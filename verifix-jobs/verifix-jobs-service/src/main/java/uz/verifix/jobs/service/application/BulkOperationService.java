@@ -61,7 +61,7 @@ public class BulkOperationService {
                     Map<String, Object> payload = Map.of(
                             "candidateId", app.getCandidate().getId(),
                             "vacancyTitle", app.getVacancy().getTitle(),
-                            "employerName", app.getVacancy().getEmployer().getCompanyName(),
+                            "employerName", app.getVacancy().getEmployer().getName(),
                             "applicationId", app.getId(),
                             "newStatus", newStatus.name()
                     );

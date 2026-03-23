@@ -75,7 +75,7 @@ public class ChurnPredictionService {
         }
 
         // Factor 4: Digest preference OFF
-        if (candidate.getDigestPref() == DigestPreference.NONE) {
+        if (candidate.getDigestPref() == DigestPreference.OFF) {
             score += 0.2;
             factors.add("NOTIFICATIONS_DISABLED");
         }
@@ -107,7 +107,7 @@ public class ChurnPredictionService {
         for (Candidate candidate : candidates) {
             try {
                 ChurnRisk risk = predictChurn(candidate.getId());
-                if (risk.score() > 0.7 && candidate.getDigestPref() != DigestPreference.NONE) {
+                if (risk.score() > 0.7 && candidate.getDigestPref() != DigestPreference.OFF) {
                     String message = templates.reEngagement();
                     notificationService.createAndSend(
                             UserType.CANDIDATE, candidate.getId(),
