@@ -1,0 +1,87 @@
+package uz.verifix.jobs.telegram.handler;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import uz.verifix.jobs.domain.entity.Candidate;
+import uz.verifix.jobs.domain.repository.CandidateRepository;
+import uz.verifix.jobs.telegram.conversation.ConversationManager;
+import uz.verifix.jobs.telegram.conversation.ConversationState;
+
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class StartHandler {
+
+    private final CandidateRepository candidateRepository;
+    private final ConversationManager conversationManager;
+
+    public SendMessage handle(Message message) {
+        Long chatId = message.getChatId();
+        Long telegramId = message.getFrom().getId();
+        String text = message.getText();
+
+        // Check for referral deep link: /start ref_ABCDEF
+        String referralCode = null;
+        if (text != null && text.startsWith("/start ref_")) {
+            referralCode = text.substring("/start ref_".length()).trim();
+        }
+
+        Optional<Candidate> existing = candidateRepository.findByTelegramId(telegramId);
+
+        if (existing.isPresent()) {
+            return sendMainMenu(chatId, existing.get().getFirstName());
+        }
+
+        // Start registration
+        ConversationState state = ConversationState.builder()
+                .chatId(chatId)
+                .currentStep(ConversationState.RegistrationStep.PHONE)
+                .referralCode(referralCode)
+                .build();
+        conversationManager.save(chatId, state);
+
+        SendMessage msg = new SendMessage();
+        msg.setChatId(chatId.toString());
+        msg.setText("👋 Salom! <b>Verifix Jobs</b> ga xush kelibsiz!\n\n" +
+                "Ish topish uchun ro'yxatdan o'ting.\n\n" +
+                "📱 Telefon raqamingizni yuboring:");
+        msg.setParseMode("HTML");
+
+        // Phone share button
+        KeyboardButton phoneButton = new KeyboardButton("📱 Telefon raqamni yuborish");
+        phoneButton.setRequestContact(true);
+        KeyboardRow row = new KeyboardRow();
+        row.add(phoneButton);
+        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
+        keyboard.setKeyboard(List.of(row));
+        keyboard.setResizeKeyboard(true);
+        keyboard.setOneTimeKeyboard(true);
+        msg.setReplyMarkup(keyboard);
+
+        log.info("New user started registration: telegramId={}", telegramId);
+        return msg;
+    }
+
+    public SendMessage sendMainMenu(Long chatId, String name) {
+        SendMessage msg = new SendMessage();
+        msg.setChatId(chatId.toString());
+        msg.setText("👋 Salom, <b>" + (name != null ? name : "do'stim") + "</b>!\n\n" +
+                "Nima qilmoqchisiz?\n\n" +
+                "🔍 /search — Ish qidirish\n" +
+                "📍 /nearby — Yaqin atrofdagi ishlar\n" +
+                "📋 /my_applications — Mening arizalarim\n" +
+                "👤 /profile — Profilim\n" +
+                "🔗 /referral — Do'stlarni taklif qilish");
+        msg.setParseMode("HTML");
+        return msg;
+    }
+}

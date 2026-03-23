@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Spatial GiST indexes -->
+    <changeSet id="007-01-spatial-indexes" author="verifix">
+        <sql>CREATE INDEX idx_employer_location ON employer USING GIST (location);</sql>
+        <sql>CREATE INDEX idx_vacancy_location ON vacancy USING GIST (location);</sql>
+        <sql>CREATE INDEX idx_candidate_home_location ON candidate USING GIST (home_location);</sql>
+        <sql>CREATE INDEX idx_geo_city_location ON geo_city USING GIST (location);</sql>
+    </changeSet>
+
+    <!-- Composite B-tree indexes -->
+    <changeSet id="007-02-employer-indexes" author="verifix">
+        <createIndex tableName="employer" indexName="idx_employer_city_status">
+            <column name="city"/>
+            <column name="status"/>
+            <column name="moderation_status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-03-vacancy-indexes" author="verifix">
+        <createIndex tableName="vacancy" indexName="idx_vacancy_city_category_status">
+            <column name="city"/>
+            <column name="category"/>
+            <column name="status"/>
+            <column name="moderation_status"/>
+        </createIndex>
+        <createIndex tableName="vacancy" indexName="idx_vacancy_employer_status">
+            <column name="employer_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-04-candidate-indexes" author="verifix">
+        <createIndex tableName="candidate" indexName="idx_candidate_city_categories">
+            <column name="city"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-05-application-indexes" author="verifix">
+        <createIndex tableName="application" indexName="idx_application_vacancy_status">
+            <column name="vacancy_id"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="application" indexName="idx_application_candidate_status">
+            <column name="candidate_id"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="application" indexName="idx_application_created_at">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-06-moderation-indexes" author="verifix">
+        <createIndex tableName="moderation_queue" indexName="idx_moderation_entity_status">
+            <column name="entity_type"/>
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="moderation_queue" indexName="idx_moderation_moderator_status">
+            <column name="moderator_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-07-notification-indexes" author="verifix">
+        <createIndex tableName="notification" indexName="idx_notification_user">
+            <column name="user_type"/>
+            <column name="user_id"/>
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="notification" indexName="idx_notification_channel_sent">
+            <column name="channel"/>
+            <column name="sent_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-08-sms-log-indexes" author="verifix">
+        <createIndex tableName="sms_log" indexName="idx_sms_log_phone_created">
+            <column name="phone"/>
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="sms_log" indexName="idx_sms_log_status_sent">
+            <column name="status"/>
+            <column name="sent_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-09-admin-indexes" author="verifix">
+        <createIndex tableName="admin_audit_log" indexName="idx_audit_admin_created">
+            <column name="admin_id"/>
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="admin_audit_log" indexName="idx_audit_entity">
+            <column name="entity_type"/>
+            <column name="entity_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-10-gov-sync-indexes" author="verifix">
+        <createIndex tableName="gov_sync_log" indexName="idx_gov_sync_source_status">
+            <column name="source"/>
+            <column name="sync_status"/>
+            <column name="synced_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-11-payment-indexes" author="verifix">
+        <createIndex tableName="payment" indexName="idx_payment_employer_created">
+            <column name="employer_id"/>
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="payment" indexName="idx_payment_status_paid">
+            <column name="status"/>
+            <column name="paid_at"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-12-verification-indexes" author="verifix">
+        <createIndex tableName="verification_log" indexName="idx_verification_entity">
+            <column name="entity_type"/>
+            <column name="entity_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-13-consent-indexes" author="verifix">
+        <createIndex tableName="consent_log" indexName="idx_consent_user">
+            <column name="user_type"/>
+            <column name="user_id"/>
+            <column name="consent_type"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-14-geo-city-indexes" author="verifix">
+        <createIndex tableName="geo_city" indexName="idx_geo_city_region_country">
+            <column name="region"/>
+            <column name="country"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="007-15-ml-score-indexes" author="verifix">
+        <createIndex tableName="ml_candidate_score" indexName="idx_ml_score_candidate_vacancy">
+            <column name="candidate_id"/>
+            <column name="vacancy_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

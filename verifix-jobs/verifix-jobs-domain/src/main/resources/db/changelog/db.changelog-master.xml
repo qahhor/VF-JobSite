@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <include file="db/changelog/changelog-001-init.xml"/>
+    <include file="db/changelog/changelog-002-core-tables.xml"/>
+    <include file="db/changelog/changelog-003-support-tables.xml"/>
+    <include file="db/changelog/changelog-004-admin-tables.xml"/>
+    <include file="db/changelog/changelog-005-billing-tables.xml"/>
+    <include file="db/changelog/changelog-006-geo-tables.xml"/>
+    <include file="db/changelog/changelog-007-indexes.xml"/>
+    <include file="db/changelog/changelog-008-seed-data.xml"/>
+    <include file="db/changelog/changelog-009-branding-tables.xml"/>
+    <include file="db/changelog/changelog-010-fraud-alert.xml"/>
+    <include file="db/changelog/changelog-011-ab-testing.xml"/>
+
+</databaseChangeLog>

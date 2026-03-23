@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="006-01-geo-city" author="verifix">
+        <createTable tableName="geo_city">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name_uz_lat" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_uz_cyr" type="varchar(100)"/>
+            <column name="name_ru" type="varchar(100)"/>
+            <column name="name_en" type="varchar(100)"/>
+            <column name="region" type="varchar(100)"/>
+            <column name="country" type="varchar(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location" type="geometry(Point,4326)"/>
+            <column name="population" type="integer"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+        <addUniqueConstraint tableName="geo_city" columnNames="name_uz_lat, country"
+                             constraintName="uq_geo_city_name_country"/>
+    </changeSet>
+
+    <changeSet id="006-02-ml-candidate-score" author="verifix">
+        <createTable tableName="ml_candidate_score">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="candidate_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_ml_score_candidate" references="candidate(id)"/>
+            </column>
+            <column name="vacancy_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_ml_score_vacancy" references="vacancy(id)"/>
+            </column>
+            <column name="match_score" type="numeric(5,4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="factors_json" type="jsonb"/>
+            <column name="model_version" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scored_at" type="timestamp with time zone"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+        <addUniqueConstraint tableName="ml_candidate_score"
+                             columnNames="candidate_id, vacancy_id, model_version"
+                             constraintName="uq_ml_score_candidate_vacancy_version"/>
+    </changeSet>
+
+    <changeSet id="006-03-gov-sync-log" author="verifix">
+        <createTable tableName="gov_sync_log">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="source" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="direction" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_type" type="varchar(50)"/>
+            <column name="entity_id" type="uuid"/>
+            <column name="sync_status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="error_message" type="text"/>
+            <column name="idempotency_key" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="synced_at" type="timestamp with time zone"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

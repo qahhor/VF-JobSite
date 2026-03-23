@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    restart: always
+
+  redis:
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    restart: always
+
+  kafka:
+    restart: always
+
+  elasticsearch:
+    environment:
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    restart: always
+
+  minio:
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    restart: always

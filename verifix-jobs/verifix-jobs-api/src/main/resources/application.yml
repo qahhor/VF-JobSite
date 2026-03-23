@@ -1,0 +1,137 @@
+server:
+  port: ${APP_PORT:8080}
+
+spring:
+  application:
+    name: verifix-jobs
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:verifix_jobs}
+    username: ${POSTGRES_USER:verifix}
+    password: ${POSTGRES_PASSWORD:verifix_secret}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dGhpcy1pcy1hLXZlcnktc2VjdXJlLXNlY3JldC1rZXktZm9yLWRldi1vbmx5LWNoYW5nZS1pbi1wcm9k}
+    access-expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+
+  sms:
+    eskiz:
+      base-url: ${ESKIZ_BASE_URL:https://notify.eskiz.uz}
+      email: ${ESKIZ_EMAIL:}
+      password: ${ESKIZ_PASSWORD:}
+    playmobile:
+      base-url: ${PLAYMOBILE_BASE_URL:https://send.playmobile.uz}
+      login: ${PLAYMOBILE_LOGIN:}
+      password: ${PLAYMOBILE_PASSWORD:}
+
+  geo:
+    nominatim-url: ${NOMINATIM_URL:https://nominatim.openstreetmap.org}
+
+  gov:
+    sync:
+      enabled: ${GOV_SYNC_ENABLED:false}
+    argos:
+      base-url: ${ARGOS_API_URL:https://api.argos.uz}
+      api-key: ${ARGOS_API_KEY:}
+    enst:
+      base-url: ${ENST_API_URL:https://api.enst.uz}
+      api-key: ${ENST_API_KEY:}
+    mehnat:
+      base-url: ${MEHNAT_API_URL:https://api.ish.mehnat.uz}
+      api-key: ${MEHNAT_API_KEY:}
+
+  verifix:
+    hrm:
+      base-url: ${VERIFIX_HRM_URL:https://hrm.verifix.uz/api}
+      api-key: ${VERIFIX_HRM_API_KEY:}
+
+  myid:
+    client-id: ${MYID_CLIENT_ID:}
+    client-secret: ${MYID_CLIENT_SECRET:}
+    base-url: ${MYID_BASE_URL:https://myid.uz}
+    redirect-uri: ${MYID_REDIRECT_URI:http://localhost:8080/api/v1/verification/callback}
+
+  telegram:
+    bot:
+      token: ${TELEGRAM_BOT_TOKEN:}
+      username: ${TELEGRAM_BOT_USERNAME:verifixjobs_bot}
+      web-app-url: ${TELEGRAM_WEB_APP_URL:}
+    channel:
+      chat-id: ${TELEGRAM_CHANNEL_CHAT_ID:}
+      enabled: ${TELEGRAM_CHANNEL_ENABLED:false}
+      post-interval-ms: ${TELEGRAM_CHANNEL_POST_INTERVAL:3600000}
+
+  scheduler:
+    expire-interval-ms: ${SCHEDULER_EXPIRE_INTERVAL:3600000}
+    autoclose-interval-ms: ${SCHEDULER_AUTOCLOSE_INTERVAL:1800000}
+
+  kafka:
+    enabled: ${KAFKA_ENABLED:false}
+
+  elasticsearch:
+    enabled: ${ELASTICSEARCH_ENABLED:false}
+
+  minio:
+    enabled: ${MINIO_ENABLED:false}
+    url: ${MINIO_URL:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket: ${MINIO_BUCKET:verifix-jobs}
+
+  payment:
+    click:
+      merchant-id: ${CLICK_MERCHANT_ID:}
+      service-id: ${CLICK_SERVICE_ID:}
+      secret-key: ${CLICK_SECRET_KEY:}
+      base-url: ${CLICK_BASE_URL:https://my.click.uz}
+    payme:
+      merchant-id: ${PAYME_MERCHANT_ID:}
+      secret-key: ${PAYME_SECRET_KEY:}
+      base-url: ${PAYME_BASE_URL:https://checkout.paycom.uz}
+
+spring.elasticsearch:
+  uris: ${ELASTICSEARCH_URI:http://localhost:9200}
+
+spring.kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  consumer:
+    group-id: verifix-jobs
+    auto-offset-reset: earliest
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+
+logging:
+  level:
+    uz.verifix.jobs: DEBUG
+    org.hibernate.SQL: DEBUG

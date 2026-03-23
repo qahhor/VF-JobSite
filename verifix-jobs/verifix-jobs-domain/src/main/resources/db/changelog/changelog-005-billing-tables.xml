@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="005-01-pricing-plan" author="verifix">
+        <createTable tableName="pricing_plan">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="varchar(30)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_vacancies" type="integer"/>
+            <column name="max_resume_views" type="integer"/>
+            <column name="has_ats" type="boolean" defaultValueBoolean="false"/>
+            <column name="has_analytics" type="boolean" defaultValueBoolean="false"/>
+            <column name="has_api" type="boolean" defaultValueBoolean="false"/>
+            <column name="has_branding" type="boolean" defaultValueBoolean="false"/>
+            <column name="price_monthly_uzs" type="numeric(15,2)"/>
+            <column name="price_annual_uzs" type="numeric(15,2)"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="005-02-payment" author="verifix">
+        <createTable tableName="payment">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="employer_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_payment_employer" references="employer(id)"/>
+            </column>
+            <column name="plan_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_payment_plan" references="pricing_plan(id)"/>
+            </column>
+            <column name="amount" type="numeric(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="varchar(5)" defaultValue="UZS"/>
+            <column name="gateway" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="varchar(255)"/>
+            <column name="status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="paid_at" type="timestamp with time zone"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
