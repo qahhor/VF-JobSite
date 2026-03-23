@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="011-01" author="claude">
+        <createTable tableName="ab_experiment">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uq_ab_experiment_name"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="011-02" author="claude">
+        <createTable tableName="ab_conversion">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="experiment_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_ab_conversion_experiment"
+                             references="ab_experiment(id)"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="variant" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="converted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+
+        <createIndex tableName="ab_conversion" indexName="idx_ab_conversion_experiment_user">
+            <column name="experiment_id"/>
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

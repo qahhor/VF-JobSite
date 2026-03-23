@@ -33,6 +33,7 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
     private final ConversationManager conversationManager;
     private final NotificationConsumer notificationConsumer;
     private final ChannelPostingService channelPostingService;
+    private final AiChatHandler aiChatHandler;
 
     public VerifixJobsBot(BotConfig botConfig, StartHandler startHandler,
                           RegistrationHandler registrationHandler, SearchHandler searchHandler,
@@ -40,7 +41,7 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
                           ReferralHandler referralHandler, CallbackQueryHandler callbackQueryHandler,
                           ProfileHandler profileHandler,
                           ConversationManager conversationManager, NotificationConsumer notificationConsumer,
-                          ChannelPostingService channelPostingService) {
+                          ChannelPostingService channelPostingService, AiChatHandler aiChatHandler) {
         super(botConfig.getToken());
         this.botConfig = botConfig;
         this.startHandler = startHandler;
@@ -54,6 +55,7 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         this.conversationManager = conversationManager;
         this.notificationConsumer = notificationConsumer;
         this.channelPostingService = channelPostingService;
+        this.aiChatHandler = aiChatHandler;
     }
 
     @PostConstruct
@@ -156,7 +158,11 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
             return helpMessage(message.getChatId());
         }
 
-        // Unknown command or text — show help
+        // Unknown text — try AI chat for natural language job search
+        if (!text.startsWith("/")) {
+            return aiChatHandler.handle(message);
+        }
+
         return helpMessage(message.getChatId());
     }
 

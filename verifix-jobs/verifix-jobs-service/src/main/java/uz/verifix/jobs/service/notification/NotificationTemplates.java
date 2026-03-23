@@ -63,4 +63,12 @@ public class NotificationTemplates {
                 refereeName + " ishga qabul qilindi.\n" +
                 "Mukofotingiz tez orada hisobingizga tushadi!";
     }
+
+    public String reEngagement() {
+        return "👋 <b>Sizni sog'indik!</b>\n\n" +
+                "Yangi vakansiyalar qo'shildi! Ish qidirishni davom ettiring:\n\n" +
+                "🔍 /search — Yangi ishlar\n" +
+                "📍 /nearby — Yaqin atrofdagi ishlar\n\n" +
+                "Yoki shunchaki yozing: <i>\"Toshkentda oshpaz\"</i>";
+    }
 }

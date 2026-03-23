@@ -18,6 +18,7 @@ import uz.verifix.jobs.service.notification.EventPublisher;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -55,7 +56,19 @@ public class BulkOperationService {
                 app.setStatus(newStatus);
                 updateTimestamps(app, newStatus);
                 applicationRepository.save(app);
-                eventPublisher.publish(DomainEvent.APPLICATION_STATUS_CHANGED, app.getId(), "Application");
+
+                if (newStatus == ApplicationStatus.HIRED) {
+                    Map<String, Object> payload = Map.of(
+                            "candidateId", app.getCandidate().getId(),
+                            "vacancyTitle", app.getVacancy().getTitle(),
+                            "employerName", app.getVacancy().getEmployer().getCompanyName(),
+                            "applicationId", app.getId(),
+                            "newStatus", newStatus.name()
+                    );
+                    eventPublisher.publish(DomainEvent.APPLICATION_HIRED, app.getId(), "Application", null, payload);
+                } else {
+                    eventPublisher.publish(DomainEvent.APPLICATION_STATUS_CHANGED, app.getId(), "Application");
+                }
                 success++;
             } catch (Exception e) {
                 errors.add(appId + ": " + e.getMessage());

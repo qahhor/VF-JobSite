@@ -38,4 +38,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     long countByVacancy_EmployerIdAndStatusAndCreatedAtAfter(UUID employerId, ApplicationStatus status, java.time.Instant after);
 
     java.util.List<Application> findByCandidateId(UUID candidateId);
+
+    java.util.Optional<Application> findTopByCandidateIdOrderByAppliedAtDesc(UUID candidateId);
 }

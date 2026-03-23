@@ -15,5 +15,6 @@
     <include file="db/changelog/changelog-008-seed-data.xml"/>
     <include file="db/changelog/changelog-009-branding-tables.xml"/>
     <include file="db/changelog/changelog-010-fraud-alert.xml"/>
+    <include file="db/changelog/changelog-011-ab-testing.xml"/>
 
 </databaseChangeLog>

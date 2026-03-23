@@ -16,6 +16,8 @@ import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.enums.ApplicationStatus;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
+import uz.verifix.jobs.service.notification.DomainEvent;
+import uz.verifix.jobs.service.notification.EventPublisher;
 
 import java.time.Instant;
 import java.util.List;
@@ -30,6 +32,7 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final VacancyRepository vacancyRepository;
+    private final EventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public Page<Application> getByVacancy(UUID vacancyId, UUID employerId, ApplicationStatus status, Pageable pageable) {
@@ -58,7 +61,9 @@ public class ApplicationService {
         setTimestamp(application, newStatus);
 
         log.info("Application {} status changed to {} by employer {}", applicationId, newStatus, employerId);
-        return applicationRepository.save(application);
+        Application saved = applicationRepository.save(application);
+        publishStatusEvent(saved, newStatus);
+        return saved;
     }
 
     @Transactional
@@ -82,7 +87,9 @@ public class ApplicationService {
         application.setRejectionReason(reason);
 
         log.info("Application {} rejected by employer {}", applicationId, employerId);
-        return applicationRepository.save(application);
+        Application saved = applicationRepository.save(application);
+        publishStatusEvent(saved, ApplicationStatus.REJECTED);
+        return saved;
     }
 
     @Transactional
@@ -97,7 +104,9 @@ public class ApplicationService {
         }
 
         log.info("Bulk status change to {} for {} applications by employer {}", newStatus, applications.size(), employerId);
-        return applicationRepository.saveAll(applications);
+        List<Application> saved = applicationRepository.saveAll(applications);
+        saved.forEach(app -> publishStatusEvent(app, newStatus));
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -152,6 +161,25 @@ public class ApplicationService {
         if (!application.getVacancy().getEmployer().getId().equals(employerId)) {
             throw new ForbiddenException("You do not have access to this application");
         }
+    }
+
+    private void publishStatusEvent(Application app, ApplicationStatus status) {
+        Map<String, Object> payload = Map.of(
+                "candidateId", app.getCandidate().getId(),
+                "vacancyTitle", app.getVacancy().getTitle(),
+                "employerName", app.getVacancy().getEmployer().getCompanyName(),
+                "applicationId", app.getId()
+        );
+
+        String eventType = switch (status) {
+            case HIRED -> DomainEvent.APPLICATION_HIRED;
+            case REJECTED -> DomainEvent.APPLICATION_REJECTED;
+            default -> DomainEvent.APPLICATION_STATUS_CHANGED;
+        };
+
+        Map<String, Object> fullPayload = new java.util.HashMap<>(payload);
+        fullPayload.put("newStatus", status.name());
+        eventPublisher.publish(eventType, app.getId(), "Application", null, fullPayload);
     }
 
     private void setTimestamp(Application app, ApplicationStatus status) {
