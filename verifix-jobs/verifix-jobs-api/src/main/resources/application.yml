@@ -58,6 +58,14 @@ app:
       token: ${TELEGRAM_BOT_TOKEN:}
       username: ${TELEGRAM_BOT_USERNAME:verifixjobs_bot}
       web-app-url: ${TELEGRAM_WEB_APP_URL:}
+    channel:
+      chat-id: ${TELEGRAM_CHANNEL_CHAT_ID:}
+      enabled: ${TELEGRAM_CHANNEL_ENABLED:false}
+      post-interval-ms: ${TELEGRAM_CHANNEL_POST_INTERVAL:3600000}
+
+  scheduler:
+    expire-interval-ms: ${SCHEDULER_EXPIRE_INTERVAL:3600000}
+    autoclose-interval-ms: ${SCHEDULER_AUTOCLOSE_INTERVAL:1800000}
 
   kafka:
     enabled: ${KAFKA_ENABLED:false}

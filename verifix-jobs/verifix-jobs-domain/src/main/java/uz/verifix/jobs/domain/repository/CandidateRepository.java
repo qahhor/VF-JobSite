@@ -6,6 +6,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uz.verifix.jobs.domain.entity.Candidate;
 
+import uz.verifix.jobs.domain.enums.DigestPreference;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,4 +31,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, UUID> {
             "ORDER BY ST_DistanceSphere(c.home_location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326))",
             nativeQuery = true)
     List<Candidate> findNearLocation(@Param("lon") double lon, @Param("lat") double lat, @Param("distanceMeters") double distanceMeters);
+
+    List<Candidate> findByDigestPref(DigestPreference digestPref);
 }

@@ -25,6 +25,7 @@ public class CallbackQueryHandler {
     private final VacancyService vacancyService;
     private final VacancyCardFormatter formatter;
     private final ApplyHandler applyHandler;
+    private final ProfileHandler profileHandler;
 
     public BotApiMethod<? extends Serializable> handle(CallbackQuery callbackQuery) {
         String data = callbackQuery.getData();
@@ -39,6 +40,10 @@ public class CallbackQueryHandler {
         if (data.startsWith("apply:")) {
             UUID vacancyId = UUID.fromString(data.substring("apply:".length()));
             return applyHandler.handleApply(callbackQuery, vacancyId);
+        }
+
+        if (data.startsWith("profile:")) {
+            return profileHandler.handleCallback(callbackQuery);
         }
 
         return null;

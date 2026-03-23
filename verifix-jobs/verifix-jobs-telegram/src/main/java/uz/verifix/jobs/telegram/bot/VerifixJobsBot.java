@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import uz.verifix.jobs.telegram.channel.ChannelPostingService;
 import uz.verifix.jobs.telegram.config.BotConfig;
 import uz.verifix.jobs.telegram.conversation.ConversationManager;
 import uz.verifix.jobs.telegram.conversation.ConversationState;
@@ -28,14 +29,18 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
     private final ApplyHandler applyHandler;
     private final ReferralHandler referralHandler;
     private final CallbackQueryHandler callbackQueryHandler;
+    private final ProfileHandler profileHandler;
     private final ConversationManager conversationManager;
     private final NotificationConsumer notificationConsumer;
+    private final ChannelPostingService channelPostingService;
 
     public VerifixJobsBot(BotConfig botConfig, StartHandler startHandler,
                           RegistrationHandler registrationHandler, SearchHandler searchHandler,
                           NearbyHandler nearbyHandler, ApplyHandler applyHandler,
                           ReferralHandler referralHandler, CallbackQueryHandler callbackQueryHandler,
-                          ConversationManager conversationManager, NotificationConsumer notificationConsumer) {
+                          ProfileHandler profileHandler,
+                          ConversationManager conversationManager, NotificationConsumer notificationConsumer,
+                          ChannelPostingService channelPostingService) {
         super(botConfig.getToken());
         this.botConfig = botConfig;
         this.startHandler = startHandler;
@@ -45,8 +50,10 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         this.applyHandler = applyHandler;
         this.referralHandler = referralHandler;
         this.callbackQueryHandler = callbackQueryHandler;
+        this.profileHandler = profileHandler;
         this.conversationManager = conversationManager;
         this.notificationConsumer = notificationConsumer;
+        this.channelPostingService = channelPostingService;
     }
 
     @PostConstruct
@@ -56,6 +63,13 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
                 execute(msg);
             } catch (TelegramApiException e) {
                 log.error("Failed to send notification: {}", e.getMessage());
+            }
+        });
+        channelPostingService.setMessageSender(msg -> {
+            try {
+                execute(msg);
+            } catch (TelegramApiException e) {
+                log.error("Failed to post to channel: {}", e.getMessage());
             }
         });
     }
@@ -136,7 +150,7 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
             return referralHandler.handle(message);
         }
         if (text.equals("/profile")) {
-            return startHandler.sendMainMenu(message.getChatId(), null);
+            return profileHandler.handle(message);
         }
         if (text.equals("/help")) {
             return helpMessage(message.getChatId());
