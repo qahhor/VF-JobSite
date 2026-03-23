@@ -75,15 +75,18 @@ public class CandidateAuthService {
     }
 
     private String generateReferralCode() {
-        StringBuilder code = new StringBuilder(6);
-        for (int i = 0; i < 6; i++) {
-            code.append(REFERRAL_CHARS.charAt(RANDOM.nextInt(REFERRAL_CHARS.length())));
+        for (int attempt = 0; attempt < 10; attempt++) {
+            StringBuilder code = new StringBuilder(6);
+            for (int i = 0; i < 6; i++) {
+                code.append(REFERRAL_CHARS.charAt(RANDOM.nextInt(REFERRAL_CHARS.length())));
+            }
+            String result = code.toString();
+            if (candidateRepository.findByReferralCode(result).isEmpty()) {
+                return result;
+            }
         }
-        String result = code.toString();
-        if (candidateRepository.findByReferralCode(result).isPresent()) {
-            return generateReferralCode();
-        }
-        return result;
+        // Fallback to UUID-based code if all attempts collide (extremely unlikely)
+        return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
     public record VerifyResult(UUID candidateId, String accessToken, String refreshToken, boolean newUser) {}

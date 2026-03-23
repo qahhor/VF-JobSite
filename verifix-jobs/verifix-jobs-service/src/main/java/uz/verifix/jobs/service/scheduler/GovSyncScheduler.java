@@ -2,6 +2,7 @@ package uz.verifix.jobs.service.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,7 @@ public class GovSyncScheduler {
     private final VacancyRepository vacancyRepository;
 
     @Scheduled(cron = "0 0 3 * * *")
+    @SchedulerLock(name = "govDailyExport", lockAtLeastFor = "30m", lockAtMostFor = "2h")
     public void dailyExport() {
         log.info("Starting daily gov vacancy export...");
 
@@ -52,6 +54,7 @@ public class GovSyncScheduler {
     }
 
     @Scheduled(cron = "0 0 4 * * *")
+    @SchedulerLock(name = "govDailyImport", lockAtLeastFor = "30m", lockAtMostFor = "2h")
     public void dailyImport() {
         log.info("Starting daily gov vacancy import...");
 
@@ -62,6 +65,7 @@ public class GovSyncScheduler {
     }
 
     @Scheduled(fixedDelay = 3600000)
+    @SchedulerLock(name = "govRetryFailed", lockAtLeastFor = "5m", lockAtMostFor = "30m")
     public void retryFailed() {
         int retried = govSyncService.retryFailed();
         if (retried > 0) {

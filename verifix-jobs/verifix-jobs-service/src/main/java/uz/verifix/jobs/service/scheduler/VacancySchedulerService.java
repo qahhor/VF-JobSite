@@ -2,6 +2,7 @@ package uz.verifix.jobs.service.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ public class VacancySchedulerService {
      * Every hour: expire vacancies past their expiresAt date.
      */
     @Scheduled(fixedDelayString = "${app.scheduler.expire-interval-ms:3600000}")
+    @SchedulerLock(name = "expireVacancies", lockAtLeastFor = "5m", lockAtMostFor = "30m")
     @Transactional
     public void expireVacancies() {
         List<Vacancy> expired = vacancyRepository.findByStatusAndExpiresAtBefore(VacancyStatus.ACTIVE, Instant.now());
@@ -50,6 +52,7 @@ public class VacancySchedulerService {
      * Every 30 minutes: auto-close vacancies where all positions are filled.
      */
     @Scheduled(fixedDelayString = "${app.scheduler.autoclose-interval-ms:1800000}")
+    @SchedulerLock(name = "autoCloseFilledVacancies", lockAtLeastFor = "5m", lockAtMostFor = "15m")
     @Transactional
     public void autoCloseFilledVacancies() {
         List<Vacancy> filled = vacancyRepository.findFilledVacancies();

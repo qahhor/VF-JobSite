@@ -18,8 +18,9 @@ public class EskizSmsGateway implements SmsGateway {
     private final String email;
     private final String password;
 
-    private String cachedToken;
-    private Instant tokenExpiresAt;
+    private volatile String cachedToken;
+    private volatile Instant tokenExpiresAt;
+    private final Object tokenLock = new Object();
 
     public EskizSmsGateway(
             @Value("${app.sms.eskiz.base-url:https://notify.eskiz.uz}") String baseUrl,
@@ -66,25 +67,32 @@ public class EskizSmsGateway implements SmsGateway {
         return "ESKIZ";
     }
 
-    private synchronized String getToken() {
+    private String getToken() {
+        // Double-checked locking: avoid synchronizing on every call
         if (cachedToken != null && tokenExpiresAt != null && Instant.now().isBefore(tokenExpiresAt)) {
             return cachedToken;
         }
-        Map<String, Object> response = webClient.post()
-                .uri("/api/auth/login")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .bodyValue("email=" + email + "&password=" + password)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block(Duration.ofSeconds(10));
+        synchronized (tokenLock) {
+            // Re-check after acquiring lock (another thread may have refreshed)
+            if (cachedToken != null && tokenExpiresAt != null && Instant.now().isBefore(tokenExpiresAt)) {
+                return cachedToken;
+            }
+            Map<String, Object> response = webClient.post()
+                    .uri("/api/auth/login")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .bodyValue("email=" + email + "&password=" + password)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block(Duration.ofSeconds(10));
 
-        if (response != null && response.containsKey("data")) {
-            Map<String, Object> data = (Map<String, Object>) response.get("data");
-            cachedToken = (String) data.get("token");
-            tokenExpiresAt = Instant.now().plus(Duration.ofDays(29));
-            log.info("Eskiz token refreshed, expires at {}", tokenExpiresAt);
+            if (response != null && response.containsKey("data")) {
+                Map<String, Object> data = (Map<String, Object>) response.get("data");
+                cachedToken = (String) data.get("token");
+                tokenExpiresAt = Instant.now().plus(Duration.ofDays(29));
+                log.info("Eskiz token refreshed, expires at {}", tokenExpiresAt);
+            }
+            return cachedToken;
         }
-        return cachedToken;
     }
 
     private String maskPhone(String phone) {

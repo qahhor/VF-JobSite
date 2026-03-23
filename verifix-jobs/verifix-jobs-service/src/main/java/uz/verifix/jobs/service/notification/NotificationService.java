@@ -1,5 +1,6 @@
 package uz.verifix.jobs.service.notification;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import uz.verifix.jobs.domain.repository.ApplicationRepository;
 import uz.verifix.jobs.domain.repository.NotificationRepository;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -21,6 +23,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final ApplicationRepository applicationRepository;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public Notification createAndSend(UserType userType, UUID userId, NotificationChannel channel,
@@ -66,14 +69,23 @@ public class NotificationService {
 
     public void sendTelegramMessage(Long chatId, String message) {
         log.info("Sending Telegram message to chatId={}: {}", chatId, message.substring(0, Math.min(50, message.length())));
-        createAndSend(UserType.EMPLOYER, null, NotificationChannel.TELEGRAM,
-                "TELEGRAM_DIRECT", "{\"chatId\":" + chatId + ",\"message\":\"" + message.replace("\"", "\\\"") + "\"}");
+        String payload = serializePayload(Map.of("chatId", chatId, "message", message));
+        createAndSend(UserType.EMPLOYER, null, NotificationChannel.TELEGRAM, "TELEGRAM_DIRECT", payload);
     }
 
     public void sendSms(String phone, String message) {
         log.info("Sending SMS to {}: {}", phone.substring(0, Math.min(7, phone.length())) + "***", message.substring(0, Math.min(50, message.length())));
-        createAndSend(UserType.EMPLOYER, null, NotificationChannel.SMS,
-                "SMS_DIRECT", "{\"phone\":\"" + phone + "\",\"message\":\"" + message.replace("\"", "\\\"") + "\"}");
+        String payload = serializePayload(Map.of("phone", phone, "message", message));
+        createAndSend(UserType.EMPLOYER, null, NotificationChannel.SMS, "SMS_DIRECT", payload);
+    }
+
+    private String serializePayload(Map<String, Object> payload) {
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (Exception e) {
+            log.error("Failed to serialize notification payload: {}", e.getMessage());
+            return "{}";
+        }
     }
 
     @Transactional(readOnly = true)

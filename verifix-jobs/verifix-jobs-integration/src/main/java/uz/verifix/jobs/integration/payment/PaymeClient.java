@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.Map;
 
@@ -85,7 +86,9 @@ public class PaymeClient implements PaymentGatewayClient {
         if (authHeader == null || !authHeader.startsWith("Basic ")) return false;
         try {
             String decoded = new String(Base64.getDecoder().decode(authHeader.substring(6)), StandardCharsets.UTF_8);
-            return decoded.equals("Paycom:" + secretKey);
+            String expected = "Paycom:" + secretKey;
+            return MessageDigest.isEqual(
+                    decoded.getBytes(StandardCharsets.UTF_8), expected.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             return false;
         }

@@ -2,6 +2,9 @@ package uz.verifix.jobs.service.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uz.verifix.jobs.domain.entity.Employer;
@@ -23,27 +26,34 @@ public class EmployerReportScheduler {
     private final EmployerNotificationService employerNotificationService;
     private final NotificationService notificationService;
 
+    private static final int BATCH_SIZE = 500;
+
     @Scheduled(cron = "0 0 9 * * MON")
+    @SchedulerLock(name = "sendWeeklyReports", lockAtLeastFor = "30m", lockAtMostFor = "2h")
     public void sendWeeklyReports() {
         log.info("Starting weekly employer reports...");
-
-        List<Employer> employers = employerRepository.findAll();
         int sent = 0;
+        int page = 0;
 
-        for (Employer employer : employers) {
-            try {
-                String report = employerNotificationService.generateWeeklyReport(employer.getId());
-                List<Manager> managers = managerRepository.findByEmployerId(employer.getId());
+        while (true) {
+            Page<Employer> employers = employerRepository.findAll(PageRequest.of(page, BATCH_SIZE));
+            for (Employer employer : employers) {
+                try {
+                    String report = employerNotificationService.generateWeeklyReport(employer.getId());
+                    List<Manager> managers = managerRepository.findByEmployerId(employer.getId());
 
-                for (Manager manager : managers) {
-                    if (manager.getTelegramChatId() != null) {
-                        notificationService.sendTelegramMessage(manager.getTelegramChatId(), report);
-                        sent++;
+                    for (Manager manager : managers) {
+                        if (manager.getTelegramChatId() != null) {
+                            notificationService.sendTelegramMessage(manager.getTelegramChatId(), report);
+                            sent++;
+                        }
                     }
+                } catch (Exception e) {
+                    log.error("Failed to send weekly report for employer {}: {}", employer.getId(), e.getMessage());
                 }
-            } catch (Exception e) {
-                log.error("Failed to send weekly report for employer {}: {}", employer.getId(), e.getMessage());
             }
+            if (!employers.hasNext()) break;
+            page++;
         }
 
         log.info("Weekly employer reports sent: {}", sent);

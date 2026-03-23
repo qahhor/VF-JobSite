@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.Map;
@@ -65,7 +66,8 @@ public class ClickUzClient implements PaymentGatewayClient {
 
         // Verify signature
         String expectedSign = generateSignature(clickTransId, merchantTransId, amount, action);
-        if (!expectedSign.equals(signString)) {
+        if (signString == null || !MessageDigest.isEqual(
+                expectedSign.getBytes(StandardCharsets.UTF_8), signString.getBytes(StandardCharsets.UTF_8))) {
             log.warn("Click.uz invalid signature for transaction {}", clickTransId);
             return new PaymentCallbackResult(merchantTransId, clickTransId, false, "Invalid signature");
         }
