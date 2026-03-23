@@ -40,6 +40,19 @@ app:
 
   base-url: ${APP_BASE_URL:http://localhost:8080}
 
+  sms:
+    eskiz:
+      base-url: ${ESKIZ_BASE_URL:https://notify.eskiz.uz}
+      email: ${ESKIZ_EMAIL:}
+      password: ${ESKIZ_PASSWORD:}
+    playmobile:
+      base-url: ${PLAYMOBILE_BASE_URL:https://send.playmobile.uz}
+      login: ${PLAYMOBILE_LOGIN:}
+      password: ${PLAYMOBILE_PASSWORD:}
+
+  geo:
+    nominatim-url: ${NOMINATIM_URL:https://nominatim.openstreetmap.org}
+
 springdoc:
   api-docs:
     path: /v3/api-docs
