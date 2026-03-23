@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="004-01-admin-user" author="verifix">
+        <createTable tableName="admin_user">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password_hash" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permissions" type="jsonb"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="004-02-admin-audit-log" author="verifix">
+        <createTable tableName="admin_audit_log">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="admin_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_audit_log_admin" references="admin_user(id)"/>
+            </column>
+            <column name="action" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="entity_type" type="varchar(50)"/>
+            <column name="entity_id" type="uuid"/>
+            <column name="details" type="jsonb"/>
+            <column name="ip_address" type="varchar(50)"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Add FK from moderation_queue to admin_user -->
+    <changeSet id="004-03-moderation-queue-fk" author="verifix">
+        <addForeignKeyConstraint baseTableName="moderation_queue" baseColumnNames="moderator_id"
+                                 referencedTableName="admin_user" referencedColumnNames="id"
+                                 constraintName="fk_moderation_queue_admin"/>
+    </changeSet>
+
+</databaseChangeLog>

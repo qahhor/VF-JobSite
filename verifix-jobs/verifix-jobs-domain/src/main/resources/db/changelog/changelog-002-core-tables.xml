@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="002-01-employer" author="verifix">
+        <createTable tableName="employer">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="inn" type="varchar(20)">
+                <constraints unique="true"/>
+            </column>
+            <column name="legal_name" type="varchar(255)"/>
+            <column name="logo_url" type="varchar(512)"/>
+            <column name="industry" type="varchar(100)"/>
+            <column name="city" type="varchar(100)"/>
+            <column name="region" type="varchar(100)"/>
+            <column name="location" type="geometry(Point,4326)"/>
+            <column name="status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subscription_plan" type="varchar(50)"/>
+            <column name="is_verified" type="boolean" defaultValueBoolean="false"/>
+            <column name="myid_verified_at" type="timestamp with time zone"/>
+            <column name="moderation_status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-02-manager" author="verifix">
+        <createTable tableName="manager">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="employer_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_manager_employer" references="employer(id)"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="phone" type="varchar(20)"/>
+            <column name="password_hash" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(20)" defaultValue="RECRUITER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="telegram_chat_id" type="bigint"/>
+            <column name="push_subscription_json" type="jsonb"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-03-candidate" author="verifix">
+        <createTable tableName="candidate">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="phone" type="varchar(20)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="telegram_id" type="bigint">
+                <constraints unique="true"/>
+            </column>
+            <column name="first_name" type="varchar(100)"/>
+            <column name="last_name" type="varchar(100)"/>
+            <column name="birth_date" type="date"/>
+            <column name="city" type="varchar(100)"/>
+            <column name="region" type="varchar(100)"/>
+            <column name="home_location" type="geometry(Point,4326)"/>
+            <column name="gender" type="varchar(20)"/>
+            <column name="education_level" type="varchar(20)"/>
+            <column name="work_experience_text" type="text"/>
+            <column name="skills" type="text[]"/>
+            <column name="preferred_categories" type="text[]"/>
+            <column name="preferred_salary" type="numeric(15,2)"/>
+            <column name="preferred_radius_km" type="integer"/>
+            <column name="avatar_url" type="varchar(512)"/>
+            <column name="passport_series" type="varchar(50)"/>
+            <column name="myid_status" type="varchar(20)" defaultValue="NONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="myid_verified_at" type="timestamp with time zone"/>
+            <column name="referral_code" type="varchar(10)">
+                <constraints unique="true"/>
+            </column>
+            <column name="referred_by_id" type="uuid">
+                <constraints foreignKeyName="fk_candidate_referred_by" references="candidate(id)"/>
+            </column>
+            <column name="language_pref" type="varchar(5)" defaultValue="UZ"/>
+            <column name="digest_pref" type="varchar(10)" defaultValue="DAILY"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-04-vacancy" author="verifix">
+        <createTable tableName="vacancy">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="employer_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_vacancy_employer" references="employer(id)"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="category" type="varchar(100)"/>
+            <column name="city" type="varchar(100)"/>
+            <column name="region" type="varchar(100)"/>
+            <column name="location" type="geometry(Point,4326)"/>
+            <column name="salary_from" type="numeric(15,2)"/>
+            <column name="salary_to" type="numeric(15,2)"/>
+            <column name="currency" type="varchar(5)" defaultValue="UZS"/>
+            <column name="employment_type" type="varchar(20)"/>
+            <column name="shift_schedule" type="varchar(20)"/>
+            <column name="benefits" type="text[]"/>
+            <column name="status" type="varchar(25)" defaultValue="DRAFT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_mass_hiring" type="boolean" defaultValueBoolean="false"/>
+            <column name="positions_count" type="integer" defaultValueNumeric="1"/>
+            <column name="positions_filled" type="integer" defaultValueNumeric="0"/>
+            <column name="expires_at" type="timestamp with time zone"/>
+            <column name="moderation_status" type="varchar(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="moderation_note" type="text"/>
+            <column name="source" type="varchar(20)" defaultValue="MANUAL"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-05-application" author="verifix">
+        <createTable tableName="application">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="vacancy_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_application_vacancy" references="vacancy(id)"/>
+            </column>
+            <column name="candidate_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_application_candidate" references="candidate(id)"/>
+            </column>
+            <column name="status" type="varchar(20)" defaultValue="NEW">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source" type="varchar(20)"/>
+            <column name="applied_at" type="timestamp with time zone"/>
+            <column name="viewed_at" type="timestamp with time zone"/>
+            <column name="invited_at" type="timestamp with time zone"/>
+            <column name="rejected_at" type="timestamp with time zone"/>
+            <column name="hired_at" type="timestamp with time zone"/>
+            <column name="rejection_reason" type="varchar(500)"/>
+            <column name="recruiter_notes" type="text"/>
+            <column name="verifix_employee_id" type="uuid"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+        <addUniqueConstraint tableName="application" columnNames="vacancy_id, candidate_id"
+                             constraintName="uq_application_vacancy_candidate"/>
+    </changeSet>
+
+</databaseChangeLog>
