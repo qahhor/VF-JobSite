@@ -4,7 +4,7 @@
 Job portal for mass hiring of blue-collar workers in Central Asia (UZ, KZ, KG, TJ). Part of Verifix HRM ecosystem.
 
 ## Tech Stack
-- **Java 21**, Spring Boot 3.3.7, Spring Data JPA, Spring Security 6, WebFlux
+- **Java 21**, Spring Boot 3.5.12, Spring Data JPA, Spring Security 6, WebFlux
 - **PostgreSQL 16 + PostGIS**, Liquibase migrations
 - **Redis 7** (cache), **Elasticsearch 8.12** (search), **Kafka** (messaging)
 - **MinIO** (file storage), **Telegram Bot API 6.9.7.1**

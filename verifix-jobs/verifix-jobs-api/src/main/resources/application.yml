@@ -18,7 +18,6 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.spatial.dialect.postgis.PostgisPG10Dialect
         format_sql: true
     open-in-view: false
 
