@@ -54,4 +54,16 @@ public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpec
     long countByStatus(VacancyStatus status);
 
     long countByCreatedAtAfter(Instant after);
+
+    @Query(value = "SELECT AVG(salary_from) as avg_salary, MIN(salary_from) as min_salary, " +
+            "MAX(salary_to) as max_salary, COUNT(*) as cnt FROM vacancy " +
+            "WHERE deleted_at IS NULL AND status = 'ACTIVE' AND salary_from IS NOT NULL " +
+            "AND category = :category AND city = :city", nativeQuery = true)
+    List<Object[]> findSalaryStatsByCategoryAndCity(@Param("category") String category, @Param("city") String city);
+
+    @Query(value = "SELECT AVG(salary_from) as avg_salary, MIN(salary_from) as min_salary, " +
+            "MAX(salary_to) as max_salary, COUNT(*) as cnt FROM vacancy " +
+            "WHERE deleted_at IS NULL AND status = 'ACTIVE' AND salary_from IS NOT NULL " +
+            "AND category = :category", nativeQuery = true)
+    List<Object[]> findSalaryStatsByCategory(@Param("category") String category);
 }

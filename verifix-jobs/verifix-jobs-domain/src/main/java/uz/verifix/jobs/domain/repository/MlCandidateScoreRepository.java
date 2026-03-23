@@ -14,4 +14,6 @@ public interface MlCandidateScoreRepository extends JpaRepository<MlCandidateSco
     Optional<MlCandidateScore> findByCandidateIdAndVacancyIdAndModelVersion(UUID candidateId, UUID vacancyId, String modelVersion);
 
     List<MlCandidateScore> findByVacancyIdOrderByMatchScoreDesc(UUID vacancyId);
+
+    List<MlCandidateScore> findByCandidateIdOrderByMatchScoreDesc(UUID candidateId);
 }

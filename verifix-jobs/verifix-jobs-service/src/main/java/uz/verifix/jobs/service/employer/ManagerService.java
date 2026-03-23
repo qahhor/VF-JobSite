@@ -16,6 +16,7 @@ import uz.verifix.jobs.domain.entity.Manager;
 import uz.verifix.jobs.domain.enums.ManagerRole;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.ManagerRepository;
+import uz.verifix.jobs.service.notification.NotificationService;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -59,7 +60,16 @@ public class ManagerService {
         manager = managerRepository.save(manager);
         log.info("Manager invited: {} with role {} for employer {}", email, role, employerId);
 
-        // TODO: send invitation email/SMS with temp password
+        // Send invitation SMS with temp password
+        if (manager.getPhone() != null && !manager.getPhone().isBlank()) {
+            try {
+                notificationService.sendSms(manager.getPhone(),
+                        "Verifix Jobs: Siz " + employer.getName() + " kompaniyasiga taklif qilindingiz. " +
+                        "Login: " + email + ", Parol: " + tempPassword);
+            } catch (Exception e) {
+                log.warn("Failed to send invitation SMS to {}: {}", manager.getPhone(), e.getMessage());
+            }
+        }
 
         return manager;
     }

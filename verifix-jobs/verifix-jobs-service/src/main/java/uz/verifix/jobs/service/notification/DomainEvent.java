@@ -36,4 +36,6 @@ public class DomainEvent {
     public static final String REFERRAL_HIRED = "referral.hired";
     public static final String BRANDING_PUBLISHED = "branding.published";
     public static final String BRANDING_UPGRADED = "branding.upgraded";
+    public static final String CANDIDATE_MATCHED = "candidate.matched";
+    public static final String FRAUD_DETECTED = "fraud.detected";
 }
