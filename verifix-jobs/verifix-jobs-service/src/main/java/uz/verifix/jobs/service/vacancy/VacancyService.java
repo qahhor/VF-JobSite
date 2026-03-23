@@ -22,6 +22,7 @@ import uz.verifix.jobs.domain.enums.VacancyStatus;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.domain.specification.VacancySpecification;
+import uz.verifix.jobs.service.billing.SubscriptionEnforcementService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -36,6 +37,7 @@ public class VacancyService {
 
     private final VacancyRepository vacancyRepository;
     private final EmployerRepository employerRepository;
+    private final SubscriptionEnforcementService subscriptionEnforcementService;
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     @Transactional
@@ -44,6 +46,9 @@ public class VacancyService {
                           BigDecimal salaryFrom, BigDecimal salaryTo, String currency,
                           String employmentType, String shiftSchedule, List<String> benefits,
                           Boolean isMassHiring, Integer positionsCount) {
+
+        // Check subscription limits
+        subscriptionEnforcementService.enforceVacancyLimit(employerId);
 
         Employer employer = employerRepository.findById(employerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer", employerId));

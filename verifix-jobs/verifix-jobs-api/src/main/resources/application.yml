@@ -72,6 +72,17 @@ app:
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
     bucket: ${MINIO_BUCKET:verifix-jobs}
 
+  payment:
+    click:
+      merchant-id: ${CLICK_MERCHANT_ID:}
+      service-id: ${CLICK_SERVICE_ID:}
+      secret-key: ${CLICK_SECRET_KEY:}
+      base-url: ${CLICK_BASE_URL:https://my.click.uz}
+    payme:
+      merchant-id: ${PAYME_MERCHANT_ID:}
+      secret-key: ${PAYME_SECRET_KEY:}
+      base-url: ${PAYME_BASE_URL:https://checkout.paycom.uz}
+
 spring.elasticsearch:
   uris: ${ELASTICSEARCH_URI:http://localhost:9200}
 
