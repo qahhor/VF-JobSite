@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Duration;
 
@@ -34,7 +36,8 @@ public class OtpService {
     public boolean verifyOtp(String phone, String code) {
         String key = OTP_PREFIX + phone;
         String storedCode = redisTemplate.opsForValue().get(key);
-        if (storedCode != null && storedCode.equals(code)) {
+        if (storedCode != null && MessageDigest.isEqual(
+                storedCode.getBytes(StandardCharsets.UTF_8), code.getBytes(StandardCharsets.UTF_8))) {
             redisTemplate.delete(key);
             return true;
         }

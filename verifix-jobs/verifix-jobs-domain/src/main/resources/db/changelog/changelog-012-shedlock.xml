@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="012-01-shedlock-table" author="verifix">
+        <comment>ShedLock table for distributed scheduler locking</comment>
+        <createTable tableName="shedlock">
+            <column name="name" type="VARCHAR(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="lock_until" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locked_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="012-02-soft-delete-indexes" author="verifix">
+        <comment>Add partial indexes on deleted_at IS NULL for soft-delete queries</comment>
+        <sql>CREATE INDEX IF NOT EXISTS idx_candidate_not_deleted ON candidate (id) WHERE deleted_at IS NULL;</sql>
+        <sql>CREATE INDEX IF NOT EXISTS idx_vacancy_not_deleted ON vacancy (id) WHERE deleted_at IS NULL;</sql>
+        <sql>CREATE INDEX IF NOT EXISTS idx_application_not_deleted ON application (id) WHERE deleted_at IS NULL;</sql>
+        <sql>CREATE INDEX IF NOT EXISTS idx_employer_not_deleted ON employer (id) WHERE deleted_at IS NULL;</sql>
+    </changeSet>
+</databaseChangeLog>

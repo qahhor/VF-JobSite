@@ -2,6 +2,7 @@ package uz.verifix.jobs.service.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class DigestService {
      * Daily at 10:00 Tashkent: send digest to candidates with DAILY preference.
      */
     @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Tashkent")
+    @SchedulerLock(name = "sendDailyDigest", lockAtLeastFor = "30m", lockAtMostFor = "2h")
     @Transactional(readOnly = true)
     public void sendDailyDigest() {
         sendDigest(DigestPreference.DAILY, 1);
@@ -41,6 +43,7 @@ public class DigestService {
      * Every Monday at 10:00 Tashkent: send weekly digest.
      */
     @Scheduled(cron = "0 0 10 * * MON", zone = "Asia/Tashkent")
+    @SchedulerLock(name = "sendWeeklyDigest", lockAtLeastFor = "30m", lockAtMostFor = "2h")
     @Transactional(readOnly = true)
     public void sendWeeklyDigest() {
         sendDigest(DigestPreference.WEEKLY, 7);

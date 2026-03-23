@@ -3,6 +3,7 @@ package uz.verifix.jobs.service.ml;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,29 @@ import java.util.*;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class FraudDetectionService {
 
     private final FraudAlertRepository fraudAlertRepository;
     private final ApplicationRepository applicationRepository;
     private final ObjectMapper objectMapper;
+    private final int rapidFireThreshold;
+    private final int highRateThreshold;
+    private final double alertScoreThreshold;
+
+    public FraudDetectionService(
+            FraudAlertRepository fraudAlertRepository,
+            ApplicationRepository applicationRepository,
+            ObjectMapper objectMapper,
+            @Value("${app.fraud.rapid-fire-threshold:10}") int rapidFireThreshold,
+            @Value("${app.fraud.high-rate-threshold:5}") int highRateThreshold,
+            @Value("${app.fraud.alert-score-threshold:0.3}") double alertScoreThreshold) {
+        this.fraudAlertRepository = fraudAlertRepository;
+        this.applicationRepository = applicationRepository;
+        this.objectMapper = objectMapper;
+        this.rapidFireThreshold = rapidFireThreshold;
+        this.highRateThreshold = highRateThreshold;
+        this.alertScoreThreshold = alertScoreThreshold;
+    }
 
     @Transactional
     public FraudCheckResult checkApplicationFraud(Application application) {
@@ -40,10 +58,10 @@ public class FraudDetectionService {
         long recentCount = recentApps.getContent().stream()
                 .filter(a -> a.getAppliedAt() != null && a.getAppliedAt().isAfter(hourAgo))
                 .count();
-        if (recentCount > 10) {
+        if (recentCount > rapidFireThreshold) {
             flags.add("RAPID_FIRE_APPLICATIONS");
             score += 0.4;
-        } else if (recentCount > 5) {
+        } else if (recentCount > highRateThreshold) {
             flags.add("HIGH_APPLICATION_RATE");
             score += 0.2;
         }
@@ -65,7 +83,7 @@ public class FraudDetectionService {
 
         score = Math.min(score, 1.0);
 
-        if (score >= 0.3) {
+        if (score >= alertScoreThreshold) {
             saveFraudAlert("APPLICATION", application.getId(), "APPLICATION_FRAUD", score, flags);
         }
 
@@ -88,7 +106,7 @@ public class FraudDetectionService {
 
         score = Math.min(score, 1.0);
 
-        if (score >= 0.3) {
+        if (score >= alertScoreThreshold) {
             saveFraudAlert("REFERRAL", referrerId, "REFERRAL_FRAUD", score, flags);
         }
 

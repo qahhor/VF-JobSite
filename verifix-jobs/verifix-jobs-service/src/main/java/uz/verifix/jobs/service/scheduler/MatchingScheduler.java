@@ -2,6 +2,7 @@ package uz.verifix.jobs.service.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uz.verifix.jobs.domain.entity.Vacancy;
@@ -21,6 +22,7 @@ public class MatchingScheduler {
     private final VacancyRepository vacancyRepository;
 
     @Scheduled(cron = "0 0 5 * * *")
+    @SchedulerLock(name = "dailyBatchScoring", lockAtLeastFor = "30m", lockAtMostFor = "2h")
     public void dailyBatchScoring() {
         log.info("Starting daily ML batch scoring...");
 

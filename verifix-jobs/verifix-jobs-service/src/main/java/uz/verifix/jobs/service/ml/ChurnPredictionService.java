@@ -1,7 +1,10 @@
 package uz.verifix.jobs.service.ml;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,20 +21,41 @@ import uz.verifix.jobs.service.notification.NotificationTemplates;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ChurnPredictionService {
 
     private final CandidateRepository candidateRepository;
     private final ApplicationRepository applicationRepository;
     private final NotificationService notificationService;
     private final NotificationTemplates templates;
+    private final int inactiveDaysHigh;
+    private final int inactiveDaysMedium;
+    private final double notificationThreshold;
+    private final int batchSize;
+
+    public ChurnPredictionService(
+            CandidateRepository candidateRepository,
+            ApplicationRepository applicationRepository,
+            NotificationService notificationService,
+            NotificationTemplates templates,
+            @Value("${app.churn.inactive-days-high:60}") int inactiveDaysHigh,
+            @Value("${app.churn.inactive-days-medium:30}") int inactiveDaysMedium,
+            @Value("${app.churn.notification-threshold:0.7}") double notificationThreshold,
+            @Value("${app.churn.batch-size:500}") int batchSize) {
+        this.candidateRepository = candidateRepository;
+        this.applicationRepository = applicationRepository;
+        this.notificationService = notificationService;
+        this.templates = templates;
+        this.inactiveDaysHigh = inactiveDaysHigh;
+        this.inactiveDaysMedium = inactiveDaysMedium;
+        this.notificationThreshold = notificationThreshold;
+        this.batchSize = batchSize;
+    }
 
     public record ChurnRisk(double score, List<String> factors) {}
 
@@ -55,12 +79,12 @@ public class ChurnPredictionService {
             Optional<Application> lastApp = applicationRepository.findTopByCandidateIdOrderByAppliedAtDesc(candidateId);
             if (lastApp.isPresent() && lastApp.get().getAppliedAt() != null) {
                 long daysSinceLastApp = ChronoUnit.DAYS.between(lastApp.get().getAppliedAt(), Instant.now());
-                if (daysSinceLastApp > 60) {
+                if (daysSinceLastApp > inactiveDaysHigh) {
                     score += 0.5;
-                    factors.add("INACTIVE_60_DAYS");
-                } else if (daysSinceLastApp > 30) {
+                    factors.add("INACTIVE_" + inactiveDaysHigh + "_DAYS");
+                } else if (daysSinceLastApp > inactiveDaysMedium) {
                     score += 0.3;
-                    factors.add("INACTIVE_30_DAYS");
+                    factors.add("INACTIVE_" + inactiveDaysMedium + "_DAYS");
                 }
             }
         }
@@ -85,38 +109,50 @@ public class ChurnPredictionService {
 
     @Transactional(readOnly = true)
     public List<ChurnRisk> getAtRiskCandidates(double threshold, int limit) {
-        return candidateRepository.findAll().stream()
-                .map(c -> {
-                    ChurnRisk risk = predictChurn(c.getId());
-                    return new Object[]{c.getId(), risk};
-                })
-                .filter(pair -> ((ChurnRisk) pair[1]).score() > threshold)
-                .sorted(Comparator.comparingDouble(pair -> -((ChurnRisk) pair[1]).score()))
-                .limit(limit)
-                .map(pair -> (ChurnRisk) pair[1])
-                .toList();
+        List<ChurnRisk> results = new ArrayList<>();
+        int page = 0;
+        while (results.size() < limit) {
+            Page<Candidate> candidates = candidateRepository.findAll(PageRequest.of(page, batchSize));
+            if (candidates.isEmpty()) break;
+            for (Candidate c : candidates) {
+                ChurnRisk risk = predictChurn(c.getId());
+                if (risk.score() > threshold) {
+                    results.add(risk);
+                    if (results.size() >= limit) break;
+                }
+            }
+            if (!candidates.hasNext()) break;
+            page++;
+        }
+        return results;
     }
 
     @Scheduled(cron = "0 0 6 * * *")
+    @SchedulerLock(name = "dailyChurnCheck", lockAtLeastFor = "30m", lockAtMostFor = "2h")
     @Transactional
     public void dailyChurnCheck() {
         log.info("Starting daily churn prediction check");
         int notified = 0;
+        int page = 0;
 
-        List<Candidate> candidates = candidateRepository.findAll();
-        for (Candidate candidate : candidates) {
-            try {
-                ChurnRisk risk = predictChurn(candidate.getId());
-                if (risk.score() > 0.7 && candidate.getDigestPref() != DigestPreference.OFF) {
-                    String message = templates.reEngagement();
-                    notificationService.createAndSend(
-                            UserType.CANDIDATE, candidate.getId(),
-                            NotificationChannel.TELEGRAM, "churn.re_engagement", message);
-                    notified++;
+        while (true) {
+            Page<Candidate> candidates = candidateRepository.findAll(PageRequest.of(page, batchSize));
+            for (Candidate candidate : candidates) {
+                try {
+                    ChurnRisk risk = predictChurn(candidate.getId());
+                    if (risk.score() > notificationThreshold && candidate.getDigestPref() != DigestPreference.OFF) {
+                        String message = templates.reEngagement();
+                        notificationService.createAndSend(
+                                UserType.CANDIDATE, candidate.getId(),
+                                NotificationChannel.TELEGRAM, "churn.re_engagement", message);
+                        notified++;
+                    }
+                } catch (Exception e) {
+                    log.error("Churn check failed for candidate {}: {}", candidate.getId(), e.getMessage());
                 }
-            } catch (Exception e) {
-                log.error("Churn check failed for candidate {}: {}", candidate.getId(), e.getMessage());
             }
+            if (!candidates.hasNext()) break;
+            page++;
         }
 
         log.info("Daily churn check complete: {} re-engagement notifications sent", notified);
