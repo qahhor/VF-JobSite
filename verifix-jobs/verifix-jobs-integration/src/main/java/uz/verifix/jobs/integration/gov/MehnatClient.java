@@ -58,7 +58,7 @@ public class MehnatClient implements GovSyncClient {
                     .uri("/api/employment/report")
                     .bodyValue(hiringData)
                     .retrieve()
-                    .toBodilesseMono()
+                    .toBodilessMono()
                     .timeout(Duration.ofSeconds(30))
                     .block();
             return GovSyncResult.ok(null);

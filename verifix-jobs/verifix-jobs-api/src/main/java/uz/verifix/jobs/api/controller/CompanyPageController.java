@@ -121,11 +121,21 @@ public class CompanyPageController {
                 .description(v.getDescription())
                 .category(v.getCategory())
                 .city(v.getCity())
+                .region(v.getRegion())
                 .salaryFrom(v.getSalaryFrom())
                 .salaryTo(v.getSalaryTo())
                 .currency(v.getCurrency())
                 .employmentType(v.getEmploymentType() != null ? v.getEmploymentType().name() : null)
+                .shiftSchedule(v.getShiftSchedule() != null ? v.getShiftSchedule().name() : null)
+                .benefits(v.getBenefits())
                 .status(v.getStatus().name())
+                .isMassHiring(v.getIsMassHiring())
+                .positionsCount(v.getPositionsCount())
+                .positionsFilled(v.getPositionsFilled())
+                .expiresAt(v.getExpiresAt())
+                .employerId(v.getEmployer().getId())
+                .employerName(v.getEmployer().getName())
+                .createdAt(v.getCreatedAt())
                 .build();
     }
 }

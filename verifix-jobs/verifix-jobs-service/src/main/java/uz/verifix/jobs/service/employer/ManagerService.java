@@ -30,6 +30,7 @@ public class ManagerService {
     private final ManagerRepository managerRepository;
     private final EmployerRepository employerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     private static final SecureRandom RANDOM = new SecureRandom();
 

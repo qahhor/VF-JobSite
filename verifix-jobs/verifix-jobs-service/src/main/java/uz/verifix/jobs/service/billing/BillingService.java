@@ -142,6 +142,28 @@ public class BillingService {
         return paymentRepository.findByEmployerIdOrderByCreatedAtDesc(employerId, pageable);
     }
 
+    @Transactional
+    public void refundPayment(UUID paymentId, String reason) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Payment", paymentId.toString()));
+
+        if (payment.getStatus() != PaymentStatus.COMPLETED) {
+            throw new BusinessException(ErrorCode.PAYMENT_FAILED, HttpStatus.BAD_REQUEST,
+                    "Only completed payments can be refunded");
+        }
+
+        payment.setStatus(PaymentStatus.REFUNDED);
+        paymentRepository.save(payment);
+
+        // Revert employer to FREE plan
+        Employer employer = payment.getEmployer();
+        employer.setSubscriptionPlan("FREE");
+        employerRepository.save(employer);
+
+        log.info("Payment {} refunded. Employer {} reverted to FREE plan. Reason: {}",
+                paymentId, employer.getId(), reason);
+    }
+
     private Employer getEmployer(UUID employerId) {
         return employerRepository.findById(employerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employer", employerId.toString()));

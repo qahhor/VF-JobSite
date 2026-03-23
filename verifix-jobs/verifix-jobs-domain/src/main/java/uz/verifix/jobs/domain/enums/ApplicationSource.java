@@ -4,5 +4,6 @@ public enum ApplicationSource {
     TELEGRAM,
     WEB,
     SMS,
-    REFERRAL
+    REFERRAL,
+    EMPLOYER
 }

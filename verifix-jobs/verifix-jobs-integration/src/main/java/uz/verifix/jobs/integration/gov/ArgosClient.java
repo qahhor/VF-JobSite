@@ -75,7 +75,7 @@ public class ArgosClient implements GovSyncClient {
                     .uri("/api/v1/employment/report")
                     .bodyValue(hiringData)
                     .retrieve()
-                    .toBodilesseMono()
+                    .toBodilessMono()
                     .timeout(Duration.ofSeconds(30))
                     .block();
             log.info("ARGOS: hiring reported successfully");

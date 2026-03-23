@@ -46,7 +46,14 @@ public enum ErrorCode {
     PAYMENT_FAILED("PAYMENT_FAILED", "Payment processing failed"),
 
     // SMS
-    SMS_SEND_FAILED("SMS_SEND_FAILED", "Failed to send SMS");
+    SMS_SEND_FAILED("SMS_SEND_FAILED", "Failed to send SMS"),
+
+    // Government Integration
+    GOV_SYNC_FAILED("GOV_SYNC_FAILED", "Government sync operation failed"),
+    HRM_BRIDGE_ERROR("HRM_BRIDGE_ERROR", "Verifix HRM bridge operation failed"),
+
+    // Fraud
+    FRAUD_DETECTED("FRAUD_DETECTED", "Suspicious activity detected");
 
     private final String code;
     private final String defaultMessage;

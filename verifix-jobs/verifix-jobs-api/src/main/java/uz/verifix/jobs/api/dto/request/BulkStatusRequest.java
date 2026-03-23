@@ -11,9 +11,12 @@ import java.util.UUID;
 @Data
 public class BulkStatusRequest {
 
+    @NotNull
+    private UUID employerId;
+
     @NotEmpty
     private List<UUID> applicationIds;
 
     @NotNull
-    private ApplicationStatus status;
+    private ApplicationStatus newStatus;
 }
