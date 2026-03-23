@@ -71,6 +71,15 @@ public class SubscriptionEnforcementService {
         return planRepository.findByCode(employer.getSubscriptionPlan()).orElse(null);
     }
 
+    @Transactional(readOnly = true)
+    public void enforceResumeSearch(UUID employerId) {
+        PricingPlan plan = getCurrentPlan(employerId);
+        if (plan == null || plan.getMaxResumeViews() == null || plan.getMaxResumeViews() <= 0) {
+            throw new BusinessException(ErrorCode.EMPLOYER_NOT_FOUND, HttpStatus.FORBIDDEN,
+                    "Candidate search requires STANDARD or higher subscription plan.");
+        }
+    }
+
     public record UsageInfo(
             String planCode, String planName,
             long activeVacancies, int maxVacancies,

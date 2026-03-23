@@ -13,7 +13,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface CandidateRepository extends JpaRepository<Candidate, UUID> {
+public interface CandidateRepository extends JpaRepository<Candidate, UUID>,
+        org.springframework.data.jpa.repository.JpaSpecificationExecutor<Candidate> {
 
     Optional<Candidate> findByPhone(String phone);
 
