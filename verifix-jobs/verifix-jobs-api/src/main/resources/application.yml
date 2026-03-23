@@ -53,6 +53,24 @@ app:
   geo:
     nominatim-url: ${NOMINATIM_URL:https://nominatim.openstreetmap.org}
 
+  gov:
+    sync:
+      enabled: ${GOV_SYNC_ENABLED:false}
+    argos:
+      base-url: ${ARGOS_API_URL:https://api.argos.uz}
+      api-key: ${ARGOS_API_KEY:}
+    enst:
+      base-url: ${ENST_API_URL:https://api.enst.uz}
+      api-key: ${ENST_API_KEY:}
+    mehnat:
+      base-url: ${MEHNAT_API_URL:https://api.ish.mehnat.uz}
+      api-key: ${MEHNAT_API_KEY:}
+
+  verifix:
+    hrm:
+      base-url: ${VERIFIX_HRM_URL:https://hrm.verifix.uz/api}
+      api-key: ${VERIFIX_HRM_API_KEY:}
+
   myid:
     client-id: ${MYID_CLIENT_ID:}
     client-secret: ${MYID_CLIENT_SECRET:}

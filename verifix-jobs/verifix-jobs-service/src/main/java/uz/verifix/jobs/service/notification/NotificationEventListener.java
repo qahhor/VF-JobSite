@@ -18,6 +18,7 @@ public class NotificationEventListener {
 
     private final NotificationService notificationService;
     private final NotificationTemplates templates;
+    private final uz.verifix.jobs.service.gov.HrmBridgeService hrmBridgeService;
 
     @Async
     @EventListener
@@ -69,6 +70,20 @@ public class NotificationEventListener {
         String message = templates.hired(vacancyTitle, employerName);
         notificationService.createAndSend(UserType.CANDIDATE, candidateId,
                 NotificationChannel.TELEGRAM, DomainEvent.APPLICATION_HIRED, message);
+
+        // Trigger HRM bridge: create employee in Verifix HRM + report to ENST
+        if (payload.containsKey("applicationId")) {
+            try {
+                UUID applicationId = (UUID) payload.get("applicationId");
+                uz.verifix.jobs.domain.entity.Application application =
+                        notificationService.getApplicationById(applicationId);
+                if (application != null) {
+                    hrmBridgeService.onApplicationHired(application);
+                }
+            } catch (Exception e) {
+                log.error("HRM bridge failed for hired event: {}", e.getMessage());
+            }
+        }
     }
 
     private void handleRejected(DomainEvent event) {
