@@ -6,10 +6,13 @@ import uz.verifix.jobs.domain.entity.VerificationLog;
 import uz.verifix.jobs.domain.enums.UserType;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface VerificationLogRepository extends JpaRepository<VerificationLog, UUID> {
 
     List<VerificationLog> findByEntityTypeAndEntityId(UserType entityType, UUID entityId);
+
+    Optional<VerificationLog> findTopByEntityTypeAndEntityIdOrderByCreatedAtDesc(UserType entityType, UUID entityId);
 }

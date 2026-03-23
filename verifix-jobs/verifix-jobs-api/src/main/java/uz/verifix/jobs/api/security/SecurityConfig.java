@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/search/**").permitAll()
                         .requestMatchers("/api/v1/miniapp/auth").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/referrals/leaderboard").permitAll()
+                        .requestMatchers("/api/v1/verification/callback").permitAll()
                         // Swagger UI
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // Health check

@@ -48,4 +48,8 @@ public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpec
             "AND v.status = 'ACTIVE' AND v.city = :city " +
             "AND v.created_at > :since ORDER BY v.created_at DESC LIMIT 20", nativeQuery = true)
     List<Vacancy> findRecentByCity(@Param("city") String city, @Param("since") Instant since);
+
+    long countByStatus(VacancyStatus status);
+
+    long countByCreatedAtAfter(Instant after);
 }

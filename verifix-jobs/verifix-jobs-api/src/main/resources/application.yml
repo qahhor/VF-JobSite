@@ -53,6 +53,12 @@ app:
   geo:
     nominatim-url: ${NOMINATIM_URL:https://nominatim.openstreetmap.org}
 
+  myid:
+    client-id: ${MYID_CLIENT_ID:}
+    client-secret: ${MYID_CLIENT_SECRET:}
+    base-url: ${MYID_BASE_URL:https://myid.uz}
+    redirect-uri: ${MYID_REDIRECT_URI:http://localhost:8080/api/v1/verification/callback}
+
   telegram:
     bot:
       token: ${TELEGRAM_BOT_TOKEN:}

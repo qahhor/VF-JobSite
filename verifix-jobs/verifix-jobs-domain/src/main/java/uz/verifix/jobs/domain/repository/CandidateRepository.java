@@ -33,4 +33,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, UUID> {
     List<Candidate> findNearLocation(@Param("lon") double lon, @Param("lat") double lat, @Param("distanceMeters") double distanceMeters);
 
     List<Candidate> findByDigestPref(DigestPreference digestPref);
+
+    long countByCreatedAtAfter(java.time.Instant after);
 }
