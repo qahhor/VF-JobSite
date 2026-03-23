@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.api.dto.request.VacancyCreateRequest;
 import uz.verifix.jobs.api.dto.response.VacancyResponse;
+import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.common.dto.PageResponse;
 import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.enums.VacancyStatus;
@@ -101,10 +102,7 @@ public class VacancyController {
     }
 
     private UUID getEmployerId(Authentication auth) {
-        UUID managerId = UUID.fromString(auth.getName());
-        return managerRepository.findById(managerId)
-                .orElseThrow(() -> new RuntimeException("Manager not found"))
-                .getEmployer().getId();
+        return SecurityUtils.extractEmployerId(auth, managerRepository);
     }
 
     private VacancyResponse toResponse(Vacancy v) {

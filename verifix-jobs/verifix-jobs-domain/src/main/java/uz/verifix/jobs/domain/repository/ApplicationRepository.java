@@ -26,4 +26,10 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     long countByVacancyIdAndStatus(UUID vacancyId, ApplicationStatus status);
 
     long countByVacancyId(UUID vacancyId);
+
+    long countByVacancy_EmployerId(UUID employerId);
+
+    long countByVacancy_EmployerIdAndStatus(UUID employerId, ApplicationStatus status);
+
+    boolean existsByCandidateIdAndVacancy_EmployerId(UUID candidateId, UUID employerId);
 }
