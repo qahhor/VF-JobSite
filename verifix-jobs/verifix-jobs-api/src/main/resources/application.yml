@@ -62,6 +62,19 @@ app:
   kafka:
     enabled: ${KAFKA_ENABLED:false}
 
+  elasticsearch:
+    enabled: ${ELASTICSEARCH_ENABLED:false}
+
+  minio:
+    enabled: ${MINIO_ENABLED:false}
+    url: ${MINIO_URL:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    bucket: ${MINIO_BUCKET:verifix-jobs}
+
+spring.elasticsearch:
+  uris: ${ELASTICSEARCH_URI:http://localhost:9200}
+
 spring.kafka:
   bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
   consumer:

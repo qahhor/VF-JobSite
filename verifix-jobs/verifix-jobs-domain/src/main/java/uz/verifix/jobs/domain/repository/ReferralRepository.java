@@ -13,5 +13,7 @@ public interface ReferralRepository extends JpaRepository<Referral, UUID> {
 
     List<Referral> findByReferrerId(UUID referrerId);
 
+    List<Referral> findByRefereeId(UUID refereeId);
+
     long countByReferrerIdAndStatus(UUID referrerId, ReferralStatus status);
 }

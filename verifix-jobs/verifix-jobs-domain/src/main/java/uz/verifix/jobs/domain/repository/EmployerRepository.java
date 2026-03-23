@@ -6,6 +6,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uz.verifix.jobs.domain.entity.Employer;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import uz.verifix.jobs.domain.enums.EmployerStatus;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +18,8 @@ import java.util.UUID;
 public interface EmployerRepository extends JpaRepository<Employer, UUID> {
 
     Optional<Employer> findByInn(String inn);
+
+    Page<Employer> findByStatus(EmployerStatus status, Pageable pageable);
 
     boolean existsByInn(String inn);
 
