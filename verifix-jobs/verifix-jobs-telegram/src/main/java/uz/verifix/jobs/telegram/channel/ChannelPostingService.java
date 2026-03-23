@@ -39,6 +39,12 @@ public class ChannelPostingService {
 
         try {
             String card = formatter.format(vacancy);
+
+            // Premium branding enhancement
+            if ("PREMIUM".equals(vacancy.getEmployer().getBrandingTier())) {
+                card += "\n\n🏢 Kompaniya haqida: " + vacancy.getEmployer().getName() + " ⭐";
+            }
+
             card += "\n\n📨 Ariza berish uchun botga yozing: @" + botConfig.getUsername();
 
             SendMessage msg = new SendMessage();

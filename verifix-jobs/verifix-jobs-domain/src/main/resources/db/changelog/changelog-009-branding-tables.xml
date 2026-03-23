@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- ==================== ALTER EXISTING TABLES ==================== -->
+
+    <changeSet id="009-01-alter-employer-branding-fields" author="verifix">
+        <addColumn tableName="employer">
+            <column name="branding_tier" type="VARCHAR(20)" defaultValue="BASIC"/>
+            <column name="branding_expires_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="009-02-alter-vacancy-branded" author="verifix">
+        <addColumn tableName="vacancy">
+            <column name="is_branded" type="BOOLEAN" defaultValueBoolean="false"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- ==================== EMPLOYER BRANDING (main table) ==================== -->
+
+    <changeSet id="009-03-create-employer-branding" author="verifix">
+        <createTable tableName="employer_branding">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="employer_id" type="UUID">
+                <constraints nullable="false" unique="true"
+                             foreignKeyName="fk_branding_employer"
+                             references="employer(id)"/>
+            </column>
+            <column name="tier" type="VARCHAR(20)" defaultValue="BASIC">
+                <constraints nullable="false"/>
+            </column>
+            <column name="custom_slug" type="VARCHAR(100)">
+                <constraints unique="true"/>
+            </column>
+            <column name="primary_color" type="VARCHAR(7)" defaultValue="#1B5E8C"/>
+            <column name="secondary_color" type="VARCHAR(7)" defaultValue="#2ECC71"/>
+            <column name="accent_color" type="VARCHAR(7)" defaultValue="#F39C12"/>
+            <column name="cover_type" type="VARCHAR(20)" defaultValue="SINGLE"/>
+            <column name="description_html" type="TEXT"/>
+            <column name="meta_title" type="VARCHAR(200)"/>
+            <column name="meta_description" type="VARCHAR(500)"/>
+            <column name="is_published" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="published_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== COVER IMAGES ==================== -->
+
+    <changeSet id="009-04-create-branding-cover-image" author="verifix">
+        <createTable tableName="branding_cover_image">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_cover_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="image_url" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="alt_text" type="VARCHAR(200)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== GALLERY ==================== -->
+
+    <changeSet id="009-05-create-branding-gallery" author="verifix">
+        <createTable tableName="branding_gallery">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_gallery_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="category" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(200)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="009-06-create-branding-gallery-image" author="verifix">
+        <createTable tableName="branding_gallery_image">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="gallery_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_gimg_gallery"
+                             references="branding_gallery(id)"/>
+            </column>
+            <column name="image_url" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caption" type="VARCHAR(500)"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== VIDEO ==================== -->
+
+    <changeSet id="009-07-create-branding-video" author="verifix">
+        <createTable tableName="branding_video">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_video_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="video_type" type="VARCHAR(20)"/>
+            <column name="video_url" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="thumbnail_url" type="VARCHAR(1000)"/>
+            <column name="title" type="VARCHAR(200)"/>
+            <column name="duration_seconds" type="INT"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== BENEFIT ==================== -->
+
+    <changeSet id="009-08-create-branding-benefit" author="verifix">
+        <createTable tableName="branding_benefit">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_benefit_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="icon" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title_uz" type="VARCHAR(200)"/>
+            <column name="title_ru" type="VARCHAR(200)"/>
+            <column name="description_uz" type="TEXT"/>
+            <column name="description_ru" type="TEXT"/>
+            <column name="image_url" type="VARCHAR(1000)"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== TESTIMONIAL ==================== -->
+
+    <changeSet id="009-09-create-branding-testimonial" author="verifix">
+        <createTable tableName="branding_testimonial">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_testimonial_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="employee_name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_position" type="VARCHAR(200)"/>
+            <column name="employee_photo_url" type="VARCHAR(1000)"/>
+            <column name="text_uz" type="TEXT"/>
+            <column name="text_ru" type="TEXT"/>
+            <column name="verifix_employee_id" type="VARCHAR(100)"/>
+            <column name="is_verified" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== STORY ==================== -->
+
+    <changeSet id="009-10-create-branding-story" author="verifix">
+        <createTable tableName="branding_story">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_story_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="title" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_html" type="TEXT"/>
+            <column name="cover_image_url" type="VARCHAR(1000)"/>
+            <column name="author_name" type="VARCHAR(200)"/>
+            <column name="author_photo_url" type="VARCHAR(1000)"/>
+            <column name="author_position" type="VARCHAR(200)"/>
+            <column name="published_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="is_published" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== FAQ ==================== -->
+
+    <changeSet id="009-11-create-branding-faq" author="verifix">
+        <createTable tableName="branding_faq">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_faq_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="question_uz" type="VARCHAR(500)"/>
+            <column name="question_ru" type="VARCHAR(500)"/>
+            <column name="answer_uz" type="TEXT"/>
+            <column name="answer_ru" type="TEXT"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== OFFICE LOCATION ==================== -->
+
+    <changeSet id="009-12-create-branding-office-location" author="verifix">
+        <createTable tableName="branding_office_location">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_location_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="VARCHAR(500)"/>
+            <column name="city" type="VARCHAR(100)"/>
+            <column name="location" type="geometry(Point,4326)"/>
+            <column name="type" type="VARCHAR(20)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== SOCIAL LINK ==================== -->
+
+    <changeSet id="009-13-create-branding-social-link" author="verifix">
+        <createTable tableName="branding_social_link">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_social_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="platform" type="VARCHAR(20)"/>
+            <column name="url" type="VARCHAR(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== STATS COUNTER ==================== -->
+
+    <changeSet id="009-14-create-branding-stats-counter" author="verifix">
+        <createTable tableName="branding_stats_counter">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_stats_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="label_uz" type="VARCHAR(100)"/>
+            <column name="label_ru" type="VARCHAR(100)"/>
+            <column name="value" type="VARCHAR(50)"/>
+            <column name="icon" type="VARCHAR(50)"/>
+            <column name="sort_order" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== ANALYTICS ==================== -->
+
+    <changeSet id="009-15-create-branding-analytics" author="verifix">
+        <createTable tableName="branding_analytics">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_analytics_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="page_views" type="INT" defaultValueNumeric="0"/>
+            <column name="unique_visitors" type="INT" defaultValueNumeric="0"/>
+            <column name="vacancy_clicks" type="INT" defaultValueNumeric="0"/>
+            <column name="apply_clicks" type="INT" defaultValueNumeric="0"/>
+            <column name="avg_time_on_page_seconds" type="INT" defaultValueNumeric="0"/>
+            <column name="source_telegram" type="INT" defaultValueNumeric="0"/>
+            <column name="source_web" type="INT" defaultValueNumeric="0"/>
+            <column name="source_search" type="INT" defaultValueNumeric="0"/>
+            <column name="source_qr" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+        <addUniqueConstraint tableName="branding_analytics"
+                             columnNames="branding_id, date"
+                             constraintName="uq_branding_analytics_date"/>
+    </changeSet>
+
+    <!-- ==================== PAGE EVENT ==================== -->
+
+    <changeSet id="009-16-create-branding-page-event" author="verifix">
+        <createTable tableName="branding_page_event">
+            <column name="id" type="UUID" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="branding_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_event_branding"
+                             references="employer_branding(id)"/>
+            </column>
+            <column name="event_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="section_id" type="VARCHAR(100)"/>
+            <column name="visitor_id" type="VARCHAR(100)"/>
+            <column name="source" type="VARCHAR(50)"/>
+            <column name="user_agent" type="VARCHAR(500)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <!-- ==================== INDEXES ==================== -->
+
+    <changeSet id="009-17-branding-indexes" author="verifix">
+        <createIndex tableName="employer_branding" indexName="idx_branding_employer">
+            <column name="employer_id"/>
+        </createIndex>
+        <sql>CREATE INDEX idx_branding_slug ON employer_branding(custom_slug) WHERE custom_slug IS NOT NULL;</sql>
+        <createIndex tableName="branding_page_event" indexName="idx_branding_event_date">
+            <column name="branding_id"/>
+            <column name="created_at"/>
+        </createIndex>
+        <createIndex tableName="branding_analytics" indexName="idx_branding_analytics_date">
+            <column name="branding_id"/>
+            <column name="date"/>
+        </createIndex>
+        <sql>CREATE INDEX idx_branding_location ON branding_office_location USING GIST(location);</sql>
+    </changeSet>
+
+</databaseChangeLog>

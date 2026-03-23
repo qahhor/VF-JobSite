@@ -34,4 +34,6 @@ public class DomainEvent {
     public static final String VACANCY_EXPIRED = "vacancy.expired";
     public static final String EMPLOYER_VERIFIED = "employer.verified";
     public static final String REFERRAL_HIRED = "referral.hired";
+    public static final String BRANDING_PUBLISHED = "branding.published";
+    public static final String BRANDING_UPGRADED = "branding.upgraded";
 }

@@ -13,7 +13,9 @@ public class VacancyCardFormatter {
         StringBuilder sb = new StringBuilder();
 
         sb.append("💼 <b>").append(escapeHtml(vacancy.getTitle())).append("</b>\n");
-        sb.append("🏢 ").append(escapeHtml(vacancy.getEmployer().getName())).append("\n");
+
+        String brandingBadge = getBrandingBadge(vacancy.getEmployer().getBrandingTier());
+        sb.append("🏢 ").append(escapeHtml(vacancy.getEmployer().getName())).append(brandingBadge).append("\n");
 
         if (vacancy.getCity() != null) {
             sb.append("📍 ").append(escapeHtml(vacancy.getCity())).append("\n");
@@ -79,6 +81,12 @@ public class VacancyCardFormatter {
             return String.format("%.0fK", val / 1_000.0);
         }
         return String.valueOf(val);
+    }
+
+    private String getBrandingBadge(String brandingTier) {
+        if ("PREMIUM".equals(brandingTier)) return " ⭐ Premium Employer";
+        if ("BRANDED".equals(brandingTier)) return " ✅";
+        return "";
     }
 
     private String escapeHtml(String text) {

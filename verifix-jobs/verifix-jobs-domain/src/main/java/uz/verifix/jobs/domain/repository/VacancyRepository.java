@@ -32,6 +32,8 @@ public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpec
 
     long countByEmployerIdAndStatus(UUID employerId, VacancyStatus status);
 
+    org.springframework.data.domain.Page<Vacancy> findByEmployerIdAndStatus(UUID employerId, VacancyStatus status, org.springframework.data.domain.Pageable pageable);
+
     List<Vacancy> findByStatusAndExpiresAtBefore(VacancyStatus status, Instant before);
 
     @Query(value = "SELECT v.* FROM vacancy v WHERE v.deleted_at IS NULL " +

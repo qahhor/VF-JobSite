@@ -15,6 +15,8 @@ import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
+import uz.verifix.jobs.domain.entity.branding.EmployerBranding;
+import uz.verifix.jobs.domain.repository.branding.EmployerBrandingRepository;
 import uz.verifix.jobs.service.vacancy.VacancyService;
 
 import java.time.Instant;
@@ -31,6 +33,7 @@ public class MiniAppController {
     private final CandidateRepository candidateRepository;
     private final VacancyRepository vacancyRepository;
     private final ApplicationRepository applicationRepository;
+    private final EmployerBrandingRepository brandingRepository;
 
     @PostMapping("/auth")
     public ResponseEntity<Map<String, Object>> authenticate(@RequestBody Map<String, String> body) {
@@ -103,6 +106,29 @@ public class MiniAppController {
         applicationRepository.save(application);
 
         return ResponseEntity.ok(Map.of("status", "applied", "applicationId", application.getId().toString()));
+    }
+
+    @GetMapping("/company/{slug}")
+    public ResponseEntity<Map<String, Object>> getCompanyPage(@PathVariable String slug) {
+        EmployerBranding branding = brandingRepository.findByCustomSlug(slug).orElse(null);
+        if (branding == null) {
+            try {
+                UUID id = UUID.fromString(slug);
+                branding = brandingRepository.findByEmployerId(id).orElse(null);
+            } catch (IllegalArgumentException ignored) {}
+        }
+        if (branding == null || !Boolean.TRUE.equals(branding.getIsPublished())) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(Map.of(
+                "id", branding.getId().toString(),
+                "employerName", branding.getEmployer().getName(),
+                "tier", branding.getTier().name(),
+                "description", branding.getDescriptionHtml() != null ? branding.getDescriptionHtml() : "",
+                "primaryColor", branding.getPrimaryColor(),
+                "logoUrl", branding.getEmployer().getLogoUrl() != null ? branding.getEmployer().getLogoUrl() : "",
+                "city", branding.getEmployer().getCity() != null ? branding.getEmployer().getCity() : ""
+        ));
     }
 
     @GetMapping("/profile")

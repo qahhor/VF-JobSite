@@ -114,6 +114,10 @@ public class Vacancy extends BaseEntity {
     @Builder.Default
     private VacancySource source = VacancySource.MANUAL;
 
+    @Column(name = "is_branded")
+    @Builder.Default
+    private Boolean isBranded = false;
+
     @OneToMany(mappedBy = "vacancy")
     @Builder.Default
     private List<Application> applications = new ArrayList<>();

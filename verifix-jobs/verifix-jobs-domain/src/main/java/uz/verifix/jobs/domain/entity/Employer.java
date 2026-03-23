@@ -72,6 +72,13 @@ public class Employer extends BaseEntity {
     @Builder.Default
     private ModerationStatus moderationStatus = ModerationStatus.PENDING;
 
+    @Column(name = "branding_tier")
+    @Builder.Default
+    private String brandingTier = "BASIC";
+
+    @Column(name = "branding_expires_at")
+    private Instant brandingExpiresAt;
+
     @OneToMany(mappedBy = "employer")
     @Builder.Default
     private List<Manager> managers = new ArrayList<>();
