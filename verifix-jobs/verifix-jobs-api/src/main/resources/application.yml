@@ -53,6 +53,21 @@ app:
   geo:
     nominatim-url: ${NOMINATIM_URL:https://nominatim.openstreetmap.org}
 
+  telegram:
+    bot:
+      token: ${TELEGRAM_BOT_TOKEN:}
+      username: ${TELEGRAM_BOT_USERNAME:verifixjobs_bot}
+      web-app-url: ${TELEGRAM_WEB_APP_URL:}
+
+  kafka:
+    enabled: ${KAFKA_ENABLED:false}
+
+spring.kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  consumer:
+    group-id: verifix-jobs
+    auto-offset-reset: earliest
+
 springdoc:
   api-docs:
     path: /v3/api-docs
