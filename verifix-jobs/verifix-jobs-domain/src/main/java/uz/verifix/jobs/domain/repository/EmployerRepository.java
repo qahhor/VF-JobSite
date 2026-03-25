@@ -25,6 +25,10 @@ public interface EmployerRepository extends JpaRepository<Employer, UUID> {
 
     List<Employer> findByHrmSyncEnabledTrue();
 
+    Optional<Employer> findBySlug(String slug);
+
+    Page<Employer> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
     Optional<Employer> findByHrmCompanyId(String hrmCompanyId);
 
     @Query(value = "SELECT e.* FROM employer e " +
