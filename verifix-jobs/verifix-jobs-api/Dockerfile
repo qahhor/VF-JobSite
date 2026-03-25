@@ -3,7 +3,7 @@ FROM eclipse-temurin:21-jdk AS build
 WORKDIR /workspace
 RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
 COPY . .
-RUN chmod +x ./mvnw && ./mvnw -B -pl verifix-jobs-api -am -DskipTests package
+RUN chmod +x ./mvnw && ./mvnw -B -pl verifix-jobs-api -am -Dmaven.test.skip=true package
 
 # Runtime stage
 FROM eclipse-temurin:21-jre
