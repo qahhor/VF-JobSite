@@ -1,6 +1,7 @@
 spring:
   jpa:
     show-sql: false
+    open-in-view: true
     properties:
       hibernate:
         generate_statistics: false
