@@ -92,7 +92,7 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
                         class="w-full h-12 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">
                   Ariza topshirish
                 </button>
-                <a href="https://t.me/smtest12bot" target="_blank"
+                <a href="https://t.me/VerifixJobBot" target="_blank"
                    class="block w-full h-12 mt-2 border border-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-2.01 9.47c-.15.68-.54.84-1.1.53l-3.03-2.24-1.46 1.41c-.16.16-.3.3-.61.3l.22-3.06 5.56-5.02c.24-.22-.05-.34-.38-.13L8.6 14.27l-2.98-.93c-.65-.2-.66-.65.14-.96l11.65-4.49c.54-.2 1.01.13.84.96l-.3 1.28z"/></svg>
                   Telegram orqali

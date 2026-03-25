@@ -142,7 +142,7 @@ app:
   telegram:
     bot:
       token: ${TELEGRAM_BOT_TOKEN:}
-      username: ${TELEGRAM_BOT_USERNAME:verifixjobs_bot}
+      username: ${TELEGRAM_BOT_USERNAME:VerifixJobBot}
       api-base-url: ${TELEGRAM_BOT_API_BASE_URL:https://api.telegram.org}
       web-app-url: ${TELEGRAM_WEB_APP_URL:}
     channel:

@@ -164,7 +164,7 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
                         class="border border-gray-200 text-gray-600 font-medium px-6 py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-sm">
                   Qayta urinish
                 </button>
-                <a href="https://t.me/VerifixJobsBot" target="_blank"
+                <a href="https://t.me/VerifixJobBot" target="_blank"
                    class="bg-[#0088cc] hover:bg-[#006daa] text-white font-medium px-6 py-2.5 rounded-xl transition-colors text-sm">
                   Telegram bot
                 </a>

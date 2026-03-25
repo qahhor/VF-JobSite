@@ -96,7 +96,7 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
       <div class="max-w-4xl mx-auto px-4 text-center">
         <h2 class="text-xl md:text-2xl font-bold mb-3">Telegram bot orqali ish toping</h2>
         <p class="text-gray-400 text-sm mb-6">Yangi vakansiyalar har kuni telefoningizga keladi</p>
-        <a href="https://t.me/smtest12bot" target="_blank" class="inline-flex bg-white text-black px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Botga o'tish &#8594;</a>
+        <a href="https://t.me/VerifixJobBot" target="_blank" class="inline-flex bg-white text-black px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Botga o'tish &#8594;</a>
       </div>
     </section>
 
