@@ -110,6 +110,14 @@ export class PublicApiService {
     return this.http.get<PublicStats>(`${this.base}/stats`);
   }
 
+  getCategories(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/categories`);
+  }
+
+  getCities(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/cities`);
+  }
+
   getCompanies(params: { q?: string; industry?: string; page?: number; size?: number } = {}): Observable<PageResponse<PublicCompany>> {
     let httpParams = new HttpParams();
     if (params.q) httpParams = httpParams.set('q', params.q);
