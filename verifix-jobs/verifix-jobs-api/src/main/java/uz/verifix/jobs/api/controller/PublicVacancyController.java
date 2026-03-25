@@ -18,7 +18,6 @@ import uz.verifix.jobs.domain.enums.VacancyStatus;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.marketplace.CategoryHubService;
-import uz.verifix.jobs.service.marketplace.CityHubService;
 import uz.verifix.jobs.service.marketplace.PublicVacancyService;
 
 import java.math.BigDecimal;
@@ -34,7 +33,6 @@ public class PublicVacancyController {
 
     private final PublicVacancyService publicVacancyService;
     private final CategoryHubService categoryHubService;
-    private final CityHubService cityHubService;
     private final EmployerRepository employerRepository;
     private final VacancyRepository vacancyRepository;
 
@@ -94,19 +92,7 @@ public class PublicVacancyController {
         ));
     }
 
-    @Operation(summary = "Категории с количеством вакансий")
-    @GetMapping("/categories")
-    public ResponseEntity<List<CategoryHubService.CategoryHub>> categories() {
-        return ResponseEntity.ok(categoryHubService.getCategories());
-    }
-
-    @Operation(summary = "Города с количеством вакансий")
-    @GetMapping("/cities")
-    public ResponseEntity<List<CityHubService.CityHub>> cities() {
-        return ResponseEntity.ok(cityHubService.getCities());
-    }
-
-    @Operation(summary = "Список компаний")
+@Operation(summary = "Список компаний")
     @GetMapping("/companies")
     public ResponseEntity<PageResponse<Employer>> companies(
             @RequestParam(required = false) String q,
