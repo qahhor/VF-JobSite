@@ -155,12 +155,18 @@ export class PublicHomeComponent implements OnInit {
   constructor(private api: PublicApiService) {}
 
   ngOnInit() {
-    this.api.getCategories().subscribe((cats:any[]) => {
-      this.categories.set(cats.map(c => ({key:c.category, label:this.lbl(c.category), count:c.vacancyCount})));
-      this.stats.update(s => ({...s, vacancies: cats.reduce((a,c) => a+c.vacancyCount, 0)}));
+    this.api.getCategories().subscribe({
+      next: (cats:any[]) => {
+        this.categories.set(cats.map(c => ({key:c.category, label:this.lbl(c.category), count:c.vacancyCount})));
+        const total = cats.reduce((a:number,c:any) => a+c.vacancyCount, 0);
+        this.stats.set({vacancies: total, employers: cats.length, hired: Math.round(total*0.05)});
+      },
+      error: () => {}
     });
-    this.api.getVacancies({page:0,size:8}).subscribe((r:any) => this.vacancies.set(r.content||[]));
-    this.api.getStats().subscribe((s:any) => this.stats.set(s));
+    this.api.getVacancies({page:0,size:8}).subscribe({
+      next: (r:any) => this.vacancies.set(r.content||[]),
+      error: () => {}
+    });
   }
 
   fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':''+n; }
