@@ -3,29 +3,15 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicApiService } from '../../core/services/public-api.service';
+import { PublicHeaderComponent } from '../../shared/components/public-header.component';
+import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 
 @Component({
   selector: 'vjw-public-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, PublicHeaderComponent, PublicFooterComponent],
   template: `
-    <!-- HEADER -->
-    <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
-      <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-        <a routerLink="/" class="flex items-center gap-2.5">
-          <img src="assets/logo-icon.svg" alt="Verifix" class="h-7">
-          <span class="font-semibold text-lg tracking-tight">Verifix Jobs</span>
-        </a>
-        <nav class="hidden md:flex items-center gap-8 text-sm">
-          <a routerLink="/jobs" class="text-gray-500 hover:text-black transition">Vakansiyalar</a>
-          <a routerLink="/companies" class="text-gray-500 hover:text-black transition">Kompaniyalar</a>
-        </nav>
-        <div class="flex items-center gap-3">
-          <a routerLink="/login" class="hidden sm:inline text-sm font-medium text-black hover:underline">Kirish</a>
-          <a routerLink="/login" class="bg-black text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition">Ish beruvchi</a>
-        </div>
-      </div>
-    </header>
+    <vjw-public-header />
 
     <!-- HERO SEARCH -->
     <section class="bg-white py-10 md:py-16">
@@ -34,7 +20,8 @@ import { PublicApiService } from '../../core/services/public-api.service';
         <p class="text-gray-500 text-sm md:text-base mb-8">Minglab vakansiyalar orasidan mosini toping</p>
         <div class="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto">
           <input type="text" [(ngModel)]="searchQuery" placeholder="Kasb, lavozim yoki kompaniya..."
-                 class="flex-1 h-12 px-4 border border-gray-300 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none">
+                 class="flex-1 h-12 px-4 border border-gray-300 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+                 (keyup.enter)="doSearch()">
           <select [(ngModel)]="searchCity" class="h-12 px-4 border border-gray-300 rounded-lg text-sm bg-white sm:w-44">
             <option value="">Barcha shaharlar</option>
             @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
@@ -109,41 +96,14 @@ import { PublicApiService } from '../../core/services/public-api.service';
       <div class="max-w-4xl mx-auto px-4 text-center">
         <h2 class="text-xl md:text-2xl font-bold mb-3">Telegram bot orqali ish toping</h2>
         <p class="text-gray-400 text-sm mb-6">Yangi vakansiyalar har kuni telefoningizga keladi</p>
-        <a href="https://t.me/VerifixJobsBot" target="_blank" class="inline-flex bg-white text-black px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Botga o'tish &#8594;</a>
+        <a href="https://t.me/smtest12bot" target="_blank" class="inline-flex bg-white text-black px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Botga o'tish &#8594;</a>
       </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="bg-white border-t border-gray-100 py-10">
-      <div class="max-w-6xl mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-          <div>
-            <div class="flex items-center gap-2 mb-3"><img src="assets/logo-icon.svg" alt="Verifix" class="h-6"><span class="font-semibold text-sm">Verifix Jobs</span></div>
-            <p class="text-xs text-gray-400">Markaziy Osiyodagi ish qidirish platformasi</p>
-          </div>
-          <div>
-            <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-3">Ish qidiruvchilar</h4>
-            <div class="space-y-2 text-xs text-gray-500"><a routerLink="/jobs" class="block hover:text-black">Vakansiyalar</a><a routerLink="/companies" class="block hover:text-black">Kompaniyalar</a></div>
-          </div>
-          <div>
-            <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-3">Ish beruvchilar</h4>
-            <div class="space-y-2 text-xs text-gray-500"><a routerLink="/login" class="block hover:text-black">Kirish</a></div>
-          </div>
-          <div>
-            <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-3">Aloqa</h4>
-            <div class="space-y-2 text-xs text-gray-500"><div>info&#64;verifix.uz</div><div>+998 71 200 00 00</div></div>
-          </div>
-        </div>
-        <div class="border-t border-gray-100 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p class="text-xs text-gray-400">&#169; 2024-2026 Verifix LLC</p>
-          <div class="flex gap-4 text-xs text-gray-400"><a href="#" class="hover:text-black">Maxfiylik</a><a href="#" class="hover:text-black">Shartlar</a></div>
-        </div>
-      </div>
-    </footer>
+    <vjw-public-footer />
   `,
 })
 export class PublicHomeComponent implements OnInit {
-  menuOpen = signal(false);
   searchQuery = '';
   searchCity = '';
   categories = signal<{key:string;label:string;count:number}[]>([]);
@@ -168,6 +128,8 @@ export class PublicHomeComponent implements OnInit {
       error: () => {}
     });
   }
+
+  doSearch() {}
 
   fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':''+n; }
 

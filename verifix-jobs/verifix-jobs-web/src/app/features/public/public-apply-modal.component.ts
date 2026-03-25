@@ -34,14 +34,14 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
             @for (s of ['phone', 'otp', 'info']; track s; let i = $index) {
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors"
-                     [class.bg-\[#000000\]]="getStepIndex(step()) >= i"
+                     [class.bg-black]="getStepIndex(step()) >= i"
                      [class.text-white]="getStepIndex(step()) >= i"
                      [class.bg-gray-100]="getStepIndex(step()) < i"
                      [class.text-gray-400]="getStepIndex(step()) < i">
                   {{ i + 1 }}
                 </div>
                 @if (i < 2) {
-                  <div class="w-8 h-0.5 rounded" [class.bg-\[#000000\]]="getStepIndex(step()) > i" [class.bg-gray-200]="getStepIndex(step()) <= i"></div>
+                  <div class="w-8 h-0.5 rounded" [class.bg-black]="getStepIndex(step()) > i" [class.bg-gray-200]="getStepIndex(step()) <= i"></div>
                 }
               </div>
             }
@@ -54,14 +54,14 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
               <div class="flex items-center gap-2">
                 <span class="shrink-0 bg-gray-100 border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-600 font-medium">+998</span>
                 <input type="tel" [(ngModel)]="phone" placeholder="90 123 45 67" maxlength="12"
-                       class="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#000000]/30 text-sm"
+                       class="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/30 text-sm"
                        (keyup.enter)="sendOtp()" />
               </div>
               @if (phoneError()) {
                 <p class="text-red-500 text-xs mt-2">{{ phoneError() }}</p>
               }
               <button (click)="sendOtp()" [disabled]="sendingOtp()"
-                      class="w-full mt-4 bg-[#000000] hover:bg-[#154a6e] disabled:bg-gray-300 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
+                      class="w-full mt-4 bg-black hover:bg-gray-800 disabled:bg-gray-300 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
                 @if (sendingOtp()) {
                   <span class="inline-flex items-center gap-2">
                     <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -82,13 +82,13 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
               </p>
               <label class="block text-sm font-medium text-gray-700 mb-2">Tasdiqlash kodi</label>
               <input type="text" [(ngModel)]="otpCode" placeholder="123456" maxlength="6"
-                     class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 text-center text-lg tracking-[0.5em] font-mono placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#000000]/30"
+                     class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 text-center text-lg tracking-[0.5em] font-mono placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/30"
                      (keyup.enter)="verifyOtp()" />
               @if (otpError()) {
                 <p class="text-red-500 text-xs mt-2">{{ otpError() }}</p>
               }
               <button (click)="verifyOtp()" [disabled]="verifyingOtp()"
-                      class="w-full mt-4 bg-[#000000] hover:bg-[#154a6e] disabled:bg-gray-300 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
+                      class="w-full mt-4 bg-black hover:bg-gray-800 disabled:bg-gray-300 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
                 Tasdiqlash
               </button>
               <button (click)="step.set('phone')" class="w-full mt-2 text-sm text-gray-500 hover:text-gray-700 py-2">
@@ -103,12 +103,12 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Ismingiz</label>
                 <input type="text" [(ngModel)]="firstName" placeholder="Ismingizni kiriting"
-                       class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#000000]/30 text-sm" />
+                       class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/30 text-sm" />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Shahringiz</label>
                 <select [(ngModel)]="city"
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#000000]/30 text-sm bg-white">
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black/30 text-sm bg-white">
                   <option value="">Shaharni tanlang</option>
                   @for (c of cities; track c) {
                     <option [value]="c">{{ c }}</option>
@@ -119,7 +119,7 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
                 <p class="text-red-500 text-xs">{{ submitError() }}</p>
               }
               <button (click)="submitApplication()" [disabled]="submitting()"
-                      class="w-full bg-[#333333] hover:bg-[#27ae60] disabled:bg-gray-300 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
+                      class="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
                 @if (submitting()) {
                   <span class="inline-flex items-center gap-2">
                     <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
@@ -135,15 +135,15 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
           <!-- STEP: Success -->
           @if (step() === 'success') {
             <div class="text-center py-4">
-              <div class="w-16 h-16 bg-[#333333]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-[#333333]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
               </div>
               <h3 class="text-lg font-semibold text-gray-800 mb-2">Ariza yuborildi!</h3>
               <p class="text-sm text-gray-500 mb-6">Ish beruvchi siz bilan tez orada bog'lanadi.</p>
               <button (click)="close()"
-                      class="bg-[#000000] hover:bg-[#154a6e] text-white font-medium px-6 py-2.5 rounded-xl transition-colors text-sm">
+                      class="bg-black hover:bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl transition-colors text-sm">
                 Yopish
               </button>
             </div>
