@@ -60,6 +60,11 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
 
     @PostConstruct
     public void init() {
+        log.info("=== VerifixJobsBot initializing ===");
+        log.info("Bot username: {}", botConfig.getUsername());
+        log.info("Bot token present: {}", botConfig.getToken() != null && !botConfig.getToken().isBlank());
+        log.info("Bot token length: {}", botConfig.getToken() != null ? botConfig.getToken().length() : 0);
+
         notificationConsumer.setMessageSender(msg -> {
             try {
                 execute(msg);
@@ -74,6 +79,7 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
                 log.error("Failed to post to channel: {}", e.getMessage());
             }
         });
+        log.info("=== VerifixJobsBot initialized successfully ===");
     }
 
     @Override
