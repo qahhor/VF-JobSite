@@ -65,6 +65,12 @@ export class AuthService {
     } catch { /* ignore */ }
   }
 
+  /** Called by LoginComponent after manual token storage */
+  setAuthFromTokens(accessToken: string, refreshToken: string) {
+    this.storeTokens({ accessToken, refreshToken } as AuthResponse);
+    this.decodeAndStoreUser(accessToken);
+  }
+
   private loadUser(): AuthUser | null {
     try {
       const raw = localStorage.getItem(this.USER_KEY);

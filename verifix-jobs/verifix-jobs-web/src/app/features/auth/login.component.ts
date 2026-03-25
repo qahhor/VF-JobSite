@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'vjw-login',
@@ -124,7 +125,7 @@ export class LoginComponent {
   error = signal('');
   success = signal('');
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private auth: AuthService) {}
 
   onLogin() {
     this.loading.set(true);
@@ -132,8 +133,7 @@ export class LoginComponent {
     this.success.set('');
     this.http.post<any>(`${environment.apiUrl}/auth/employer/login`, { email: this.email, password: this.password }).subscribe({
       next: (res) => {
-        localStorage.setItem('vjw_access_token', res.accessToken);
-        localStorage.setItem('vjw_refresh_token', res.refreshToken);
+        this.auth.setAuthFromTokens(res.accessToken, res.refreshToken);
         this.router.navigate(['/employer/dashboard']);
       },
       error: (err) => {
