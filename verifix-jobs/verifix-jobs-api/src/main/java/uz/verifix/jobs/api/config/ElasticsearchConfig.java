@@ -10,6 +10,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
  */
 @Configuration
 @ConditionalOnProperty(name = "app.elasticsearch.enabled", havingValue = "true")
-@EnableElasticsearchRepositories(basePackages = "uz.verifix.jobs.domain.repository")
+@EnableElasticsearchRepositories(basePackages = {"uz.verifix.jobs.domain.repository", "uz.verifix.jobs.service.search"})
 public class ElasticsearchConfig {
 }
