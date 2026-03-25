@@ -52,7 +52,7 @@ public class EnstClient implements GovSyncClient {
                     .uri("/v1/registry/employers")
                     .bodyValue(employerData)
                     .retrieve()
-                    .toBodilessMono()
+                    .bodyToMono(Void.class)
                     .timeout(Duration.ofSeconds(30))
                     .block();
             return GovSyncResult.ok(null);

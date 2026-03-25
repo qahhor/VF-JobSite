@@ -30,7 +30,7 @@ public class IndexNowService {
                             "urlList", new String[]{url}
                     ))
                     .retrieve()
-                    .toBodilessMono()
+                    .bodyToMono(Void.class)
                     .subscribe(
                             success -> log.info("IndexNow: Yandex notified for {}", url),
                             error -> log.warn("IndexNow: Yandex notification failed for {}: {}", url, error.getMessage())

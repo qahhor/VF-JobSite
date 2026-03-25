@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+package verifix.jobs.ml;
+
+option java_package = "uz.verifix.jobs.integration.ml.grpc";
+option java_outer_classname = "MlServiceProto";
+
+// ==================== Matching Service ====================
+
+service MatchingService {
+  rpc ScoreCandidate (ScoreCandidateRequest) returns (ScoreCandidateResponse);
+  rpc BatchScore (BatchScoreRequest) returns (BatchScoreResponse);
+}
+
+message CandidateProfile {
+  string candidate_id = 1;
+  string city = 2;
+  repeated string preferred_categories = 3;
+  double preferred_salary = 4;
+  repeated string skills = 5;
+  string education_level = 6;
+  bool myid_verified = 7;
+  int32 total_applications = 8;
+  int32 hired_count = 9;
+  double avg_tenure_days = 10;
+}
+
+message VacancyProfile {
+  string vacancy_id = 1;
+  string city = 2;
+  string category = 3;
+  double salary_from = 4;
+  double salary_to = 5;
+  repeated string required_skills = 6;
+  string employment_type = 7;
+  bool is_mass_hiring = 8;
+  int32 positions_count = 9;
+  string employer_id = 10;
+}
+
+message ScoreCandidateRequest {
+  CandidateProfile candidate = 1;
+  VacancyProfile vacancy = 2;
+}
+
+message ScoreCandidateResponse {
+  double match_score = 1;
+  map<string, double> factors = 2;
+  string model_version = 3;
+}
+
+message BatchScoreRequest {
+  repeated CandidateProfile candidates = 1;
+  VacancyProfile vacancy = 2;
+}
+
+message BatchScoreResponse {
+  repeated ScoreCandidateResponse scores = 1;
+}
+
+// ==================== Salary Prediction Service ====================
+
+service SalaryPredictionService {
+  rpc PredictSalary (SalaryPredictionRequest) returns (SalaryPredictionResponse);
+}
+
+message SalaryPredictionRequest {
+  string category = 1;
+  string city = 2;
+  string employment_type = 3;
+  string education_level = 4;
+  int32 experience_years = 5;
+  repeated string skills = 6;
+}
+
+message SalaryPredictionResponse {
+  double p25 = 1;
+  double median = 2;
+  double p75 = 3;
+  int64 sample_size = 4;
+  double confidence = 5;
+  string model_version = 6;
+}
+
+// ==================== Fraud Detection Service ====================
+
+service FraudDetectionService {
+  rpc CheckFraud (FraudCheckRequest) returns (FraudCheckResponse);
+}
+
+message FraudCheckRequest {
+  string entity_type = 1;  // APPLICATION or REFERRAL
+  string entity_id = 2;
+  string user_id = 3;
+  int32 recent_applications_count = 4;
+  bool has_complete_profile = 5;
+  bool is_self_referral = 6;
+  int32 duplicate_employer_applications = 7;
+  double account_age_days = 8;
+  int32 unique_ips_24h = 9;
+}
+
+message FraudCheckResponse {
+  double score = 1;
+  repeated string flags = 2;
+  bool is_fraud = 3;
+  string model_version = 4;
+}
+
+// ==================== Churn Prediction Service ====================
+
+service ChurnPredictionService {
+  rpc PredictChurn (ChurnPredictionRequest) returns (ChurnPredictionResponse);
+  rpc BatchPredictChurn (BatchChurnRequest) returns (BatchChurnResponse);
+}
+
+message ChurnPredictionRequest {
+  string candidate_id = 1;
+  int32 days_since_last_login = 2;
+  int32 days_since_last_application = 3;
+  int32 total_applications = 4;
+  bool has_complete_profile = 5;
+  bool notifications_enabled = 6;
+  int32 profile_views_30d = 7;
+  int32 search_count_30d = 8;
+}
+
+message ChurnPredictionResponse {
+  double churn_score = 1;
+  repeated string risk_factors = 2;
+  string risk_level = 3;  // LOW, MEDIUM, HIGH, CRITICAL
+  string recommended_action = 4;
+  string model_version = 5;
+}
+
+message BatchChurnRequest {
+  repeated ChurnPredictionRequest candidates = 1;
+}
+
+message BatchChurnResponse {
+  repeated ChurnPredictionResponse predictions = 1;
+}

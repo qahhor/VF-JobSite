@@ -17,6 +17,7 @@ import uz.verifix.jobs.service.employer.EmployerAuthService;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Deprecated(forRemoval = false)
 public class AuthController {
 
     private final EmployerAuthService employerAuthService;
@@ -29,7 +30,7 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 AuthResponse.of(result.accessToken(), result.refreshToken(),
-                        result.managerId(), result.employerId(), "ADMIN"));
+                        result.managerId(), result.employerId(), "EMPLOYER_ADMIN"));
     }
 
     @PostMapping("/login")
@@ -50,5 +51,11 @@ public class AuthController {
                 .refreshToken(result.refreshToken())
                 .tokenType("Bearer")
                 .build());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshTokenRequest request) {
+        employerAuthService.logout(request.getRefreshToken());
+        return ResponseEntity.noContent().build();
     }
 }

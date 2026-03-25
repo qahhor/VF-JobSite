@@ -9,9 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.enums.DigestPreference;
-import uz.verifix.jobs.domain.enums.NotificationChannel;
 import uz.verifix.jobs.domain.enums.UserType;
-import uz.verifix.jobs.domain.enums.VacancyStatus;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.notification.NotificationService;
@@ -67,8 +65,8 @@ public class DigestService {
             if (vacancies.isEmpty()) continue;
 
             String message = buildDigestMessage(vacancies, pref == DigestPreference.WEEKLY);
-            notificationService.createAndSend(UserType.CANDIDATE, candidate.getId(),
-                    NotificationChannel.TELEGRAM, "digest." + pref.name().toLowerCase(), message);
+            notificationService.dispatch(UserType.CANDIDATE, candidate.getId(),
+                    "digest." + pref.name().toLowerCase(), message);
             sent++;
         }
 

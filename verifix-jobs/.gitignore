@@ -16,6 +16,7 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/apache-maven/
 
 # IDE
 .idea/
@@ -45,6 +46,7 @@ dist/
 .angular/
 .npm/
 npm-debug.log*
+__pycache__/
 
 # Docker
 docker-compose.override.yml

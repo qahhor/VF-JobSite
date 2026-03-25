@@ -3,8 +3,10 @@ package uz.verifix.jobs.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.api.dto.response.MatchScoreResponse;
+import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.domain.entity.MlCandidateScore;
 import uz.verifix.jobs.service.ml.CandidateMatchingService;
 
@@ -23,22 +25,33 @@ public class MatchingController {
     @GetMapping("/candidates")
     public ResponseEntity<List<MatchScoreResponse>> getTopCandidates(
             @RequestParam UUID vacancyId,
+            Authentication auth,
             @RequestParam(defaultValue = "20") int limit) {
-        List<MlCandidateScore> scores = matchingService.getTopCandidates(vacancyId, limit);
+        List<MlCandidateScore> scores = matchingService.getTopCandidatesForEmployer(
+                vacancyId,
+                SecurityUtils.extractEmployerId(auth),
+                limit
+        );
         return ResponseEntity.ok(scores.stream().map(this::toResponse).toList());
     }
 
     @GetMapping("/vacancies")
     public ResponseEntity<List<MatchScoreResponse>> getTopVacancies(
-            @RequestParam UUID candidateId,
+            @RequestParam(required = false) UUID candidateId,
+            Authentication auth,
             @RequestParam(defaultValue = "10") int limit) {
-        List<MlCandidateScore> scores = matchingService.getTopVacancies(candidateId, limit);
+        List<MlCandidateScore> scores = matchingService.getTopVacancies(
+                SecurityUtils.enforceCandidateAccess(auth, candidateId),
+                limit
+        );
         return ResponseEntity.ok(scores.stream().map(this::toResponse).toList());
     }
 
     @PostMapping("/score")
-    public ResponseEntity<Map<String, String>> triggerScoring(@RequestParam UUID vacancyId) {
-        matchingService.batchScore(vacancyId);
+    public ResponseEntity<Map<String, String>> triggerScoring(
+            @RequestParam UUID vacancyId,
+            Authentication auth) {
+        matchingService.batchScoreForEmployer(vacancyId, SecurityUtils.extractEmployerId(auth));
         return ResponseEntity.ok(Map.of("status", "scoring_triggered", "vacancyId", vacancyId.toString()));
     }
 

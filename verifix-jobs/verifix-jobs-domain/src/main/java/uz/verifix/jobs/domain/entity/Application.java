@@ -31,10 +31,12 @@ import java.util.UUID;
 @Builder
 public class Application extends BaseEntity {
 
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer","handler","applications","vacancies","managers","payments"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacancy_id", nullable = false)
     private Vacancy vacancy;
 
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer","handler","applications","vacancies","managers","payments"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "candidate_id", nullable = false)
     private Candidate candidate;

@@ -79,6 +79,28 @@ public class Employer extends BaseEntity {
     @Column(name = "branding_expires_at")
     private Instant brandingExpiresAt;
 
+    @Column(name = "slug", length = 300, unique = true)
+    private String slug;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "employee_count_range", length = 30)
+    private String employeeCountRange;
+
+    @Column(name = "founded_year")
+    private Integer foundedYear;
+
+    @Column(name = "website_url", length = 500)
+    private String websiteUrl;
+
+    @Column(name = "hrm_company_id", length = 100)
+    private String hrmCompanyId;
+
+    @Column(name = "hrm_sync_enabled")
+    @Builder.Default
+    private Boolean hrmSyncEnabled = false;
+
     @OneToMany(mappedBy = "employer")
     @Builder.Default
     private List<Manager> managers = new ArrayList<>();

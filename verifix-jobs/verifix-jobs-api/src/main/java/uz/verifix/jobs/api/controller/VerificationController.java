@@ -16,6 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/verification")
 @RequiredArgsConstructor
+@Deprecated(forRemoval = false)
 public class VerificationController {
 
     private final VerificationService verificationService;

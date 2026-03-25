@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.verifix.jobs.common.util.HashUtils;
 import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.entity.Employer;
@@ -84,9 +85,13 @@ public class VerificationService {
             return false;
         }
 
-        // Save response
+        // Save a minimal audit-safe response
         try {
-            verLog.setResponseJson(objectMapper.writeValueAsString(userInfo));
+            verLog.setResponseJson(objectMapper.writeValueAsString(Map.of(
+                    "verified", true,
+                    "provider", "MYID",
+                    "documentHash", userInfo.getPassportSeries() != null ? HashUtils.sha256Hex(userInfo.getPassportSeries()) : null
+            )));
         } catch (Exception ignored) {}
 
         verLog.setStatus(VerificationStatus.VERIFIED);
@@ -112,7 +117,6 @@ public class VerificationService {
             candidateRepository.findById(entityId).ifPresent(c -> {
                 c.setMyidStatus(MyIdStatus.VERIFIED);
                 c.setMyidVerifiedAt(Instant.now());
-                c.setPassportSeries(userInfo.getPassportSeries());
                 if (c.getFirstName() == null) c.setFirstName(userInfo.getFirstName());
                 if (c.getLastName() == null) c.setLastName(userInfo.getLastName());
                 candidateRepository.save(c);

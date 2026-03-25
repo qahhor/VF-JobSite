@@ -15,6 +15,7 @@ import uz.verifix.jobs.service.auth.JwtService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -32,17 +33,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7);
-        if (jwtService.isTokenValid(token)) {
+        if (jwtService.isTokenValid(token, JwtService.TOKEN_TYPE_ACCESS)) {
             Claims claims = jwtService.parseToken(token);
-            String userId = claims.getSubject();
-            String role = claims.get("role", String.class);
+            UUID userId = UUID.fromString(claims.getSubject());
+            String role = claims.get(JwtService.CLAIM_ROLE, String.class);
+            String tokenType = claims.get(JwtService.CLAIM_TYPE, String.class);
+            String employerIdValue = claims.get(JwtService.CLAIM_EMPLOYER_ID, String.class);
+            UUID employerId = employerIdValue != null ? UUID.fromString(employerIdValue) : null;
 
             List<SimpleGrantedAuthority> authorities = role != null
                     ? List.of(new SimpleGrantedAuthority("ROLE_" + role))
                     : List.of();
 
+            AuthenticatedUser principal = new AuthenticatedUser(userId, role, employerId, tokenType);
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                    new UsernamePasswordAuthenticationToken(principal, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 

@@ -37,6 +37,7 @@ import java.util.List;
 @Builder
 public class Vacancy extends BaseEntity {
 
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer","handler","vacancies","managers","payments"})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employer_id", nullable = false)
     private Employer employer;
@@ -117,6 +118,26 @@ public class Vacancy extends BaseEntity {
     @Column(name = "is_branded")
     @Builder.Default
     private Boolean isBranded = false;
+
+    @Column(name = "slug", length = 300, unique = true)
+    private String slug;
+
+    @Column(name = "view_count")
+    @Builder.Default
+    private Integer viewCount = 0;
+
+    @Column(name = "apply_count")
+    @Builder.Default
+    private Integer applyCount = 0;
+
+    @Column(name = "branch_name", length = 200)
+    private String branchName;
+
+    @Column(name = "branch_address", length = 500)
+    private String branchAddress;
+
+    @Column(name = "district", length = 100)
+    private String district;
 
     @OneToMany(mappedBy = "vacancy")
     @Builder.Default

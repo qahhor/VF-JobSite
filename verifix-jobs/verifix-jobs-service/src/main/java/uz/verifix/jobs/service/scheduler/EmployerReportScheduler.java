@@ -8,13 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uz.verifix.jobs.domain.entity.Employer;
-import uz.verifix.jobs.domain.entity.Manager;
+import uz.verifix.jobs.domain.enums.UserType;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
-import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.service.employer.EmployerNotificationService;
 import uz.verifix.jobs.service.notification.NotificationService;
-
-import java.util.List;
 
 @Slf4j
 @Component
@@ -22,7 +19,6 @@ import java.util.List;
 public class EmployerReportScheduler {
 
     private final EmployerRepository employerRepository;
-    private final ManagerRepository managerRepository;
     private final EmployerNotificationService employerNotificationService;
     private final NotificationService notificationService;
 
@@ -40,19 +36,20 @@ public class EmployerReportScheduler {
             for (Employer employer : employers) {
                 try {
                     String report = employerNotificationService.generateWeeklyReport(employer.getId());
-                    List<Manager> managers = managerRepository.findByEmployerId(employer.getId());
-
-                    for (Manager manager : managers) {
-                        if (manager.getTelegramChatId() != null) {
-                            notificationService.sendTelegramMessage(manager.getTelegramChatId(), report);
-                            sent++;
-                        }
-                    }
+                    NotificationService.DispatchResult result = notificationService.dispatch(
+                            UserType.EMPLOYER,
+                            employer.getId(),
+                            "employer.report.weekly",
+                            report
+                    );
+                    sent += result.delivered();
                 } catch (Exception e) {
                     log.error("Failed to send weekly report for employer {}: {}", employer.getId(), e.getMessage());
                 }
             }
-            if (!employers.hasNext()) break;
+            if (!employers.hasNext()) {
+                break;
+            }
             page++;
         }
 

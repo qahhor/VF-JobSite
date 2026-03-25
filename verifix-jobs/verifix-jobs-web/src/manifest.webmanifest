@@ -1,0 +1,16 @@
+{
+  "name": "Verifix Jobs",
+  "short_name": "Verifix",
+  "description": "O'zbekistonda ish topish platformasi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "assets/logo-icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "uz",
+  "dir": "ltr"
+}

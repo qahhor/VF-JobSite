@@ -18,6 +18,8 @@ import uz.verifix.jobs.service.branding.BrandingAnalyticsService;
 import uz.verifix.jobs.service.branding.BrandingSeoService;
 import uz.verifix.jobs.service.branding.BrandingService;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -127,7 +129,7 @@ public class CompanyPageController {
                 .currency(v.getCurrency())
                 .employmentType(v.getEmploymentType() != null ? v.getEmploymentType().name() : null)
                 .shiftSchedule(v.getShiftSchedule() != null ? v.getShiftSchedule().name() : null)
-                .benefits(v.getBenefits())
+                .benefits(v.getBenefits() != null ? Arrays.asList(v.getBenefits()) : List.of())
                 .status(v.getStatus().name())
                 .isMassHiring(v.getIsMassHiring())
                 .positionsCount(v.getPositionsCount())

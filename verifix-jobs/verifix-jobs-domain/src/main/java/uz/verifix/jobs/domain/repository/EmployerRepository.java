@@ -23,6 +23,10 @@ public interface EmployerRepository extends JpaRepository<Employer, UUID> {
 
     boolean existsByInn(String inn);
 
+    List<Employer> findByHrmSyncEnabledTrue();
+
+    Optional<Employer> findByHrmCompanyId(String hrmCompanyId);
+
     @Query(value = "SELECT e.* FROM employer e " +
             "WHERE e.deleted_at IS NULL " +
             "AND ST_DWithin(e.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)::geography, :distanceMeters) " +

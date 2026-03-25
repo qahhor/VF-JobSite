@@ -1,0 +1,83 @@
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        generate_statistics: false
+  liquibase:
+    enabled: true
+
+  # === DATABASE POOL (1000 concurrent users target) ===
+  datasource:
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:75}
+      minimum-idle: ${DB_POOL_MIN:20}
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 600000
+      leak-detection-threshold: 30000
+
+  # === REDIS CONNECTION POOL ===
+  data:
+    redis:
+      timeout: 5000
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE:50}
+          max-idle: ${REDIS_POOL_MAX_IDLE:25}
+          min-idle: ${REDIS_POOL_MIN_IDLE:10}
+
+  # === ASYNC TASK EXECUTOR ===
+  task:
+    execution:
+      pool:
+        core-size: ${ASYNC_CORE_POOL:20}
+        max-size: ${ASYNC_MAX_POOL:150}
+        queue-capacity: ${ASYNC_QUEUE_CAPACITY:500}
+    scheduling:
+      pool:
+        size: ${SCHEDULER_POOL_SIZE:15}
+
+# === TOMCAT CONTAINER (1000 concurrent users target) ===
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,text/html,text/plain,text/css,application/javascript
+    min-response-size: 1024
+  error:
+    include-stacktrace: never
+    include-message: never
+  tomcat:
+    max-threads: ${TOMCAT_MAX_THREADS:500}
+    min-spare-threads: ${TOMCAT_MIN_SPARE:50}
+    accept-count: ${TOMCAT_ACCEPT_COUNT:200}
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:2000}
+    connection-timeout: 10000
+
+logging:
+  level:
+    root: WARN
+    uz.verifix.jobs: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: authorized
+
+app:
+  kafka:
+    enabled: ${KAFKA_ENABLED:true}
+  elasticsearch:
+    enabled: ${ELASTICSEARCH_ENABLED:true}
+  minio:
+    enabled: ${MINIO_ENABLED:true}
+  jwt:
+    secret: ${JWT_SECRET}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:https://jobs.verifix.uz}

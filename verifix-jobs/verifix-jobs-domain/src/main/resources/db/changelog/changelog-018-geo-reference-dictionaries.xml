@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="018-01-geo-country-table" author="codex">
+        <createTable tableName="geo_country">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="iso2" type="varchar(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="iso3" type="varchar(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="m49" type="varchar(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_uz_lat" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_en" type="varchar(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="capital" type="varchar(150)"/>
+            <column name="phone_code" type="varchar(20)"/>
+            <column name="currency_code" type="varchar(10)"/>
+            <column name="geoname_id" type="bigint"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+        <addUniqueConstraint tableName="geo_country" columnNames="iso2" constraintName="uq_geo_country_iso2"/>
+        <addUniqueConstraint tableName="geo_country" columnNames="iso3" constraintName="uq_geo_country_iso3"/>
+        <addUniqueConstraint tableName="geo_country" columnNames="m49" constraintName="uq_geo_country_m49"/>
+        <createIndex tableName="geo_country" indexName="idx_geo_country_name_en">
+            <column name="name_en"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="018-02-geo-region-table" author="codex">
+        <createTable tableName="geo_region">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="country_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_geo_region_country" references="geo_country(id)"/>
+            </column>
+            <column name="code" type="varchar(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_code" type="varchar(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_uz_lat" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_en" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="geoname_id" type="bigint"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+        <addUniqueConstraint tableName="geo_region" columnNames="full_code" constraintName="uq_geo_region_full_code"/>
+        <addUniqueConstraint tableName="geo_region" columnNames="country_id, code" constraintName="uq_geo_region_country_code"/>
+        <createIndex tableName="geo_region" indexName="idx_geo_region_country_id">
+            <column name="country_id"/>
+        </createIndex>
+        <createIndex tableName="geo_region" indexName="idx_geo_region_name_en">
+            <column name="name_en"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="018-03-geo-district-table" author="codex">
+        <createTable tableName="geo_district">
+            <column name="id" type="uuid" defaultValueComputed="uuid_generate_v4()">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="country_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_geo_district_country" references="geo_country(id)"/>
+            </column>
+            <column name="region_id" type="uuid">
+                <constraints nullable="false" foreignKeyName="fk_geo_district_region" references="geo_region(id)"/>
+            </column>
+            <column name="code" type="varchar(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_code" type="varchar(120)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_uz_lat" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_ru" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name_en" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="geoname_id" type="bigint"/>
+            <column name="created_at" type="timestamp with time zone" defaultValueComputed="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="timestamp with time zone"/>
+            <column name="created_by" type="varchar(255)"/>
+            <column name="deleted_at" type="timestamp with time zone"/>
+        </createTable>
+        <addUniqueConstraint tableName="geo_district" columnNames="full_code" constraintName="uq_geo_district_full_code"/>
+        <addUniqueConstraint tableName="geo_district" columnNames="region_id, code" constraintName="uq_geo_district_region_code"/>
+        <createIndex tableName="geo_district" indexName="idx_geo_district_country_id">
+            <column name="country_id"/>
+        </createIndex>
+        <createIndex tableName="geo_district" indexName="idx_geo_district_region_id">
+            <column name="region_id"/>
+        </createIndex>
+        <createIndex tableName="geo_district" indexName="idx_geo_district_name_en">
+            <column name="name_en"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="018-04-geo-city-normalization-columns" author="codex">
+        <addColumn tableName="geo_city">
+            <column name="district" type="varchar(150)"/>
+            <column name="geoname_id" type="bigint"/>
+            <column name="country_id" type="uuid"/>
+            <column name="region_id" type="uuid"/>
+            <column name="district_id" type="uuid"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="geo_city" baseColumnNames="country_id"
+                                 referencedTableName="geo_country" referencedColumnNames="id"
+                                 constraintName="fk_geo_city_country"/>
+        <addForeignKeyConstraint baseTableName="geo_city" baseColumnNames="region_id"
+                                 referencedTableName="geo_region" referencedColumnNames="id"
+                                 constraintName="fk_geo_city_region"/>
+        <addForeignKeyConstraint baseTableName="geo_city" baseColumnNames="district_id"
+                                 referencedTableName="geo_district" referencedColumnNames="id"
+                                 constraintName="fk_geo_city_district"/>
+        <createIndex tableName="geo_city" indexName="idx_geo_city_country_id">
+            <column name="country_id"/>
+        </createIndex>
+        <createIndex tableName="geo_city" indexName="idx_geo_city_region_id">
+            <column name="region_id"/>
+        </createIndex>
+        <createIndex tableName="geo_city" indexName="idx_geo_city_district_id">
+            <column name="district_id"/>
+        </createIndex>
+        <createIndex tableName="geo_city" indexName="idx_geo_city_geoname_id">
+            <column name="geoname_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="018-05-load-geo-country" author="codex">
+        <loadData file="db/changelog/data/geo/geo_country.csv"
+                  tableName="geo_country"
+                  separator=","
+                  quotchar="&quot;"
+                  encoding="UTF-8">
+            <column header="iso2" name="iso2" type="STRING"/>
+            <column header="iso3" name="iso3" type="STRING"/>
+            <column header="m49" name="m49" type="STRING"/>
+            <column header="name_uz_lat" name="name_uz_lat" type="STRING"/>
+            <column header="name_ru" name="name_ru" type="STRING"/>
+            <column header="name_en" name="name_en" type="STRING"/>
+            <column header="capital" name="capital" type="STRING"/>
+            <column header="phone_code" name="phone_code" type="STRING"/>
+            <column header="currency_code" name="currency_code" type="STRING"/>
+            <column header="geoname_id" name="geoname_id" type="NUMERIC"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="018-06-load-geo-region" author="codex">
+        <createTable tableName="geo_region_import">
+            <column name="country_iso2" type="varchar(2)"/>
+            <column name="code" type="varchar(40)"/>
+            <column name="full_code" type="varchar(80)"/>
+            <column name="name_uz_lat" type="varchar(200)"/>
+            <column name="name_ru" type="varchar(200)"/>
+            <column name="name_en" type="varchar(200)"/>
+            <column name="geoname_id" type="bigint"/>
+        </createTable>
+        <loadData file="db/changelog/data/geo/geo_region.csv"
+                  tableName="geo_region_import"
+                  separator=","
+                  quotchar="&quot;"
+                  encoding="UTF-8">
+            <column header="country_iso2" name="country_iso2" type="STRING"/>
+            <column header="code" name="code" type="STRING"/>
+            <column header="full_code" name="full_code" type="STRING"/>
+            <column header="name_uz_lat" name="name_uz_lat" type="STRING"/>
+            <column header="name_ru" name="name_ru" type="STRING"/>
+            <column header="name_en" name="name_en" type="STRING"/>
+            <column header="geoname_id" name="geoname_id" type="NUMERIC"/>
+        </loadData>
+        <sql>
+            INSERT INTO geo_region (country_id, code, full_code, name_uz_lat, name_ru, name_en, geoname_id)
+            SELECT c.id, i.code, i.full_code, i.name_uz_lat, i.name_ru, i.name_en, i.geoname_id
+            FROM geo_region_import i
+            JOIN geo_country c ON c.iso2 = i.country_iso2;
+        </sql>
+        <dropTable tableName="geo_region_import"/>
+    </changeSet>
+
+    <changeSet id="018-07-load-geo-district" author="codex">
+        <createTable tableName="geo_district_import">
+            <column name="country_iso2" type="varchar(2)"/>
+            <column name="region_code" type="varchar(40)"/>
+            <column name="code" type="varchar(80)"/>
+            <column name="full_code" type="varchar(120)"/>
+            <column name="name_uz_lat" type="varchar(200)"/>
+            <column name="name_ru" type="varchar(200)"/>
+            <column name="name_en" type="varchar(200)"/>
+            <column name="geoname_id" type="bigint"/>
+        </createTable>
+        <loadData file="db/changelog/data/geo/geo_district.csv"
+                  tableName="geo_district_import"
+                  separator=","
+                  quotchar="&quot;"
+                  encoding="UTF-8">
+            <column header="country_iso2" name="country_iso2" type="STRING"/>
+            <column header="region_code" name="region_code" type="STRING"/>
+            <column header="code" name="code" type="STRING"/>
+            <column header="full_code" name="full_code" type="STRING"/>
+            <column header="name_uz_lat" name="name_uz_lat" type="STRING"/>
+            <column header="name_ru" name="name_ru" type="STRING"/>
+            <column header="name_en" name="name_en" type="STRING"/>
+            <column header="geoname_id" name="geoname_id" type="NUMERIC"/>
+        </loadData>
+        <sql>
+            INSERT INTO geo_district (country_id, region_id, code, full_code, name_uz_lat, name_ru, name_en, geoname_id)
+            SELECT c.id, r.id, i.code, i.full_code, i.name_uz_lat, i.name_ru, i.name_en, i.geoname_id
+            FROM geo_district_import i
+            JOIN geo_country c ON c.iso2 = i.country_iso2
+            JOIN geo_region r ON r.country_id = c.id AND r.code = i.region_code;
+        </sql>
+        <dropTable tableName="geo_district_import"/>
+    </changeSet>
+
+    <changeSet id="018-08-backfill-city-country-and-region-links" author="codex">
+        <sql>
+            UPDATE geo_city gc
+            SET country_id = c.id
+            FROM geo_country c
+            WHERE gc.country = c.iso2
+              AND gc.country_id IS NULL;
+        </sql>
+        <sql>
+            UPDATE geo_city gc
+            SET region_id = r.id
+            FROM geo_region r
+            JOIN geo_country c ON c.id = r.country_id
+            WHERE gc.country = c.iso2
+              AND gc.region_id IS NULL
+              AND gc.region IS NOT NULL
+              AND (
+                    LOWER(gc.region) = LOWER(r.name_uz_lat)
+                 OR LOWER(gc.region) = LOWER(r.name_ru)
+                 OR LOWER(gc.region) = LOWER(r.name_en)
+              );
+        </sql>
+    </changeSet>
+
+    <changeSet id="018-09-seed-turkmenistan-cities" author="codex">
+        <createTable tableName="geo_city_import">
+            <column name="country" type="varchar(2)"/>
+            <column name="region_code" type="varchar(40)"/>
+            <column name="geonameid" type="bigint"/>
+            <column name="name" type="varchar(200)"/>
+            <column name="asciiname" type="varchar(200)"/>
+            <column name="latitude" type="varchar(30)"/>
+            <column name="longitude" type="varchar(30)"/>
+            <column name="population" type="integer"/>
+            <column name="featureCode" type="varchar(20)"/>
+        </createTable>
+        <loadData file="db/changelog/data/geo/geo_city_tm_major.csv"
+                  tableName="geo_city_import"
+                  separator=","
+                  quotchar="&quot;"
+                  encoding="UTF-8">
+            <column header="country" name="country" type="STRING"/>
+            <column header="region_code" name="region_code" type="STRING"/>
+            <column header="geonameid" name="geonameid" type="NUMERIC"/>
+            <column header="name" name="name" type="STRING"/>
+            <column header="asciiname" name="asciiname" type="STRING"/>
+            <column header="latitude" name="latitude" type="STRING"/>
+            <column header="longitude" name="longitude" type="STRING"/>
+            <column header="population" name="population" type="NUMERIC"/>
+            <column header="featureCode" name="featureCode" type="STRING"/>
+        </loadData>
+        <sql>
+            INSERT INTO geo_city (
+                id,
+                name_uz_lat,
+                name_ru,
+                name_en,
+                region,
+                country,
+                geoname_id,
+                country_id,
+                region_id,
+                location,
+                population,
+                created_at
+            )
+            SELECT uuid_generate_v4(),
+                   i.name,
+                   i.asciiname,
+                   i.asciiname,
+                   r.name_en,
+                   i.country,
+                   i.geonameid,
+                   c.id,
+                   r.id,
+                   ST_SetSRID(ST_MakePoint(CAST(i.longitude AS double precision), CAST(i.latitude AS double precision)), 4326),
+                   i.population,
+                   now()
+            FROM geo_city_import i
+            JOIN geo_country c ON c.iso2 = i.country
+            LEFT JOIN geo_region r ON r.country_id = c.id AND r.code = i.region_code
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM geo_city existing_city
+                WHERE existing_city.geoname_id = i.geonameid
+                   OR (existing_city.country = i.country AND LOWER(existing_city.name_en) = LOWER(i.asciiname))
+            );
+        </sql>
+        <dropTable tableName="geo_city_import"/>
+    </changeSet>
+
+</databaseChangeLog>

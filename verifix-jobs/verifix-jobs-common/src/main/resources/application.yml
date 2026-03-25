@@ -1,9 +1,10 @@
 server:
   port: ${APP_PORT:8080}
+  forward-headers-strategy: framework
 
 spring:
   application:
-    name: verifix-jobs
+    name: ${APP_NAME:verifix-jobs}
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
@@ -63,10 +64,32 @@ spring:
           max-idle: ${REDIS_POOL_MAX_IDLE:10}
           min-idle: ${REDIS_POOL_MIN_IDLE:5}
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:verifix-jobs}
+      auto-offset-reset: earliest
+
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URI:http://${ELASTICSEARCH_HOST:localhost}:${ELASTICSEARCH_PORT:9200}}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${APP_NAME:verifix-jobs}
+
 app:
   jwt:
-    secret: ${JWT_SECRET}  # Required — no default. Set JWT_SECRET env var before starting.
-    access-expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+    secret: ${JWT_SECRET:}
+    access-expiration-ms: ${JWT_EXPIRATION_MS:900000}
     refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
 
   base-url: ${APP_BASE_URL:http://localhost:8080}
@@ -101,17 +124,26 @@ app:
     hrm:
       base-url: ${VERIFIX_HRM_URL:https://hrm.verifix.uz/api}
       api-key: ${VERIFIX_HRM_API_KEY:}
+      sync:
+        enabled: ${HRM_SYNC_ENABLED:false}
+        vacancy-cron: ${HRM_VACANCY_SYNC_CRON:0 */30 * * * *}
+      sso:
+        enabled: ${HRM_SSO_ENABLED:false}
+        client-id: ${HRM_SSO_CLIENT_ID:}
+        client-secret: ${HRM_SSO_CLIENT_SECRET:}
+        redirect-uri: ${HRM_SSO_REDIRECT_URI:${APP_BASE_URL:http://localhost:8080}/api/v1/hrm/sso/callback}
 
   myid:
     client-id: ${MYID_CLIENT_ID:}
     client-secret: ${MYID_CLIENT_SECRET:}
     base-url: ${MYID_BASE_URL:https://myid.uz}
-    redirect-uri: ${MYID_REDIRECT_URI:http://localhost:8080/api/v1/verification/callback}
+    redirect-uri: ${MYID_REDIRECT_URI:${APP_BASE_URL:http://localhost:8080}/api/v1/auth/myid/callback}
 
   telegram:
     bot:
       token: ${TELEGRAM_BOT_TOKEN:}
       username: ${TELEGRAM_BOT_USERNAME:verifixjobs_bot}
+      api-base-url: ${TELEGRAM_BOT_API_BASE_URL:https://api.telegram.org}
       web-app-url: ${TELEGRAM_WEB_APP_URL:}
     channel:
       chat-id: ${TELEGRAM_CHANNEL_CHAT_ID:}
@@ -149,7 +181,7 @@ app:
     default-expiration-days: ${VACANCY_EXPIRATION_DAYS:30}
 
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:4201}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:4201,https://jobs.verifix.uz,https://employer.jobs.verifix.uz,https://admin.jobs.verifix.uz}
 
   kafka:
     enabled: ${KAFKA_ENABLED:false}
@@ -157,12 +189,71 @@ app:
   elasticsearch:
     enabled: ${ELASTICSEARCH_ENABLED:false}
 
+  ml:
+    enabled: ${ML_SERVICE_ENABLED:false}
+    base-url: ${ML_SERVICE_URL:http://localhost:8000}
+    grpc-host: ${ML_GRPC_HOST:localhost}
+    grpc-port: ${ML_GRPC_PORT:50051}
+
   minio:
     enabled: ${MINIO_ENABLED:false}
-    url: ${MINIO_URL:http://localhost:9000}
-    access-key: ${MINIO_ACCESS_KEY:minioadmin}
-    secret-key: ${MINIO_SECRET_KEY:minioadmin}
+    url: ${MINIO_URL:${MINIO_ENDPOINT:http://localhost:9000}}
+    access-key: ${MINIO_ACCESS_KEY:}
+    secret-key: ${MINIO_SECRET_KEY:}
     bucket: ${MINIO_BUCKET:verifix-jobs}
+
+  moderation:
+    minimum-wage-uzs: ${MODERATION_MINIMUM_WAGE_UZS:1155000}
+    minimum-wage-reason: Salary below minimum wage
+    manual-review-reason: Manual review required by moderation rules
+    reject-rules:
+      - pattern: MLM
+        reason: Content contains prohibited words
+      - pattern: network marketing
+        reason: Content contains prohibited words
+      - pattern: depozit
+        reason: Content contains prohibited words
+      - pattern: vlozhenie
+        reason: Content contains prohibited words
+      - pattern: piramida
+        reason: Content contains prohibited words
+      - pattern: zalog
+        reason: Content contains prohibited words
+    manual-review-keywords:
+      - crypto
+      - bitcoin
+      - remote work
+      - udalenka
+      - vakhta
+    auto-approve:
+      min-approved: ${MODERATION_AUTO_APPROVE_MIN_APPROVED:10}
+      max-rejection-rate: ${MODERATION_AUTO_APPROVE_MAX_REJECTION_RATE:0.05}
+
+  rate-limit:
+    general-requests-per-minute: ${RATE_LIMIT_GENERAL_REQUESTS_PER_MINUTE:100}
+    employer-requests-per-minute: ${RATE_LIMIT_EMPLOYER_REQUESTS_PER_MINUTE:30}
+
+  notification:
+    retry:
+      enabled: ${NOTIFICATION_RETRY_ENABLED:true}
+      interval-ms: ${NOTIFICATION_RETRY_INTERVAL_MS:300000}
+      batch-size: ${NOTIFICATION_RETRY_BATCH_SIZE:50}
+      max-attempts: ${NOTIFICATION_RETRY_MAX_ATTEMPTS:3}
+
+  ai:
+    chatbot-enabled: ${AI_CHATBOT_ENABLED:false}
+    screening-enabled: ${AI_SCREENING_ENABLED:false}
+    claude:
+      api-key: ${CLAUDE_API_KEY:}
+      model: ${CLAUDE_MODEL:claude-sonnet-4-20250514}
+      max-tokens: ${CLAUDE_MAX_TOKENS:1024}
+
+  ats:
+    telegram:
+      enabled: ${ATS_TELEGRAM_ENABLED:false}
+      webhook-url: ${ATS_TELEGRAM_WEBHOOK_URL:http://localhost:3030}
+      hmac-secret: ${ATS_TELEGRAM_HMAC_SECRET:}
+      company-code: ${ATS_TELEGRAM_COMPANY_CODE:default}
 
   payment:
     click:
@@ -175,15 +266,6 @@ app:
       secret-key: ${PAYME_SECRET_KEY:}
       base-url: ${PAYME_BASE_URL:https://checkout.paycom.uz}
 
-spring.elasticsearch:
-  uris: ${ELASTICSEARCH_URI:http://localhost:9200}
-
-spring.kafka:
-  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-  consumer:
-    group-id: verifix-jobs
-    auto-offset-reset: earliest
-
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -192,7 +274,5 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: alpha
 
-logging:
-  level:
-    uz.verifix.jobs: DEBUG
-    org.hibernate.SQL: DEBUG
+  # Email (optional — enable by setting spring.mail.host)
+  # spring.mail.host: ${SMTP_HOST:}

@@ -17,6 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/otp")
 @RequiredArgsConstructor
+@Deprecated(forRemoval = false)
 public class OtpController {
 
     private final CandidateAuthService candidateAuthService;

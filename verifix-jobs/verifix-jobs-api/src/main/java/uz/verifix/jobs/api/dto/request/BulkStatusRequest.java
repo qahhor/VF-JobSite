@@ -11,7 +11,6 @@ import java.util.UUID;
 @Data
 public class BulkStatusRequest {
 
-    @NotNull
     private UUID employerId;
 
     @NotEmpty

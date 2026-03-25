@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.api.dto.request.ManagerInviteRequest;
 import uz.verifix.jobs.api.dto.request.ManagerRoleUpdateRequest;
 import uz.verifix.jobs.api.dto.response.ManagerResponse;
+import uz.verifix.jobs.api.mapper.ManagerMapper;
 import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.common.exception.ForbiddenException;
 import uz.verifix.jobs.domain.entity.Manager;
 import uz.verifix.jobs.domain.enums.ManagerRole;
-import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.service.employer.ManagerService;
 
 import java.util.List;
@@ -25,13 +25,13 @@ import java.util.UUID;
 public class ManagerController {
 
     private final ManagerService managerService;
-    private final ManagerRepository managerRepository;
+    private final ManagerMapper managerMapper;
 
     @GetMapping
     public ResponseEntity<List<ManagerResponse>> getTeam(Authentication auth) {
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         List<Manager> managers = managerService.getTeam(employerId);
-        return ResponseEntity.ok(managers.stream().map(this::toResponse).toList());
+        return ResponseEntity.ok(managers.stream().map(managerMapper::toResponse).toList());
     }
 
     @PostMapping
@@ -40,9 +40,9 @@ public class ManagerController {
             Authentication auth) {
 
         requireAdmin(auth);
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Manager manager = managerService.invite(employerId, request.getEmail(), request.getPhone(), request.getRole());
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(manager));
+        return ResponseEntity.status(HttpStatus.CREATED).body(managerMapper.toResponse(manager));
     }
 
     @PatchMapping("/{id}/role")
@@ -52,9 +52,9 @@ public class ManagerController {
             Authentication auth) {
 
         requireAdmin(auth);
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Manager manager = managerService.updateRole(id, employerId, request.getRole());
-        return ResponseEntity.ok(toResponse(manager));
+        return ResponseEntity.ok(managerMapper.toResponse(manager));
     }
 
     @DeleteMapping("/{id}")
@@ -63,25 +63,14 @@ public class ManagerController {
             Authentication auth) {
 
         requireAdmin(auth);
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         managerService.remove(id, employerId);
         return ResponseEntity.noContent().build();
     }
 
     private void requireAdmin(Authentication auth) {
-        ManagerRole role = SecurityUtils.extractRole(auth, managerRepository);
-        if (role != ManagerRole.ADMIN) {
+        if (SecurityUtils.extractRole(auth) != ManagerRole.ADMIN) {
             throw new ForbiddenException("Only ADMIN managers can perform this action");
         }
-    }
-
-    private ManagerResponse toResponse(Manager m) {
-        return ManagerResponse.builder()
-                .id(m.getId())
-                .email(m.getEmail())
-                .phone(m.getPhone())
-                .role(m.getRole().name())
-                .createdAt(m.getCreatedAt())
-                .build();
     }
 }

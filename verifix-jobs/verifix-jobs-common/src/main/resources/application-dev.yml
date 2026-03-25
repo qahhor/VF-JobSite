@@ -1,0 +1,13 @@
+logging:
+  level:
+    uz.verifix.jobs: DEBUG
+    org.hibernate.SQL: DEBUG
+
+app:
+  kafka:
+    enabled: ${KAFKA_ENABLED:false}
+  elasticsearch:
+    enabled: ${ELASTICSEARCH_ENABLED:false}
+  minio:
+    enabled: ${MINIO_ENABLED:false}
+spring.jpa.open-in-view=true

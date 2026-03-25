@@ -13,6 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import uz.verifix.jobs.domain.enums.ManagerRole;
 
 @Entity
@@ -45,6 +47,7 @@ public class Manager extends BaseEntity {
     @Column(name = "telegram_chat_id")
     private Long telegramChatId;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "push_subscription_json", columnDefinition = "jsonb")
     private String pushSubscriptionJson;
 }

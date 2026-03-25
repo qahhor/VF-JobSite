@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.api.dto.request.RejectRequest;
 import uz.verifix.jobs.api.dto.response.ModerationQueueResponse;
+import uz.verifix.jobs.api.mapper.ModerationQueueMapper;
+import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.common.dto.PageResponse;
 import uz.verifix.jobs.domain.entity.ModerationQueue;
 import uz.verifix.jobs.service.admin.AdminAuditService;
@@ -25,12 +27,13 @@ public class AdminModerationController {
 
     private final ModerationService moderationService;
     private final AdminAuditService adminAuditService;
+    private final ModerationQueueMapper moderationQueueMapper;
 
     @GetMapping("/pending")
     public ResponseEntity<PageResponse<ModerationQueueResponse>> getPending(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<ModerationQueue> page = moderationService.getPendingQueue(pageable);
-        return ResponseEntity.ok(PageResponse.of(page.map(this::toResponse)));
+        return ResponseEntity.ok(PageResponse.of(page.map(moderationQueueMapper::toResponse)));
     }
 
     @PostMapping("/{id}/approve")
@@ -39,7 +42,7 @@ public class AdminModerationController {
             Authentication auth,
             HttpServletRequest request) {
 
-        UUID adminId = UUID.fromString(auth.getName());
+        UUID adminId = SecurityUtils.extractUserId(auth);
         moderationService.approve(id, adminId);
         adminAuditService.log(adminId, "MODERATION_APPROVE", "ModerationQueue", id, null, request.getRemoteAddr());
         return ResponseEntity.ok().build();
@@ -52,22 +55,10 @@ public class AdminModerationController {
             Authentication auth,
             HttpServletRequest request) {
 
-        UUID adminId = UUID.fromString(auth.getName());
+        UUID adminId = SecurityUtils.extractUserId(auth);
         moderationService.reject(id, adminId, rejectRequest.getReason());
         adminAuditService.log(adminId, "MODERATION_REJECT", "ModerationQueue", id,
                 "{\"reason\":\"" + rejectRequest.getReason() + "\"}", request.getRemoteAddr());
         return ResponseEntity.ok().build();
-    }
-
-    private ModerationQueueResponse toResponse(ModerationQueue mq) {
-        return ModerationQueueResponse.builder()
-                .id(mq.getId())
-                .entityType(mq.getEntityType().name())
-                .entityId(mq.getEntityId())
-                .status(mq.getStatus().name())
-                .reason(mq.getReason())
-                .decidedAt(mq.getDecidedAt())
-                .createdAt(mq.getCreatedAt())
-                .build();
     }
 }

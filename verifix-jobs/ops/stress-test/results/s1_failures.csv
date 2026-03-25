@@ -1,0 +1,10 @@
+Method,Name,Error,Occurrences
+POST,/api/v1/auth/employer/register,HTTPError('400 Client Error:  for url: /api/v1/auth/employer/register'),25
+GET,/api/v1/analytics/dashboard,HTTPError('403 Client Error:  for url: /api/v1/analytics/dashboard'),46
+GET,/api/v1/applications [employer],HTTPError('403 Client Error:  for url: /api/v1/applications [employer]'),47
+POST,/api/v1/vacancies [create],HTTPError('403 Client Error:  for url: /api/v1/vacancies [create]'),6
+GET,/api/v1/employer/value-report,HTTPError('403 Client Error:  for url: /api/v1/employer/value-report'),5
+GET,/actuator/prometheus,HTTPError('500 Server Error:  for url: /actuator/prometheus'),6
+GET,/api/v1/employer/vacancy-board,HTTPError('403 Client Error:  for url: /api/v1/employer/vacancy-board'),20
+GET,/api/v1/employer/response-inbox,HTTPError('403 Client Error:  for url: /api/v1/employer/response-inbox'),19
+GET,/api/v1/intelligence/hiring/funnel,HTTPError('403 Client Error:  for url: /api/v1/intelligence/hiring/funnel'),16

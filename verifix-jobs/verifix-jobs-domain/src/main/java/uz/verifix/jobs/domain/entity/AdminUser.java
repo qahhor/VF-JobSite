@@ -33,4 +33,7 @@ public class AdminUser extends BaseEntity {
 
     @Column(name = "permissions", columnDefinition = "jsonb")
     private String permissions;
+
+    @Column(name = "totp_secret")
+    private String totpSecret;
 }

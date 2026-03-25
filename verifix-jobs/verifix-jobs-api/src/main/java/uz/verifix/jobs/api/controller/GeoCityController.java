@@ -42,7 +42,9 @@ public class GeoCityController {
                 city.getNameRu(),
                 city.getNameEn(),
                 city.getRegion(),
+                city.getDistrict(),
                 city.getCountry(),
+                city.getGeonameId(),
                 city.getLocation() != null ? city.getLocation().getY() : null,
                 city.getLocation() != null ? city.getLocation().getX() : null,
                 city.getPopulation()
@@ -50,6 +52,6 @@ public class GeoCityController {
     }
 
     record GeoCityResponse(String id, String nameUzLat, String nameRu, String nameEn,
-                            String region, String country, Double latitude, Double longitude,
-                            Integer population) {}
+                           String region, String district, String country, Long geonameId,
+                           Double latitude, Double longitude, Integer population) {}
 }

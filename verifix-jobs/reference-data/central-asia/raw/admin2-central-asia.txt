@@ -1,0 +1,633 @@
+KG.09.1222597	Leylekskiy Rayon	Leylekskiy Rayon	1222597
+KG.09.1222671	Kadamjaiskiy Raion	Kadamjaiskiy Raion	1222671
+KG.09.1222703	Batkenskiy Rayon	Batkenskiy Rayon	1222703
+KG.03.1527194	Toktogul District	Toktogul District	1527194
+KG.06.1527296	Talasskiy Rayon	Talasskiy Rayon	1527296
+KG.01.1527315	Sverdlovskiy Rayon	Sverdlovskiy Rayon	1527315
+KG.02.1527358	Sokulukskiy Rayon	Sokulukskiy Rayon	1527358
+KG.01.1527506	Pervomayskiy Rayon	Pervomayskiy Rayon	1527506
+KG.02.1527509	Panfilovskiy Rayon	Panfilovskiy Rayon	1527509
+KG.01.1527686	Leninskiy Rayon	Leninskiy Rayon	1527686
+KG.06.1527687	Bakay-Atinskiy Rayon	Bakay-Atinskiy Rayon	1527687
+KG.06.1527920	Kara-Buurinskiy Rayon	Kara-Buurinskiy Rayon	1527920
+KG.02.1527974	Keminskiy Rayon	Keminskiy Rayon	1527974
+KG.02.1528261	Ysyk-Ata	Ysyk-Ata	1528261
+KG.02.1528472	Chuyskiy Rayon	Chuyskiy Rayon	1528472
+KG.02.1528867	Alamudunskiy Rayon	Alamudunskiy Rayon	1528867
+KG.04.7649245	Ak-Tala	Ak-Tala	7649245
+KG.04.7654212	Jumgal	Jumgal	7654212
+KG.02.7667441	Moskovsky Raion	Moskovsky Raion	7667441
+KG.08.7667445	Uzgen District	Uzgen District	7667445
+KG.08.7910403	Aravan	Aravan	7910403
+KG.08.7910404	Kara-Suu	Kara-Suu	7910404
+KG.08.7910405	Nookat	Nookat	7910405
+KG.03.7910407	Suzak	Suzak	7910407
+KG.07.8046904	Tüp	Tuep	8046904
+KG.03.8139375	Aksy	Aksy	8139375
+KG.03.8139376	Chatkal	Chatkal	8139376
+KG.01.8220960	Oktyabr’skiy Rayon	Oktyabr'skiy Rayon	8220960
+KG.07.8308862	Tong	Tong	8308862
+KG.07.8357767	Ysyk-Köl	Ysyk-Koel	8357767
+KG.07.8537999	Ak-Suu	Ak-Suu	8537999
+KG.02.8739737	Jaiyl	Jaiyl	8739737
+KG.08.8739771	Alay District	Alay District	8739771
+KG.08.9165129	Kara Kulja	Kara Kulja	9165129
+KG.03.9165680	Bazar-Korgon	Bazar-Korgon	9165680
+KG.03.9165682	Ala-Buka	Ala-Buka	9165682
+KG.03.9165683	Nooken	Nooken	9165683
+KG.06.9165692	Manas	Manas	9165692
+KG.04.9165773	Kochkor	Kochkor	9165773
+KG.04.9165774	At-Bashi	At-Bashi	9165774
+KG.03.9165780	Kazarman	Kazarman	9165780
+KG.08.9192641	Chong-Alay District	Chong-Alay District	9192641
+KG.07.10237012	Jeti-Oguz District	Jeti-Oguz District	10237012
+KG.04.10237161	Naryn District	Naryn District	10237161
+KG.02.10291336	Tokmok District	Tokmok District	10291336
+KZ.07.607687	Rayon Bayterek	Rayon Bayterek	607687
+KZ.09.607726	Karakiyanskiy Rayon	Karakiyanskiy Rayon	607726
+KZ.07.607842	Bokeyordinskiy Rayon	Bokeyordinskiy Rayon	607842
+KZ.04.607866	Oyyl Aūdany	Oyyl Audany	607866
+KZ.07.608022	Terekti Aūdany	Terekti Audany	608022
+KZ.04.608031	Temir Aūdany	Temir Audany	608031
+KZ.07.608048	Taypaq Aūyldyq Okrūgi	Taypaq Auyldyq Okrugi	608048
+KZ.07.608573	Darīya Aūyldyq Okrūgi	Dariya Auyldyq Okrugi	608573
+KZ.04.608677	Temirskiy Rayon	Temirskiy Rayon	608677
+KZ.04.608707	Khromtaū Aūdany	Khromtau Audany	608707
+KZ.06.608723	Īsatay Aūdany	Isatay Audany	608723
+KZ.04.608796	Mugalzharskiy Rayon	Mugalzharskiy Rayon	608796
+KZ.04.608866	Martukskiy Rayon	Martukskiy Rayon	608866
+KZ.09.608878	Mangghystaū Aūdany	Mangghystau Audany	608878
+KZ.06.608914	Makhambetskiy Rayon	Makhambetskiy Rayon	608914
+KZ.06.608919	Makatskiy Rayon	Makatskiy Rayon	608919
+KZ.04.608948	Kargalinskiy Rayon	Kargalinskiy Rayon	608948
+KZ.06.608966	Qyzylqogha Aūdany	Qyzylqogha Audany	608966
+KZ.04.609408	Khobdinskiy Rayon	Khobdinskiy Rayon	609408
+KZ.07.609453	Kaztalov Aūdany	Kaztalov Audany	609453
+KZ.07.609541	Qaratöbe Aūdany	Qaratobe Audany	609541
+KZ.07.609717	Taskalinskiy Rayon	Taskalinskiy Rayon	609717
+KZ.04.609786	Isatayskiy Rayon	Isatayskiy Rayon	609786
+KZ.06.609795	Īnder Aūdany	Inder Audany	609795
+KZ.07.609902	Furmanovskiy Rayon	Furmanovskiy Rayon	609902
+KZ.06.609923	Zhylyoyskiy Rayon	Zhylyoyskiy Rayon	609923
+KZ.07.609952	Zhanibekskiy Rayon	Zhanibekskiy Rayon	609952
+KZ.07.609964	Zhangaqala Aūdany	Zhangaqala Audany	609964
+KZ.07.609978	Syrymskiy Rayon	Syrymskiy Rayon	609978
+KZ.06.610044	Kurmangazinskiy Rayon	Kurmangazinskiy Rayon	610044
+KZ.07.610089	Chingirlauskiy Rayon	Chingirlauskiy Rayon	610089
+KZ.04.610114	Shalkarskiy Rayon	Shalkarskiy Rayon	610114
+KZ.07.610130	Akzhaikskiy Rayon	Akzhaikskiy Rayon	610130
+KZ.07.610162	Börili Aūdany	Borili Audany	610162
+KZ.09.610297	Beyneuskiy Rayon	Beyneuskiy Rayon	610297
+KZ.04.610385	Bayganinskiy Rayon	Bayganinskiy Rayon	610385
+KZ.06.610444	Balyqshy Aūdany	Balyqshy Audany	610444
+KZ.04.610656	Algha Aūdany	Algha Audany	610656
+KZ.07.610685	Aqzhayyq Aūdany	Aqzhayyq Audany	610685
+KZ.04.610687	Aqtöbe Aūdany	Aqtobe Audany	610687
+KZ.07.828320	Ural’sk Gorodskaya Administratsiya	Ural'sk Gorodskaya Administratsiya	828320
+KZ.06.828321	Atyrau Gorodskaya Administratsiya	Atyrau Gorodskaya Administratsiya	828321
+KZ.09.828323	Tupkaraganskiy Rayon	Tupkaraganskiy Rayon	828323
+KZ.09.828324	Aktau Gorodskaya Administratsiya	Aktau Gorodskaya Administratsiya	828324
+KZ.09.828325	Zhanaozen Gorodskaya Administratsiya	Zhanaozen Gorodskaya Administratsiya	828325
+KZ.04.828331	Aktobe Gorodskaya Administratsiya	Aktobe Gorodskaya Administratsiya	828331
+KZ.15.1516437	Rayon Altay	Rayon Altay	1516437
+KZ.11.1516632	Zhelezinskiy Rayon	Zhelezinskiy Rayon	1516632
+KZ.15.1516713	Zharma Aūdany	Zharma Audany	1516713
+KZ.12510143.1516846	Semey Gorodskaya Administratsiya	Semey Gorodskaya Administratsiya	1516846
+KZ.03.1516873	Zhanadalinskiy Rayon	Zhanadalinskiy Rayon	1516873
+KZ.12510145.1516894	Zhangaarqa Aūdany	Zhangaarqa Audany	1516894
+KZ.03.1517012	Zhaksy	Zhaksy	1517012
+KZ.03.1517044	Zerendi	Zerendi	1517044
+KZ.15.1517057	Zaysanskiy Rayon	Zaysanskiy Rayon	1517057
+KZ.03.1517166	Esil	Esil	1517166
+KZ.03.1517189	Ereymentau	Ereymentau	1517189
+KZ.11.1517194	Aksu Gorodskaya Administratsiya	Aksu Gorodskaya Administratsiya	1517194
+KZ.12.1517288	Qazybek Bī Aūdany	Qazybek Bi Audany	1517288
+KZ.14.1517322	Zhanokorganskiy Rayon	Zhanokorganskiy Rayon	1517322
+KZ.16.1517353	Vozvyshenka Aūdany	Vozvyshenka Audany	1517353
+KZ.16.1517412	Ayyrtauskiy Rayon	Ayyrtauskiy Rayon	1517412
+KZ.03.1517439	Arshaly	Arshaly	1517439
+KZ.16.1517502	Ūälīkhanov Aūdany	Ualikhanov Audany	1517502
+KZ.01.1517577	Uygurskiy Rayon	Uygurskiy Rayon	1517577
+KZ.11.1517619	Uspenskiy Rayon	Uspenskiy Rayon	1517619
+KZ.13.1517715	Saryköl Aūdany	Sarykol Audany	1517715
+KZ.12510143.1517718	Urdzharskiy Rayon	Urdzharskiy Rayon	1517718
+KZ.12510145.1517740	Ulytaū Aūdany	Ulytau Audany	1517740
+KZ.11.1517745	Bukhar Zhyrauskiy Rayon	Bukhar Zhyrauskiy Rayon	1517745
+KZ.15.1517810	Ulan Aūdany	Ulan Audany	1517810
+KZ.10.1517878	Tyul’kubasskiy Rayon	Tyul'kubasskiy Rayon	1517878
+KZ.10.1517946	Turkestan Gorodskaya Administratsiya	Turkestan Gorodskaya Administratsiya	1517946
+KZ.03.1518002	Tselinograd	Tselinograd	1518002
+KZ.16.1518161	Timiryazevskiy Rayon	Timiryazevskiy Rayon	1518161
+KZ.14.1518202	Terengözek Aūdany	Terengoezek Audany	1518202
+KZ.12.1518252	Tengiz Aūdany	Tengiz Audany	1518252
+KZ.12.1518281	Tel’man Aūdany	Tel'man Audany	1518281
+KZ.15.1518334	Tavricheskiy Rayon	Tavricheskiy Rayon	1518334
+KZ.15.1518415	Taskesken Aūdany	Taskesken Audany	1518415
+KZ.15.1518456	Tarbagatayskiy Rayon	Tarbagatayskiy Rayon	1518456
+KZ.13.1518463	Rayon Beimbeta Maylina	Rayon Beimbeta Maylina	1518463
+KZ.01.1518519	Talgarskiy Rayon	Talgarskiy Rayon	1518519
+KZ.12510144.1518545	Eskeldi Aūdany	Eskeldi Audany	1518545
+KZ.17.1518589	Talas Aūdany	Talas Audany	1518589
+KZ.14.1518650	Syrdar’inskiy Rayon	Syrdar'inskiy Rayon	1518650
+KZ.17.1518673	Bayzakskiy Rayon	Bayzakskiy Rayon	1518673
+KZ.10.1518678	Suzakskiy Rayon	Suzakskiy Rayon	1518678
+KZ.16.1518835	Akkayynskiy Rayon	Akkayynskiy Rayon	1518835
+KZ.16.1518912	Sokolovka Aūdany	Sokolovka Audany	1518912
+KZ.03.1519052	Shortandy	Shortandy	1519052
+KZ.12.1519197	Shet Aūdany	Shet Audany	1519197
+KZ.15.1519224	Shemonaikhinskiy Rayon	Shemonaikhinskiy Rayon	1519224
+KZ.03.1519241	Burabay	Burabay	1519241
+KZ.11.1519247	Shcherbaktinskiy Rayon	Shcherbaktinskiy Rayon	1519247
+KZ.16.1519383	Rayon Shal Akyna	Rayon Shal Akyna	1519383
+KZ.13.1519416	Semiozërnyy Rayon	Semiozernyy Rayon	1519416
+KZ.03.1519433	Sileti Aūdany	Sileti Audany	1519433
+KZ.10.1519452	Sayram Aūdany	Sayram Audany	1519452
+KZ.17.1519552	Sarysū Aūdany	Sarysu Audany	1519552
+KZ.10.1519675	Saryagachskiy Rayon	Saryagachskiy Rayon	1519675
+KZ.12510144.1519704	Sarkandskiy Rayon	Sarkandskiy Rayon	1519704
+KZ.15.1519757	Samarskoe Aūdany	Samarskoe Audany	1519757
+KZ.16.1519834	Rūzaevka Aūdany	Ruzaevka Audany	1519834
+KZ.16.1520047	Presnov Aūyldyq Okrūgi	Presnov Auyldyq Okrugi	1520047
+KZ.11.1520238	Pavlodarskiy Rayon	Pavlodarskiy Rayon	1520238
+KZ.12510144.1520251	Panfilovskiy Rayon	Panfilovskiy Rayon	1520251
+KZ.10.1520258	Maktaaral’skiy Rayon	Maktaaral'skiy Rayon	1520258
+KZ.12.1520325	Osakarovskiy Rayon	Osakarovskiy Rayon	1520325
+KZ.13.1520378	Denisovskiy Rayon	Denisovskiy Rayon	1520378
+KZ.12.1520497	Nurinskiy Rayon	Nurinskiy Rayon	1520497
+KZ.15.1520548	Novoshūl’ba Aūdany	Novoshul'ba Audany	1520548
+KZ.13.1520735	Naurzumskiy Rayon	Naurzumskiy Rayon	1520735
+KZ.01.1520746	Rayymbek Aūdany	Rayymbek Audany	1520746
+KZ.17.1520845	Moyynkumskiy Rayon	Moyynkumskiy Rayon	1520845
+KZ.16.1520854	Moskovskiy Rayon	Moskovskiy Rayon	1520854
+KZ.12.1520873	Molodezhnyy Aūdany	Molodezhnyy Audany	1520873
+KZ.12.1520952	Abayskiy Rayon	Abayskiy Rayon	1520952
+KZ.17.1520965	Merke Aūdany	Merke Audany	1520965
+KZ.11.1521012	Mayskiy Rayon	Mayskiy Rayon	1521012
+KZ.15.1521109	Marqaköl Aūdany	Marqakol Audany	1521109
+KZ.16.1521151	Mamlyutskiy Rayon	Mamlyutskiy Rayon	1521151
+KZ.03.1521227	Bulandy	Bulandy	1521227
+KZ.15.1521244	Maqanshy Aūdany	Maqanshy Audany	1521244
+KZ.17.1521288	Rayon Turara Ryskulova	Rayon Turara Ryskulova	1521288
+KZ.16.1521352	Esil District	Esil District	1521352
+KZ.10.1521354	Kazygurtskiy Rayon	Kazygurtskiy Rayon	1521354
+KZ.13.1521358	Uzynköl Aūdany	Uzynkol Audany	1521358
+KZ.16.1521375	Lenīngrad Aūdany	Leningrad Audany	1521375
+KZ.10.1521378	Tolebiyskiy Rayon	Tolebiyskiy Rayon	1521378
+KZ.11.1521382	Akkulinskiy Rayon	Akkulinskiy Rayon	1521382
+KZ.16.1521400	Qyzyltū Aūdany	Qyzyltu Audany	1521400
+KZ.10.1521407	Otrarskiy Rayon	Otrarskiy Rayon	1521407
+KZ.16.1521634	Rayon Imeni Gabita Musrepova	Rayon Imeni Gabita Musrepova	1521634
+KZ.13.1521667	Kostanayskiy Rayon	Kostanayskiy Rayon	1521667
+KZ.02.1521711	Kurtinskiy Rayon	Kurtinskiy Rayon	1521711
+KZ.03.1521748	Korgalzhyn	Korgalzhyn	1521748
+KZ.17.1521754	Kordayskiy Rayon	Kordayskiy Rayon	1521754
+KZ.15.1521759	Kurchumskiy Rayon	Kurchumskiy Rayon	1521759
+KZ.03.1521995	Egindikol	Egindikol	1521995
+KZ.11.1522019	Aktogayskiy Rayon	Aktogayskiy Rayon	1522019
+KZ.16.1522032	Tayynshinskiy Rayon	Tayynshinskiy Rayon	1522032
+KZ.13.1522333	Karabalykskiy Rayon	Karabalykskiy Rayon	1522333
+KZ.04.1522334	Bögetköl Aūdany	Bogetkol Audany	1522334
+KZ.12510143.1522504	Kokpektinskiy Rayon	Kokpektinskiy Rayon	1522504
+KZ.03.1522531	Kokshetau Gorodskaya Adminstratsiya	Kokshetau Gorodskaya Adminstratsiya	1522531
+KZ.03.1522599	Qīma Aūdany	Qima Audany	1522599
+KZ.12510144.1522636	Koksuskiy Rayon	Koksuskiy Rayon	1522636
+KZ.10.1522640	Kirovskiy Rayon	Kirovskiy Rayon	1522640
+KZ.12510144.1522739	Kerbulakskiy Rayon	Kerbulakskiy Rayon	1522739
+KZ.16.1522808	Kellerovka Aūdany	Kellerovka Audany	1522808
+KZ.10.1522812	Kelesskiy Rayon	Kelesskiy Rayon	1522812
+KZ.01.1522816	Kegenskiy Rayon	Kegenskiy Rayon	1522816
+KZ.14.1522859	Kazalinskiy Rayon	Kazalinskiy Rayon	1522859
+KZ.15.1522926	Katon-Karagayskiy Rayon	Katon-Karagayskiy Rayon	1522926
+KZ.02.1522943	Qaskeleng Aūdany	Qaskeleng Audany	1522943
+KZ.14.1522998	Karmakshinskiy Rayon	Karmakshinskiy Rayon	1522998
+KZ.12.1523004	Karkaralinskiy Rayon	Karkaralinskiy Rayon	1523004
+KZ.12510144.1523101	Karatal’skiy Rayon	Karatal'skiy Rayon	1523101
+KZ.13.1523115	Qarasū Aūdany	Qarasu Audany	1523115
+KZ.04.1523423	Aytekebiyskiy Rayon	Aytekebiyskiy Rayon	1523423
+KZ.12510144.1523500	Qapal Aūdany	Qapal Audany	1523500
+KZ.13.1523544	Kamystinskiy Rayon	Kamystinskiy Rayon	1523544
+KZ.11.1523663	Terengköl Aūdany	Terengkol Audany	1523663
+KZ.11.1523767	Irtyshskiy Rayon	Irtyshskiy Rayon	1523767
+KZ.04.1523782	Irgizskiy Rayon	Irgizskiy Rayon	1523782
+KZ.02.1524128	Iliyskiy Rayon	Iliyskiy Rayon	1524128
+KZ.12510144.1524156	Kogalinskiy Sel'skiy Okrug	Kogalinskiy Sel'skiy Okrug	1524156
+KZ.15.1524226	Glubokovskiy Rayon	Glubokovskiy Rayon	1524226
+KZ.13.1524278	Fëdorovskiy Rayon	Fedorovskiy Rayon	1524278
+KZ.03.1524313	Birzhan sal	Birzhan sal	1524313
+KZ.02.1524315	Engbekshiqazaq Aūdany	Engbekshiqazaq Audany	1524315
+KZ.11.1524322	Ekibastuz Gorodskaya Administratsiya	Ekibastuz Gorodskaya Administratsiya	1524322
+KZ.17.1524333	Zhūaly Aūdany	Zhualy Audany	1524333
+KZ.12.1524382	Zhezdi Aūdany	Zhezdi Audany	1524382
+KZ.10.1524384	Zhetisayskiy Rayon	Zhetisayskiy Rayon	1524384
+KZ.13.1524425	Zhangeldīn Aūdany	Zhangeldin Audany	1524425
+KZ.01.1524438	Zhambylskiy Rayon	Zhambylskiy Rayon	1524438
+KZ.17.1524439	Zhambylskiy Rayon	Zhambylskiy Rayon	1524439
+KZ.16.1524440	Zhambylskiy Rayon	Zhambylskiy Rayon	1524440
+KZ.14.1524477	Zhalaghash Aūdany	Zhalaghash Audany	1524477
+KZ.03.1524603	Zharkain	Zharkain	1524603
+KZ.17.1524678	Shū Aūdany	Shu Audany	1524678
+KZ.15.1524717	Chubartauskiy Rayon	Chubartauskiy Rayon	1524717
+KZ.16.1524749	Chkalov Aūdany	Chkalov Audany	1524749
+KZ.16.1524766	Chīstopol’e Aūdany	Chistopol'e Audany	1524766
+KZ.02.1524792	Shelek Aūdany	Shelek Audany	1524792
+KZ.14.1524798	Shīeli Aūdany	Shieli Audany	1524798
+KZ.15.1524882	Shar Aūdany	Shar Audany	1524882
+KZ.10.1524885	Shardarinskiy Rayon	Shardarinskiy Rayon	1524885
+KZ.12510144.1524969	Lepsinskiy Sel'skiy Okrug	Lepsinskiy Sel'skiy Okrug	1524969
+KZ.16.1525010	Rayon Magzhana Zhumabayeva	Rayon Magzhana Zhumabayeva	1525010
+KZ.10.1525042	Ordabasy Aūdany	Ordabasy Audany	1525042
+KZ.13.1525120	Mendykarinskiy Rayon	Mendykarinskiy Rayon	1525120
+KZ.12510143.1525133	Borodulikhinskiy Rayon	Borodulikhinskiy Rayon	1525133
+KZ.15.1525198	Ülkennaryn Aūdany	Ulkennaryn Audany	1525198
+KZ.16.1525293	Qyzylzhar Aūdany	Qyzylzhar Audany	1525293
+KZ.12510143.1525406	Beskaragayskiy Rayon	Beskaragayskiy Rayon	1525406
+KZ.11.1525651	Bayanaul’skiy Rayon	Bayanaul'skiy Rayon	1525651
+KZ.02.1525804	Balqash Aūdany	Balqash Audany	1525804
+KZ.03.1525806	Sandyktau	Sandyktau	1525806
+KZ.12510143.1525986	Ayagoz Gorodskaya Administratsiya	Ayagoz Gorodskaya Administratsiya	1525986
+KZ.02.1526020	Auezovskiy Rayon	Auezovskiy Rayon	1526020
+KZ.03.1526033	Atbasar	Atbasar	1526033
+KZ.03.1526056	Astrakhan	Astrakhan	1526056
+KZ.16.1526177	Aryqbalyq Aūdany	Aryqbalyq Audany	1526177
+KZ.13.1526209	Arqalyq Qalalyq Äkimshiligi	Arqalyq Qalalyq Akimshiligi	1526209
+KZ.14.1526248	Aral’skiy Rayon	Aral'skiy Rayon	1526248
+KZ.12510144.1526298	Kabanbayskiy Sel'skiy Okrug	Kabanbayskiy Sel'skiy Okrug	1526298
+KZ.13.1526321	Amantoghay Aūdany	Amantoghay Audany	1526321
+KZ.13.1526340	Amangeldi Aūdany	Amangeldi Audany	1526340
+KZ.10.1526412	Rayon Baydibeka	Rayon Baydibeka	1526412
+KZ.03.1526436	Akkol	Akkol	1526436
+KZ.01.1526489	Alakol District	Alakol District	1526489
+KZ.12.1526570	Aktogayskiy Rayon	Aktogayskiy Rayon	1526570
+KZ.12510144.1526631	Aksuskiy Rayon	Aksuskiy Rayon	1526631
+KZ.15.1526637	Aqsūat Aūdany	Aqsuat Audany	1526637
+KZ.12.1526940	Agadyrskiy Rayon	Agadyrskiy Rayon	1526940
+KZ.12510143.1526967	Abayskiy Rayon	Abayskiy Rayon	1526967
+KZ.13.1537245	Altynsarinskiy Rayon	Altynsarinskiy Rayon	1537245
+KZ.13.1537246	Kostanay Gorodskaya Administratsiya	Kostanay Gorodskaya Administratsiya	1537246
+KZ.13.1537247	Zhitiqara Qalalyq Äkimdigi	Zhitiqara Qalalyq Akimdigi	1537247
+KZ.13.1537248	Lisakovsk Gorodskaya Administratsiya	Lisakovsk Gorodskaya Administratsiya	1537248
+KZ.13.1537249	Rudniy Gorodskaya Administratsiya	Rudniy Gorodskaya Administratsiya	1537249
+KZ.13.1537251	Oktyabr’ Aūdany	Oktyabr' Audany	1537251
+KZ.12.1537252	Toqyraūyn Aūdany	Toqyrauyn Audany	1537252
+KZ.12510145.1537254	Zhezkazgan Gorodskaya Administratsiya	Zhezkazgan Gorodskaya Administratsiya	1537254
+KZ.12.1537255	Balkhash Gorodskaya Administratsiya	Balkhash Gorodskaya Administratsiya	1537255
+KZ.12510145.1537256	Karazhal Gorodskaya Administratsiya	Karazhal Gorodskaya Administratsiya	1537256
+KZ.12510145.1537257	Satpayev Gorodskaya Administratsiya	Satpayev Gorodskaya Administratsiya	1537257
+KZ.03.1537265	Stepnogorsk Gorodskaya Administratsiya	Stepnogorsk Gorodskaya Administratsiya	1537265
+KZ.12.1537266	Karaganda Gorodskaya Administratsiya	Karaganda Gorodskaya Administratsiya	1537266
+KZ.12.1537267	Abay Qalasy	Abay Qalasy	1537267
+KZ.12.1537268	Saran’ Gorodskaya Administratsiya	Saran' Gorodskaya Administratsiya	1537268
+KZ.12.1537269	Temirtau Gorodskaya Administratsiya	Temirtau Gorodskaya Administratsiya	1537269
+KZ.12.1537270	Shakhtinsk Gorodskaya Administratsiya	Shakhtinsk Gorodskaya Administratsiya	1537270
+KZ.10.1537271	Arys Qalalyq Äkimshiligi	Arys Qalalyq Akimshiligi	1537271
+KZ.10.1537273	Arys Qalasy	Arys Qalasy	1537273
+KZ.10.1537274	Kentau Gorodskaya Administratsiya	Kentau Gorodskaya Administratsiya	1537274
+KZ.10.1537276	Türkistan Qalasy	Tuerkistan Qalasy	1537276
+KZ.17.1537277	Taraz Gorodskaya Administratsiya	Taraz Gorodskaya Administratsiya	1537277
+KZ.17.1537278	Zhangatas Qalasy	Zhangatas Qalasy	1537278
+KZ.17.1537279	Qarataū Qalasy	Qaratau Qalasy	1537279
+KZ.17.1537280	Shū Qalasy	Shu Qalasy	1537280
+KZ.01.1537281	Kapshagay city	Kapshagay city	1537281
+KZ.02.1537282	Talghar Qalasy	Talghar Qalasy	1537282
+KZ.01.1537283	Taldyqorghan Qalasy	Taldyqorghan Qalasy	1537283
+KZ.12510144.1537284	Tekeli Gorodskaya Administratsiya	Tekeli Gorodskaya Administratsiya	1537284
+KZ.15.1537285	Semey Qalasy	Semey Qalasy	1537285
+KZ.15.1537286	Öskemen Qalalyq Äkimshiligi	Oskemen Qalalyq Akimshiligi	1537286
+KZ.15.1537288	Ridder Gorodskaya Administratsiya	Ridder Gorodskaya Administratsiya	1537288
+KZ.15.1537289	Serebryansk Qalasy	Serebryansk Qalasy	1537289
+KZ.11.1537290	Pavlodar Gorodskaya Administratsiya	Pavlodar Gorodskaya Administratsiya	1537290
+KZ.11.1537292	Ekibastuz Qalasy	Ekibastuz Qalasy	1537292
+KZ.15.1537309	Abralinskiy Rayon	Abralinskiy Rayon	1537309
+KZ.10.8739752	Kazygurt District	Kazygurt District	8739752
+KZ.17.8739769	Bayzak District	Bayzak District	8739769
+KZ.17.8739777	Korday	Korday	8739777
+KZ.12.9072845	Bukhar-Zhyrau	Bukhar-Zhyrau	9072845
+KZ.09.11886715	Munaily	Munaily	11886715
+KZ.06.11886716	Zhylyoi	Zhylyoi	11886716
+KZ.06.11886717	Kyzylkoga	Kyzylkoga	11886717
+KZ.01.11886905	Karasay	Karasay	11886905
+KZ.03.12474018	Petropavlovsk Gorodskaya Administratsiya	Petropavlovsk Gorodskaya Administratsiya	12474018
+KZ.05.12482487	Almatinskiy Rayon	Almatinskiy Rayon	12482487
+KZ.05.12482488	Esil Aūdany	Esil Audany	12482488
+KZ.05.12482489	Saryarkinskiy Rayon	Saryarkinskiy Rayon	12482489
+KZ.05.12482490	Baykonurskiy Rayon	Baykonurskiy Rayon	12482490
+KZ.12510143.12483022	Kurchatov Gorodskaya Administratsiya	Kurchatov Gorodskaya Administratsiya	12483022
+KZ.12510143.12483025	Ayagozskiy Rayon	Ayagozskiy Rayon	12483025
+KZ.15.12485887	Zaysanskaya Gorodskaya Administratsiya	Zaysanskaya Gorodskaya Administratsiya	12485887
+KZ.1537272.12518735	Karatauskiy Rayon	Karatauskiy Rayon	12518735
+KZ.10.12518736	Rayon Sauran	Rayon Sauran	12518736
+KZ.02.12522073	Nauryzbayskiy Rayon	Nauryzbayskiy Rayon	12522073
+KZ.13.12526813	Auliyekol’skiy Rayon	Auliyekol'skiy Rayon	12526813
+KZ.12510144.12530101	Taldykorgan Gorodskaya Administratsiya	Taldykorgan Gorodskaya Administratsiya	12530101
+KZ.14.12530995	Kyzylorda Gorodskaya Administratsiya	Kyzylorda Gorodskaya Administratsiya	12530995
+KZ.01.12533979	Karasayskiy Rayon	Karasayskiy Rayon	12533979
+KZ.03.12539745	Kosshy Gorodskaya Administratsiya	Kosshy Gorodskaya Administratsiya	12539745
+TJ.RR.1220012	Tursunzoda District	Tursunzoda District	1220012
+TJ.04.1220048	Zheleznodorozhnyy Rayon	Zheleznodorozhnyy Rayon	1220048
+TJ.02.1220107	Yavanskiy Rayon	Yavanskiy Rayon	1220107
+TJ.01.1220206	Vanchskiy Rayon	Vanchskiy Rayon	1220206
+TJ.04.1220319	Tsentral’nyy Rayon	Tsentral'nyy Rayon	1220319
+TJ.02.1220445	Sovetskiy Rayon	Sovetskiy Rayon	1220445
+TJ.03.1220797	Pendzhikentskiy Rayon	Pendzhikentskiy Rayon	1220797
+TJ.RR.1220854	Vahdat District	Vahdat District	1220854
+TJ.04.1220859	Oktyabr’skiy Rayon	Oktyabr'skiy Rayon	1220859
+TJ.RR.1221088	Rudaki District	Rudaki District	1221088
+TJ.02.1221090	Muminobodskiy Rayon	Muminobodskiy Rayon	1221090
+TJ.RR.1221249	Nurobod District	Nurobod District	1221249
+TJ.02.1221253	Bokhtarskiy Rayon	Bokhtarskiy Rayon	1221253
+TJ.02.1221320	Khovalingskiy Rayon	Khovalingskiy Rayon	1221320
+TJ.01.1221558	Darvozskiy Rayon	Darvozskiy Rayon	1221558
+TJ.02.1221646	Gozimalikskiy Rayon	Gozimalikskiy Rayon	1221646
+TJ.04.1221873	Dushanbe	Dushanbe	1221873
+TJ.03.1222220	Ayninskiy Rayon	Ayninskiy Rayon	1222220
+TJ.03.1514816	Nohiyai Zafarobod	Nohiyai Zafarobod	1514816
+TJ.03.1514880	Khodzhentskiy Rayon	Khodzhentskiy Rayon	1514880
+TJ.RR.7669227	Tojikobod District	Tojikobod District	7669227
+TJ.03.7669228	Kuhistoni Mastchohskiy	Kuhistoni Mastchohskiy	7669228
+TJ.RR.7669385	Shahrinaw District	Shahrinaw District	7669385
+TJ.RR.7669387	Rogunsky rayon	Rogunsky rayon	7669387
+TJ.RR.7669388	Varzob District	Varzob District	7669388
+TJ.RR.7670495	Tavildara	Tavildara	7670495
+TJ.02.7670506	Shuro-obod District	Shuro-obod District	7670506
+TJ.03.7670512	Shahriston District	Shahriston District	7670512
+TJ.01.7670513	Roshtqal'a District	Roshtqal'a District	7670513
+TJ.02.7670570	Norak	Norak	7670570
+TJ.02.7798497	Qumsangir District	Qumsangir District	7798497
+TJ.03.8209859	Nohiyai Mastchoh	Nohiyai Mastchoh	8209859
+TJ.03.8209860	Nohiyai Bobojon Ghafurov	Nohiyai Bobojon Ghafurov	8209860
+TJ.03.8213083	Nohiyai Asht	Nohiyai Asht	8213083
+TJ.03.8213699	Nohiyai Konibodom	Nohiyai Konibodom	8213699
+TJ.03.8213700	Nohiyai Isfara	Nohiyai Isfara	8213700
+TJ.03.8213796	Nohiyai Jabbor Rasulov	Nohiyai Jabbor Rasulov	8213796
+TJ.03.8216026	Nohiyai Spitamen	Nohiyai Spitamen	8216026
+TJ.03.8216028	Istaravshan District	Istaravshan District	8216028
+TJ.03.8216029	Nohiyai Ghonchí	Nohiyai Ghonchi	8216029
+TJ.03.8216045	Nohiyai Ayni	Nohiyai Ayni	8216045
+TJ.03.8216066	Nohiyai Panjakent	Nohiyai Panjakent	8216066
+TJ.01.8217321	Nohiyai Vanj	Nohiyai Vanj	8217321
+TJ.01.8220895	Nohiyai Darvoz	Nohiyai Darvoz	8220895
+TJ.01.8220896	Nohiyai Ishqoshim	Nohiyai Ishqoshim	8220896
+TJ.01.8220897	Nohiyai Murghob	Nohiyai Murghob	8220897
+TJ.01.8220920	Nohiyai Rŭshon	Nohiyai Rushon	8220920
+TJ.01.8220923	Nohiyai Shughnon	Nohiyai Shughnon	8220923
+TJ.02.8220956	Nohiyai Abdurahmoni Jomí	Nohiyai Abdurahmoni Jomi	8220956
+TJ.02.8220957	Nohiyai Baljuvon	Nohiyai Baljuvon	8220957
+TJ.02.8220958	Nohiyai Kushoniyon	Nohiyai Kushoniyon	8220958
+TJ.02.8220959	Nohiyai Vakhsh	Nohiyai Vakhsh	8220959
+TJ.02.8221033	Nohiyai Vose’	Nohiyai Vose'	8221033
+TJ.02.8221235	Nohiyai Danghara	Nohiyai Danghara	8221235
+TJ.02.8221240	Nohiyai Yovon	Nohiyai Yovon	8221240
+TJ.02.8221250	Nohiyai Kolkhozobod	Nohiyai Kolkhozobod	8221250
+TJ.02.8221255	Nohiyai Qubodiyon	Nohiyai Qubodiyon	8221255
+TJ.02.8221261	Nohiyai Kŭlob	Nohiyai Kulob	8221261
+TJ.02.8221269	Nohiyai Mŭ’minobod	Nohiyai Mu'minobod	8221269
+TJ.02.8221272	Nohiyai Nosiri Khusrav	Nohiyai Nosiri Khusrav	8221272
+TJ.02.8221276	Nohiyai Panj	Nohiyai Panj	8221276
+TJ.02.8221279	Nohiyai Sarband	Nohiyai Sarband	8221279
+TJ.02.8221283	Nohiyai Temurmalik	Nohiyai Temurmalik	8221283
+TJ.02.8221284	Nohiyai Farkhor	Nohiyai Farkhor	8221284
+TJ.02.8221285	Nohiyai Khovaling	Nohiyai Khovaling	8221285
+TJ.02.8221286	Nohiyai Khuroson	Nohiyai Khuroson	8221286
+TJ.02.8221287	Nohiyai Hamadoní	Nohiyai Hamadoni	8221287
+TJ.02.8221288	Nohiyai Jilikŭl	Nohiyai Jilikul	8221288
+TJ.02.8221292	Nohiyai Shahritus	Nohiyai Shahritus	8221292
+TJ.RR.8238328	Nohiyai Rasht	Nohiyai Rasht	8238328
+TJ.RR.8238355	Nohiyai Hisor	Nohiyai Hisor	8238355
+TJ.RR.8238358	Jirgatol	Jirgatol	8238358
+TJ.RR.8238387	Nohiyai Rūdakí	Nohiyai Rudaki	8238387
+TJ.RR.8714387	Faizobod District	Faizobod District	8714387
+TM.05.1218305	Tagtabazar Etrap	Tagtabazar Etrap	1218305
+TM.05.1218742	Guşgy Etrap	Gusgy Etrap	1218742
+TM.01.11189155	Baharly District	Baharly District	11189155
+TM.03.11820056	Akdepe District	Akdepe District	11820056
+TM.05.13526664	Mary District	Mary District	13526664
+TM.05.13526677	Baýramaly District	Bayramaly District	13526677
+TM.05.13526678	Garagum District	Garagum District	13526678
+TM.05.13526679	Murgap District	Murgap District	13526679
+TM.05.13526680	Sakarçäge District	Sakarcaege District	13526680
+TM.05.13526681	Ýolöten District	Yoloeten District	13526681
+TM.05.13526682	Wekilbazar District	Wekilbazar District	13526682
+TM.03.13526879	Gubadag District	Gubadag District	13526879
+TM.04.13526881	Saýat District	Sayat District	13526881
+TM.05.13526882	Türkmengala District	Tuerkmengala District	13526882
+UZ.09.601276	Shumanay Tumani	Shumanay Tumani	601276
+UZ.09.601292	Nukus Tumani	Nukus Tumani	601292
+UZ.09.601301	Mo’ynoq Tumani	Mo'ynoq Tumani	601301
+UZ.09.601309	Qanliko‘l Tumani	Qanliko'l Tumani	601309
+UZ.09.601322	Qo‘ng‘irot Tumani	Qo'ng'irot Tumani	601322
+UZ.09.601340	Xo‘jayli Tumani	Xo'jayli Tumani	601340
+UZ.09.601347	Kegeyli Tumani	Kegeyli Tumani	601347
+UZ.09.601394	Chimboy Tumani	Chimboy Tumani	601394
+UZ.09.601398	Bo‘zatov Tumani	Bo`zatov Tumani	601398
+UZ.15.1215692	Zomin Tumani	Zomin Tumani	1215692
+UZ.08.1215766	Yakkabog‘ Tumani	Yakkabog' Tumani	1215766
+UZ.02.1215788	Vobkent Tumani	Vobkent Tumani	1215788
+UZ.08.1215811	Usmon Yusupov Tumani	Usmon Yusupov Tumani	1215811
+UZ.10.1215838	Urgut Tumani	Urgut Tumani	1215838
+UZ.08.1215855	Kasbi Tumani	Kasbi Tumani	1215855
+UZ.02.1215958	Termiz Tumani	Termiz Tumani	1215958
+UZ.02.1216048	Jondor Tumani	Jondor Tumani	1216048
+UZ.10.1216079	Nurobod Tumani	Nurobod Tumani	1216079
+UZ.12.1216113	Sho‘rchi Tumani	Sho'rchi Tumani	1216113
+UZ.12.1216154	Sherobod Tumani	Sherobod Tumani	1216154
+UZ.08.1216186	Shahrisabz Tumani	Shahrisabz Tumani	1216186
+UZ.12.1216243	Sariosiyo Tumani	Sariosiyo Tumani	1216243
+UZ.10.1216266	Samarqand Tumani	Samarqand Tumani	1216266
+UZ.02.1216289	Romiton Tumani	Romiton Tumani	1216289
+UZ.10.1216337	Payariq Tumani	Payariq Tumani	1216337
+UZ.10.1216341	Pastdarg‘om Tumani	Pastdarg`om Tumani	1216341
+UZ.10.1216354	Paxtachi Tumani	Paxtachi Tumani	1216354
+UZ.08.1216399	Nishon Tumani	Nishon Tumani	1216399
+UZ.10.1216429	Narpay Tumani	Narpay Tumani	1216429
+UZ.08.1216474	Muborak Tumani	Muborak Tumani	1216474
+UZ.12.1216571	Qiziriq Tumani	Qiziriq Tumani	1216571
+UZ.07.1216582	Qiziltepa Tumani	Qiziltepa Tumani	1216582
+UZ.12.1216685	Qumqŭrghon Tumani	Qumqurghon Tumani	1216685
+UZ.08.1216786	Kitob Tumani	Kitob Tumani	1216786
+UZ.10.1216987	Kattaqo‘rg‘on Tumani	Kattaqo`rg`on Tumani	1216987
+UZ.08.1217005	Koson Tumani	Koson Tumani	1217005
+UZ.08.1217013	Qarshi Tumani	Qarshi Tumani	1217013
+UZ.02.1217081	Qorakŭl Tumani	Qorakul Tumani	1217081
+UZ.08.1217142	Qamashi Tumani	Qamashi Tumani	1217142
+UZ.02.1217179	Kogon Tumani	Kogon Tumani	1217179
+UZ.10.1217214	Ishtixon Tumani	Ishtixon Tumani	1217214
+UZ.08.1217259	G‘uzor Tumani	G`uzor Tumani	1217259
+UZ.15.1217334	G‘allaorol Tumani	G`allaorol Tumani	1217334
+UZ.12.1217341	Muzrabod Tumani	Muzrabod Tumani	1217341
+UZ.12.1217391	Jarqo‘rg‘on Tumani	Jarqo`rg`on Tumani	1217391
+UZ.10.1217412	Jomboy Tumani	Jomboy Tumani	1217412
+UZ.12.1217476	Denov Tumani	Denov Tumani	1217476
+UZ.08.1217479	Dehqonobod Tumani	Dehqonobod Tumani	1217479
+UZ.08.1217538	Chiroqchi Tumani	Chiroqchi Tumani	1217538
+UZ.10.1217655	Bulung‘ur Tumani	Bulung`ur Tumani	1217655
+UZ.02.1217663	Bukhoro Tumani	Bukhoro Tumani	1217663
+UZ.12.1217733	Boysun Tumani	Boysun Tumani	1217733
+UZ.15.1217778	Baxmal Tumani	Baxmal Tumani	1217778
+UZ.12.1217872	Angor Tumani	Angor Tumani	1217872
+UZ.12.1217894	Oltinsoy Tumani	Oltinsoy Tumani	1217894
+UZ.02.1217905	Olot Tumani	Olot Tumani	1217905
+UZ.10.1217960	Oqdaryo Tumani	Oqdaryo Tumani	1217960
+UZ.02.1346433	Qorovulbozor Tumani	Qorovulbozor Tumani	1346433
+UZ.02.1346437	Kogon Shahri	Kogon Shahri	1346437
+UZ.10.1346451	Chelak Tumani	Chelak Tumani	1346451
+UZ.10.1346455	Go`zalkent Tumani	Go`zalkent Tumani	1346455
+UZ.10.1346462	Toyloq Tumani	Toyloq Tumani	1346462
+UZ.10.1346463	Samarqand Shahri	Samarqand Shahri	1346463
+UZ.10.1346465	Oqtosh Shahri	Oqtosh Shahri	1346465
+UZ.10.1346467	Urgut Shahri	Urgut Shahri	1346467
+UZ.08.1346479	Mirishkor Tumani	Mirishkor Tumani	1346479
+UZ.08.1346481	Qarshi Shahri	Qarshi Shahri	1346481
+UZ.12.1346497	Uzun Tumani	Uzun Tumani	1346497
+UZ.12.1346534	Bandikhon Tumani	Bandikhon Tumani	1346534
+UZ.12.1346536	Termiz Shahri	Termiz Shahri	1346536
+UZ.12.1346537	Denov Shahri	Denov Shahri	1346537
+UZ.15.1512277	Zarbdor Tumani	Zarbdor Tumani	1512277
+UZ.06.1512289	Mingbuloq Tumani	Mingbuloq Tumani	1512289
+UZ.03.1512318	Yozyovon Tumani	Yozyovon Tumani	1512318
+UZ.06.1512349	Yangiqo‘rg‘on Tumani	Yangiqo`rg`on Tumani	1512349
+UZ.05.1512360	Yangibozor Tumani	Yangibozor Tumani	1512360
+UZ.05.1512367	Yangiariq Tumani	Yangiariq Tumani	1512367
+UZ.16.1512404	Sayhunobod Tumani	Sayhunobod Tumani	1512404
+UZ.03.1512439	O‘zbekiston Tumani	O`zbekiston Tumani	1512439
+UZ.06.1512448	Uychi Tumani	Uychi Tumani	1512448
+UZ.05.1512467	Urganch Tumani	Urganch Tumani	1512467
+UZ.06.1512500	Uchqŭrghon Tumani	Uchqurghon Tumani	1512500
+UZ.07.1512504	Uchkuduk District	Uchkuduk District	1512504
+UZ.09.1512534	To‘rtko‘l Tumani	To`rtko`l Tumani	1512534
+UZ.06.1512548	Tŭraqŭrghon Tumani	Turaqurghon Tumani	1512548
+UZ.03.1512646	Toshloq Tumani	Toshloq Tumani	1512646
+UZ.14.1512652	Toshkent Tumani	Toshkent Tumani	1512652
+UZ.07.1512673	Tomdi Tumani	Tomdi Tumani	1512673
+UZ.09.1512698	Taxtako‘pir Tumani	Taxtako'pir Tumani	1512698
+UZ.16.1512717	Sirdaryo Tumani	Sirdaryo Tumani	1512717
+UZ.14.1512751	Ŭrta Chirchiq Tumani	Urta Chirchiq Tumani	1512751
+UZ.05.1512818	Shovot Tumani	Shovot Tumani	1512818
+UZ.02.1512837	Shofirkon Tumani	Shofirkon Tumani	1512837
+UZ.13.1512848	Sirg’ali Tumani	Sirg'ali Tumani	1512848
+UZ.13.1512949	Olmazor Tumani	Olmazor Tumani	1512949
+UZ.03.1512956	Rishton Tumani	Rishton Tumani	1512956
+UZ.14.1512985	Piskent Tumani	Piskent Tumani	1512985
+UZ.02.1513006	Peshku Tumani	Peshku Tumani	1513006
+UZ.14.1513016	Parkent Tumani	Parkent Tumani	1513016
+UZ.06.1513021	Pop Tumani	Pop Tumani	1513021
+UZ.15.1513035	Paxtakor Tumani	Paxtakor Tumani	1513035
+UZ.01.1513039	Pakhtaobod Tumani	Pakhtaobod Tumani	1513039
+UZ.14.1513057	Qibray Tumani	Qibray Tumani	1513057
+UZ.13.1513066	Shayxontohur Tumani	Shayxontohur Tumani	1513066
+UZ.15.1513067	Zafarobod Tumani	Zafarobod Tumani	1513067
+UZ.07.1513082	Nurota Tumani	Nurota Tumani	1513082
+UZ.07.1513133	Navoiy Tumani	Navoiy Tumani	1513133
+UZ.07.1513135	Navbahor Tumani	Navbahor Tumani	1513135
+UZ.06.1513144	Norin Tumani	Norin Tumani	1513144
+UZ.06.1513156	Namangan Tumani	Namangan Tumani	1513156
+UZ.01.1513193	Shahrikhon Tumani	Shahrikhon Tumani	1513193
+UZ.15.1513202	Mirzachŭl Tumani	Mirzachul Tumani	1513202
+UZ.01.1513240	Marhamat Tumani	Marhamat Tumani	1513240
+UZ.13.1513269	Mirobod Tumani	Mirobod Tumani	1513269
+UZ.01.1513270	Asaka Tumani	Asaka Tumani	1513270
+UZ.03.1513272	Uchko‘prik Tumani	Uchko'prik Tumani	1513272
+UZ.13.1513328	Mirzo Ulug‘bek Tumani	Mirzo Ulug`bek Tumani	1513328
+UZ.03.1513329	Quva Tumani	Quva Tumani	1513329
+UZ.01.1513363	Qŭrghontepa Tumani	Qurghontepa Tumani	1513363
+UZ.10.1513472	Qo‘shrabot Tumani	Qo`shrabot Tumani	1513472
+UZ.05.1513477	Qo’shko’pir Tumani	Qo'shko'pir Tumani	1513477
+UZ.16.1513490	Mirzaobod Tumani	Mirzaobod Tumani	1513490
+UZ.01.1513493	Ulug‘nor Tumani	Ulug`nor Tumani	1513493
+UZ.14.1513498	Yuqori Chirchiq Tumani	Yuqori Chirchiq Tumani	1513498
+UZ.13.1513546	Yunusobod Tumani	Yunusobod Tumani	1513546
+UZ.03.1513547	Beshariq Tumani	Beshariq Tumani	1513547
+UZ.01.1513598	Khŭjaobod Tumani	Khujaobod Tumani	1513598
+UZ.05.1513603	Xiva Tumani	Xiva Tumani	1513603
+UZ.05.1513610	Hazorasp Tumani	Hazorasp Tumani	1513610
+UZ.16.1513618	Khovos Tumani	Khovos Tumani	1513618
+UZ.07.1513622	Xatirchi Tumani	Xatirchi Tumani	1513622
+UZ.05.1513635	Xonqa Tumani	Xonqa Tumani	1513635
+UZ.13.1513648	Yashnobod Tumani	Yashnobod Tumani	1513648
+UZ.06.1513713	Kosonsoy Tumani	Kosonsoy Tumani	1513713
+UZ.09.1513732	Qorao‘zak Tumani	Qorao'zak Tumani	1513732
+UZ.07.1513830	Konimex Tumani	Konimex Tumani	1513830
+UZ.14.1513860	Zangiota Tumani	Zangiota Tumani	1513860
+UZ.01.1513888	Izboskan Tumani	Izboskan Tumani	1513888
+UZ.16.1513952	Sharof-Rashidow Tumani	Sharof-Rashidow Tumani	1513952
+UZ.05.1513961	Gurlan Tumani	Gurlan Tumani	1513961
+UZ.16.1513967	Guliston Tumani	Guliston Tumani	1513967
+UZ.02.1513982	Ghijduwon Tumani	Ghijduwon Tumani	1513982
+UZ.14.1514010	Quyi Chirchiq Tumani	Quyi Chirchiq Tumani	1514010
+UZ.03.1514016	Dang‘ara Tumani	Dang`ara Tumani	1514016
+UZ.03.1514017	Farg‘ona Tumani	Farg`ona Tumani	1514017
+UZ.15.1514024	Forish Tumani	Forish Tumani	1514024
+UZ.09.1514037	Ellikqala Tumani	Ellikqala Tumani	1514037
+UZ.15.1514068	Jizzax Tumani	Jizzax Tumani	1514068
+UZ.01.1514108	Jalolkuduk Tumani	Jalolkuduk Tumani	1514108
+UZ.15.1514124	Dŭstlik Tumani	Dustlik Tumani	1514124
+UZ.06.1514190	Chust Tumani	Chust Tumani	1514190
+UZ.14.1514214	Chinoz Tumani	Chinoz Tumani	1514214
+UZ.13.1514229	Chilonzor Tumani	Chilonzor Tumani	1514229
+UZ.03.1514299	Buvayda Tumani	Buvayda Tumani	1514299
+UZ.14.1514327	Bŭka Tumani	Buka Tumani	1514327
+UZ.01.1514336	Bo‘z Tumani	Bo`z Tumani	1514336
+UZ.14.1514338	Bŭstonliq Tumani	Bustonliq Tumani	1514338
+UZ.09.1514386	Beruniy Tumani	Beruniy Tumani	1514386
+UZ.14.1514399	Bekobod Tumani	Bekobod Tumani	1514399
+UZ.16.1514430	Boyowut Tumani	Boyowut Tumani	1514430
+UZ.01.1514451	Baliqchi Tumani	Baliqchi Tumani	1514451
+UZ.03.1514482	Bag‘dod Tumani	Bag`dod Tumani	1514482
+UZ.05.1514485	Boghot Tumani	Boghot Tumani	1514485
+UZ.15.1514555	Arnasoy Tumani	Arnasoy Tumani	1514555
+UZ.01.1514584	Andijon Tumani	Andijon Tumani	1514584
+UZ.09.1514593	Amudaryo Tumani	Amudaryo Tumani	1514593
+UZ.01.1514606	Oltinkŭl Tumani	Oltinkul Tumani	1514606
+UZ.03.1514616	Oltiariq Tumani	Oltiariq Tumani	1514616
+UZ.13.1514665	Uchtepa Tumani	Uchtepa Tumani	1514665
+UZ.14.1514667	Oqqŭrghon Tumani	Oqqurghon Tumani	1514667
+UZ.03.1514681	Oxunboboyev Tumani	Oxunboboyev Tumani	1514681
+UZ.14.1514687	Ohangaron Tumani	Ohangaron Tumani	1514687
+UZ.16.1514705	Oqoltin Tumani	Oqoltin Tumani	1514705
+UZ.13.1536760	Bektemir Tumani	Bektemir Tumani	1536760
+UZ.13.1536761	Yakkasaroy Tumani	Yakkasaroy Tumani	1536761
+UZ.05.1538226	Urganch Shahri	Urganch Shahri	1538226
+UZ.05.1538227	Pitnak Shahri	Pitnak Shahri	1538227
+UZ.05.1538228	Khiwa Shahri	Khiwa Shahri	1538228
+UZ.02.1538236	G’ijduvon Tumani	G'ijduvon Tumani	1538236
+UZ.15.1538240	Jizzax Shahri	Jizzax Shahri	1538240
+UZ.16.1538246	Mehnatobod Tumani	Mehnatobod Tumani	1538246
+UZ.16.1538249	Guliston Shahri	Guliston Shahri	1538249
+UZ.16.1538250	Sirdaryo Shahri	Sirdaryo Shahri	1538250
+UZ.16.1538251	Shirin Shahri	Shirin Shahri	1538251
+UZ.16.1538252	Yangiyer Shahri	Yangiyer Shahri	1538252
+UZ.16.1538253	Bakht Shahri	Bakht Shahri	1538253
+UZ.12.1538254	Yangiyŭl Tumani	Yangiyul Tumani	1538254
+UZ.14.1538256	Olmaliq Shahri	Olmaliq Shahri	1538256
+UZ.14.1538257	Angren Shahri	Angren Shahri	1538257
+UZ.14.1538258	Ohangaron Shahri	Ohangaron Shahri	1538258
+UZ.14.1538259	Bekobod Shahri	Bekobod Shahri	1538259
+UZ.14.1538260	Chirchiq Shahri	Chirchiq Shahri	1538260
+UZ.14.1538261	Yangiobod Shahri	Yangiobod Shahri	1538261
+UZ.06.1538272	Chortoq Tumani	Chortoq Tumani	1538272
+UZ.01.1538281	Buloqboshi Tumani	Buloqboshi Tumani	1538281
+UZ.01.1538282	Andijon Shahri	Andijon Shahri	1538282
+UZ.01.1538283	Asaka Shahri	Asaka Shahri	1538283
+UZ.01.1538284	Qorasuw Shahri	Qorasuw Shahri	1538284
+UZ.01.1538285	Khonobod Shahri	Khonobod Shahri	1538285
+UZ.01.1538286	Shahrikhon Shahri	Shahrikhon Shahri	1538286
+UZ.03.1538294	Furqat Tumani	Furqat Tumani	1538294
+UZ.03.1538295	So‘x Tumani	So`x Tumani	1538295
+UZ.03.1538296	Farg‘ona Shahri	Farg`ona Shahri	1538296
+UZ.03.1538297	Qo‘qon Shahri	Qo`qon Shahri	1538297
+UZ.03.1538298	Quva Shahri	Quva Shahri	1538298
+UZ.03.1538299	Quvasoy Shahri	Quvasoy Shahri	1538299
+UZ.03.1538300	Marg‘ilon Shahri	Marg`ilon Shahri	1538300
+UZ.03.7668818	Altyarik	Altyarik	7668818
+UZ.03.7668819	Bagdad	Bagdad	7668819
+UZ.03.7668820	Rishtan	Rishtan	7668820
+UZ.01.7668830	Ulugnar	Ulugnar	7668830
+UZ.02.7668831	Alat	Alat	7668831
+UZ.08.7668833	Mirishkar	Mirishkar	7668833
+UZ.10.7668834	Pastdargom	Pastdargom	7668834
+UZ.16.7668840	Bayaut	Bayaut	7668840
+UZ.03.7668842	Yazyavan	Yazyavan	7668842
+UZ.08.8714362	Kamashi District	Kamashi District	8714362
+UZ.08.8714363	Guzar District	Guzar District	8714363
+UZ.07.8714365	Navbakhor Tumani	Navbakhor Tumani	8714365
+UZ.10.9166490	Toyloq District	Toyloq District	9166490
+UZ.06.11611821	Pap District	Pap District	11611821

@@ -1,0 +1,12 @@
+logging:
+  level:
+    uz.verifix.jobs: INFO
+    org.hibernate.SQL: INFO
+
+app:
+  kafka:
+    enabled: ${KAFKA_ENABLED:true}
+  elasticsearch:
+    enabled: ${ELASTICSEARCH_ENABLED:true}
+  minio:
+    enabled: ${MINIO_ENABLED:true}

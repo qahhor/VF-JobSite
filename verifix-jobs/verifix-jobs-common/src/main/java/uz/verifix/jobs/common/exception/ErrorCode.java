@@ -19,7 +19,10 @@ public enum ErrorCode {
     INVALID_CREDENTIALS("INVALID_CREDENTIALS", "Invalid email or password"),
     INVALID_TOKEN("INVALID_TOKEN", "Invalid or expired token"),
     INVALID_OTP("INVALID_OTP", "Invalid or expired OTP code"),
+    INVALID_TOTP("INVALID_TOTP", "Invalid TOTP code"),
+    TOTP_REQUIRED("TOTP_REQUIRED", "TOTP code is required"),
     OTP_RATE_LIMIT("OTP_RATE_LIMIT", "Too many OTP requests, try again later"),
+    RATE_LIMITED("RATE_LIMITED", "Rate limit exceeded"),
 
     // Employer
     EMPLOYER_NOT_FOUND("EMPLOYER_NOT_FOUND", "Employer not found"),

@@ -1,69 +1,63 @@
 # Verifix Jobs
 
-Job portal for mass hiring of blue-collar workers in Central Asia (Uzbekistan, Kazakhstan, Kyrgyzstan, Tajikistan).
+Verifix Jobs is a Central Asia job platform for high-volume blue-collar hiring inside the Verifix HRM ecosystem.
 
-Part of the [Verifix HRM](https://verifix.uz) ecosystem.
+## Current Repo Shape
 
-## Tech Stack
+- Backend modules: `verifix-jobs-common`, `verifix-jobs-domain`, `verifix-jobs-service`, `verifix-jobs-api`, `verifix-jobs-telegram`, `verifix-jobs-integration`
+- Frontend/admin skeleton workspaces: `verifix-jobs-web`, `verifix-jobs-admin`
+- ML service skeleton: `verifix-jobs-ml`
+- Shared runtime config now lives in [application.yml](/D:/DATA/VFX/VF-JobSite/verifix-jobs/verifix-jobs-common/src/main/resources/application.yml)
 
-- **Backend:** Java 21, Spring Boot 3.3, Spring Security 6, Spring Data JPA
-- **Database:** PostgreSQL 16 + PostGIS, Liquibase migrations
-- **Cache:** Redis 7
-- **Search:** Elasticsearch 8.12
-- **Messaging:** Apache Kafka
-- **Frontend:** Angular 17+ (PWA), Angular Material, Tailwind CSS
-- **Telegram:** Bot API + Mini App
-- **File Storage:** MinIO (S3-compatible)
+## Stack
 
-## Prerequisites
+- Java 21
+- Spring Boot 3.5.12
+- PostgreSQL 16 + PostGIS + Liquibase
+- Redis 7
+- Kafka (Confluent 7.6)
+- Elasticsearch 8.x
+- MinIO
+- Telegram Bot + Mini App auth
+- Angular 17 skeleton workspaces
+- FastAPI ML skeleton
 
-- Java 21+
-- Maven 3.9+
-- Docker & Docker Compose
-- Node.js 20+ (for Angular frontend)
+## Auth Contract
+
+- Employer auth: `/api/v1/auth/employer/*`
+- Candidate OTP auth: `/api/v1/auth/candidate/otp/*`
+- MyID auth: `/api/v1/auth/myid/*`
+- Legacy aliases remain for `/api/v1/auth/*`, `/api/v1/otp/*`, and `/api/v1/verification/*`
 
 ## Quick Start
 
-1. Clone and configure:
+1. Copy `.env.example` to `.env` and fill secrets.
+2. Start infra:
 ```bash
-cp .env.example .env
-# Edit .env with your credentials
+docker compose up -d
 ```
-
-2. Start infrastructure:
+3. Build backend:
 ```bash
-docker-compose up -d
+./mvnw -B verify
 ```
-
-3. Build and run:
+4. Run API:
 ```bash
-mvn clean install
-mvn spring-boot:run -pl verifix-jobs-api
+./mvnw spring-boot:run -pl verifix-jobs-api
+```
+5. Run Telegram app separately:
+```bash
+APP_NAME=verifix-jobs-telegram APP_PORT=8081 ./mvnw spring-boot:run -pl verifix-jobs-telegram
 ```
 
-4. Access:
-- API: http://localhost:8080/api/v1
-- Swagger UI: http://localhost:8080/swagger-ui.html
-- MinIO Console: http://localhost:9001
-- Kibana: http://localhost:5601
+## Observability
 
-## Project Structure
+- API health: `http://localhost:8080/actuator/health`
+- API metrics: `http://localhost:8080/actuator/prometheus`
+- Prometheus: `http://localhost:9090`
+- Grafana: `http://localhost:3000`
 
-```
-verifix-jobs/
-├── verifix-jobs-common/       # Shared DTOs, exceptions, utilities
-├── verifix-jobs-domain/       # JPA entities, repositories, Liquibase
-├── verifix-jobs-service/      # Business logic
-├── verifix-jobs-api/          # REST controllers, security
-├── verifix-jobs-telegram/     # Telegram bot + Mini App
-├── verifix-jobs-integration/  # External service clients
-├── verifix-jobs-web/          # Angular employer portal
-└── verifix-jobs-admin/        # Angular admin panel
-```
+## Notes
 
-## API Conventions
-
-- Base path: `/api/v1/`
-- UUID primary keys
-- Error format: `{ "error": "ERROR_CODE", "message": "...", "details": {} }`
-- Authentication: JWT (employers), OTP via SMS/Telegram (candidates)
+- The Telegram module is now a separate Spring Boot application.
+- `DEVELOPMENT_PLAN.md` contains the phased roadmap plus a repo status snapshot.
+- Frontend/admin/ML folders are bootstrap skeletons, not finished products.

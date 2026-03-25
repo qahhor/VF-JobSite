@@ -10,7 +10,6 @@ import java.util.UUID;
 @Data
 public class WorkHistoryRequest {
 
-    @NotNull
     private UUID candidateId;
 
     @NotBlank

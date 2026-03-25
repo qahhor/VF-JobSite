@@ -147,9 +147,9 @@ public class BillingService {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment", paymentId.toString()));
 
-        if (payment.getStatus() != PaymentStatus.COMPLETED) {
+        if (payment.getStatus() != PaymentStatus.PAID) {
             throw new BusinessException(ErrorCode.PAYMENT_FAILED, HttpStatus.BAD_REQUEST,
-                    "Only completed payments can be refunded");
+                    "Only paid payments can be refunded");
         }
 
         payment.setStatus(PaymentStatus.REFUNDED);

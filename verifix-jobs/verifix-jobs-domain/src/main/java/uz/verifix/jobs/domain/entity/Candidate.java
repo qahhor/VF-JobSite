@@ -44,6 +44,10 @@ public class Candidate extends BaseEntity {
     @Column(name = "telegram_id", unique = true)
     private Long telegramId;
 
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    @Column(name = "push_subscription_json", columnDefinition = "jsonb")
+    private String pushSubscriptionJson;
+
     @Column(name = "first_name")
     private String firstName;
 

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.verifix.jobs.common.exception.ForbiddenException;
+import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.entity.MlCandidateScore;
 import uz.verifix.jobs.domain.entity.Vacancy;
@@ -105,8 +107,18 @@ public class CandidateMatchingService {
 
     @Transactional(readOnly = true)
     public List<MlCandidateScore> getTopCandidates(UUID vacancyId, int limit) {
+        ensureVacancyExists(vacancyId);
         List<MlCandidateScore> all = scoreRepository.findByVacancyIdOrderByMatchScoreDesc(vacancyId);
         return all.stream().limit(limit).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MlCandidateScore> getTopCandidatesForEmployer(UUID vacancyId, UUID employerId, int limit) {
+        Vacancy vacancy = ensureVacancyExists(vacancyId);
+        if (!vacancy.getEmployer().getId().equals(employerId)) {
+            throw new ForbiddenException("Vacancy does not belong to this employer");
+        }
+        return getTopCandidates(vacancyId, limit);
     }
 
     @Transactional(readOnly = true)
@@ -118,8 +130,7 @@ public class CandidateMatchingService {
     @Async
     @Transactional
     public void batchScore(UUID vacancyId) {
-        Vacancy vacancy = vacancyRepository.findById(vacancyId).orElse(null);
-        if (vacancy == null) return;
+        Vacancy vacancy = ensureVacancyExists(vacancyId);
 
         // Get candidates in same city or with matching categories
         List<Candidate> candidates;
@@ -144,6 +155,20 @@ public class CandidateMatchingService {
             }
         }
         log.info("Batch scoring complete: {} candidates scored for vacancy {}", scored, vacancyId);
+    }
+
+    @Transactional
+    public void batchScoreForEmployer(UUID vacancyId, UUID employerId) {
+        Vacancy vacancy = ensureVacancyExists(vacancyId);
+        if (!vacancy.getEmployer().getId().equals(employerId)) {
+            throw new ForbiddenException("Vacancy does not belong to this employer");
+        }
+        batchScore(vacancyId);
+    }
+
+    private Vacancy ensureVacancyExists(UUID vacancyId) {
+        return vacancyRepository.findById(vacancyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vacancy", vacancyId.toString()));
     }
 
     private Map<String, Double> calculateFactors(Candidate candidate, Vacancy vacancy) {

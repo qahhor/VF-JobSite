@@ -164,6 +164,7 @@ public class DataExportService {
         candidate.setPreferredCategories(null);
         candidate.setWorkExperienceText(null);
         candidate.setTelegramId(null);
+        candidate.setPushSubscriptionJson(null);
         candidate.setReferralCode(null);
         candidate.softDelete();
 

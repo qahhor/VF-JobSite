@@ -12,6 +12,7 @@ import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.service.auth.JwtService;
 import uz.verifix.jobs.service.auth.OtpService;
+import uz.verifix.jobs.service.auth.RefreshTokenService;
 import uz.verifix.jobs.service.notification.SmsService;
 
 import java.security.SecureRandom;
@@ -27,6 +28,7 @@ public class CandidateAuthService {
     private final OtpService otpService;
     private final SmsService smsService;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     private static final SecureRandom RANDOM = new SecureRandom();
     private static final String REFERRAL_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -68,8 +70,9 @@ public class CandidateAuthService {
             candidate = existingCandidate.get();
         }
 
-        String accessToken = jwtService.generateAccessToken(candidate.getId(), normalized, "CANDIDATE");
-        String refreshToken = jwtService.generateRefreshToken(candidate.getId());
+        String accessToken = jwtService.generateAccessToken(candidate.getId(), normalized, "CANDIDATE", null);
+        String refreshToken = jwtService.generateRefreshToken(candidate.getId(), "CANDIDATE", null);
+        refreshTokenService.store(candidate.getId(), refreshToken);
 
         return new VerifyResult(candidate.getId(), accessToken, refreshToken, isNewUser);
     }

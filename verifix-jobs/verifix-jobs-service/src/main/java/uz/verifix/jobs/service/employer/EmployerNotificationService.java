@@ -5,17 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.verifix.jobs.domain.entity.Application;
-import uz.verifix.jobs.domain.entity.Manager;
 import uz.verifix.jobs.domain.enums.ApplicationStatus;
+import uz.verifix.jobs.domain.enums.UserType;
 import uz.verifix.jobs.domain.enums.VacancyStatus;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
-import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.notification.NotificationService;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -23,29 +21,28 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EmployerNotificationService {
 
-    private final ManagerRepository managerRepository;
     private final ApplicationRepository applicationRepository;
     private final VacancyRepository vacancyRepository;
     private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public void notifyNewApplication(UUID employerId, Application application) {
-        List<Manager> managers = managerRepository.findByEmployerId(employerId);
-
         String message = String.format(
-                "📨 Yangi ariza!\n\n💼 %s\n👤 %s %s\n📍 %s\n\nAriza ko'rish uchun dashboardga kiring.",
+                "Yangi ariza.%n%nVakansiya: %s%nNomzod: %s %s%nShahar: %s%n%nArizani dashboard orqali koring.",
                 application.getVacancy().getTitle(),
                 application.getCandidate().getFirstName() != null ? application.getCandidate().getFirstName() : "",
                 application.getCandidate().getLastName() != null ? application.getCandidate().getLastName() : "",
                 application.getCandidate().getCity() != null ? application.getCandidate().getCity() : ""
         );
 
-        for (Manager manager : managers) {
-            if (manager.getTelegramChatId() != null) {
-                notificationService.sendTelegramMessage(manager.getTelegramChatId(), message);
-                log.debug("Notified manager {} about new application", manager.getEmail());
-            }
-        }
+        NotificationService.DispatchResult result = notificationService.dispatch(
+                UserType.EMPLOYER,
+                employerId,
+                "employer.application.new",
+                message
+        );
+        log.debug("Employer {} notified about new application via {} attempts / {} delivered",
+                employerId, result.attempts(), result.delivered());
     }
 
     @Transactional(readOnly = true)
@@ -55,14 +52,11 @@ public class EmployerNotificationService {
             return;
         }
 
-        List<Manager> managers = managerRepository.findByEmployerId(employerId);
-        String message = String.format("🎉 Tabriklaymiz! Sizning kompaniyangizga %d ta ariza keldi!", applicationCount);
-
-        for (Manager manager : managers) {
-            if (manager.getTelegramChatId() != null) {
-                notificationService.sendTelegramMessage(manager.getTelegramChatId(), message);
-            }
-        }
+        String message = String.format(
+                "Tabriklaymiz. Sizning kompaniyangizga %d ta ariza keldi.",
+                applicationCount
+        );
+        notificationService.dispatch(UserType.EMPLOYER, employerId, "employer.application.milestone", message);
     }
 
     @Transactional(readOnly = true)
@@ -76,12 +70,12 @@ public class EmployerNotificationService {
         long activeVacancies = vacancyRepository.countByEmployerIdAndStatus(employerId, VacancyStatus.ACTIVE);
 
         return String.format(
-                "📊 Haftalik hisobot\n\n" +
-                "📋 Faol vakansiyalar: %d\n" +
-                "📨 Yangi arizalar (7 kun): %d\n" +
-                "📊 Jami arizalar: %d\n" +
-                "✅ Ishga qabul qilingan: %d\n\n" +
-                "Batafsil: dashboard orqali ko'ring.",
+                "Haftalik hisobot%n%n" +
+                        "Faol vakansiyalar: %d%n" +
+                        "Yangi arizalar (7 kun): %d%n" +
+                        "Jami arizalar: %d%n" +
+                        "Ishga qabul qilingan: %d%n%n" +
+                        "Batafsil malumot dashboardda.",
                 activeVacancies, newApps, totalApps, hiredCount
         );
     }

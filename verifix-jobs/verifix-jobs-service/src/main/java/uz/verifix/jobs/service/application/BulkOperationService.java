@@ -6,18 +6,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.verifix.jobs.domain.entity.Application;
 import uz.verifix.jobs.domain.entity.Candidate;
+import uz.verifix.jobs.domain.entity.Manager;
 import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.enums.ApplicationSource;
 import uz.verifix.jobs.domain.enums.ApplicationStatus;
+import uz.verifix.jobs.domain.enums.ManagerRole;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
+import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.notification.DomainEvent;
 import uz.verifix.jobs.service.notification.EventPublisher;
-
-import uz.verifix.jobs.domain.entity.Manager;
-import uz.verifix.jobs.domain.enums.ManagerRole;
-import uz.verifix.jobs.domain.repository.ManagerRepository;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -34,16 +33,13 @@ public class BulkOperationService {
     private final VacancyRepository vacancyRepository;
     private final CandidateRepository candidateRepository;
     private final ManagerRepository managerRepository;
-    private final ApplicationStatusMachine statusMachine;
     private final EventPublisher eventPublisher;
 
-    /**
-     * Validates that the manager has ADMIN role for bulk operations.
-     */
     public void validateBulkPermission(UUID managerId) {
         Manager manager = managerRepository.findById(managerId).orElse(null);
         if (manager == null || manager.getRole() != ManagerRole.ADMIN) {
-            throw new uz.verifix.jobs.common.exception.ForbiddenException("Only managers with ADMIN role can perform bulk operations");
+            throw new uz.verifix.jobs.common.exception.ForbiddenException(
+                    "Only managers with ADMIN role can perform bulk operations");
         }
     }
 
@@ -63,8 +59,8 @@ public class BulkOperationService {
                     errors.add(appId + ": not your application");
                     continue;
                 }
-                if (!statusMachine.canTransition(app.getStatus(), newStatus)) {
-                    errors.add(appId + ": invalid transition " + app.getStatus() + " → " + newStatus);
+                if (!ApplicationStatusMachine.canTransition(app.getStatus(), newStatus)) {
+                    errors.add(appId + ": invalid transition " + app.getStatus() + " -> " + newStatus);
                     continue;
                 }
 
@@ -175,9 +171,11 @@ public class BulkOperationService {
             case INVITED -> app.setInvitedAt(Instant.now());
             case HIRED -> app.setHiredAt(Instant.now());
             case REJECTED -> app.setRejectedAt(Instant.now());
-            default -> {}
+            default -> {
+            }
         }
     }
 
-    public record BulkResult(int successCount, int failedCount, List<String> errors) {}
+    public record BulkResult(int successCount, int failedCount, List<String> errors) {
+    }
 }

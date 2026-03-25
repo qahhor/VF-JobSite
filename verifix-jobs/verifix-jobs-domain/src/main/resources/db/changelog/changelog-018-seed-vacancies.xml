@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Demo employer -->
+    <changeSet id="018-01" author="verifix" context="dev,staging">
+        <sql>
+            INSERT INTO employer (id, name, legal_name, inn, city, status, moderation_status, is_verified, branding_tier, created_at, updated_at)
+            VALUES
+            (gen_random_uuid(), 'Verifix Demo Co', 'Verifix Demo LLC', 'DEMO001', 'Tashkent', 'ACTIVE', 'APPROVED', true, 'PREMIUM', now(), now()),
+            (gen_random_uuid(), 'Oila Restoran', 'Oila Restoran LLC', 'DEMO002', 'Tashkent', 'ACTIVE', 'APPROVED', true, 'BRANDED', now(), now()),
+            (gen_random_uuid(), 'Express Logistik', 'Express Logistik LLC', 'DEMO003', 'Samarkand', 'ACTIVE', 'APPROVED', true, 'BASIC', now(), now()),
+            (gen_random_uuid(), 'Mega Market', 'Mega Market LLC', 'DEMO004', 'Bukhara', 'ACTIVE', 'APPROVED', false, 'BASIC', now(), now()),
+            (gen_random_uuid(), 'Qurilish Plus', 'Qurilish Plus LLC', 'DEMO005', 'Andijan', 'ACTIVE', 'APPROVED', true, 'BASIC', now(), now())
+            ON CONFLICT (inn) DO NOTHING;
+        </sql>
+    </changeSet>
+
+    <!-- Demo vacancies (50 per SQL block, multiple categories and cities) -->
+    <changeSet id="018-02" author="verifix" context="dev,staging">
+        <sql>
+            INSERT INTO vacancy (id, employer_id, title, description, category, city, salary_from, salary_to, currency, employment_type, status, moderation_status, positions_count, positions_filled, source, created_at, updated_at)
+            SELECT gen_random_uuid(), e.id,
+                   CASE (random()*13)::int
+                       WHEN 0 THEN 'Oshpaz kerak' WHEN 1 THEN 'Haydovchi' WHEN 2 THEN 'Sotuvchi-kassir'
+                       WHEN 3 THEN 'Quruvchi-ishchi' WHEN 4 THEN 'Tozalovchi' WHEN 5 THEN 'Ofitsiant'
+                       WHEN 6 THEN 'Omborchi' WHEN 7 THEN 'Qorovul' WHEN 8 THEN 'Elektrik ustasi'
+                       WHEN 9 THEN 'Santexnik' WHEN 10 THEN 'Tikuvchi' WHEN 11 THEN 'Kuryer'
+                       WHEN 12 THEN 'Yukchi' ELSE 'Ishchi kerak'
+                   END,
+                   'Bu demo vakansiya. Tajribali xodim kerak. Ish sharoitlari qulay. Maosh o''z vaqtida to''lanadi.',
+                   CASE (random()*13)::int
+                       WHEN 0 THEN 'COOK' WHEN 1 THEN 'DRIVER' WHEN 2 THEN 'SALES'
+                       WHEN 3 THEN 'BUILDER' WHEN 4 THEN 'CLEANER' WHEN 5 THEN 'WAITER'
+                       WHEN 6 THEN 'WAREHOUSE' WHEN 7 THEN 'SECURITY' WHEN 8 THEN 'ELECTRICIAN'
+                       WHEN 9 THEN 'PLUMBER' WHEN 10 THEN 'TAILOR' WHEN 11 THEN 'COURIER'
+                       WHEN 12 THEN 'LOADER' ELSE 'OTHER'
+                   END,
+                   CASE (random()*7)::int
+                       WHEN 0 THEN 'Tashkent' WHEN 1 THEN 'Samarkand' WHEN 2 THEN 'Bukhara'
+                       WHEN 3 THEN 'Andijan' WHEN 4 THEN 'Namangan' WHEN 5 THEN 'Fergana'
+                       WHEN 6 THEN 'Nukus' ELSE 'Karshi'
+                   END,
+                   (2000000 + (random()*3000000)::int)::numeric,
+                   (5000000 + (random()*5000000)::int)::numeric,
+                   'UZS', 'FULL_TIME', 'ACTIVE', 'APPROVED',
+                   (1 + (random()*9)::int), 0, 'MANUAL', now() - (random()*30||' days')::interval, now()
+            FROM employer e, generate_series(1, 100)
+            WHERE e.inn LIKE 'DEMO%'
+            LIMIT 500;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

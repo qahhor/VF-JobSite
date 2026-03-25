@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.service.vacancy.VacancyImportService;
 
 import java.io.IOException;
@@ -21,10 +23,14 @@ public class VacancyImportController {
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> importCsv(
-            @RequestParam UUID employerId,
+            @RequestParam(required = false) UUID employerId,
+            Authentication auth,
             @RequestParam MultipartFile file) throws IOException {
 
-        VacancyImportService.ImportResult result = importService.importFromCsv(employerId, file.getInputStream());
+        VacancyImportService.ImportResult result = importService.importFromCsv(
+                SecurityUtils.enforceEmployerAccess(auth, employerId),
+                file.getInputStream()
+        );
 
         return ResponseEntity.ok(Map.of(
                 "totalRows", result.totalRows(),

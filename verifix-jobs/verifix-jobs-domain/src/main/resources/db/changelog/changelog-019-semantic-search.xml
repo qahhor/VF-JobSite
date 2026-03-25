@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Enable pgvector extension -->
+    <changeSet id="019-01" author="verifix">
+        <sql>CREATE EXTENSION IF NOT EXISTS vector;</sql>
+    </changeSet>
+
+    <!-- Vacancy embeddings for semantic search -->
+    <changeSet id="019-02" author="verifix">
+        <createTable tableName="vacancy_embedding">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="vacancy_id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="embedding" type="vector(384)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text_hash" type="VARCHAR(64)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Candidate embeddings -->
+    <changeSet id="019-03" author="verifix">
+        <createTable tableName="candidate_embedding">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="candidate_id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="embedding" type="vector(384)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text_hash" type="VARCHAR(64)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

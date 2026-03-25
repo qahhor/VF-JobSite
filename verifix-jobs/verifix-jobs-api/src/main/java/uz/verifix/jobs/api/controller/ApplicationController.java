@@ -14,13 +14,11 @@ import uz.verifix.jobs.api.dto.request.RejectRequest;
 import uz.verifix.jobs.api.dto.response.ApplicationDetailResponse;
 import uz.verifix.jobs.api.dto.response.ApplicationResponse;
 import uz.verifix.jobs.api.dto.response.ApplicationStatsResponse;
+import uz.verifix.jobs.api.mapper.ApplicationMapper;
 import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.common.dto.PageResponse;
 import uz.verifix.jobs.domain.entity.Application;
-import uz.verifix.jobs.domain.entity.Candidate;
-import uz.verifix.jobs.domain.entity.WorkHistory;
 import uz.verifix.jobs.domain.enums.ApplicationStatus;
-import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.domain.repository.WorkHistoryRepository;
 import uz.verifix.jobs.service.application.ApplicationService;
 
@@ -34,8 +32,8 @@ import java.util.UUID;
 public class ApplicationController {
 
     private final ApplicationService applicationService;
-    private final ManagerRepository managerRepository;
     private final WorkHistoryRepository workHistoryRepository;
+    private final ApplicationMapper applicationMapper;
 
     @GetMapping("/vacancy/{vacancyId}")
     public ResponseEntity<PageResponse<ApplicationResponse>> getByVacancy(
@@ -44,9 +42,9 @@ public class ApplicationController {
             @PageableDefault(size = 20) Pageable pageable,
             Authentication auth) {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Page<Application> page = applicationService.getByVacancy(vacancyId, employerId, status, pageable);
-        return ResponseEntity.ok(PageResponse.of(page.map(this::toResponse)));
+        return ResponseEntity.ok(PageResponse.of(page.map(applicationMapper::toResponse)));
     }
 
     @GetMapping("/{id}")
@@ -54,9 +52,12 @@ public class ApplicationController {
             @PathVariable UUID id,
             Authentication auth) {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Application application = applicationService.getDetail(id, employerId);
-        return ResponseEntity.ok(toDetailResponse(application));
+        return ResponseEntity.ok(applicationMapper.toDetailResponse(
+                application,
+                workHistoryRepository.findByCandidateIdOrderByStartDateDesc(application.getCandidate().getId())
+        ));
     }
 
     @PatchMapping("/{id}/status")
@@ -65,9 +66,9 @@ public class ApplicationController {
             @RequestParam ApplicationStatus status,
             Authentication auth) {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Application application = applicationService.changeStatus(id, employerId, status);
-        return ResponseEntity.ok(toResponse(application));
+        return ResponseEntity.ok(applicationMapper.toResponse(application));
     }
 
     @PatchMapping("/{id}/note")
@@ -76,9 +77,9 @@ public class ApplicationController {
             @Valid @RequestBody RecruiterNoteRequest request,
             Authentication auth) {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Application application = applicationService.addNote(id, employerId, request.getNote());
-        return ResponseEntity.ok(toResponse(application));
+        return ResponseEntity.ok(applicationMapper.toResponse(application));
     }
 
     @PostMapping("/{id}/reject")
@@ -87,9 +88,9 @@ public class ApplicationController {
             @Valid @RequestBody RejectRequest request,
             Authentication auth) {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Application application = applicationService.reject(id, employerId, request.getReason());
-        return ResponseEntity.ok(toResponse(application));
+        return ResponseEntity.ok(applicationMapper.toResponse(application));
     }
 
     @PostMapping("/bulk-status")
@@ -97,10 +98,10 @@ public class ApplicationController {
             @Valid @RequestBody BulkStatusRequest request,
             Authentication auth) {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         List<Application> applications = applicationService.bulkChangeStatus(
-                request.getApplicationIds(), employerId, request.getStatus());
-        return ResponseEntity.ok(applications.stream().map(this::toResponse).toList());
+                request.getApplicationIds(), employerId, request.getNewStatus());
+        return ResponseEntity.ok(applications.stream().map(applicationMapper::toResponse).toList());
     }
 
     @GetMapping("/vacancy/{vacancyId}/stats")
@@ -108,7 +109,7 @@ public class ApplicationController {
             @PathVariable UUID vacancyId,
             Authentication auth) {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         Map<String, Long> stats = applicationService.getStatsMap(vacancyId, employerId);
         long total = stats.getOrDefault("TOTAL", 0L);
         stats.remove("TOTAL");
@@ -118,67 +119,5 @@ public class ApplicationController {
                 .statusCounts(stats)
                 .total(total)
                 .build());
-    }
-
-    private ApplicationResponse toResponse(Application app) {
-        Candidate c = app.getCandidate();
-        return ApplicationResponse.builder()
-                .id(app.getId())
-                .vacancyId(app.getVacancy().getId())
-                .vacancyTitle(app.getVacancy().getTitle())
-                .candidateId(c.getId())
-                .candidateName(c.getFirstName() + " " + c.getLastName())
-                .candidatePhone(c.getPhone())
-                .candidateCity(c.getCity())
-                .status(app.getStatus().name())
-                .source(app.getSource() != null ? app.getSource().name() : null)
-                .appliedAt(app.getAppliedAt())
-                .viewedAt(app.getViewedAt())
-                .invitedAt(app.getInvitedAt())
-                .rejectedAt(app.getRejectedAt())
-                .hiredAt(app.getHiredAt())
-                .rejectionReason(app.getRejectionReason())
-                .recruiterNotes(app.getRecruiterNotes())
-                .createdAt(app.getCreatedAt())
-                .build();
-    }
-
-    private ApplicationDetailResponse toDetailResponse(Application app) {
-        Candidate c = app.getCandidate();
-        List<WorkHistory> histories = workHistoryRepository.findByCandidateIdOrderByStartDateDesc(c.getId());
-
-        return ApplicationDetailResponse.builder()
-                .id(app.getId())
-                .status(app.getStatus().name())
-                .source(app.getSource() != null ? app.getSource().name() : null)
-                .appliedAt(app.getAppliedAt())
-                .viewedAt(app.getViewedAt())
-                .invitedAt(app.getInvitedAt())
-                .rejectedAt(app.getRejectedAt())
-                .hiredAt(app.getHiredAt())
-                .rejectionReason(app.getRejectionReason())
-                .recruiterNotes(app.getRecruiterNotes())
-                .vacancyId(app.getVacancy().getId())
-                .vacancyTitle(app.getVacancy().getTitle())
-                .candidateId(c.getId())
-                .firstName(c.getFirstName())
-                .lastName(c.getLastName())
-                .phone(c.getPhone())
-                .city(c.getCity())
-                .region(c.getRegion())
-                .gender(c.getGender() != null ? c.getGender().name() : null)
-                .educationLevel(c.getEducationLevel() != null ? c.getEducationLevel().name() : null)
-                .birthDate(c.getBirthDate())
-                .skills(c.getSkills())
-                .workExperienceText(c.getWorkExperienceText())
-                .workHistory(histories.stream().map(wh -> ApplicationDetailResponse.WorkHistoryItem.builder()
-                        .jobTitle(wh.getJobTitle())
-                        .companyName(wh.getCompanyName())
-                        .employmentType(wh.getEmploymentType() != null ? wh.getEmploymentType().name() : null)
-                        .startDate(wh.getStartDate())
-                        .endDate(wh.getEndDate())
-                        .description(wh.getDescription())
-                        .build()).toList())
-                .build();
     }
 }

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Vacancy Health Snapshot: periodic diagnostics per vacancy -->
+    <changeSet id="016-01" author="verifix">
+        <createTable tableName="vacancy_health_snapshot">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="vacancy_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="impressions" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="detail_views" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="applies" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="conversion_rate" type="DECIMAL(5,2)" defaultValueNumeric="0"/>
+            <column name="avg_time_to_first_response_hours" type="DECIMAL(8,2)"/>
+            <column name="salary_competitiveness" type="VARCHAR(20)"/>
+            <column name="geo_competitiveness" type="VARCHAR(20)"/>
+            <column name="health_score" type="INTEGER"/>
+            <column name="recommendations" type="JSONB"/>
+            <column name="snapshot_date" type="DATE"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+        <createIndex tableName="vacancy_health_snapshot" indexName="idx_vhs_vacancy_date">
+            <column name="vacancy_id"/><column name="snapshot_date" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Civility Score Snapshot: employer behavior metrics -->
+    <changeSet id="016-02" author="verifix">
+        <createTable tableName="civility_score_snapshot">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="response_rate" type="DECIMAL(5,2)"/>
+            <column name="avg_response_time_hours" type="DECIMAL(8,2)"/>
+            <column name="ignored_candidates_pct" type="DECIMAL(5,2)"/>
+            <column name="clean_closure_rate" type="DECIMAL(5,2)"/>
+            <column name="overall_score" type="INTEGER"/>
+            <column name="grade" type="VARCHAR(10)"/>
+            <column name="snapshot_date" type="DATE"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+        <createIndex tableName="civility_score_snapshot" indexName="idx_css_employer_date">
+            <column name="employer_id"/><column name="snapshot_date" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Hiring Project: umbrella entity above vacancies -->
+    <changeSet id="016-03" author="verifix">
+        <createTable tableName="hiring_project">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="name" type="VARCHAR(300)"><constraints nullable="false"/></column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
+            <column name="target_hires" type="INTEGER"/>
+            <column name="actual_hires" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="deadline" type="DATE"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="deleted_at" type="TIMESTAMP WITH TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Hiring Project ↔ Vacancy link -->
+    <changeSet id="016-04" author="verifix">
+        <createTable tableName="hiring_project_vacancy">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="project_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="vacancy_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+        <addUniqueConstraint tableName="hiring_project_vacancy" columnNames="project_id, vacancy_id"/>
+    </changeSet>
+
+    <!-- Talent Hub: reusable candidate pools -->
+    <changeSet id="016-05" author="verifix">
+        <createTable tableName="talent_list">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="name" type="VARCHAR(200)"><constraints nullable="false"/></column>
+            <column name="description" type="TEXT"/>
+            <column name="candidate_count" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="016-06" author="verifix">
+        <createTable tableName="talent_list_candidate">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="talent_list_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="candidate_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="tags" type="JSONB"/>
+            <column name="notes" type="TEXT"/>
+            <column name="added_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+        <addUniqueConstraint tableName="talent_list_candidate" columnNames="talent_list_id, candidate_id"/>
+    </changeSet>
+
+    <!-- Organization Memory -->
+    <changeSet id="016-07" author="verifix">
+        <createTable tableName="organization_memory">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false" unique="true"/></column>
+            <column name="evp_statement" type="TEXT"/>
+            <column name="preferred_traits" type="JSONB"/>
+            <column name="rejection_patterns" type="JSONB"/>
+            <column name="hiring_policies" type="JSONB"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="016-08" author="verifix">
+        <createTable tableName="org_memory_fact">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="fact_type" type="VARCHAR(50)"><constraints nullable="false"/></column>
+            <column name="fact_key" type="VARCHAR(200)"/>
+            <column name="fact_value" type="TEXT"/>
+            <column name="metadata" type="JSONB"/>
+            <column name="source" type="VARCHAR(50)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+        <createIndex tableName="org_memory_fact" indexName="idx_omf_employer_type">
+            <column name="employer_id"/><column name="fact_type"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Entitlement / Contact Credits -->
+    <changeSet id="016-09" author="verifix">
+        <createTable tableName="employer_entitlement">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="entitlement_type" type="VARCHAR(50)"><constraints nullable="false"/></column>
+            <column name="total_amount" type="INTEGER"><constraints nullable="false"/></column>
+            <column name="used_amount" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="expires_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="source" type="VARCHAR(50)"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+        <createIndex tableName="employer_entitlement" indexName="idx_ee_employer_type">
+            <column name="employer_id"/><column name="entitlement_type"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Branch for multi-location employers -->
+    <changeSet id="016-10" author="verifix">
+        <addColumn tableName="vacancy">
+            <column name="branch_name" type="VARCHAR(200)"/>
+            <column name="branch_address" type="VARCHAR(500)"/>
+            <column name="district" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

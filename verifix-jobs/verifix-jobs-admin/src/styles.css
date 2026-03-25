@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { margin: 0; font-family: "Inter", system-ui, sans-serif; background: #FAFAFA; color: #1A1A1A; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: #CCCCCC; border-radius: 2px; }
+*:focus-visible { outline: 2px solid #000; outline-offset: 2px; }

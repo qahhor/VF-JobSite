@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===================================================
+   VERIFIX JOBS — Design System
+   Brand: Black & White minimalist
+   Audience: Blue-collar workers, budget Android, 4G
+   Priority: Readability → Simplicity → Speed
+   =================================================== */
+
+@layer base {
+  :root {
+    color-scheme: light;
+    /* Typography scale — optimized for readability */
+    --font-xs: 0.75rem;    /* 12px — captions */
+    --font-sm: 0.875rem;   /* 14px — secondary text */
+    --font-base: 1rem;     /* 16px — body text (NEVER smaller on mobile) */
+    --font-lg: 1.125rem;   /* 18px — subheadings */
+    --font-xl: 1.25rem;    /* 20px — section titles */
+    --font-2xl: 1.5rem;    /* 24px — page titles */
+    --font-3xl: 2rem;      /* 32px — hero */
+    --font-4xl: 2.5rem;    /* 40px — hero desktop */
+
+    /* Colors — WCAG AA contrast ratios */
+    --color-text: #1A1A1A;          /* 15:1 on white */
+    --color-text-secondary: #525252; /* 7.5:1 on white */
+    --color-text-muted: #737373;     /* 4.6:1 on white (AA) */
+    --color-bg: #FFFFFF;
+    --color-surface: #FAFAFA;
+    --color-border: #E5E5E5;
+    --color-success: #16A34A;
+    --color-warning: #CA8A04;
+    --color-danger: #DC2626;
+
+    /* Spacing — consistent 4px grid */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+
+    /* Touch targets — 44px minimum (WCAG 2.5.5) */
+    --touch-min: 44px;
+
+    /* Border radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: var(--font-base);
+    line-height: 1.6;
+    color: var(--color-text);
+    background: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings — clear visual hierarchy */
+  h1 { font-size: var(--font-2xl); font-weight: 700; line-height: 1.2; letter-spacing: -0.025em; }
+  h2 { font-size: var(--font-xl); font-weight: 600; line-height: 1.3; }
+  h3 { font-size: var(--font-lg); font-weight: 600; line-height: 1.4; }
+
+  @media (min-width: 768px) {
+    h1 { font-size: var(--font-3xl); }
+    h2 { font-size: var(--font-2xl); }
+  }
+
+  /* Links — visible and accessible */
+  a { color: var(--color-text); text-underline-offset: 2px; }
+  a:hover { opacity: 0.8; }
+
+  /* Images — prevent layout shift */
+  img { max-width: 100%; height: auto; display: block; }
+}
+
+/* ===================================================
+   SCROLLBAR — minimal
+   =================================================== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D4D4D4; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #A3A3A3; }
+
+/* ===================================================
+   FOCUS — visible for keyboard nav
+   =================================================== */
+*:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ===================================================
+   BUTTONS — 44px min touch target
+   =================================================== */
+@layer components {
+  .btn-primary {
+    @apply bg-black text-white font-medium rounded-lg transition-all;
+    @apply hover:bg-gray-800 active:bg-gray-900;
+    @apply focus:ring-2 focus:ring-black/20 focus:outline-none;
+    padding: 12px 20px;
+    min-height: var(--touch-min);
+    font-size: var(--font-base);
+  }
+
+  .btn-secondary {
+    @apply bg-white text-black border border-gray-300 font-medium rounded-lg transition-all;
+    @apply hover:bg-gray-50 active:bg-gray-100;
+    padding: 12px 20px;
+    min-height: var(--touch-min);
+    font-size: var(--font-base);
+  }
+
+  .btn-ghost {
+    @apply text-gray-600 rounded-lg transition-all hover:bg-gray-100;
+    padding: 10px 16px;
+    min-height: var(--touch-min);
+    font-size: var(--font-sm);
+  }
+
+  .btn-sm {
+    padding: 8px 14px;
+    min-height: 36px;
+    font-size: var(--font-sm);
+  }
+
+  /* ===================================================
+     CARDS — consistent elevation
+     =================================================== */
+  .card {
+    @apply bg-white rounded-xl transition-shadow;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  /* ===================================================
+     INPUTS — large touch targets, clear labels
+     =================================================== */
+  .input {
+    @apply w-full border border-gray-300 rounded-lg transition-all bg-white;
+    @apply focus:ring-2 focus:ring-black/10 focus:border-black outline-none;
+    padding: 12px 14px;
+    min-height: var(--touch-min);
+    font-size: var(--font-base);
+  }
+  .input::placeholder { color: #A3A3A3; }
+
+  .select {
+    @apply w-full border border-gray-300 rounded-lg bg-white transition-all;
+    @apply focus:ring-2 focus:ring-black/10 focus:border-black outline-none;
+    padding: 12px 14px;
+    min-height: var(--touch-min);
+    font-size: var(--font-base);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23666' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  /* ===================================================
+     BADGES — status indicators
+     =================================================== */
+  .badge { @apply text-xs font-medium px-2.5 py-1 rounded-full inline-flex items-center; }
+  .badge-success { @apply bg-green-50 text-green-700; }
+  .badge-warning { @apply bg-amber-50 text-amber-700; }
+  .badge-danger { @apply bg-red-50 text-red-700; }
+  .badge-info { @apply bg-gray-100 text-gray-700; }
+  .badge-black { @apply bg-black text-white; }
+
+  /* ===================================================
+     SECTION SPACING — breathing room
+     =================================================== */
+  .section { @apply py-12 md:py-16 px-4 md:px-6 lg:px-8; }
+  .section-title { @apply text-xl md:text-2xl font-bold text-gray-900 mb-2; }
+  .section-subtitle { @apply text-sm md:text-base text-gray-500; }
+
+  /* ===================================================
+     SKELETON — loading placeholders
+     =================================================== */
+  .skeleton {
+    @apply bg-gray-200 rounded animate-pulse;
+  }
+}
+
+/* ===================================================
+   MOBILE-FIRST UTILITIES
+   Targets: budget Android, unstable 4G, small screens
+   =================================================== */
+
+/* Minimum touch target for all interactive elements */
+button, a, [role="button"], select, input[type="checkbox"], input[type="radio"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Text never smaller than 14px on mobile */
+@media (max-width: 640px) {
+  body { font-size: 15px; }
+  .text-xs { font-size: 13px !important; }
+  .text-sm { font-size: 14px !important; }
+  h1 { font-size: 1.5rem !important; }
+}
+
+/* Safe area padding for notched phones */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border: #000000;
+    --color-text-muted: #525252;
+  }
+}
+
+/* Print styles */
+@media print {
+  nav, footer, .no-print { display: none !important; }
+  body { font-size: 12pt; color: #000; background: #fff; }
+}

@@ -1,0 +1,35 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    enabled: true
+
+app:
+  kafka:
+    enabled: false
+  elasticsearch:
+    enabled: false
+  minio:
+    enabled: false
+  ml:
+    enabled: false
+  ats:
+    telegram:
+      enabled: false
+  telegram:
+    bot:
+      token: test-token
+      username: test_bot
+  sms:
+    eskiz:
+      email: test
+      password: test
+    playmobile:
+      login: test
+      password: test
+
+logging:
+  level:
+    root: WARN
+    uz.verifix.jobs: INFO

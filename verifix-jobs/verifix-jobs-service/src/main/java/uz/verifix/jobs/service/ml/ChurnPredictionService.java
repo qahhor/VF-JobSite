@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.verifix.jobs.domain.entity.Application;
 import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.enums.DigestPreference;
-import uz.verifix.jobs.domain.enums.NotificationChannel;
 import uz.verifix.jobs.domain.enums.UserType;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
@@ -142,9 +141,9 @@ public class ChurnPredictionService {
                     ChurnRisk risk = predictChurn(candidate.getId());
                     if (risk.score() > notificationThreshold && candidate.getDigestPref() != DigestPreference.OFF) {
                         String message = templates.reEngagement();
-                        notificationService.createAndSend(
+                        notificationService.dispatch(
                                 UserType.CANDIDATE, candidate.getId(),
-                                NotificationChannel.TELEGRAM, "churn.re_engagement", message);
+                                "churn.re_engagement", message);
                         notified++;
                     }
                 } catch (Exception e) {

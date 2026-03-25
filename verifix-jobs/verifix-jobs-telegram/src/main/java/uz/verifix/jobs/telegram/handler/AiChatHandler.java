@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import uz.verifix.jobs.domain.entity.Vacancy;
+import uz.verifix.jobs.service.ai.AiChatbotService;
 import uz.verifix.jobs.service.vacancy.VacancyService;
 import uz.verifix.jobs.telegram.formatter.VacancyCardFormatter;
 
@@ -27,6 +28,7 @@ public class AiChatHandler {
 
     private final VacancyService vacancyService;
     private final VacancyCardFormatter formatter;
+    private final AiChatbotService aiChatbotService;
 
     private static final Map<String, String> CITY_MAP = Map.ofEntries(
             Map.entry("toshkent", "Tashkent"), Map.entry("tashkent", "Tashkent"),
@@ -61,7 +63,13 @@ public class AiChatHandler {
             Map.entry("santexnik", "PLUMBER"), Map.entry("plumber", "PLUMBER"),
             Map.entry("tikuvchi", "TAILOR"), Map.entry("shvey", "TAILOR"), Map.entry("tailor", "TAILOR"),
             Map.entry("kuryer", "COURIER"), Map.entry("courier", "COURIER"),
-            Map.entry("yuk", "LOADER"), Map.entry("gruzchik", "LOADER"), Map.entry("loader", "LOADER")
+            Map.entry("yuk", "LOADER"), Map.entry("gruzchik", "LOADER"), Map.entry("loader", "LOADER"),
+            Map.entry("mexanik", "MECHANIC"), Map.entry("mechanic", "MECHANIC"),
+            Map.entry("bo'yoqchi", "PAINTER"), Map.entry("malyar", "PAINTER"), Map.entry("painter", "PAINTER"),
+            Map.entry("payvandchi", "WELDER"), Map.entry("svarshik", "WELDER"), Map.entry("welder", "WELDER"),
+            Map.entry("duradgor", "CARPENTER"), Map.entry("plotnik", "CARPENTER"), Map.entry("carpenter", "CARPENTER"),
+            Map.entry("bog'bon", "GARDENER"), Map.entry("sadovnik", "GARDENER"), Map.entry("gardener", "GARDENER"),
+            Map.entry("enaga", "NANNY"), Map.entry("nyanya", "NANNY"), Map.entry("nanny", "NANNY")
     );
 
     private static final Pattern SALARY_PATTERN = Pattern.compile(
@@ -76,8 +84,61 @@ public class AiChatHandler {
 
     public SendMessage handle(Message message) {
         Long chatId = message.getChatId();
-        String text = message.getText().toLowerCase().trim();
+        String text = message.getText().trim();
+        String textLower = text.toLowerCase();
 
+        // Try Claude API first if enabled
+        if (aiChatbotService.isEnabled()) {
+            AiChatbotService.ChatResult aiResult = aiChatbotService.processMessage(text, message.getFrom().getId());
+            if (aiResult != null) {
+                return buildAiResponse(chatId, aiResult);
+            }
+            log.debug("Claude API unavailable, falling back to keyword search");
+        }
+
+        // Keyword-based fallback
+        return handleKeywordSearch(chatId, textLower);
+    }
+
+    private SendMessage buildAiResponse(Long chatId, AiChatbotService.ChatResult result) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("🤖 ").append(result.message()).append("\n");
+
+        List<Vacancy> vacancies = result.vacancies();
+        if (vacancies != null && !vacancies.isEmpty()) {
+            sb.append("\n");
+            List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+            int i = 1;
+            for (Vacancy v : vacancies) {
+                sb.append(formatter.formatCompact(v, i)).append("\n\n");
+                InlineKeyboardButton btn = new InlineKeyboardButton();
+                btn.setText("📋 " + i + ". Batafsil");
+                btn.setCallbackData("vacancy:" + v.getId());
+                rows.add(List.of(btn));
+                i++;
+            }
+
+            SendMessage msg = reply(chatId, sb.toString());
+            if (!rows.isEmpty()) {
+                InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
+                keyboard.setKeyboard(rows);
+                msg.setReplyMarkup(keyboard);
+            }
+            return msg;
+        }
+
+        if ("GREETING".equals(result.intent()) || "HELP".equals(result.intent()) || "INFO".equals(result.intent())) {
+            return reply(chatId, sb.toString());
+        }
+
+        // SEARCH intent but no results
+        if ("SEARCH".equals(result.intent())) {
+            sb.append("\n😔 Afsuski, mos ish o'rni topilmadi. Boshqa so'rov bilan urinib ko'ring.");
+        }
+        return reply(chatId, sb.toString());
+    }
+
+    private SendMessage handleKeywordSearch(Long chatId, String text) {
         String city = extractCity(text);
         String category = extractCategory(text);
         BigDecimal salaryFrom = extractSalary(text);
@@ -93,7 +154,7 @@ public class AiChatHandler {
                     "📍 /nearby — Yaqin atrofdagi ishlar");
         }
 
-        log.info("AI chat parsed — city: {}, category: {}, salary: {} from text: '{}'", city, category, salaryFrom, text);
+        log.info("Keyword search — city: {}, category: {}, salary: {} from text: '{}'", city, category, salaryFrom, text);
 
         Page<Vacancy> results = vacancyService.search(city, category, salaryFrom, null, PageRequest.of(0, 5));
 
@@ -124,7 +185,6 @@ public class AiChatHandler {
         int i = 1;
         for (Vacancy v : results.getContent()) {
             sb.append(formatter.formatCompact(v, i)).append("\n\n");
-
             InlineKeyboardButton btn = new InlineKeyboardButton();
             btn.setText("📋 " + i + ". Batafsil");
             btn.setCallbackData("vacancy:" + v.getId());

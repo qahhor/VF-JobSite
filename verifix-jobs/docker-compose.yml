@@ -1,17 +1,17 @@
 services:
   postgres:
-    image: postgis/postgis:16-3.4
+    image: postgis/postgis:17-3.5
     container_name: verifix-jobs-postgres
     environment:
-      POSTGRES_DB: verifix_jobs
-      POSTGRES_USER: verifix
-      POSTGRES_PASSWORD: verifix_secret
+      POSTGRES_DB: ${POSTGRES_DB:-verifix_jobs}
+      POSTGRES_USER: ${POSTGRES_USER:-verifix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-verifix_secret}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U verifix -d verifix_jobs"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-verifix} -d ${POSTGRES_DB:-verifix_jobs}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -19,8 +19,9 @@ services:
   redis:
     image: redis:7-alpine
     container_name: verifix-jobs-redis
+    command: redis-server ${REDIS_PASSWORD:+--requirepass $REDIS_PASSWORD}
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis-data:/data
     healthcheck:
@@ -30,7 +31,7 @@ services:
       retries: 5
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.0
+    image: confluentinc/cp-zookeeper:7.9.0
     container_name: verifix-jobs-zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -41,7 +42,7 @@ services:
       - zookeeper-data:/var/lib/zookeeper/data
 
   kafka:
-    image: confluentinc/cp-kafka:7.6.0
+    image: confluentinc/cp-kafka:7.9.0
     container_name: verifix-jobs-kafka
     depends_on:
       - zookeeper
@@ -64,7 +65,7 @@ services:
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ports:
-      - "9200:9200"
+      - "${ELASTICSEARCH_PORT:-9200}:9200"
     volumes:
       - es-data:/usr/share/elasticsearch/data
     healthcheck:
@@ -84,15 +85,15 @@ services:
       - "5601:5601"
 
   minio:
-    image: minio/minio:RELEASE.2024-10-02T17-50-41Z
+    image: minio/minio:RELEASE.2025-02-28T09-55-16Z
     container_name: verifix-jobs-minio
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - minio-data:/data
     healthcheck:
@@ -101,6 +102,27 @@ services:
       timeout: 10s
       retries: 5
 
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    container_name: verifix-jobs-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./ops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.5.2
+    container_name: verifix-jobs-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./ops/grafana/provisioning:/etc/grafana/provisioning
+      - ./ops/grafana/dashboards:/var/lib/grafana/dashboards
+
 volumes:
   postgres-data:
   redis-data:
@@ -108,3 +130,4 @@ volumes:
   kafka-data:
   es-data:
   minio-data:
+  grafana-data:

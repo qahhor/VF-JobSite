@@ -5,12 +5,11 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <!-- Pricing Plans -->
     <changeSet id="008-01-pricing-plans" author="verifix">
         <insert tableName="pricing_plan">
             <column name="id" valueComputed="uuid_generate_v4()"/>
             <column name="code" value="FREE"/>
-            <column name="name" value="Boshlang'ich"/>
+            <column name="name" value="Boshlangich"/>
             <column name="max_vacancies" valueNumeric="3"/>
             <column name="max_resume_views" valueNumeric="10"/>
             <column name="has_ats" valueBoolean="false"/>
@@ -61,70 +60,63 @@
         </insert>
     </changeSet>
 
-    <!-- Seed 50 Cities -->
     <changeSet id="008-02-cities" author="verifix">
         <sql>
-            <!-- Uzbekistan (13 cities) -->
             INSERT INTO geo_city (id, name_uz_lat, name_uz_cyr, name_ru, name_en, region, country, location, population, created_at)
             VALUES
-            (uuid_generate_v4(), 'Toshkent', 'Тошкент', 'Ташкент', 'Tashkent', 'Toshkent', 'UZ', ST_SetSRID(ST_MakePoint(69.2401, 41.2995), 4326), 2900000, now()),
-            (uuid_generate_v4(), 'Samarqand', 'Самарқанд', 'Самарканд', 'Samarkand', 'Samarqand', 'UZ', ST_SetSRID(ST_MakePoint(66.9597, 39.6542), 4326), 540000, now()),
-            (uuid_generate_v4(), 'Namangan', 'Наманган', 'Наманган', 'Namangan', 'Namangan', 'UZ', ST_SetSRID(ST_MakePoint(71.6726, 41.0011), 4326), 510000, now()),
-            (uuid_generate_v4(), 'Andijon', 'Андижон', 'Андижан', 'Andijan', 'Andijon', 'UZ', ST_SetSRID(ST_MakePoint(72.3442, 40.7821), 4326), 440000, now()),
-            (uuid_generate_v4(), 'Nukus', 'Нукус', 'Нукус', 'Nukus', 'Qoraqalpogiston', 'UZ', ST_SetSRID(ST_MakePoint(59.6036, 42.4602), 4326), 310000, now()),
-            (uuid_generate_v4(), 'Buxoro', 'Бухоро', 'Бухара', 'Bukhara', 'Buxoro', 'UZ', ST_SetSRID(ST_MakePoint(64.4585, 39.7745), 4326), 280000, now()),
-            (uuid_generate_v4(), 'Qarshi', 'Қарши', 'Карши', 'Karshi', 'Qashqadaryo', 'UZ', ST_SetSRID(ST_MakePoint(65.7983, 38.8604), 4326), 250000, now()),
-            (uuid_generate_v4(), 'Fargona', 'Фарғона', 'Фергана', 'Fergana', 'Fargona', 'UZ', ST_SetSRID(ST_MakePoint(71.7870, 40.3834), 4326), 240000, now()),
-            (uuid_generate_v4(), 'Qoqon', 'Қўқон', 'Коканд', 'Kokand', 'Fargona', 'UZ', ST_SetSRID(ST_MakePoint(70.9425, 40.5286), 4326), 230000, now()),
-            (uuid_generate_v4(), 'Jizzax', 'Жиззах', 'Джизак', 'Jizzakh', 'Jizzax', 'UZ', ST_SetSRID(ST_MakePoint(67.8422, 40.1158), 4326), 175000, now()),
-            (uuid_generate_v4(), 'Urganch', 'Урганч', 'Ургенч', 'Urgench', 'Xorazm', 'UZ', ST_SetSRID(ST_MakePoint(60.6333, 41.5500), 4326), 170000, now()),
-            (uuid_generate_v4(), 'Navoiy', 'Навоий', 'Навои', 'Navoi', 'Navoiy', 'UZ', ST_SetSRID(ST_MakePoint(65.3792, 40.1033), 4326), 160000, now()),
-            (uuid_generate_v4(), 'Termiz', 'Термиз', 'Термез', 'Termez', 'Surxondaryo', 'UZ', ST_SetSRID(ST_MakePoint(67.2783, 37.2242), 4326), 150000, now()),
+            (uuid_generate_v4(), 'Toshkent', 'Toshkent', 'Tashkent', 'Tashkent', 'Toshkent', 'UZ', ST_SetSRID(ST_MakePoint(69.2401, 41.2995), 4326), 2900000, now()),
+            (uuid_generate_v4(), 'Samarqand', 'Samarqand', 'Samarkand', 'Samarkand', 'Samarqand', 'UZ', ST_SetSRID(ST_MakePoint(66.9597, 39.6542), 4326), 540000, now()),
+            (uuid_generate_v4(), 'Namangan', 'Namangan', 'Namangan', 'Namangan', 'Namangan', 'UZ', ST_SetSRID(ST_MakePoint(71.6726, 41.0011), 4326), 510000, now()),
+            (uuid_generate_v4(), 'Andijon', 'Andijon', 'Andijan', 'Andijan', 'Andijon', 'UZ', ST_SetSRID(ST_MakePoint(72.3442, 40.7821), 4326), 440000, now()),
+            (uuid_generate_v4(), 'Nukus', 'Nukus', 'Nukus', 'Nukus', 'Qoraqalpogiston', 'UZ', ST_SetSRID(ST_MakePoint(59.6036, 42.4602), 4326), 310000, now()),
+            (uuid_generate_v4(), 'Buxoro', 'Buxoro', 'Bukhara', 'Bukhara', 'Buxoro', 'UZ', ST_SetSRID(ST_MakePoint(64.4585, 39.7745), 4326), 280000, now()),
+            (uuid_generate_v4(), 'Qarshi', 'Qarshi', 'Karshi', 'Karshi', 'Qashqadaryo', 'UZ', ST_SetSRID(ST_MakePoint(65.7983, 38.8604), 4326), 250000, now()),
+            (uuid_generate_v4(), 'Fargona', 'Fargona', 'Fergana', 'Fergana', 'Fargona', 'UZ', ST_SetSRID(ST_MakePoint(71.7870, 40.3834), 4326), 240000, now()),
+            (uuid_generate_v4(), 'Qoqon', 'Qoqon', 'Kokand', 'Kokand', 'Fargona', 'UZ', ST_SetSRID(ST_MakePoint(70.9425, 40.5286), 4326), 230000, now()),
+            (uuid_generate_v4(), 'Jizzax', 'Jizzax', 'Jizzakh', 'Jizzakh', 'Jizzax', 'UZ', ST_SetSRID(ST_MakePoint(67.8422, 40.1158), 4326), 175000, now()),
+            (uuid_generate_v4(), 'Urganch', 'Urganch', 'Urgench', 'Urgench', 'Xorazm', 'UZ', ST_SetSRID(ST_MakePoint(60.6333, 41.5500), 4326), 170000, now()),
+            (uuid_generate_v4(), 'Navoiy', 'Navoiy', 'Navoi', 'Navoi', 'Navoiy', 'UZ', ST_SetSRID(ST_MakePoint(65.3792, 40.1033), 4326), 160000, now()),
+            (uuid_generate_v4(), 'Termiz', 'Termiz', 'Termez', 'Termez', 'Surxondaryo', 'UZ', ST_SetSRID(ST_MakePoint(67.2783, 37.2242), 4326), 150000, now()),
+            (uuid_generate_v4(), 'Chirchiq', 'Chirchiq', 'Chirchik', 'Chirchiq', 'Toshkent', 'UZ', ST_SetSRID(ST_MakePoint(69.5822, 41.4689), 4326), 171000, now()),
+            (uuid_generate_v4(), 'Angren', 'Angren', 'Angren', 'Angren', 'Toshkent', 'UZ', ST_SetSRID(ST_MakePoint(70.1436, 41.0167), 4326), 190000, now()),
+            (uuid_generate_v4(), 'Guliston', 'Guliston', 'Gulistan', 'Guliston', 'Sirdaryo', 'UZ', ST_SetSRID(ST_MakePoint(68.7800, 40.4897), 4326), 91000, now()),
+            (uuid_generate_v4(), 'Shahrisabz', 'Shahrisabz', 'Shakhrisabz', 'Shahrisabz', 'Qashqadaryo', 'UZ', ST_SetSRID(ST_MakePoint(66.8342, 39.0578), 4326), 116000, now()),
+            (uuid_generate_v4(), 'Denov', 'Denov', 'Denau', 'Denov', 'Surxondaryo', 'UZ', ST_SetSRID(ST_MakePoint(67.8986, 38.2772), 4326), 98000, now()),
 
-            <!-- Kazakhstan (12 cities) -->
-            (uuid_generate_v4(), 'Astana', 'Астана', 'Астана', 'Astana', 'Astana', 'KZ', ST_SetSRID(ST_MakePoint(71.4491, 51.1694), 4326), 1400000, now()),
-            (uuid_generate_v4(), 'Almaty', 'Алматы', 'Алматы', 'Almaty', 'Almaty', 'KZ', ST_SetSRID(ST_MakePoint(76.9502, 43.2380), 4326), 1900000, now()),
-            (uuid_generate_v4(), 'Shymkent', 'Шымкент', 'Шымкент', 'Shymkent', 'Shymkent', 'KZ', ST_SetSRID(ST_MakePoint(69.5853, 42.3141), 4326), 1300000, now()),
-            (uuid_generate_v4(), 'Qaraghandy', 'Қарағанды', 'Караганда', 'Karaganda', 'Qaraghandy', 'KZ', ST_SetSRID(ST_MakePoint(73.1017, 49.8019), 4326), 500000, now()),
-            (uuid_generate_v4(), 'Aqtobe', 'Ақтөбе', 'Актобе', 'Aktobe', 'Aqtobe', 'KZ', ST_SetSRID(ST_MakePoint(57.2071, 50.2999), 4326), 410000, now()),
-            (uuid_generate_v4(), 'Taraz', 'Тараз', 'Тараз', 'Taraz', 'Jambyl', 'KZ', ST_SetSRID(ST_MakePoint(71.3667, 42.9000), 4326), 360000, now()),
-            (uuid_generate_v4(), 'Pavlodar', 'Павлодар', 'Павлодар', 'Pavlodar', 'Pavlodar', 'KZ', ST_SetSRID(ST_MakePoint(76.9500, 52.2833), 4326), 350000, now()),
-            (uuid_generate_v4(), 'Oskemen', 'Өскемен', 'Усть-Каменогорск', 'Ust-Kamenogorsk', 'East Kazakhstan', 'KZ', ST_SetSRID(ST_MakePoint(82.6146, 49.9481), 4326), 330000, now()),
-            (uuid_generate_v4(), 'Semey', 'Семей', 'Семей', 'Semey', 'Abay', 'KZ', ST_SetSRID(ST_MakePoint(80.2278, 50.4111), 4326), 320000, now()),
-            (uuid_generate_v4(), 'Atyrau', 'Атырау', 'Атырау', 'Atyrau', 'Atyrau', 'KZ', ST_SetSRID(ST_MakePoint(51.8839, 47.1167), 4326), 280000, now()),
-            (uuid_generate_v4(), 'Qostanay', 'Қостанай', 'Костанай', 'Kostanay', 'Qostanay', 'KZ', ST_SetSRID(ST_MakePoint(63.5833, 53.2000), 4326), 240000, now()),
-            (uuid_generate_v4(), 'Oral', 'Орал', 'Уральск', 'Uralsk', 'West Kazakhstan', 'KZ', ST_SetSRID(ST_MakePoint(51.3667, 51.2500), 4326), 230000, now()),
+            (uuid_generate_v4(), 'Astana', 'Astana', 'Astana', 'Astana', 'Astana', 'KZ', ST_SetSRID(ST_MakePoint(71.4491, 51.1694), 4326), 1400000, now()),
+            (uuid_generate_v4(), 'Almaty', 'Almaty', 'Almaty', 'Almaty', 'Almaty', 'KZ', ST_SetSRID(ST_MakePoint(76.9502, 43.2380), 4326), 1900000, now()),
+            (uuid_generate_v4(), 'Shymkent', 'Shymkent', 'Shymkent', 'Shymkent', 'Shymkent', 'KZ', ST_SetSRID(ST_MakePoint(69.5853, 42.3141), 4326), 1300000, now()),
+            (uuid_generate_v4(), 'Karaganda', 'Karaganda', 'Karaganda', 'Karaganda', 'Qaraghandy', 'KZ', ST_SetSRID(ST_MakePoint(73.1017, 49.8019), 4326), 500000, now()),
+            (uuid_generate_v4(), 'Aktobe', 'Aktobe', 'Aktobe', 'Aktobe', 'Aqtobe', 'KZ', ST_SetSRID(ST_MakePoint(57.2071, 50.2999), 4326), 410000, now()),
+            (uuid_generate_v4(), 'Taraz', 'Taraz', 'Taraz', 'Taraz', 'Jambyl', 'KZ', ST_SetSRID(ST_MakePoint(71.3667, 42.9000), 4326), 360000, now()),
+            (uuid_generate_v4(), 'Pavlodar', 'Pavlodar', 'Pavlodar', 'Pavlodar', 'Pavlodar', 'KZ', ST_SetSRID(ST_MakePoint(76.9500, 52.2833), 4326), 350000, now()),
+            (uuid_generate_v4(), 'Oskemen', 'Oskemen', 'Ust-Kamenogorsk', 'Ust-Kamenogorsk', 'East Kazakhstan', 'KZ', ST_SetSRID(ST_MakePoint(82.6146, 49.9481), 4326), 330000, now()),
+            (uuid_generate_v4(), 'Semey', 'Semey', 'Semey', 'Semey', 'Abay', 'KZ', ST_SetSRID(ST_MakePoint(80.2278, 50.4111), 4326), 320000, now()),
+            (uuid_generate_v4(), 'Atyrau', 'Atyrau', 'Atyrau', 'Atyrau', 'Atyrau', 'KZ', ST_SetSRID(ST_MakePoint(51.8839, 47.1167), 4326), 280000, now()),
+            (uuid_generate_v4(), 'Kostanay', 'Kostanay', 'Kostanay', 'Kostanay', 'Qostanay', 'KZ', ST_SetSRID(ST_MakePoint(63.5833, 53.2000), 4326), 240000, now()),
+            (uuid_generate_v4(), 'Oral', 'Oral', 'Uralsk', 'Uralsk', 'West Kazakhstan', 'KZ', ST_SetSRID(ST_MakePoint(51.3667, 51.2500), 4326), 230000, now()),
+            (uuid_generate_v4(), 'Turkistan', 'Turkistan', 'Turkistan', 'Turkistan', 'Turkistan', 'KZ', ST_SetSRID(ST_MakePoint(68.2697, 43.2973), 4326), 230000, now()),
+            (uuid_generate_v4(), 'Kyzylorda', 'Kyzylorda', 'Kyzylorda', 'Kyzylorda', 'Kyzylorda', 'KZ', ST_SetSRID(ST_MakePoint(65.4823, 44.8488), 4326), 330000, now()),
 
-            <!-- Kyrgyzstan (8 cities) -->
-            (uuid_generate_v4(), 'Bishkek', 'Бишкек', 'Бишкек', 'Bishkek', 'Chuy', 'KG', ST_SetSRID(ST_MakePoint(74.5698, 42.8746), 4326), 1400000, now()),
-            (uuid_generate_v4(), 'Osh', 'Ош', 'Ош', 'Osh', 'Osh', 'KG', ST_SetSRID(ST_MakePoint(72.7989, 40.5283), 4326), 280000, now()),
-            (uuid_generate_v4(), 'Jalal-Abad', 'Жалал-Абад', 'Джалал-Абад', 'Jalal-Abad', 'Jalal-Abad', 'KG', ST_SetSRID(ST_MakePoint(73.0019, 40.9333), 4326), 110000, now()),
-            (uuid_generate_v4(), 'Karakol', 'Каракол', 'Каракол', 'Karakol', 'Issyk-Kul', 'KG', ST_SetSRID(ST_MakePoint(78.3948, 42.4877), 4326), 80000, now()),
-            (uuid_generate_v4(), 'Tokmok', 'Токмок', 'Токмок', 'Tokmok', 'Chuy', 'KG', ST_SetSRID(ST_MakePoint(75.2862, 42.7641), 4326), 70000, now()),
-            (uuid_generate_v4(), 'Naryn', 'Нарын', 'Нарын', 'Naryn', 'Naryn', 'KG', ST_SetSRID(ST_MakePoint(76.0000, 41.4333), 4326), 40000, now()),
-            (uuid_generate_v4(), 'Batken', 'Баткен', 'Баткен', 'Batken', 'Batken', 'KG', ST_SetSRID(ST_MakePoint(70.8194, 40.0625), 4326), 30000, now()),
-            (uuid_generate_v4(), 'Talas', 'Талас', 'Талас', 'Talas', 'Talas', 'KG', ST_SetSRID(ST_MakePoint(72.2436, 42.5178), 4326), 35000, now()),
+            (uuid_generate_v4(), 'Bishkek', 'Bishkek', 'Bishkek', 'Bishkek', 'Chuy', 'KG', ST_SetSRID(ST_MakePoint(74.5698, 42.8746), 4326), 1400000, now()),
+            (uuid_generate_v4(), 'Osh', 'Osh', 'Osh', 'Osh', 'Osh', 'KG', ST_SetSRID(ST_MakePoint(72.7989, 40.5283), 4326), 280000, now()),
+            (uuid_generate_v4(), 'Jalal-Abad', 'Jalal-Abad', 'Jalal-Abad', 'Jalal-Abad', 'Jalal-Abad', 'KG', ST_SetSRID(ST_MakePoint(73.0019, 40.9333), 4326), 110000, now()),
+            (uuid_generate_v4(), 'Karakol', 'Karakol', 'Karakol', 'Karakol', 'Issyk-Kul', 'KG', ST_SetSRID(ST_MakePoint(78.3948, 42.4877), 4326), 80000, now()),
+            (uuid_generate_v4(), 'Tokmok', 'Tokmok', 'Tokmok', 'Tokmok', 'Chuy', 'KG', ST_SetSRID(ST_MakePoint(75.2862, 42.7641), 4326), 70000, now()),
+            (uuid_generate_v4(), 'Naryn', 'Naryn', 'Naryn', 'Naryn', 'Naryn', 'KG', ST_SetSRID(ST_MakePoint(76.0000, 41.4333), 4326), 40000, now()),
+            (uuid_generate_v4(), 'Batken', 'Batken', 'Batken', 'Batken', 'Batken', 'KG', ST_SetSRID(ST_MakePoint(70.8194, 40.0625), 4326), 30000, now()),
+            (uuid_generate_v4(), 'Talas', 'Talas', 'Talas', 'Talas', 'Talas', 'KG', ST_SetSRID(ST_MakePoint(72.2436, 42.5178), 4326), 35000, now()),
+            (uuid_generate_v4(), 'Kara-Balta', 'Kara-Balta', 'Kara-Balta', 'Kara-Balta', 'Chuy', 'KG', ST_SetSRID(ST_MakePoint(73.8483, 42.8142), 4326), 48000, now()),
 
-            <!-- Tajikistan (8 cities) -->
-            (uuid_generate_v4(), 'Dushanbe', 'Душанбе', 'Душанбе', 'Dushanbe', 'Dushanbe', 'TJ', ST_SetSRID(ST_MakePoint(68.7738, 38.5598), 4326), 850000, now()),
-            (uuid_generate_v4(), 'Khujand', 'Хуҷанд', 'Худжанд', 'Khujand', 'Sughd', 'TJ', ST_SetSRID(ST_MakePoint(69.6206, 40.2808), 4326), 180000, now()),
-            (uuid_generate_v4(), 'Bokhtar', 'Бохтар', 'Бохтар', 'Bokhtar', 'Khatlon', 'TJ', ST_SetSRID(ST_MakePoint(68.7800, 37.8333), 4326), 110000, now()),
-            (uuid_generate_v4(), 'Kulob', 'Кулоб', 'Куляб', 'Kulob', 'Khatlon', 'TJ', ST_SetSRID(ST_MakePoint(69.7847, 38.5444), 4326), 100000, now()),
-            (uuid_generate_v4(), 'Istaravshan', 'Истаравшан', 'Истаравшан', 'Istaravshan', 'Sughd', 'TJ', ST_SetSRID(ST_MakePoint(69.0042, 39.9147), 4326), 60000, now()),
-            (uuid_generate_v4(), 'Vahdat', 'Ваҳдат', 'Вахдат', 'Vahdat', 'Districts of Republican Subordination', 'TJ', ST_SetSRID(ST_MakePoint(69.0167, 38.5500), 4326), 50000, now()),
-            (uuid_generate_v4(), 'Panjakent', 'Панҷакент', 'Пенджикент', 'Panjakent', 'Sughd', 'TJ', ST_SetSRID(ST_MakePoint(67.6111, 39.4903), 4326), 40000, now()),
-            (uuid_generate_v4(), 'Khorugh', 'Хоруғ', 'Хорог', 'Khorugh', 'GBAO', 'TJ', ST_SetSRID(ST_MakePoint(71.5531, 37.5361), 4326), 30000, now()),
-
-            <!-- Mongolia (9 cities) -->
-            (uuid_generate_v4(), 'Ulaanbaatar', 'Улаанбаатар', 'Улан-Батор', 'Ulaanbaatar', 'Ulaanbaatar', 'MN', ST_SetSRID(ST_MakePoint(106.8866, 47.9064), 4326), 1600000, now()),
-            (uuid_generate_v4(), 'Erdenet', 'Эрдэнэт', 'Эрдэнэт', 'Erdenet', 'Orkhon', 'MN', ST_SetSRID(ST_MakePoint(104.1500, 49.0833), 4326), 100000, now()),
-            (uuid_generate_v4(), 'Darkhan', 'Дархан', 'Дархан', 'Darkhan', 'Darkhan-Uul', 'MN', ST_SetSRID(ST_MakePoint(106.0500, 49.4833), 4326), 85000, now()),
-            (uuid_generate_v4(), 'Choibalsan', 'Чойбалсан', 'Чойбалсан', 'Choibalsan', 'Dornod', 'MN', ST_SetSRID(ST_MakePoint(114.5350, 48.0750), 4326), 45000, now()),
-            (uuid_generate_v4(), 'Murun', 'Мөрөн', 'Мурэн', 'Murun', 'Khuvsgul', 'MN', ST_SetSRID(ST_MakePoint(100.1600, 49.6350), 4326), 40000, now()),
-            (uuid_generate_v4(), 'Ulgii', 'Өлгий', 'Улгий', 'Ulgii', 'Bayan-Ulgii', 'MN', ST_SetSRID(ST_MakePoint(89.9625, 48.9667), 4326), 30000, now()),
-            (uuid_generate_v4(), 'Khovd', 'Ховд', 'Ховд', 'Khovd', 'Khovd', 'MN', ST_SetSRID(ST_MakePoint(91.6400, 48.0100), 4326), 30000, now()),
-            (uuid_generate_v4(), 'Dalanzadgad', 'Даланзадгад', 'Даланзадгад', 'Dalanzadgad', 'Omnogovi', 'MN', ST_SetSRID(ST_MakePoint(104.4264, 43.5708), 4326), 20000, now()),
-            (uuid_generate_v4(), 'Bayankhongor', 'Баянхонгор', 'Баянхонгор', 'Bayankhongor', 'Bayankhongor', 'MN', ST_SetSRID(ST_MakePoint(100.7181, 46.1944), 4326), 28000, now());
+            (uuid_generate_v4(), 'Dushanbe', 'Dushanbe', 'Dushanbe', 'Dushanbe', 'Dushanbe', 'TJ', ST_SetSRID(ST_MakePoint(68.7738, 38.5598), 4326), 850000, now()),
+            (uuid_generate_v4(), 'Khujand', 'Khujand', 'Khujand', 'Khujand', 'Sughd', 'TJ', ST_SetSRID(ST_MakePoint(69.6206, 40.2808), 4326), 180000, now()),
+            (uuid_generate_v4(), 'Bokhtar', 'Bokhtar', 'Bokhtar', 'Bokhtar', 'Khatlon', 'TJ', ST_SetSRID(ST_MakePoint(68.7800, 37.8333), 4326), 110000, now()),
+            (uuid_generate_v4(), 'Kulob', 'Kulob', 'Kulob', 'Kulob', 'Khatlon', 'TJ', ST_SetSRID(ST_MakePoint(69.7847, 38.5444), 4326), 100000, now()),
+            (uuid_generate_v4(), 'Istaravshan', 'Istaravshan', 'Istaravshan', 'Istaravshan', 'Sughd', 'TJ', ST_SetSRID(ST_MakePoint(69.0042, 39.9147), 4326), 60000, now()),
+            (uuid_generate_v4(), 'Vahdat', 'Vahdat', 'Vahdat', 'Vahdat', 'Districts of Republican Subordination', 'TJ', ST_SetSRID(ST_MakePoint(69.0167, 38.5500), 4326), 50000, now()),
+            (uuid_generate_v4(), 'Panjakent', 'Panjakent', 'Panjakent', 'Panjakent', 'Sughd', 'TJ', ST_SetSRID(ST_MakePoint(67.6111, 39.4903), 4326), 40000, now()),
+            (uuid_generate_v4(), 'Khorugh', 'Khorugh', 'Khorugh', 'Khorugh', 'GBAO', 'TJ', ST_SetSRID(ST_MakePoint(71.5531, 37.5361), 4326), 30000, now()),
+            (uuid_generate_v4(), 'Tursunzoda', 'Tursunzoda', 'Tursunzade', 'Tursunzoda', 'Districts of Republican Subordination', 'TJ', ST_SetSRID(ST_MakePoint(68.2317, 38.5128), 4326), 55000, now());
         </sql>
     </changeSet>
 

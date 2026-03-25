@@ -28,6 +28,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final TenantContextFilter tenantContextFilter;
+    private final RateLimitFilter rateLimitFilter;
 
     @Value("${app.cors.allowed-origins:http://localhost:4200,http://localhost:4201}")
     private String allowedOriginsConfig;
@@ -41,7 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/admin/auth/**").permitAll()
+                        .requestMatchers("/api/v1/admin/auth/login").permitAll()
                         .requestMatchers("/api/v1/otp/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/vacancies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/cities/**").permitAll()
@@ -51,17 +53,26 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/miniapp/auth").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/referrals/leaderboard").permitAll()
                         .requestMatchers("/api/v1/verification/callback").permitAll()
+                        // HRM SSO
+                        .requestMatchers("/api/v1/hrm/sso/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/hrm/salary/benchmarks").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/company/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/company/events").permitAll()
                         .requestMatchers(HttpMethod.GET, "/sitemap.xml").permitAll()
+                        // Public Marketplace & Intelligence
+                        .requestMatchers(HttpMethod.GET, "/api/v1/public/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/intelligence/salary/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/partner/**").permitAll()
                         // Swagger UI
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        // Health check
-                        .requestMatchers("/actuator/health").permitAll()
+                        // Health and metrics
+                        .requestMatchers("/actuator/health", "/actuator/prometheus").permitAll()
                         // Everything else requires auth
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(tenantContextFilter, JwtAuthenticationFilter.class)
+                .addFilterAfter(rateLimitFilter, TenantContextFilter.class)
                 .build();
     }
 
@@ -75,7 +86,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList(allowedOriginsConfig.split(",")));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With", "X-Telegram-Init-Data"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 

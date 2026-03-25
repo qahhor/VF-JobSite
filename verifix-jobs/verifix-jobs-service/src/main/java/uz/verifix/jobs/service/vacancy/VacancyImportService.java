@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 import uz.verifix.jobs.domain.entity.Employer;
 import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.enums.EmploymentType;
@@ -12,7 +13,6 @@ import uz.verifix.jobs.domain.enums.VacancySource;
 import uz.verifix.jobs.domain.enums.VacancyStatus;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
-import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -51,7 +51,9 @@ public class VacancyImportService {
             String line;
             while ((line = reader.readLine()) != null) {
                 totalRows++;
-                if (line.isBlank()) continue;
+                if (line.isBlank()) {
+                    continue;
+                }
 
                 try {
                     String[] cols = parseCsvLine(line);
@@ -90,7 +92,8 @@ public class VacancyImportService {
                     if (cols.length > 6 && !cols[6].isBlank()) {
                         try {
                             vacancy.setEmploymentType(EmploymentType.valueOf(cols[6].trim().toUpperCase()));
-                        } catch (IllegalArgumentException ignored) {}
+                        } catch (IllegalArgumentException ignored) {
+                        }
                     }
                     if (cols.length > 7 && !cols[7].isBlank()) {
                         vacancy.setPositionsCount(Integer.parseInt(cols[7].trim()));
@@ -114,8 +117,8 @@ public class VacancyImportService {
 
     public byte[] getImportTemplate() {
         String template = CSV_HEADER + "\n"
-                + "Повар,Опытный повар в ресторан,Общепит,Ташкент,3000000,5000000,FULL_TIME,2\n"
-                + "Водитель,Категория B,Логистика,Самарканд,4000000,,FULL_TIME,5\n";
+                + "Cook,Experienced restaurant cook,Hospitality,Tashkent,3000000,5000000,FULL_TIME,2\n"
+                + "Driver,Category B driver,Logistics,Samarkand,4000000,,FULL_TIME,5\n";
         return template.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -138,5 +141,6 @@ public class VacancyImportService {
         return fields.toArray(new String[0]);
     }
 
-    public record ImportResult(int totalRows, int importedCount, int skippedCount, List<String> errors) {}
+    public record ImportResult(int totalRows, int importedCount, int skippedCount, List<String> errors) {
+    }
 }

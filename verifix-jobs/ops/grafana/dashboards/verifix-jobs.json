@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "title": "Verifix Jobs - Application Metrics",
+    "uid": "verifix-jobs-main",
+    "timezone": "Asia/Tashkent",
+    "refresh": "30s",
+    "panels": [
+      {
+        "title": "HTTP Request Rate",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [{"expr": "rate(http_server_requests_seconds_count{job=\"verifix-jobs-api\"}[5m])", "legendFormat": "{{method}} {{uri}}"}]
+      },
+      {
+        "title": "HTTP Response Time (p95)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [{"expr": "histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{job=\"verifix-jobs-api\"}[5m]))", "legendFormat": "p95"}]
+      },
+      {
+        "title": "JVM Heap Memory",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {"expr": "jvm_memory_used_bytes{area=\"heap\",job=\"verifix-jobs-api\"}", "legendFormat": "Used"},
+          {"expr": "jvm_memory_max_bytes{area=\"heap\",job=\"verifix-jobs-api\"}", "legendFormat": "Max"}
+        ]
+      },
+      {
+        "title": "Database Connection Pool",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {"expr": "hikaricp_connections_active{job=\"verifix-jobs-api\"}", "legendFormat": "Active"},
+          {"expr": "hikaricp_connections_idle{job=\"verifix-jobs-api\"}", "legendFormat": "Idle"}
+        ]
+      },
+      {
+        "title": "HTTP Error Rate (4xx/5xx)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16},
+        "targets": [
+          {"expr": "rate(http_server_requests_seconds_count{status=~\"4..\",job=\"verifix-jobs-api\"}[5m])", "legendFormat": "4xx"},
+          {"expr": "rate(http_server_requests_seconds_count{status=~\"5..\",job=\"verifix-jobs-api\"}[5m])", "legendFormat": "5xx"}
+        ]
+      },
+      {
+        "title": "Telegram Bot Messages",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16},
+        "targets": [{"expr": "rate(http_server_requests_seconds_count{job=\"verifix-jobs-telegram\"}[5m])", "legendFormat": "{{uri}}"}]
+      }
+    ]
+  }
+}

@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import uz.verifix.jobs.api.security.SecurityUtils;
-import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.integration.storage.FileStorageService;
 
 import java.io.IOException;
@@ -21,9 +24,8 @@ import java.util.UUID;
 public class FileUploadController {
 
     private final FileStorageService fileStorageService;
-    private final ManagerRepository managerRepository;
 
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
     private static final java.util.Set<String> ALLOWED_TYPES = java.util.Set.of(
             "image/jpeg", "image/png", "image/webp", "application/pdf"
     );
@@ -33,7 +35,7 @@ public class FileUploadController {
             @RequestParam("file") MultipartFile file,
             Authentication auth) throws IOException {
 
-        UUID employerId = SecurityUtils.extractEmployerId(auth, managerRepository);
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         validateFile(file);
 
         String objectName = fileStorageService.upload(
@@ -41,7 +43,8 @@ public class FileUploadController {
                 file.getOriginalFilename(),
                 file.getInputStream(),
                 file.getContentType(),
-                file.getSize());
+                file.getSize()
+        );
 
         String url = fileStorageService.getPresignedUrl(objectName);
         return ResponseEntity.ok(Map.of("objectName", objectName, "url", url));
@@ -60,7 +63,8 @@ public class FileUploadController {
                 file.getOriginalFilename(),
                 file.getInputStream(),
                 file.getContentType(),
-                file.getSize());
+                file.getSize()
+        );
 
         String url = fileStorageService.getPresignedUrl(objectName);
         return ResponseEntity.ok(Map.of("objectName", objectName, "url", url));

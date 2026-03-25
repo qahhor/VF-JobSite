@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="013-01-admin-user-totp" author="codex">
+        <addColumn tableName="admin_user">
+            <column name="totp_secret" type="varchar(128)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="013-02-candidate-push-subscription" author="codex">
+        <addColumn tableName="candidate">
+            <column name="push_subscription_json" type="jsonb"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

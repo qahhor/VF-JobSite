@@ -1,0 +1,5 @@
+KG	KGZ	417	KG	Kyrgyzstan	Bishkek	198500	6315800	AS	.kg	KGS	Som	996	######	^(\d{6})$	ky,uz,ru	1527747	CN,TJ,UZ,KZ	
+KZ	KAZ	398	KZ	Kazakhstan	Nur-Sultan	2717300	18276499	AS	.kz	KZT	Tenge	7	######	^(\d{6})$	kk,ru	1522867	TM,CN,KG,UZ,RU	
+TJ	TJK	762	TI	Tajikistan	Dushanbe	143100	9100837	AS	.tj	TJS	Somoni	992	######	^(\d{6})$	tg,ru	1220409	CN,AF,KG,UZ	
+TM	TKM	795	TX	Turkmenistan	Ashgabat	488100	5850908	AS	.tm	TMT	Manat	993	######	^(\d{6})$	tk,ru,uz	1218197	AF,IR,UZ,KZ	
+UZ	UZB	860	UZ	Uzbekistan	Tashkent	447400	32955400	AS	.uz	UZS	Som	998	######	^(\d{6})$	uz,ru,tg	1512440	TM,AF,KG,TJ,KZ	

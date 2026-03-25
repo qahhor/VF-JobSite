@@ -64,7 +64,11 @@ public class ManagerService {
         // Send invitation SMS with temp password
         if (manager.getPhone() != null && !manager.getPhone().isBlank()) {
             try {
-                notificationService.sendSms(manager.getPhone(),
+                notificationService.sendSms(
+                        uz.verifix.jobs.domain.enums.UserType.EMPLOYER,
+                        employerId,
+                        manager.getPhone(),
+                        "manager.invite",
                         "Verifix Jobs: Siz " + employer.getName() + " kompaniyasiga taklif qilindingiz. " +
                         "Login: " + email + ", Parol: " + tempPassword);
             } catch (Exception e) {

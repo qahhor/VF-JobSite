@@ -12,6 +12,8 @@ import uz.verifix.jobs.domain.entity.AdminUser;
 import uz.verifix.jobs.domain.enums.AdminRole;
 import uz.verifix.jobs.domain.repository.AdminUserRepository;
 import uz.verifix.jobs.service.auth.JwtService;
+import uz.verifix.jobs.service.auth.RefreshTokenService;
+import uz.verifix.jobs.service.auth.TotpService;
 
 import java.util.UUID;
 
@@ -23,8 +25,10 @@ public class AdminAuthService {
     private final AdminUserRepository adminUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
+    private final TotpService totpService;
 
-    public LoginResult login(String email, String password) {
+    public LoginResult login(String email, String password, String totpCode) {
         AdminUser admin = adminUserRepository.findByEmail(email)
                 .orElseThrow(() -> new UnauthorizedException("Invalid email or password"));
 
@@ -32,11 +36,32 @@ public class AdminAuthService {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        String accessToken = jwtService.generateAccessToken(admin.getId(), email, "ADMIN_" + admin.getRole().name());
-        String refreshToken = jwtService.generateRefreshToken(admin.getId());
+        if (admin.getTotpSecret() != null && !admin.getTotpSecret().isBlank()) {
+            if (totpCode == null || totpCode.isBlank()) {
+                throw new UnauthorizedException("TOTP code is required");
+            }
+            if (!totpService.verify(admin.getTotpSecret(), totpCode)) {
+                throw new UnauthorizedException("Invalid TOTP code");
+            }
+        }
+
+        String role = admin.getRole().name();
+        String accessToken = jwtService.generateAccessToken(admin.getId(), email, role, null);
+        String refreshToken = jwtService.generateRefreshToken(admin.getId(), role, null);
+        refreshTokenService.store(admin.getId(), refreshToken);
 
         log.info("Admin logged in: {} (role: {})", email, admin.getRole());
         return new LoginResult(admin.getId(), admin.getRole(), accessToken, refreshToken);
+    }
+
+    public TwoFactorSetup setupTwoFactor(UUID adminId) {
+        AdminUser admin = getById(adminId);
+        String secret = totpService.generateSecret();
+        admin.setTotpSecret(secret);
+        adminUserRepository.save(admin);
+
+        String otpAuthUri = totpService.buildOtpAuthUri("VerifixJobs", admin.getEmail(), secret);
+        return new TwoFactorSetup(secret, otpAuthUri);
     }
 
     @Transactional
@@ -62,5 +87,6 @@ public class AdminAuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("AdminUser", adminId.toString()));
     }
 
+    public record TwoFactorSetup(String secret, String otpAuthUri) {}
     public record LoginResult(UUID adminId, AdminRole role, String accessToken, String refreshToken) {}
 }

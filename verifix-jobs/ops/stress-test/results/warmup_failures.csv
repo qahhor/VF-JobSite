@@ -1,0 +1,22 @@
+Method,Name,Error,Occurrences
+GET,/api/v1/public/vacancies [text search],"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",125
+POST,/api/v1/auth/employer/register,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",25
+GET,/api/v1/analytics/dashboard,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",50
+GET,/api/v1/intelligence/hiring/funnel,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",19
+GET,/api/v1/public/categories,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",97
+GET,/api/v1/vacancies [employer],"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",45
+GET,/actuator/health,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",15
+GET,/sitemap.xml,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",11
+GET,/api/v1/public/vacancies/category/:cat,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",79
+POST,/api/v1/vacancies [create],"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",12
+GET,/api/v1/public/vacancies/city/:city,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",41
+GET,/api/v1/employer/value-report,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",13
+GET,/actuator/prometheus,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",11
+GET,/api/v1/employer/response-inbox,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",37
+GET,/api/v1/applications [employer],"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",33
+GET,/api/v1/intelligence/salary/trends,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",4
+GET,/api/v1/public/cities,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",81
+GET,/api/v1/public/vacancies [search],"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",257
+GET,/api/v1/public/vacancies [for detail],"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",184
+GET,/api/v1/employer/vacancy-board,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",33
+GET,/api/v1/hrm/salary/benchmarks,"ConnectionRefusedError(10061, '[WinError 10061] Подключение не установлено, т.к. конечный компьютер отверг запрос на подключение.')",4

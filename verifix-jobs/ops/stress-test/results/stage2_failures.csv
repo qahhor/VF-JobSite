@@ -1,0 +1,29 @@
+Method,Name,Error,Occurrences
+GET,/api/v1/vacancies [employer],HTTPError('429 Client Error:  for url: /api/v1/vacancies [employer]'),14
+POST,/api/v1/auth/employer/register,HTTPError('400 Client Error:  for url: /api/v1/auth/employer/register'),12
+GET,/api/v1/public/categories,HTTPError('429 Client Error:  for url: /api/v1/public/categories'),32
+GET,/actuator/health,HTTPError('429 Client Error:  for url: /actuator/health'),5
+GET,/api/v1/public/vacancies/city/:city,HTTPError('429 Client Error:  for url: /api/v1/public/vacancies/city/:city'),25
+GET,/api/v1/analytics/dashboard,HTTPError('403 Client Error:  for url: /api/v1/analytics/dashboard'),5
+GET,/api/v1/employer/vacancy-board,HTTPError('429 Client Error:  for url: /api/v1/employer/vacancy-board'),7
+GET,/api/v1/applications [employer],HTTPError('403 Client Error:  for url: /api/v1/applications [employer]'),8
+GET,/api/v1/public/cities,HTTPError('429 Client Error:  for url: /api/v1/public/cities'),23
+GET,/sitemap.xml,HTTPError('429 Client Error:  for url: /sitemap.xml'),6
+GET,/api/v1/intelligence/hiring/funnel,HTTPError('429 Client Error:  for url: /api/v1/intelligence/hiring/funnel'),4
+GET,/actuator/prometheus,HTTPError('429 Client Error:  for url: /actuator/prometheus'),1
+GET,/api/v1/intelligence/salary/trends,HTTPError('429 Client Error:  for url: /api/v1/intelligence/salary/trends'),2
+GET,/api/v1/employer/value-report,HTTPError('403 Client Error:  for url: /api/v1/employer/value-report'),5
+GET,/actuator/prometheus,HTTPError('500 Server Error:  for url: /actuator/prometheus'),1
+GET,/api/v1/employer/vacancy-board,HTTPError('403 Client Error:  for url: /api/v1/employer/vacancy-board'),3
+GET,/api/v1/employer/response-inbox,HTTPError('403 Client Error:  for url: /api/v1/employer/response-inbox'),5
+GET,/api/v1/public/vacancies [text search],HTTPError('429 Client Error:  for url: /api/v1/public/vacancies [text search]'),35
+GET,/api/v1/public/vacancies [for detail],HTTPError('429 Client Error:  for url: /api/v1/public/vacancies [for detail]'),54
+GET,/api/v1/analytics/dashboard,HTTPError('429 Client Error:  for url: /api/v1/analytics/dashboard'),15
+GET,/api/v1/public/vacancies [search],HTTPError('429 Client Error:  for url: /api/v1/public/vacancies [search]'),81
+GET,/api/v1/applications [employer],HTTPError('429 Client Error:  for url: /api/v1/applications [employer]'),11
+GET,/api/v1/hrm/salary/benchmarks,HTTPError('429 Client Error:  for url: /api/v1/hrm/salary/benchmarks'),3
+GET,/api/v1/public/vacancies/category/:cat,HTTPError('429 Client Error:  for url: /api/v1/public/vacancies/category/:cat'),26
+POST,/api/v1/vacancies [create],HTTPError('429 Client Error:  for url: /api/v1/vacancies [create]'),1
+GET,/api/v1/employer/value-report,HTTPError('429 Client Error:  for url: /api/v1/employer/value-report'),2
+GET,/api/v1/intelligence/hiring/funnel,HTTPError('403 Client Error:  for url: /api/v1/intelligence/hiring/funnel'),3
+GET,/api/v1/employer/response-inbox,HTTPError('429 Client Error:  for url: /api/v1/employer/response-inbox'),5

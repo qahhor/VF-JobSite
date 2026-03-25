@@ -15,6 +15,7 @@ import uz.verifix.jobs.domain.enums.ManagerRole;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.service.auth.JwtService;
+import uz.verifix.jobs.service.auth.RefreshTokenService;
 
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ public class EmployerAuthService {
     private final ManagerRepository managerRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public RegistrationResult register(String companyName, String inn, String email,
@@ -58,8 +60,10 @@ public class EmployerAuthService {
 
         log.info("Employer registered: {} (INN: {}), admin: {}", companyName, inn, email);
 
-        String accessToken = jwtService.generateAccessToken(manager.getId(), email, ManagerRole.ADMIN.name());
-        String refreshToken = jwtService.generateRefreshToken(manager.getId());
+        String role = canonicalRole(manager.getRole());
+        String accessToken = jwtService.generateAccessToken(manager.getId(), email, role, employer.getId());
+        String refreshToken = jwtService.generateRefreshToken(manager.getId(), role, employer.getId());
+        refreshTokenService.store(manager.getId(), refreshToken);
 
         return new RegistrationResult(employer.getId(), manager.getId(), accessToken, refreshToken);
     }
@@ -72,27 +76,48 @@ public class EmployerAuthService {
             throw new UnauthorizedException("Invalid email or password");
         }
 
-        String accessToken = jwtService.generateAccessToken(manager.getId(), email, manager.getRole().name());
-        String refreshToken = jwtService.generateRefreshToken(manager.getId());
+        String role = canonicalRole(manager.getRole());
+        String accessToken = jwtService.generateAccessToken(manager.getId(), email, role, manager.getEmployer().getId());
+        String refreshToken = jwtService.generateRefreshToken(manager.getId(), role, manager.getEmployer().getId());
+        refreshTokenService.store(manager.getId(), refreshToken);
 
         log.info("Manager logged in: {}", email);
-        return new LoginResult(manager.getId(), manager.getEmployer().getId(), manager.getRole().name(),
+        return new LoginResult(manager.getId(), manager.getEmployer().getId(), role,
                 accessToken, refreshToken);
     }
 
     public TokenPair refreshToken(String refreshToken) {
-        if (!jwtService.isTokenValid(refreshToken)) {
+        if (!jwtService.isTokenValid(refreshToken, JwtService.TOKEN_TYPE_REFRESH)) {
             throw new UnauthorizedException("Invalid or expired refresh token");
         }
 
-        String userId = jwtService.getSubject(refreshToken);
-        Manager manager = managerRepository.findById(UUID.fromString(userId))
+        UUID userId = jwtService.getSubjectId(refreshToken);
+        if (!refreshTokenService.matches(userId, refreshToken)) {
+            throw new UnauthorizedException("Refresh token has been revoked");
+        }
+
+        Manager manager = managerRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Manager", userId));
 
-        String newAccessToken = jwtService.generateAccessToken(manager.getId(), manager.getEmail(), manager.getRole().name());
-        String newRefreshToken = jwtService.generateRefreshToken(manager.getId());
+        String role = canonicalRole(manager.getRole());
+        String newAccessToken = jwtService.generateAccessToken(manager.getId(), manager.getEmail(), role, manager.getEmployer().getId());
+        String newRefreshToken = jwtService.generateRefreshToken(manager.getId(), role, manager.getEmployer().getId());
+        if (!refreshTokenService.rotate(manager.getId(), refreshToken, newRefreshToken)) {
+            throw new UnauthorizedException("Refresh token rotation failed");
+        }
 
         return new TokenPair(newAccessToken, newRefreshToken);
+    }
+
+    public void logout(String refreshToken) {
+        if (!jwtService.isTokenValid(refreshToken, JwtService.TOKEN_TYPE_REFRESH)) {
+            throw new UnauthorizedException("Invalid or expired refresh token");
+        }
+        refreshTokenService.revoke(jwtService.getSubjectId(refreshToken));
+    }
+
+    private String canonicalRole(ManagerRole role) {
+        return "EMPLOYER_" + role.name();
     }
 
     public record RegistrationResult(UUID employerId, UUID managerId, String accessToken, String refreshToken) {}

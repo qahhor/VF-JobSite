@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Data
 public class BulkInviteRequest {
-    @NotNull private UUID employerId;
+    private UUID employerId;
     @NotEmpty private List<UUID> candidateIds;
     @NotNull private UUID vacancyId;
     private String message;

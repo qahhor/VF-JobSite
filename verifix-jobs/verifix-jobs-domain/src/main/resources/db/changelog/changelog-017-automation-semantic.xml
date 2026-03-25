@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="017-01" author="verifix">
+        <createTable tableName="automation_rule">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="name" type="VARCHAR(200)"><constraints nullable="false"/></column>
+            <column name="trigger_event" type="VARCHAR(50)"><constraints nullable="false"/></column>
+            <column name="conditions" type="JSONB"/>
+            <column name="action_type" type="VARCHAR(50)"><constraints nullable="false"/></column>
+            <column name="action_config" type="JSONB"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="execution_count" type="INTEGER" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="017-02" author="verifix">
+        <createTable tableName="automation_execution_log">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="rule_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="trigger_entity_id" type="uuid"/>
+            <column name="result" type="VARCHAR(20)"/>
+            <column name="details" type="JSONB"/>
+            <column name="executed_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="now()"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.api.dto.response.EmployerProfileResponse;
+import uz.verifix.jobs.api.mapper.EmployerMapper;
+import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.common.dto.PageResponse;
 import uz.verifix.jobs.domain.entity.Employer;
 import uz.verifix.jobs.domain.enums.EmployerStatus;
@@ -24,13 +26,14 @@ public class AdminEmployerController {
 
     private final AdminEmployerService adminEmployerService;
     private final AdminAuditService adminAuditService;
+    private final EmployerMapper employerMapper;
 
     @GetMapping
     public ResponseEntity<PageResponse<EmployerProfileResponse>> list(
             @RequestParam(required = false) EmployerStatus status,
             @PageableDefault(size = 20) Pageable pageable) {
         Page<Employer> page = adminEmployerService.list(status, pageable);
-        return ResponseEntity.ok(PageResponse.of(page.map(this::toResponse)));
+        return ResponseEntity.ok(PageResponse.of(page.map(employer -> employerMapper.toResponse(employer, 0))));
     }
 
     @PatchMapping("/{id}/status")
@@ -40,11 +43,11 @@ public class AdminEmployerController {
             Authentication auth,
             HttpServletRequest request) {
 
-        UUID adminId = UUID.fromString(auth.getName());
+        UUID adminId = SecurityUtils.extractUserId(auth);
         Employer employer = adminEmployerService.changeStatus(id, status);
         adminAuditService.log(adminId, "EMPLOYER_STATUS_CHANGE", "Employer", id,
                 "{\"newStatus\":\"" + status + "\"}", request.getRemoteAddr());
-        return ResponseEntity.ok(toResponse(employer));
+        return ResponseEntity.ok(employerMapper.toResponse(employer, 0));
     }
 
     @PostMapping("/{id}/verify")
@@ -53,27 +56,9 @@ public class AdminEmployerController {
             Authentication auth,
             HttpServletRequest request) {
 
-        UUID adminId = UUID.fromString(auth.getName());
+        UUID adminId = SecurityUtils.extractUserId(auth);
         Employer employer = adminEmployerService.verify(id);
         adminAuditService.log(adminId, "EMPLOYER_VERIFY", "Employer", id, null, request.getRemoteAddr());
-        return ResponseEntity.ok(toResponse(employer));
-    }
-
-    private EmployerProfileResponse toResponse(Employer e) {
-        return EmployerProfileResponse.builder()
-                .id(e.getId())
-                .name(e.getName())
-                .inn(e.getInn())
-                .legalName(e.getLegalName())
-                .logoUrl(e.getLogoUrl())
-                .industry(e.getIndustry())
-                .city(e.getCity())
-                .region(e.getRegion())
-                .status(e.getStatus().name())
-                .moderationStatus(e.getModerationStatus().name())
-                .isVerified(e.getIsVerified())
-                .createdAt(e.getCreatedAt())
-                .updatedAt(e.getUpdatedAt())
-                .build();
+        return ResponseEntity.ok(employerMapper.toResponse(employer, 0));
     }
 }

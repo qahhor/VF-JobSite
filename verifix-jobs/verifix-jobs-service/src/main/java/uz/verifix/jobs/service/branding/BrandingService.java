@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uz.verifix.jobs.common.exception.BusinessException;
+import uz.verifix.jobs.common.exception.ErrorCode;
 import uz.verifix.jobs.common.exception.ForbiddenException;
 import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 import uz.verifix.jobs.domain.entity.Employer;
@@ -60,13 +61,13 @@ public class BrandingService {
                 throw new ForbiddenException("Custom slug requires PREMIUM branding tier");
             }
             if (!SLUG_PATTERN.matcher(customSlug).matches()) {
-                throw new BusinessException("INVALID_SLUG", "Slug must be 3-50 chars, lowercase alphanumeric with hyphens",
-                        org.springframework.http.HttpStatus.BAD_REQUEST);
+                throw new BusinessException(ErrorCode.VALIDATION_ERROR, org.springframework.http.HttpStatus.BAD_REQUEST,
+                        "Slug must be 3-50 chars, lowercase alphanumeric with hyphens");
             }
             if (brandingRepository.existsByCustomSlug(customSlug) &&
                     !customSlug.equals(branding.getCustomSlug())) {
-                throw new BusinessException("SLUG_TAKEN", "This slug is already taken",
-                        org.springframework.http.HttpStatus.CONFLICT);
+                throw new BusinessException(ErrorCode.DUPLICATE_RESOURCE, org.springframework.http.HttpStatus.CONFLICT,
+                        "This slug is already taken");
             }
             branding.setCustomSlug(customSlug);
         }
@@ -163,8 +164,8 @@ public class BrandingService {
 
     private void validateHexColor(String color) {
         if (!HEX_COLOR_PATTERN.matcher(color).matches()) {
-            throw new BusinessException("INVALID_COLOR", "Color must be hex format: #RRGGBB",
-                    org.springframework.http.HttpStatus.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Color must be hex format: #RRGGBB");
         }
     }
 }

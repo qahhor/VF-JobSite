@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import uz.verifix.jobs.common.exception.BusinessException;
+import uz.verifix.jobs.common.exception.ErrorCode;
 import uz.verifix.jobs.common.exception.ForbiddenException;
 import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 import uz.verifix.jobs.domain.entity.branding.*;
@@ -48,8 +49,8 @@ public class BrandingMediaService {
         int maxCovers = branding.getTier() == BrandingTier.PREMIUM ? MAX_COVERS_PREMIUM : MAX_COVERS_BRANDED;
         long currentCount = coverImageRepository.countByBrandingId(branding.getId());
         if (currentCount >= maxCovers) {
-            throw new BusinessException("COVER_LIMIT", "Maximum " + maxCovers + " cover images allowed for " + branding.getTier(),
-                    org.springframework.http.HttpStatus.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Maximum " + maxCovers + " cover images allowed for " + branding.getTier());
         }
 
         String url = fileStorageService.upload("branding-covers", file.getOriginalFilename(),
@@ -135,8 +136,8 @@ public class BrandingMediaService {
 
         long count = videoRepository.countByBrandingId(branding.getId());
         if (count >= MAX_VIDEOS) {
-            throw new BusinessException("VIDEO_LIMIT", "Maximum " + MAX_VIDEOS + " videos allowed",
-                    org.springframework.http.HttpStatus.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Maximum " + MAX_VIDEOS + " videos allowed");
         }
 
         String thumbnailUrl = null;
@@ -176,16 +177,17 @@ public class BrandingMediaService {
 
     private void validateImageFile(MultipartFile file, long maxSize) {
         if (file.isEmpty()) {
-            throw new BusinessException("EMPTY_FILE", "File is empty", org.springframework.http.HttpStatus.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "File is empty");
         }
         if (file.getSize() > maxSize) {
-            throw new BusinessException("FILE_TOO_LARGE", "File exceeds maximum size of " + (maxSize / 1024 / 1024) + "MB",
-                    org.springframework.http.HttpStatus.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "File exceeds maximum size of " + (maxSize / 1024 / 1024) + "MB");
         }
         String contentType = file.getContentType();
         if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/webp"))) {
-            throw new BusinessException("INVALID_FILE_TYPE", "Only JPEG, PNG, and WebP images are allowed",
-                    org.springframework.http.HttpStatus.BAD_REQUEST);
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Only JPEG, PNG, and WebP images are allowed");
         }
     }
 
