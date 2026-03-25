@@ -10,4 +10,7 @@ app:
     enabled: ${ELASTICSEARCH_ENABLED:false}
   minio:
     enabled: ${MINIO_ENABLED:false}
-spring.jpa.open-in-view=true
+
+spring:
+  jpa:
+    open-in-view: true

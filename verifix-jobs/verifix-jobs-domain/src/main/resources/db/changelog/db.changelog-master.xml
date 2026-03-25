@@ -22,7 +22,6 @@
     <include file="db/changelog/changelog-015-public-marketplace.xml"/>
     <include file="db/changelog/changelog-016-employer-operations.xml"/>
     <include file="db/changelog/changelog-018-seed-vacancies.xml"/>
-    <include file="db/changelog/changelog-019-semantic-search.xml"/>
     <include file="db/changelog/changelog-017-automation-semantic.xml"/>
     <include file="db/changelog/changelog-018-geo-reference-dictionaries.xml"/>
 

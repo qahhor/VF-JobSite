@@ -23,7 +23,7 @@ import java.util.UUID;
 @ConditionalOnProperty(name = "app.minio.enabled", havingValue = "true", matchIfMissing = false)
 public class FileUploadController {
 
-    private final FileStorageService fileStorageService;
+    private final java.util.Optional<FileStorageService> fileStorageService;
 
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
     private static final java.util.Set<String> ALLOWED_TYPES = java.util.Set.of(
@@ -38,7 +38,7 @@ public class FileUploadController {
         UUID employerId = SecurityUtils.extractEmployerId(auth);
         validateFile(file);
 
-        String objectName = fileStorageService.upload(
+        String objectName = fileStorageService.orElseThrow(() -> new RuntimeException("Storage not configured")).upload(
                 "logos/" + employerId,
                 file.getOriginalFilename(),
                 file.getInputStream(),
@@ -46,7 +46,7 @@ public class FileUploadController {
                 file.getSize()
         );
 
-        String url = fileStorageService.getPresignedUrl(objectName);
+        String url = fileStorageService.orElseThrow(() -> new RuntimeException("Storage not configured")).getPresignedUrl(objectName);
         return ResponseEntity.ok(Map.of("objectName", objectName, "url", url));
     }
 
@@ -58,7 +58,7 @@ public class FileUploadController {
         UUID userId = SecurityUtils.extractManagerId(auth);
         validateFile(file);
 
-        String objectName = fileStorageService.upload(
+        String objectName = fileStorageService.orElseThrow(() -> new RuntimeException("Storage not configured")).upload(
                 "resumes/" + userId,
                 file.getOriginalFilename(),
                 file.getInputStream(),
@@ -66,13 +66,13 @@ public class FileUploadController {
                 file.getSize()
         );
 
-        String url = fileStorageService.getPresignedUrl(objectName);
+        String url = fileStorageService.orElseThrow(() -> new RuntimeException("Storage not configured")).getPresignedUrl(objectName);
         return ResponseEntity.ok(Map.of("objectName", objectName, "url", url));
     }
 
     @GetMapping("/url")
     public ResponseEntity<Map<String, String>> getUrl(@RequestParam String objectName) {
-        String url = fileStorageService.getPresignedUrl(objectName);
+        String url = fileStorageService.orElseThrow(() -> new RuntimeException("Storage not configured")).getPresignedUrl(objectName);
         return ResponseEntity.ok(Map.of("url", url));
     }
 

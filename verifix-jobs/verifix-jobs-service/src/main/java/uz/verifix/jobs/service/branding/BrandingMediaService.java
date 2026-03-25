@@ -37,7 +37,7 @@ public class BrandingMediaService {
     private final BrandingGalleryRepository galleryRepository;
     private final BrandingGalleryImageRepository galleryImageRepository;
     private final BrandingVideoRepository videoRepository;
-    private final FileStorageService fileStorageService;
+    private final java.util.Optional<FileStorageService> fileStorageService;
 
     // ==================== COVER IMAGES ====================
 
@@ -53,7 +53,7 @@ public class BrandingMediaService {
                     "Maximum " + maxCovers + " cover images allowed for " + branding.getTier());
         }
 
-        String url = fileStorageService.upload("branding-covers", file.getOriginalFilename(),
+        String url = fileStorageService.orElseThrow(() -> new RuntimeException("File storage not configured")).upload("branding-covers", file.getOriginalFilename(),
                 file.getInputStream(), file.getContentType(), file.getSize());
 
         BrandingCoverImage cover = BrandingCoverImage.builder()
@@ -111,7 +111,7 @@ public class BrandingMediaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Gallery", galleryId.toString()));
         validateImageFile(file, MAX_GALLERY_SIZE);
 
-        String url = fileStorageService.upload("branding-gallery", file.getOriginalFilename(),
+        String url = fileStorageService.orElseThrow(() -> new RuntimeException("File storage not configured")).upload("branding-gallery", file.getOriginalFilename(),
                 file.getInputStream(), file.getContentType(), file.getSize());
 
         BrandingGalleryImage image = BrandingGalleryImage.builder()
