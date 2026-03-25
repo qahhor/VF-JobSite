@@ -78,7 +78,7 @@ import { PublicApiService } from '../../core/services/public-api.service';
               <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
                 <div class="flex-1 min-w-0">
                   <h3 class="text-base font-medium text-gray-900 group-hover:text-black truncate">{{ v.title }}</h3>
-                  <div class="text-sm text-gray-500 mt-0.5">{{ v.employerName }}</div>
+                  <div class="text-sm text-gray-500 mt-0.5">{{ v.employer?.name || v.employerName }}</div>
                 </div>
                 <div class="flex items-center gap-4 text-sm shrink-0">
                   @if (v.salaryFrom) {
