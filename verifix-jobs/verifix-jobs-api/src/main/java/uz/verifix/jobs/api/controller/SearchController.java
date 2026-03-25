@@ -1,22 +1,24 @@
 package uz.verifix.jobs.api.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.service.search.VacancyDocument;
 import uz.verifix.jobs.service.search.VacancyIndexService;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/search")
-@RequiredArgsConstructor
-@ConditionalOnProperty(name = "app.elasticsearch.enabled", havingValue = "true", matchIfMissing = false)
 public class SearchController {
 
     private final VacancyIndexService vacancyIndexService;
+
+    public SearchController(@Autowired(required = false) VacancyIndexService vacancyIndexService) {
+        this.vacancyIndexService = vacancyIndexService;
+    }
 
     @GetMapping("/vacancies")
     public ResponseEntity<List<VacancyDocument>> search(
@@ -31,6 +33,9 @@ public class SearchController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
+        if (vacancyIndexService == null) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
         List<VacancyDocument> results = vacancyIndexService.search(
                 q, city, category, salaryFrom, salaryTo, lat, lon, radiusKm, page, size);
         return ResponseEntity.ok(results);

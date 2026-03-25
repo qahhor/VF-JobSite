@@ -2,7 +2,6 @@ package uz.verifix.jobs.service.search;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -11,16 +10,13 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.data.elasticsearch.core.query.Query;
-import org.springframework.stereotype.Service;
 import uz.verifix.jobs.domain.entity.Vacancy;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "app.elasticsearch.enabled", havingValue = "true", matchIfMissing = false)
 public class VacancyIndexService {
 
     private final VacancySearchRepository searchRepository;
