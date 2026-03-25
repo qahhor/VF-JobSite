@@ -45,13 +45,13 @@ import { AuthService } from '../../core/services/auth.service';
               <form (ngSubmit)="onLogin()" class="space-y-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input type="email" [(ngModel)]="email" name="email" required
+                  <input type="email" [(ngModel)]="email" name="email" required autocomplete="email"
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="admin&#64;company.uz">
                 </div>
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Parol</label>
-                  <input type="password" [(ngModel)]="password" name="password" required
+                  <input type="password" [(ngModel)]="password" name="password" required autocomplete="current-password"
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
                 </div>
