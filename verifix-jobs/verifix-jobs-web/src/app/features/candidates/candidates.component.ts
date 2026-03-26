@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
@@ -58,7 +58,7 @@ import { Candidate } from '../../core/models';
             }
             <div class="flex items-center justify-between pt-3 border-t border-gray-100">
               <span class="text-xs text-gray-400">{{ c.phone }}</span>
-              <button class="text-sm text-black hover:underline">Taklif qilish</button>
+              <button (click)="invite(c)" class="text-sm text-black hover:underline">Taklif qilish</button>
             </div>
           </div>
         } @empty {
@@ -67,19 +67,78 @@ import { Candidate } from '../../core/models';
           </div>
         }
       </div>
+
+      <!-- Invite modal -->
+      @if (inviteCandidate()) {
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div class="absolute inset-0 bg-black/50" (click)="inviteCandidate.set(null)"></div>
+          <div class="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ inviteCandidate()!.firstName }} ga taklif</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Vakansiya</label>
+                <select [(ngModel)]="inviteVacancyId" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm">
+                  <option value="">Vakansiyani tanlang</option>
+                  @for (v of vacancyOptions(); track v.id) {
+                    <option [value]="v.id">{{ v.title }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Xabar</label>
+                <textarea [(ngModel)]="inviteMessage" rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Qo'shimcha xabar..."></textarea>
+              </div>
+              <div class="flex gap-2 justify-end">
+                <button (click)="inviteCandidate.set(null)" class="h-10 px-4 border border-gray-200 rounded-lg text-sm">Bekor</button>
+                <button (click)="sendInvite()" [disabled]="!inviteVacancyId" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium disabled:opacity-50">Yuborish</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
 })
-export class CandidatesComponent {
+export class CandidatesComponent implements OnInit {
   query = '';
   candidates = signal<Candidate[]>([]);
   searched = signal(false);
+  inviteCandidate = signal<Candidate | null>(null);
+  inviteVacancyId = '';
+  inviteMessage = '';
+  vacancyOptions = signal<any[]>([]);
 
   constructor(private api: ApiService) {}
+
+  ngOnInit() {
+    this.api.getVacancies(0, 100).subscribe({
+      next: (r: any) => this.vacancyOptions.set(r.content || []),
+      error: () => {}
+    });
+  }
 
   search() {
     if (!this.query.trim()) return;
     this.searched.set(true);
-    this.api.searchCandidates(this.query).subscribe(r => this.candidates.set(r.content));
+    this.api.searchCandidates(this.query).subscribe({
+      next: (r: any) => this.candidates.set(r.content || []),
+      error: () => {}
+    });
+  }
+
+  invite(c: Candidate) {
+    this.inviteCandidate.set(c);
+    this.inviteVacancyId = '';
+    this.inviteMessage = '';
+  }
+
+  sendInvite() {
+    const c = this.inviteCandidate();
+    if (!c || !this.inviteVacancyId) return;
+    // Create application with INVITED status for this candidate
+    this.api.changeApplicationStatus(c.id, 'INVITED', this.inviteMessage).subscribe({
+      next: () => { this.inviteCandidate.set(null); },
+      error: () => { this.inviteCandidate.set(null); }
+    });
   }
 }
