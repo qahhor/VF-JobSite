@@ -99,4 +99,5 @@ public class EskizSmsGateway implements SmsGateway {
         if (phone == null || phone.length() < 5) return "***";
         return phone.substring(0, phone.length() - 4) + "****";
     }
+
 }

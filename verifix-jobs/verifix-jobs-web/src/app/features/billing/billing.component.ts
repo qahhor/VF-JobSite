@@ -65,6 +65,48 @@ import { PricingPlan, Payment } from '../../core/models';
         }
       </div>
 
+      <!-- Promotion Packages (TOP) -->
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <h3 class="font-semibold text-gray-800 mb-4">⭐ Vakansiya ko'tarish (TOP)</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          @for (pkg of promotionPackages; track pkg.days) {
+            <div class="border border-orange-100 rounded-xl p-4 text-center hover:border-orange-300 transition">
+              <div class="text-lg font-bold text-orange-600">TOP-{{ pkg.days }}</div>
+              <div class="text-xs text-gray-400 mt-1">{{ pkg.days }} kun</div>
+              <div class="text-xl font-bold text-gray-900 mt-2">{{ formatPrice(pkg.price) }} <span class="text-xs font-normal text-gray-400">UZS</span></div>
+              <button (click)="buyPromotion(pkg)" class="w-full mt-3 h-9 bg-orange-500 text-white rounded-lg text-xs font-medium hover:bg-orange-600 transition">
+                Sotib olish
+              </button>
+            </div>
+          }
+        </div>
+        <p class="text-xs text-gray-400 mt-3">TOP vakansiyalar qidiruv natijalarida birinchi o'rinda ko'rinadi. Max 20%.</p>
+      </div>
+
+      <!-- Bundle Packages -->
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <h3 class="font-semibold text-gray-800 mb-4">📦 Paketlar</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          @for (bundle of bundles; track bundle.name) {
+            <div class="border border-gray-200 rounded-xl p-5 hover:border-black transition">
+              <div class="text-base font-bold text-gray-900">{{ bundle.name }}</div>
+              <ul class="mt-3 space-y-1.5 text-xs text-gray-600">
+                <li>📋 {{ bundle.vacancies }} ta vakansiya</li>
+                <li>👁 {{ bundle.contacts }} ta kontakt</li>
+                <li>⭐ {{ bundle.tops }} ta TOP</li>
+              </ul>
+              <div class="mt-3">
+                <div class="text-xl font-bold text-gray-900">{{ formatPrice(bundle.price) }} <span class="text-xs font-normal text-gray-400">UZS/oy</span></div>
+                <div class="text-xs text-gray-400 line-through">{{ formatPrice(bundle.originalPrice) }}</div>
+              </div>
+              <button class="w-full mt-3 h-9 bg-black text-white rounded-lg text-xs font-medium hover:bg-gray-800 transition">
+                Tanlash
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
       <!-- Payment history -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100">
         <div class="p-5 border-b border-gray-100">
@@ -157,10 +199,27 @@ export class BillingComponent implements OnInit {
     } as Record<string, string>)[type] || type;
   }
 
+  promotionPackages = [
+    { days: 7, price: 200000 },
+    { days: 14, price: 350000 },
+    { days: 30, price: 500000 },
+  ];
+
+  bundles = [
+    { name: 'Starter', vacancies: 5, contacts: 100, tops: 2, price: 790000, originalPrice: 1100000 },
+    { name: 'Business', vacancies: 15, contacts: 300, tops: 5, price: 1990000, originalPrice: 2800000 },
+    { name: 'Enterprise', vacancies: 50, contacts: 1000, tops: 20, price: 4990000, originalPrice: 7500000 },
+  ];
+
   upgrade(planCode: string) {
     this.api.purchaseSubscription(planCode, 'MONTHLY').subscribe({
       next: (res: any) => { if (res.redirectUrl) window.location.href = res.redirectUrl; },
       error: () => {}
     });
+  }
+
+  buyPromotion(pkg: any) {
+    // TODO: integrate with payment gateway
+    alert(`TOP-${pkg.days} — ${this.formatPrice(pkg.price)} UZS. To'lov sahifasiga yo'naltiriladi.`);
   }
 }
