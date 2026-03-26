@@ -123,6 +123,88 @@ services:
       - ./ops/grafana/provisioning:/etc/grafana/provisioning
       - ./ops/grafana/dashboards:/var/lib/grafana/dashboards
 
+  # ---- Application services ----
+
+  api:
+    build:
+      context: .
+      dockerfile: verifix-jobs-api/Dockerfile
+    image: verifix-jobs-api:latest
+    container_name: verifix-jobs-api
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-verifix_jobs}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-verifix}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-verifix_secret}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+  telegram:
+    build:
+      context: .
+      dockerfile: verifix-jobs-telegram/Dockerfile
+    image: verifix-jobs-telegram:latest
+    container_name: verifix-jobs-telegram
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-verifix_jobs}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-verifix}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-verifix_secret}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "${TELEGRAM_PORT:-8081}:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+
+  ml-service:
+    build:
+      context: ./verifix-jobs-ml
+      dockerfile: Dockerfile
+    image: verifix-jobs-ml:latest
+    container_name: verifix-jobs-ml
+    ports:
+      - "${ML_API_PORT:-8000}:8000"
+      - "${ML_GRPC_PORT:-50051}:50051"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
+
 volumes:
   postgres-data:
   redis-data:

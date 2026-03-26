@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls c:/DATA/PROJECT/TMP/VF-JobSite/verifix-jobs/mvnw*)"
+    ]
+  }
+}
