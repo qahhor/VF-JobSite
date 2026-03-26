@@ -65,7 +65,7 @@ public class CallbackQueryHandler {
                 return profileHandler.handleCallback(cq);
             }
 
-            // Search pagination
+            // Search pagination (free text)
             if (data.startsWith(CB_SEARCH_PAGE)) {
                 String rest = data.substring(CB_SEARCH_PAGE.length());
                 int lastColon = rest.lastIndexOf(':');
@@ -74,6 +74,37 @@ public class CallbackQueryHandler {
                     int page = Integer.parseInt(rest.substring(lastColon + 1));
                     return searchHandler.searchAndFormat(chatId, query, page);
                 }
+            }
+
+            // Category search: cat:COOK or cat:COOK:2 (page)
+            if (data.startsWith("cat:")) {
+                String rest = data.substring("cat:".length());
+                int colon = rest.indexOf(':');
+                if (colon > 0) {
+                    return searchHandler.searchByCategory(chatId, rest.substring(0, colon), Integer.parseInt(rest.substring(colon + 1)));
+                }
+                return searchHandler.searchByCategory(chatId, rest, 0);
+            }
+
+            // City search: city_s:Tashkent or city_s:Tashkent:2
+            if (data.startsWith("city_s:")) {
+                String rest = data.substring("city_s:".length());
+                int colon = rest.indexOf(':');
+                if (colon > 0) {
+                    return searchHandler.searchByCity(chatId, rest.substring(0, colon), Integer.parseInt(rest.substring(colon + 1)));
+                }
+                return searchHandler.searchByCity(chatId, rest, 0);
+            }
+
+            // All vacancies: all_vacancies or all:2
+            if (data.equals("all_vacancies") || data.startsWith("all:")) {
+                int page = data.startsWith("all:") ? Integer.parseInt(data.substring("all:".length())) : 0;
+                return searchHandler.searchAll(chatId, page);
+            }
+
+            // Back to category picker — just answer callback, main menu handles it
+            if (data.equals("show_categories")) {
+                return answer(cq.getId(), "Kasbni tanlang", false);
             }
 
             // Favorite toggle

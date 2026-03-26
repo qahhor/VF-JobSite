@@ -15,6 +15,8 @@ import uz.verifix.jobs.telegram.formatter.VacancyCardFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uz.verifix.jobs.telegram.util.TgUtils.*;
+
 @Component
 @RequiredArgsConstructor
 public class SearchHandler {
@@ -24,36 +26,102 @@ public class SearchHandler {
 
     private static final int PAGE_SIZE = 5;
 
+    // Popular categories for quick buttons
+    private static final String[][] QUICK_CATEGORIES = {
+            {"👨‍🍳 Oshpaz", "COOK"},
+            {"🚗 Haydovchi", "DRIVER"},
+            {"🛒 Sotuvchi", "SALES"},
+            {"🏗️ Qurilishchi", "BUILDER"},
+            {"🍽️ Ofitsiant", "WAITER"},
+            {"🛡️ Qo'riqchi", "SECURITY"},
+            {"📦 Omborchi", "WAREHOUSE"},
+            {"💰 Kassir", "CASHIER"},
+            {"⚡ Elektrik", "ELECTRICIAN"},
+            {"🧵 Tikuvchi", "TAILOR"},
+            {"🏍️ Kuryer", "COURIER"},
+            {"💪 Yukchi", "LOADER"},
+    };
+
     public SendMessage handle(Message message) {
         Long chatId = message.getChatId();
         String text = message.getText();
 
-        // Extract query — from /search command or button text
+        // Extract query from /search command
         String query = null;
-        if (text != null) {
-            if (text.startsWith("/search") && text.length() > "/search".length()) {
-                query = text.substring("/search".length()).trim();
-            } else if (text.contains("Ish qidirish")) {
-                // Menu button clicked — prompt for query
-                return reply(chatId, "🔍 <b>Ish qidirish</b>\n\n" +
-                        "Nimani qidiryapsiz? Yozing:\n\n" +
-                        "Masalan:\n" +
-                        "• <code>Toshkent oshpaz</code>\n" +
-                        "• <code>haydovchi</code>\n" +
-                        "• <code>kassir 5 million</code>\n\n" +
-                        "Yoki shahar/kasb nomini yozing:");
-            }
+        if (text != null && text.startsWith("/search") && text.length() > "/search".length()) {
+            query = text.substring("/search".length()).trim();
         }
 
+        // If menu button or no query — show category picker
         if (query == null || query.isBlank()) {
-            return reply(chatId, "🔍 <b>Ish qidirish</b>\n\n" +
-                    "Kalit so'z yozing:\n" +
-                    "Masalan: <code>/search Toshkent kassir</code>");
+            return showCategoryPicker(chatId);
         }
 
         return searchAndFormat(chatId, query, 0);
     }
 
+    /** Quick category picker — no typing needed */
+    private SendMessage showCategoryPicker(Long chatId) {
+        SendMessage msg = html(chatId,
+                "🔍 <b>Qanday ish qidiryapsiz?</b>\n\n" +
+                "Kasbni tanlang yoki nomini yozing:");
+
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        for (int i = 0; i < QUICK_CATEGORIES.length; i += 3) {
+            List<InlineKeyboardButton> row = new ArrayList<>();
+            for (int j = i; j < Math.min(i + 3, QUICK_CATEGORIES.length); j++) {
+                row.add(btn(QUICK_CATEGORIES[j][0], "cat:" + QUICK_CATEGORIES[j][1]));
+            }
+            rows.add(row);
+        }
+
+        // City row
+        rows.add(List.of(
+                btn("📍 Toshkent", "city_s:Tashkent"),
+                btn("📍 Samarqand", "city_s:Samarkand"),
+                btn("📍 Buxoro", "city_s:Bukhara")
+        ));
+        rows.add(List.of(
+                btn("📍 Andijon", "city_s:Andijan"),
+                btn("📍 Namangan", "city_s:Namangan"),
+                btn("📍 Farg'ona", "city_s:Fergana")
+        ));
+
+        // "Show all" button
+        rows.add(List.of(btn("📋 Barcha vakansiyalar", "all_vacancies")));
+
+        msg.setReplyMarkup(keyboard(rows));
+        return msg;
+    }
+
+    /** Search by category code */
+    public SendMessage searchByCategory(Long chatId, String category, int page) {
+        Page<Vacancy> results = vacancyService.search(null, category, null, null, PageRequest.of(page, PAGE_SIZE));
+        if (results.isEmpty()) {
+            return html(chatId, "😔 Bu kategoriyada vakansiya topilmadi.");
+        }
+        return formatResults(chatId, categoryLabel(category), results, page, "cat:" + category + ":");
+    }
+
+    /** Search by city */
+    public SendMessage searchByCity(Long chatId, String city, int page) {
+        Page<Vacancy> results = vacancyService.search(city, null, null, null, PageRequest.of(page, PAGE_SIZE));
+        if (results.isEmpty()) {
+            return html(chatId, "😔 " + city + " shahrida vakansiya topilmadi.");
+        }
+        return formatResults(chatId, "📍 " + city, results, page, "city_s:" + city + ":");
+    }
+
+    /** Search all vacancies */
+    public SendMessage searchAll(Long chatId, int page) {
+        Page<Vacancy> results = vacancyService.search(null, null, null, null, PageRequest.of(page, PAGE_SIZE));
+        if (results.isEmpty()) {
+            return html(chatId, "😔 Vakansiyalar topilmadi.");
+        }
+        return formatResults(chatId, "Barcha vakansiyalar", results, page, "all:");
+    }
+
+    /** Free text search */
     public SendMessage searchAndFormat(Long chatId, String query, int page) {
         Page<Vacancy> results = vacancyService.search(query, null, null, null, PageRequest.of(page, PAGE_SIZE));
 
@@ -62,58 +130,59 @@ public class SearchHandler {
         }
 
         if (results.isEmpty()) {
-            return reply(chatId, "😔 \"" + query + "\" bo'yicha natija topilmadi.\n\n" +
-                    "Boshqa kalit so'z bilan urinib ko'ring.");
+            SendMessage msg = html(chatId, "😔 \"" + escapeHtml(query) + "\" bo'yicha natija topilmadi.\n\nKasbni tanlang:");
+            msg.setReplyMarkup(keyboard(quickCategoryRows()));
+            return msg;
         }
 
+        return formatResults(chatId, "\"" + escapeHtml(query) + "\"", results, page, CB_SEARCH_PAGE + query + ":");
+    }
+
+    /** Common result formatter with pagination */
+    private SendMessage formatResults(Long chatId, String title, Page<Vacancy> results, int page, String pagePrefix) {
         StringBuilder sb = new StringBuilder();
-        sb.append("🔍 <b>Natijalar:</b> \"").append(query).append("\"");
-        sb.append("  (").append(results.getTotalElements()).append(" ta)\n\n");
+        sb.append("🔍 <b>").append(title).append("</b>  (").append(results.getTotalElements()).append(" ta)\n\n");
 
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         int i = page * PAGE_SIZE + 1;
         for (Vacancy v : results.getContent()) {
             sb.append(formatter.formatCompact(v, i)).append("\n\n");
-
-            InlineKeyboardButton btn = new InlineKeyboardButton();
-            btn.setText("📋 " + i + ". Batafsil");
-            btn.setCallbackData(uz.verifix.jobs.telegram.util.TgUtils.CB_VACANCY + v.getId());
-            rows.add(List.of(btn));
+            rows.add(List.of(btn("📋 " + i + ". Batafsil", CB_VACANCY + v.getId())));
             i++;
         }
 
-        // Pagination buttons
+        // Pagination
         List<InlineKeyboardButton> navRow = new ArrayList<>();
-        if (page > 0) {
-            InlineKeyboardButton prev = new InlineKeyboardButton();
-            prev.setText("⬅️ Oldingi");
-            prev.setCallbackData(uz.verifix.jobs.telegram.util.TgUtils.CB_SEARCH_PAGE + query + ":" + (page - 1));
-            navRow.add(prev);
-        }
-        if (results.getTotalPages() > page + 1) {
-            InlineKeyboardButton next = new InlineKeyboardButton();
-            next.setText("Keyingi ➡️");
-            next.setCallbackData(uz.verifix.jobs.telegram.util.TgUtils.CB_SEARCH_PAGE + query + ":" + (page + 1));
-            navRow.add(next);
-        }
-        if (!navRow.isEmpty()) {
-            rows.add(navRow);
-        }
+        if (page > 0) navRow.add(btn("⬅️ Oldingi", pagePrefix + (page - 1)));
+        if (results.getTotalPages() > page + 1) navRow.add(btn("Keyingi ➡️", pagePrefix + (page + 1)));
+        if (!navRow.isEmpty()) rows.add(navRow);
 
-        sb.append("📄 Sahifa ").append(page + 1).append("/").append(results.getTotalPages());
+        // Back to categories
+        rows.add(List.of(btn("🔙 Kasblar ro'yxati", "show_categories")));
 
-        SendMessage msg = reply(chatId, sb.toString());
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(rows);
-        msg.setReplyMarkup(keyboard);
+        sb.append("📄 ").append(page + 1).append("/").append(results.getTotalPages());
+
+        SendMessage msg = html(chatId, sb.toString());
+        msg.setReplyMarkup(keyboard(rows));
         return msg;
     }
 
-    private SendMessage reply(Long chatId, String text) {
-        SendMessage msg = new SendMessage();
-        msg.setChatId(chatId.toString());
-        msg.setText(text);
-        msg.setParseMode("HTML");
-        return msg;
+    private List<List<InlineKeyboardButton>> quickCategoryRows() {
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+        for (int i = 0; i < Math.min(6, QUICK_CATEGORIES.length); i += 3) {
+            List<InlineKeyboardButton> row = new ArrayList<>();
+            for (int j = i; j < Math.min(i + 3, QUICK_CATEGORIES.length); j++) {
+                row.add(btn(QUICK_CATEGORIES[j][0], "cat:" + QUICK_CATEGORIES[j][1]));
+            }
+            rows.add(row);
+        }
+        return rows;
+    }
+
+    private String categoryLabel(String code) {
+        for (String[] cat : QUICK_CATEGORIES) {
+            if (cat[1].equals(code)) return cat[0];
+        }
+        return code;
     }
 }
