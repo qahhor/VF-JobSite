@@ -6,18 +6,36 @@ import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.service.search.VacancyDocument;
 import uz.verifix.jobs.service.search.VacancyIndexService;
 
+import uz.verifix.jobs.domain.entity.Vacancy;
+import uz.verifix.jobs.domain.enums.VacancyStatus;
+import uz.verifix.jobs.domain.repository.VacancyRepository;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/search")
 public class SearchController {
 
     private final VacancyIndexService vacancyIndexService;
+    private final VacancyRepository vacancyRepository;
 
-    public SearchController(@Autowired(required = false) VacancyIndexService vacancyIndexService) {
+    public SearchController(@Autowired(required = false) VacancyIndexService vacancyIndexService,
+                            VacancyRepository vacancyRepository) {
         this.vacancyIndexService = vacancyIndexService;
+        this.vacancyRepository = vacancyRepository;
+    }
+
+    @PostMapping("/reindex")
+    public ResponseEntity<Map<String, Object>> reindex() {
+        if (vacancyIndexService == null) {
+            return ResponseEntity.ok(Map.of("status", "skipped", "reason", "ES disabled"));
+        }
+        List<Vacancy> active = vacancyRepository.findByStatus(VacancyStatus.ACTIVE);
+        vacancyIndexService.reindexAll(active);
+        return ResponseEntity.ok(Map.of("status", "done", "indexed", active.size()));
     }
 
     @GetMapping("/vacancies")

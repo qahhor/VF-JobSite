@@ -23,6 +23,8 @@ public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpec
 
     Page<Vacancy> findByEmployerId(UUID employerId, Pageable pageable);
 
+    List<Vacancy> findByStatus(VacancyStatus status);
+
     List<Vacancy> findByStatusAndCategory(VacancyStatus status, String category);
 
     @Query(value = "SELECT v.* FROM vacancy v " +
