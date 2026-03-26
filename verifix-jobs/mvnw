@@ -10,13 +10,15 @@ ARCHIVE_FILE="$WRAPPER_DIR/apache-maven.zip"
 
 if [ ! -x "$INSTALL_DIR/bin/mvn" ]; then
   mkdir -p "$WRAPPER_DIR"
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$DIST_URL" -o "$ARCHIVE_FILE"
-  elif command -v wget >/dev/null 2>&1; then
-    wget -q "$DIST_URL" -O "$ARCHIVE_FILE"
-  else
-    echo "curl or wget is required to download Maven." >&2
-    exit 1
+  if [ ! -f "$ARCHIVE_FILE" ]; then
+    if command -v curl >/dev/null 2>&1; then
+      curl -fsSL "$DIST_URL" -o "$ARCHIVE_FILE"
+    elif command -v wget >/dev/null 2>&1; then
+      wget -q "$DIST_URL" -O "$ARCHIVE_FILE"
+    else
+      echo "curl or wget is required to download Maven." >&2
+      exit 1
+    fi
   fi
 
   rm -rf "$INSTALL_DIR"
