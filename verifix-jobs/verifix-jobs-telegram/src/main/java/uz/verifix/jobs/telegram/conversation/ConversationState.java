@@ -21,12 +21,14 @@ public class ConversationState implements Serializable {
     private String city;
     private String referralCode;
 
+    /** Field being edited in profile mode (city, skills, categories) */
+    private String editField;
+
     public enum RegistrationStep {
         PHONE,
         FIRST_NAME,
         LAST_NAME,
         CITY,
-        CATEGORIES,
         COMPLETED
     }
 }

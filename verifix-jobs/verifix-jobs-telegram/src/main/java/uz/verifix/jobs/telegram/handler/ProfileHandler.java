@@ -6,16 +6,16 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.telegram.conversation.ConversationManager;
 import uz.verifix.jobs.telegram.conversation.ConversationState;
+import uz.verifix.jobs.telegram.util.TgUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static uz.verifix.jobs.telegram.util.TgUtils.*;
 
 @Component
 @RequiredArgsConstructor
@@ -28,53 +28,38 @@ public class ProfileHandler {
         Long telegramId = message.getFrom().getId();
         Long chatId = message.getChatId();
 
-        Optional<Candidate> candidateOpt = candidateRepository.findByTelegramId(telegramId);
-        if (candidateOpt.isEmpty()) {
-            return reply(chatId, "❌ Avval /start buyrug'i bilan ro'yxatdan o'ting.");
+        Optional<Candidate> opt = candidateRepository.findByTelegramId(telegramId);
+        if (opt.isEmpty()) {
+            return html(chatId, "❌ Avval /start buyrug'i bilan ro'yxatdan o'ting.");
         }
-
-        Candidate c = candidateOpt.get();
-        return showProfile(chatId, c);
+        return showProfile(chatId, opt.get());
     }
 
     public SendMessage showProfile(Long chatId, Candidate c) {
         StringBuilder sb = new StringBuilder();
         sb.append("👤 <b>Mening profilim</b>\n\n");
-        sb.append("📛 Ism: ").append(c.getFirstName()).append(" ").append(c.getLastName()).append("\n");
-        sb.append("📱 Telefon: ").append(c.getPhone()).append("\n");
-        sb.append("📍 Shahar: ").append(c.getCity() != null ? c.getCity() : "—").append("\n");
+        sb.append("📛 <b>").append(escapeHtml(c.getFirstName()));
+        if (c.getLastName() != null) sb.append(" ").append(escapeHtml(c.getLastName()));
+        sb.append("</b>\n");
+        sb.append("📱 ").append(c.getPhone()).append("\n");
+        sb.append("📍 ").append(c.getCity() != null ? c.getCity() : "Shahar ko'rsatilmagan").append("\n");
 
         if (c.getSkills() != null && c.getSkills().length > 0) {
-            sb.append("🛠 Ko'nikmalar: ").append(String.join(", ", c.getSkills())).append("\n");
+            sb.append("🛠 ").append(String.join(", ", c.getSkills())).append("\n");
         }
-
         if (c.getPreferredCategories() != null && c.getPreferredCategories().length > 0) {
-            sb.append("📂 Kategoriyalar: ").append(String.join(", ", c.getPreferredCategories())).append("\n");
+            sb.append("📂 ").append(String.join(", ", c.getPreferredCategories())).append("\n");
         }
-
         if (c.getEducationLevel() != null) {
-            sb.append("🎓 Ta'lim: ").append(c.getEducationLevel().name()).append("\n");
+            sb.append("🎓 ").append(c.getEducationLevel().name()).append("\n");
         }
+        sb.append("\n🔗 Taklif kodi: <code>").append(c.getReferralCode()).append("</code>");
 
-        sb.append("🔗 Taklif kodi: <code>").append(c.getReferralCode()).append("</code>\n");
-
-        SendMessage msg = new SendMessage();
-        msg.setChatId(chatId.toString());
-        msg.setText(sb.toString());
-        msg.setParseMode("HTML");
-
-        // Edit buttons
-        InlineKeyboardButton editCity = button("📍 Shahar", "profile:edit_city");
-        InlineKeyboardButton editSkills = button("🛠 Ko'nikmalar", "profile:edit_skills");
-        InlineKeyboardButton editCategories = button("📂 Kategoriyalar", "profile:edit_categories");
-
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(List.of(
-                List.of(editCity, editSkills),
-                List.of(editCategories)
-        ));
-        msg.setReplyMarkup(keyboard);
-
+        SendMessage msg = html(chatId, sb.toString());
+        msg.setReplyMarkup(keyboard(List.of(
+                List.of(btn("📍 Shahar", "profile:edit_city"), btn("🛠 Ko'nikmalar", "profile:edit_skills")),
+                List.of(btn("📂 Kategoriyalar", "profile:edit_categories"))
+        )));
         return msg;
     }
 
@@ -84,72 +69,56 @@ public class ProfileHandler {
         String text = message.getText();
 
         if (text == null || text.isBlank()) {
-            return reply(chatId, "❌ Iltimos, ma'lumotni kiriting.");
+            return html(chatId, "❌ Iltimos, ma'lumotni kiriting.");
         }
 
-        Optional<Candidate> candidateOpt = candidateRepository.findByTelegramId(telegramId);
-        if (candidateOpt.isEmpty()) return reply(chatId, "❌ Profil topilmadi.");
+        Optional<Candidate> opt = candidateRepository.findByTelegramId(telegramId);
+        if (opt.isEmpty()) return html(chatId, "❌ Profil topilmadi.");
 
-        Candidate c = candidateOpt.get();
+        Candidate c = opt.get();
+        String fieldName = switch (field) {
+            case "city" -> { c.setCity(text.trim()); yield "Shahar"; }
+            case "skills" -> { c.setSkills(text.split(",\\s*")); yield "Ko'nikmalar"; }
+            case "categories" -> { c.setPreferredCategories(text.split(",\\s*")); yield "Kategoriyalar"; }
+            default -> null;
+        };
 
-        switch (field) {
-            case "city" -> c.setCity(text.trim());
-            case "skills" -> c.setSkills(text.split(",\\s*"));
-            case "categories" -> c.setPreferredCategories(text.split(",\\s*"));
-            default -> {
-                return reply(chatId, "❌ Noma'lum maydon.");
-            }
-        }
+        if (fieldName == null) return html(chatId, "❌ Noma'lum maydon.");
 
         candidateRepository.save(c);
         conversationManager.delete(chatId);
 
-        return reply(chatId, "✅ Profil yangilandi!\n\n/profile — Profilni ko'rish");
+        return html(chatId, "✅ <b>" + fieldName + "</b> yangilandi!\n\n👤 Profilni ko'rish: /profile");
     }
 
-    public EditMessageText handleCallback(CallbackQuery callbackQuery) {
-        Long chatId = callbackQuery.getMessage().getChatId();
-        Integer messageId = callbackQuery.getMessage().getMessageId();
-        String data = callbackQuery.getData();
+    public EditMessageText handleCallback(CallbackQuery cq) {
+        Long chatId = cq.getMessage().getChatId();
+        Integer msgId = cq.getMessage().getMessageId();
+        String data = cq.getData();
 
-        String prompt = switch (data) {
-            case "profile:edit_city" -> "📍 Yangi shahringizni kiriting:";
-            case "profile:edit_skills" -> "🛠 Ko'nikmalaringizni kiriting (vergul bilan ajrating):\nMasalan: haydovchilik, payvandlash, oshpazlik";
-            case "profile:edit_categories" -> "📂 Qiziqtirgan kategoriyalarni kiriting (vergul bilan):\nMasalan: transport, qurilish, oshxona";
+        String field = data.replace("profile:edit_", "");
+        String prompt = switch (field) {
+            case "city" -> "📍 Yangi shahringizni kiriting:";
+            case "skills" -> "🛠 Ko'nikmalaringizni kiriting (vergul bilan):\n<i>Masalan: haydovchilik, payvandlash, oshpazlik</i>";
+            case "categories" -> "📂 Qiziqtirgan kategoriyalarni kiriting (vergul bilan):\n<i>Masalan: transport, qurilish, oshxona</i>";
             default -> null;
         };
 
         if (prompt == null) return null;
 
-        // Store which field is being edited
-        String field = data.replace("profile:edit_", "");
+        // Store edit mode with dedicated editField (not city hack)
         ConversationState state = ConversationState.builder()
                 .chatId(chatId)
                 .currentStep(ConversationState.RegistrationStep.COMPLETED)
-                .city(field) // reuse city field to store edit mode
+                .editField(field)
                 .build();
         conversationManager.save(chatId, state);
 
         EditMessageText edit = new EditMessageText();
         edit.setChatId(chatId.toString());
-        edit.setMessageId(messageId);
+        edit.setMessageId(msgId);
         edit.setText(prompt);
         edit.setParseMode("HTML");
         return edit;
-    }
-
-    private InlineKeyboardButton button(String text, String callbackData) {
-        InlineKeyboardButton btn = new InlineKeyboardButton();
-        btn.setText(text);
-        btn.setCallbackData(callbackData);
-        return btn;
-    }
-
-    private SendMessage reply(Long chatId, String text) {
-        SendMessage msg = new SendMessage();
-        msg.setChatId(chatId.toString());
-        msg.setText(text);
-        msg.setParseMode("HTML");
-        return msg;
     }
 }

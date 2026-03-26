@@ -9,21 +9,18 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import uz.verifix.jobs.domain.entity.Candidate;
-import uz.verifix.jobs.domain.entity.FavoriteVacancy;
 import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
-import uz.verifix.jobs.domain.repository.FavoriteVacancyRepository;
 import uz.verifix.jobs.service.vacancy.VacancyService;
 import uz.verifix.jobs.telegram.formatter.VacancyCardFormatter;
-
-import org.springframework.transaction.annotation.Transactional;
+import uz.verifix.jobs.telegram.util.TgUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static uz.verifix.jobs.telegram.util.TgUtils.*;
 
 @Slf4j
 @Component
@@ -36,121 +33,124 @@ public class CallbackQueryHandler {
     private final ProfileHandler profileHandler;
     private final SearchHandler searchHandler;
     private final CandidateRepository candidateRepository;
-    private final FavoriteVacancyRepository favoriteVacancyRepository;
+    private final FavoriteService favoriteService;
 
-    public BotApiMethod<? extends Serializable> handle(CallbackQuery callbackQuery) {
-        String data = callbackQuery.getData();
-        Long chatId = callbackQuery.getMessage().getChatId();
-        Integer messageId = callbackQuery.getMessage().getMessageId();
+    public BotApiMethod<? extends Serializable> handle(CallbackQuery cq) {
+        String data = cq.getData();
+        Long chatId = cq.getMessage().getChatId();
+        Integer msgId = cq.getMessage().getMessageId();
+        Long telegramId = cq.getFrom().getId();
 
-        if (data.startsWith("vacancy:")) {
-            UUID vacancyId = UUID.fromString(data.substring("vacancy:".length()));
-            return showVacancyDetail(chatId, messageId, vacancyId, callbackQuery.getFrom().getId());
-        }
-
-        if (data.startsWith("apply:")) {
-            UUID vacancyId = UUID.fromString(data.substring("apply:".length()));
-            return applyHandler.handleApply(callbackQuery, vacancyId);
-        }
-
-        if (data.startsWith("profile:")) {
-            return profileHandler.handleCallback(callbackQuery);
-        }
-
-        // Search pagination: search_page:query:pageNum
-        if (data.startsWith("search_page:")) {
-            String[] parts = data.split(":", 3);
-            if (parts.length == 3) {
-                String query = parts[1];
-                int page = Integer.parseInt(parts[2]);
-                SendMessage msg = searchHandler.searchAndFormat(chatId, query, page);
-                return msg;
+        try {
+            // Vacancy detail
+            if (data.startsWith(CB_VACANCY)) {
+                UUID vid = UUID.fromString(data.substring(CB_VACANCY.length()));
+                return showVacancyDetail(chatId, msgId, vid, telegramId);
             }
-        }
 
-        // Favorites toggle: fav:vacancyId
-        if (data.startsWith("fav:")) {
-            UUID vacancyId = UUID.fromString(data.substring("fav:".length()));
-            return toggleFavorite(callbackQuery, vacancyId);
+            // Apply confirmation step
+            if (data.startsWith(CB_APPLY_CONFIRM)) {
+                UUID vid = UUID.fromString(data.substring(CB_APPLY_CONFIRM.length()));
+                return applyHandler.handleApply(cq, vid);
+            }
+
+            // Apply — show confirmation first
+            if (data.startsWith(CB_APPLY)) {
+                UUID vid = UUID.fromString(data.substring(CB_APPLY.length()));
+                return showApplyConfirmation(chatId, msgId, vid);
+            }
+
+            // Profile edit
+            if (data.startsWith(CB_PROFILE_EDIT) || data.startsWith("profile:")) {
+                return profileHandler.handleCallback(cq);
+            }
+
+            // Search pagination
+            if (data.startsWith(CB_SEARCH_PAGE)) {
+                String rest = data.substring(CB_SEARCH_PAGE.length());
+                int lastColon = rest.lastIndexOf(':');
+                if (lastColon > 0) {
+                    String query = rest.substring(0, lastColon);
+                    int page = Integer.parseInt(rest.substring(lastColon + 1));
+                    return searchHandler.searchAndFormat(chatId, query, page);
+                }
+            }
+
+            // Favorite toggle
+            if (data.startsWith(CB_FAVORITE)) {
+                UUID vid = UUID.fromString(data.substring(CB_FAVORITE.length()));
+                return toggleFavorite(cq, vid);
+            }
+        } catch (Exception e) {
+            log.error("Callback error [{}]: {}", data, e.getMessage());
+            return answer(cq.getId(), "Xatolik yuz berdi", true);
         }
 
         return null;
     }
 
-    private EditMessageText showVacancyDetail(Long chatId, Integer messageId, UUID vacancyId, Long telegramId) {
-        try {
-            Vacancy vacancy = vacancyService.getById(vacancyId);
-            String card = formatter.format(vacancy);
+    private EditMessageText showVacancyDetail(Long chatId, Integer msgId, UUID vacancyId, Long telegramId) {
+        Vacancy vacancy = vacancyService.getById(vacancyId);
+        String card = formatter.format(vacancy);
 
-            EditMessageText edit = new EditMessageText();
-            edit.setChatId(chatId.toString());
-            edit.setMessageId(messageId);
-            edit.setText(card);
-            edit.setParseMode("HTML");
-
-            // Check if favorited
-            boolean isFav = false;
-            Candidate candidate = candidateRepository.findByTelegramId(telegramId).orElse(null);
-            if (candidate != null) {
-                isFav = favoriteVacancyRepository.existsByCandidateIdAndVacancyId(candidate.getId(), vacancyId);
-            }
-
-            // Buttons
-            List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-            // Apply + Favorite row
-            InlineKeyboardButton applyBtn = new InlineKeyboardButton();
-            applyBtn.setText("📨 Ariza berish");
-            applyBtn.setCallbackData("apply:" + vacancyId);
-
-            InlineKeyboardButton favBtn = new InlineKeyboardButton();
-            favBtn.setText(isFav ? "💔 Olib tashlash" : "❤️ Saqlash");
-            favBtn.setCallbackData("fav:" + vacancyId);
-
-            rows.add(List.of(applyBtn, favBtn));
-
-            InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-            keyboard.setKeyboard(rows);
-            edit.setReplyMarkup(keyboard);
-
-            return edit;
-        } catch (Exception e) {
-            log.error("Error showing vacancy {}: {}", vacancyId, e.getMessage());
-            EditMessageText edit = new EditMessageText();
-            edit.setChatId(chatId.toString());
-            edit.setMessageId(messageId);
-            edit.setText("❌ Vakansiya topilmadi.");
-            return edit;
+        boolean isFav = false;
+        Candidate candidate = candidateRepository.findByTelegramId(telegramId).orElse(null);
+        if (candidate != null) {
+            isFav = favoriteService.isFavorited(candidate.getId(), vacancyId);
         }
+
+        EditMessageText edit = new EditMessageText();
+        edit.setChatId(chatId.toString());
+        edit.setMessageId(msgId);
+        edit.setText(card);
+        edit.setParseMode("HTML");
+        edit.setReplyMarkup(keyboard(List.of(
+                List.of(
+                        btn("📨 Ariza berish", CB_APPLY + vacancyId),
+                        btn(isFav ? "💔 Olib tashlash" : "❤️ Saqlash", CB_FAVORITE + vacancyId)
+                )
+        )));
+
+        return edit;
     }
 
-    @Transactional
-    private AnswerCallbackQuery toggleFavorite(CallbackQuery callbackQuery, UUID vacancyId) {
-        Long telegramId = callbackQuery.getFrom().getId();
+    private EditMessageText showApplyConfirmation(Long chatId, Integer msgId, UUID vacancyId) {
+        Vacancy vacancy = vacancyService.getById(vacancyId);
+
+        EditMessageText edit = new EditMessageText();
+        edit.setChatId(chatId.toString());
+        edit.setMessageId(msgId);
+        edit.setText("📨 <b>Ariza topshirasizmi?</b>\n\n" +
+                "📋 " + TgUtils.escapeHtml(vacancy.getTitle()) + "\n" +
+                "🏢 " + (vacancy.getEmployer() != null ? TgUtils.escapeHtml(vacancy.getEmployer().getName()) : "") + "\n" +
+                "💰 " + TgUtils.formatSalaryRange(vacancy.getSalaryFrom(), vacancy.getSalaryTo()));
+        edit.setParseMode("HTML");
+        edit.setReplyMarkup(keyboard(List.of(
+                List.of(
+                        btn("✅ Ha, topshirish", CB_APPLY_CONFIRM + vacancyId),
+                        btn("❌ Bekor qilish", CB_VACANCY + vacancyId)
+                )
+        )));
+        return edit;
+    }
+
+    private AnswerCallbackQuery toggleFavorite(CallbackQuery cq, UUID vacancyId) {
+        Long telegramId = cq.getFrom().getId();
         Candidate candidate = candidateRepository.findByTelegramId(telegramId).orElse(null);
 
-        AnswerCallbackQuery answer = new AnswerCallbackQuery();
-        answer.setCallbackQueryId(callbackQuery.getId());
-
         if (candidate == null) {
-            answer.setText("Avval ro'yxatdan o'ting: /start");
-            answer.setShowAlert(true);
-            return answer;
+            return answer(cq.getId(), "Avval ro'yxatdan o'ting: /start", true);
         }
 
-        boolean exists = favoriteVacancyRepository.existsByCandidateIdAndVacancyId(candidate.getId(), vacancyId);
-        if (exists) {
-            favoriteVacancyRepository.deleteByCandidateIdAndVacancyId(candidate.getId(), vacancyId);
-            answer.setText("💔 Olib tashlandi");
-        } else {
-            FavoriteVacancy fav = FavoriteVacancy.builder()
-                    .candidateId(candidate.getId())
-                    .vacancyId(vacancyId)
-                    .build();
-            favoriteVacancyRepository.save(fav);
-            answer.setText("❤️ Saqlandi!");
-        }
+        boolean added = favoriteService.toggle(candidate.getId(), vacancyId);
+        return answer(cq.getId(), added ? "❤️ Saqlandi!" : "💔 Olib tashlandi", false);
+    }
 
-        return answer;
+    private AnswerCallbackQuery answer(String callbackId, String text, boolean showAlert) {
+        AnswerCallbackQuery a = new AnswerCallbackQuery();
+        a.setCallbackQueryId(callbackId);
+        a.setText(text);
+        a.setShowAlert(showAlert);
+        return a;
     }
 }

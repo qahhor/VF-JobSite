@@ -36,7 +36,6 @@ public class RegistrationHandler {
             case FIRST_NAME -> handleFirstName(message, state);
             case LAST_NAME -> handleLastName(message, state);
             case CITY -> handleCity(message, state);
-            case CATEGORIES -> handleCategories(message, state);
             default -> startHandler.sendMainMenu(chatId, state.getFirstName());
         };
     }
@@ -127,10 +126,6 @@ public class RegistrationHandler {
                 "🔍 /search — Ish qidirish\n" +
                 "📍 /nearby — Yaqin atrofdagi ishlar\n" +
                 "🔗 /referral — Do'stlarni taklif qiling va mukofot oling!");
-    }
-
-    private SendMessage handleCategories(Message message, ConversationState state) {
-        return startHandler.sendMainMenu(state.getChatId(), state.getFirstName());
     }
 
     private String generateReferralCode() {

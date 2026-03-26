@@ -2,95 +2,75 @@ package uz.verifix.jobs.telegram.formatter;
 
 import org.springframework.stereotype.Component;
 import uz.verifix.jobs.domain.entity.Vacancy;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
+import uz.verifix.jobs.telegram.util.TgUtils;
 
 @Component
 public class VacancyCardFormatter {
 
-    public String format(Vacancy vacancy) {
+    public String format(Vacancy v) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("💼 <b>").append(escapeHtml(vacancy.getTitle())).append("</b>\n");
+        sb.append("💼 <b>").append(TgUtils.escapeHtml(v.getTitle())).append("</b>\n");
 
-        String brandingBadge = getBrandingBadge(vacancy.getEmployer().getBrandingTier());
-        sb.append("🏢 ").append(escapeHtml(vacancy.getEmployer().getName())).append(brandingBadge).append("\n");
-
-        if (vacancy.getCity() != null) {
-            sb.append("📍 ").append(escapeHtml(vacancy.getCity())).append("\n");
+        if (v.getEmployer() != null) {
+            sb.append("🏢 ").append(TgUtils.escapeHtml(v.getEmployer().getName()));
+            sb.append(getBrandingBadge(v.getEmployer().getBrandingTier())).append("\n");
         }
 
-        if (vacancy.getSalaryFrom() != null || vacancy.getSalaryTo() != null) {
-            sb.append("💰 ").append(formatSalary(vacancy.getSalaryFrom(), vacancy.getSalaryTo(), vacancy.getCurrency())).append("\n");
+        if (v.getCity() != null) {
+            sb.append("📍 ").append(TgUtils.escapeHtml(v.getCity())).append("\n");
         }
 
-        if (vacancy.getEmploymentType() != null) {
-            sb.append("⏰ ").append(vacancy.getEmploymentType().name().replace("_", " ")).append("\n");
+        sb.append("💰 ").append(TgUtils.formatSalaryRange(v.getSalaryFrom(), v.getSalaryTo())).append("\n");
+
+        if (v.getEmploymentType() != null) {
+            sb.append("⏰ ").append(formatEmploymentType(v.getEmploymentType().name())).append("\n");
         }
 
-        if (vacancy.getBenefits() != null && vacancy.getBenefits().length > 0) {
-            sb.append("✅ ").append(String.join(", ", vacancy.getBenefits())).append("\n");
+        if (v.getBenefits() != null && v.getBenefits().length > 0) {
+            sb.append("✅ ").append(String.join(", ", v.getBenefits())).append("\n");
         }
 
-        if (vacancy.getDescription() != null) {
-            String desc = vacancy.getDescription();
-            if (desc.length() > 200) {
-                desc = desc.substring(0, 200) + "...";
-            }
-            sb.append("\n").append(escapeHtml(desc)).append("\n");
+        if (v.getDescription() != null) {
+            String desc = v.getDescription();
+            if (desc.length() > 300) desc = desc.substring(0, 300) + "...";
+            sb.append("\n").append(TgUtils.escapeHtml(desc)).append("\n");
         }
 
-        if (vacancy.getPositionsCount() != null && vacancy.getPositionsCount() > 1) {
-            sb.append("\n👥 Ochiq joylar: ").append(vacancy.getPositionsCount());
+        if (v.getPositionsCount() != null && v.getPositionsCount() > 1) {
+            sb.append("\n👥 <b>").append(v.getPositionsCount()).append("</b> ta o'rin ochiq");
         }
 
         return sb.toString();
     }
 
-    public String formatCompact(Vacancy vacancy, int index) {
+    public String formatCompact(Vacancy v, int index) {
         StringBuilder sb = new StringBuilder();
-        sb.append(index).append(". <b>").append(escapeHtml(vacancy.getTitle())).append("</b>");
-        sb.append(" — ").append(escapeHtml(vacancy.getEmployer().getName()));
-        if (vacancy.getCity() != null) {
-            sb.append(" (").append(vacancy.getCity()).append(")");
+        sb.append("<b>").append(index).append(".</b> ");
+        sb.append(TgUtils.escapeHtml(v.getTitle()));
+        if (v.getEmployer() != null) {
+            sb.append(" — ").append(TgUtils.escapeHtml(v.getEmployer().getName()));
         }
-        if (vacancy.getSalaryFrom() != null) {
-            sb.append(" 💰").append(formatSalary(vacancy.getSalaryFrom(), vacancy.getSalaryTo(), vacancy.getCurrency()));
+        if (v.getCity() != null) {
+            sb.append("\n   📍 ").append(v.getCity());
         }
+        sb.append("  💰 ").append(TgUtils.formatSalaryRange(v.getSalaryFrom(), v.getSalaryTo()));
         return sb.toString();
     }
 
-    private String formatSalary(BigDecimal from, BigDecimal to, String currency) {
-        String cur = currency != null ? currency : "UZS";
-        if (from != null && to != null) {
-            return formatNumber(from) + " - " + formatNumber(to) + " " + cur;
-        } else if (from != null) {
-            return "dan " + formatNumber(from) + " " + cur;
-        } else if (to != null) {
-            return "gacha " + formatNumber(to) + " " + cur;
-        }
-        return "Kelishiladi";
+    private String formatEmploymentType(String type) {
+        return switch (type) {
+            case "FULL_TIME" -> "To'liq stavka";
+            case "PART_TIME" -> "Yarim stavka";
+            case "CONTRACT" -> "Shartnoma";
+            case "TEMPORARY" -> "Vaqtinchalik";
+            default -> type;
+        };
     }
 
-    private String formatNumber(BigDecimal number) {
-        long val = number.longValue();
-        if (val >= 1_000_000) {
-            return String.format("%.1fM", val / 1_000_000.0);
-        } else if (val >= 1_000) {
-            return String.format("%.0fK", val / 1_000.0);
-        }
-        return String.valueOf(val);
-    }
-
-    private String getBrandingBadge(String brandingTier) {
-        if ("PREMIUM".equals(brandingTier)) return " ⭐ Premium Employer";
-        if ("BRANDED".equals(brandingTier)) return " ✅";
+    private String getBrandingBadge(String tier) {
+        if ("PREMIUM".equals(tier)) return " ⭐";
+        if ("BRANDED".equals(tier)) return " ✅";
         return "";
-    }
-
-    private String escapeHtml(String text) {
-        if (text == null) return "";
-        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 }

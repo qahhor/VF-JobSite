@@ -136,12 +136,21 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
                 }
             }
 
-            // Check for active registration conversation
+            // Check for active conversation
             ConversationState state = conversationManager.get(chatId);
-            if (state != null && state.getCurrentStep() != ConversationState.RegistrationStep.COMPLETED) {
-                SendMessage response = registrationHandler.handle(message, state);
-                execute(response);
-                return;
+            if (state != null) {
+                // Profile edit mode
+                if (state.getEditField() != null && state.getCurrentStep() == ConversationState.RegistrationStep.COMPLETED) {
+                    SendMessage response = profileHandler.handleProfileEdit(message, state.getEditField());
+                    execute(response);
+                    return;
+                }
+                // Registration flow
+                if (state.getCurrentStep() != ConversationState.RegistrationStep.COMPLETED) {
+                    SendMessage response = registrationHandler.handle(message, state);
+                    execute(response);
+                    return;
+                }
             }
 
             // Handle commands

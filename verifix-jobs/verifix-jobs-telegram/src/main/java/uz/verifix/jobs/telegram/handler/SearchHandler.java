@@ -77,7 +77,7 @@ public class SearchHandler {
 
             InlineKeyboardButton btn = new InlineKeyboardButton();
             btn.setText("📋 " + i + ". Batafsil");
-            btn.setCallbackData("vacancy:" + v.getId());
+            btn.setCallbackData(uz.verifix.jobs.telegram.util.TgUtils.CB_VACANCY + v.getId());
             rows.add(List.of(btn));
             i++;
         }
@@ -87,13 +87,13 @@ public class SearchHandler {
         if (page > 0) {
             InlineKeyboardButton prev = new InlineKeyboardButton();
             prev.setText("⬅️ Oldingi");
-            prev.setCallbackData("search_page:" + query + ":" + (page - 1));
+            prev.setCallbackData(uz.verifix.jobs.telegram.util.TgUtils.CB_SEARCH_PAGE + query + ":" + (page - 1));
             navRow.add(prev);
         }
         if (results.getTotalPages() > page + 1) {
             InlineKeyboardButton next = new InlineKeyboardButton();
             next.setText("Keyingi ➡️");
-            next.setCallbackData("search_page:" + query + ":" + (page + 1));
+            next.setCallbackData(uz.verifix.jobs.telegram.util.TgUtils.CB_SEARCH_PAGE + query + ":" + (page + 1));
             navRow.add(next);
         }
         if (!navRow.isEmpty()) {
