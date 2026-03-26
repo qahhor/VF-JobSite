@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
 import { VacancyCreateRequest } from '../../core/models';
+import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-templates';
 
 @Component({
   selector: 'vjw-vacancy-form',
@@ -12,6 +13,21 @@ import { VacancyCreateRequest } from '../../core/models';
   template: `
     <div class="max-w-3xl mx-auto space-y-6">
       <h1 class="text-2xl font-bold text-gray-800">{{ isEdit ? 'Vakansiyani tahrirlash' : 'Yangi vakansiya' }}</h1>
+
+      <!-- Template picker (only for new vacancies) -->
+      @if (!isEdit && step() === 0) {
+        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+          <h3 class="text-sm font-semibold text-gray-800 mb-3">Shablondan yaratish</h3>
+          <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+            @for (t of templates; track t.name) {
+              <button (click)="useTemplate(t)" class="flex flex-col items-center gap-1 py-3 px-2 rounded-lg border border-gray-100 hover:border-gray-300 hover:shadow-sm transition text-center">
+                <span class="text-2xl">{{ t.icon }}</span>
+                <span class="text-xs font-medium text-gray-600">{{ t.name }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
 
       <!-- Step indicator -->
       <div class="flex items-center gap-2 overflow-x-auto pb-2">
@@ -163,10 +179,21 @@ export class VacancyFormComponent implements OnInit {
   saving = signal(false);
   benefitsStr = '';
 
+  templates = SYSTEM_TEMPLATES;
+
   form: VacancyCreateRequest & { shiftSchedule?: string; positionsCount?: number; isMassHiring?: boolean; salaryTo?: number; expiresAt?: string } = {
     title: '', description: '', category: 'COOK', city: 'Tashkent',
     employmentType: 'FULL_TIME', shiftSchedule: 'MORNING', positionsCount: 1,
   };
+
+  useTemplate(t: VacancyTemplate) {
+    this.form.title = t.name;
+    this.form.category = t.category;
+    this.form.description = t.description;
+    this.form.employmentType = t.employmentType;
+    this.benefitsStr = t.benefits.join(', ');
+    this.step.set(0);
+  }
 
   steps = [
     { id: 0, label: 'Asosiy' }, { id: 1, label: 'Tafsilot' },

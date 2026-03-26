@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
+import { getBenefitIcon } from '../../shared/utils/benefit-icons';
 
 @Component({
   selector: 'vjw-public-home',
@@ -72,13 +73,24 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
               }
               <h3 class="text-sm font-semibold text-gray-800 group-hover:text-black truncate">{{ v.title }}</h3>
               <div class="text-xs text-gray-400 mt-1 truncate">{{ v.employer?.name || v.employerName }}</div>
-              <div class="flex items-center gap-2 mt-3 text-xs text-gray-400">
+              <!-- Benefits icons -->
+              @if (v.benefits?.length) {
+                <div class="flex gap-1 mt-2">
+                  @for (b of v.benefits.slice(0, 4); track b) {
+                    <span class="text-sm" [title]="b">{{ getBenefitIcon(b) }}</span>
+                  }
+                </div>
+              }
+              <div class="flex items-center gap-2 mt-2 text-xs text-gray-400">
                 <span class="flex items-center gap-1">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                   {{ v.city || 'Toshkent' }}
                 </span>
                 @if (v.employmentType) {
                   <span class="px-2 py-0.5 bg-gray-100 rounded-full">{{ empType(v.employmentType) }}</span>
+                }
+                @if (v.isBranded || v.promoted) {
+                  <span class="px-2 py-0.5 bg-orange-50 text-orange-600 rounded-full font-medium">TOP ⭐</span>
                 }
               </div>
             </a>
@@ -184,4 +196,6 @@ export class PublicHomeComponent implements OnInit {
   empType(t:string):string {
     return ({FULL_TIME:"To'liq",PART_TIME:'Yarim',CONTRACT:'Shartnoma',TEMPORARY:'Vaqtinchalik'} as Record<string,string>)[t]||t;
   }
+
+  getBenefitIcon = getBenefitIcon;
 }

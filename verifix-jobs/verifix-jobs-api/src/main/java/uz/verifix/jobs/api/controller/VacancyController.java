@@ -29,6 +29,7 @@ public class VacancyController {
 
     private final VacancyService vacancyService;
     private final VacancyMapper vacancyMapper;
+    private final uz.verifix.jobs.domain.repository.VacancyRepository vacancyRepository;
 
     @PostMapping
     public ResponseEntity<VacancyResponse> create(
@@ -124,6 +125,18 @@ public class VacancyController {
             Authentication auth) {
         UUID employerId = SecurityUtils.extractEmployerId(auth);
         Vacancy vacancy = vacancyService.changeStatus(id, employerId, status);
+        return ResponseEntity.ok(vacancyMapper.toResponse(vacancy));
+    }
+
+    @PostMapping("/{id}/bump")
+    public ResponseEntity<VacancyResponse> bump(@PathVariable UUID id, Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        Vacancy vacancy = vacancyService.getById(id);
+        if (!vacancy.getEmployer().getId().equals(employerId)) {
+            return ResponseEntity.status(403).build();
+        }
+        vacancy.setUpdatedAt(java.time.Instant.now());
+        vacancy = vacancyRepository.save(vacancy);
         return ResponseEntity.ok(vacancyMapper.toResponse(vacancy));
     }
 
