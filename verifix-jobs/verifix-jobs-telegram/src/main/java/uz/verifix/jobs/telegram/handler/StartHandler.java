@@ -13,6 +13,7 @@ import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.telegram.conversation.ConversationManager;
 import uz.verifix.jobs.telegram.conversation.ConversationState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,14 +75,34 @@ public class StartHandler {
     public SendMessage sendMainMenu(Long chatId, String name) {
         SendMessage msg = new SendMessage();
         msg.setChatId(chatId.toString());
-        msg.setText("👋 Salom, <b>" + (name != null ? name : "do'stim") + "</b>!\n\n" +
-                "Nima qilmoqchisiz?\n\n" +
-                "🔍 /search — Ish qidirish\n" +
-                "📍 /nearby — Yaqin atrofdagi ishlar\n" +
-                "📋 /my_applications — Mening arizalarim\n" +
-                "👤 /profile — Profilim\n" +
-                "🔗 /referral — Do'stlarni taklif qilish");
+        msg.setText("👋 <b>" + (name != null ? name : "Do'stim") + "</b>, nima qilmoqchisiz?");
         msg.setParseMode("HTML");
+        msg.setReplyMarkup(buildMainMenuKeyboard());
         return msg;
+    }
+
+    public static ReplyKeyboardMarkup buildMainMenuKeyboard() {
+        List<KeyboardRow> rows = new ArrayList<>();
+
+        KeyboardRow row1 = new KeyboardRow();
+        row1.add("🔍 Ish qidirish");
+        row1.add("📍 Yaqindagi ishlar");
+        rows.add(row1);
+
+        KeyboardRow row2 = new KeyboardRow();
+        row2.add("📋 Arizalarim");
+        row2.add("❤️ Saqlangan");
+        rows.add(row2);
+
+        KeyboardRow row3 = new KeyboardRow();
+        row3.add("👤 Profilim");
+        row3.add("🔗 Taklif qilish");
+        rows.add(row3);
+
+        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
+        keyboard.setKeyboard(rows);
+        keyboard.setResizeKeyboard(true);
+        keyboard.setIsPersistent(true);
+        return keyboard;
     }
 }

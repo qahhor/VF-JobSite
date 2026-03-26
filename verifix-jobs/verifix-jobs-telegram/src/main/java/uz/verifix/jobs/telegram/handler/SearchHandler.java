@@ -22,27 +22,43 @@ public class SearchHandler {
     private final VacancyService vacancyService;
     private final VacancyCardFormatter formatter;
 
+    private static final int PAGE_SIZE = 5;
+
     public SendMessage handle(Message message) {
         Long chatId = message.getChatId();
         String text = message.getText();
 
-        // Extract query after /search
+        // Extract query — from /search command or button text
         String query = null;
-        if (text != null && text.length() > "/search".length()) {
-            query = text.substring("/search".length()).trim();
+        if (text != null) {
+            if (text.startsWith("/search") && text.length() > "/search".length()) {
+                query = text.substring("/search".length()).trim();
+            } else if (text.contains("Ish qidirish")) {
+                // Menu button clicked — prompt for query
+                return reply(chatId, "🔍 <b>Ish qidirish</b>\n\n" +
+                        "Nimani qidiryapsiz? Yozing:\n\n" +
+                        "Masalan:\n" +
+                        "• <code>Toshkent oshpaz</code>\n" +
+                        "• <code>haydovchi</code>\n" +
+                        "• <code>kassir 5 million</code>\n\n" +
+                        "Yoki shahar/kasb nomini yozing:");
+            }
         }
 
         if (query == null || query.isBlank()) {
             return reply(chatId, "🔍 <b>Ish qidirish</b>\n\n" +
-                    "Kalit so'z yoki shahar nomini yozing:\n" +
+                    "Kalit so'z yozing:\n" +
                     "Masalan: <code>/search Toshkent kassir</code>");
         }
 
-        // Simple search: try city first, then category
-        Page<Vacancy> results = vacancyService.search(query, null, null, null, PageRequest.of(0, 5));
+        return searchAndFormat(chatId, query, 0);
+    }
 
-        if (results.isEmpty()) {
-            results = vacancyService.search(null, query, null, null, PageRequest.of(0, 5));
+    public SendMessage searchAndFormat(Long chatId, String query, int page) {
+        Page<Vacancy> results = vacancyService.search(query, null, null, null, PageRequest.of(page, PAGE_SIZE));
+
+        if (results.isEmpty() && page == 0) {
+            results = vacancyService.search(null, query, null, null, PageRequest.of(0, PAGE_SIZE));
         }
 
         if (results.isEmpty()) {
@@ -51,10 +67,11 @@ public class SearchHandler {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("🔍 <b>Natijalar:</b> \"").append(query).append("\"\n\n");
+        sb.append("🔍 <b>Natijalar:</b> \"").append(query).append("\"");
+        sb.append("  (").append(results.getTotalElements()).append(" ta)\n\n");
 
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-        int i = 1;
+        int i = page * PAGE_SIZE + 1;
         for (Vacancy v : results.getContent()) {
             sb.append(formatter.formatCompact(v, i)).append("\n\n");
 
@@ -65,9 +82,25 @@ public class SearchHandler {
             i++;
         }
 
-        if (results.getTotalPages() > 1) {
-            sb.append("\n📄 Sahifa 1/").append(results.getTotalPages());
+        // Pagination buttons
+        List<InlineKeyboardButton> navRow = new ArrayList<>();
+        if (page > 0) {
+            InlineKeyboardButton prev = new InlineKeyboardButton();
+            prev.setText("⬅️ Oldingi");
+            prev.setCallbackData("search_page:" + query + ":" + (page - 1));
+            navRow.add(prev);
         }
+        if (results.getTotalPages() > page + 1) {
+            InlineKeyboardButton next = new InlineKeyboardButton();
+            next.setText("Keyingi ➡️");
+            next.setCallbackData("search_page:" + query + ":" + (page + 1));
+            navRow.add(next);
+        }
+        if (!navRow.isEmpty()) {
+            rows.add(navRow);
+        }
+
+        sb.append("📄 Sahifa ").append(page + 1).append("/").append(results.getTotalPages());
 
         SendMessage msg = reply(chatId, sb.toString());
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();

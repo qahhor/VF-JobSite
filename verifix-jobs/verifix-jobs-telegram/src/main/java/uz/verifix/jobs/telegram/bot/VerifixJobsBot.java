@@ -9,6 +9,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import uz.verifix.jobs.domain.entity.Candidate;
+import uz.verifix.jobs.domain.entity.FavoriteVacancy;
+import uz.verifix.jobs.domain.entity.Vacancy;
+import uz.verifix.jobs.domain.repository.CandidateRepository;
+import uz.verifix.jobs.domain.repository.FavoriteVacancyRepository;
+import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.telegram.channel.ChannelPostingService;
 import uz.verifix.jobs.telegram.config.BotConfig;
 import uz.verifix.jobs.telegram.conversation.ConversationManager;
@@ -16,6 +22,8 @@ import uz.verifix.jobs.telegram.conversation.ConversationState;
 import uz.verifix.jobs.telegram.handler.*;
 
 import java.io.Serializable;
+import java.util.List;
+import org.springframework.data.domain.PageRequest;
 
 @Slf4j
 @Component
@@ -34,6 +42,9 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
     private final NotificationConsumer notificationConsumer;
     private final ChannelPostingService channelPostingService;
     private final AiChatHandler aiChatHandler;
+    private final CandidateRepository candidateRepository;
+    private final FavoriteVacancyRepository favoriteVacancyRepository;
+    private final VacancyRepository vacancyRepository;
 
     public VerifixJobsBot(BotConfig botConfig, StartHandler startHandler,
                           RegistrationHandler registrationHandler, SearchHandler searchHandler,
@@ -41,7 +52,9 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
                           ReferralHandler referralHandler, CallbackQueryHandler callbackQueryHandler,
                           ProfileHandler profileHandler,
                           ConversationManager conversationManager, NotificationConsumer notificationConsumer,
-                          ChannelPostingService channelPostingService, AiChatHandler aiChatHandler) {
+                          ChannelPostingService channelPostingService, AiChatHandler aiChatHandler,
+                          CandidateRepository candidateRepository, FavoriteVacancyRepository favoriteVacancyRepository,
+                          VacancyRepository vacancyRepository) {
         super(botConfig.getToken());
         this.botConfig = botConfig;
         this.startHandler = startHandler;
@@ -56,6 +69,9 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         this.notificationConsumer = notificationConsumer;
         this.channelPostingService = channelPostingService;
         this.aiChatHandler = aiChatHandler;
+        this.candidateRepository = candidateRepository;
+        this.favoriteVacancyRepository = favoriteVacancyRepository;
+        this.vacancyRepository = vacancyRepository;
     }
 
     @PostConstruct
@@ -142,34 +158,82 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
     }
 
     private SendMessage routeCommand(String text, Message message) {
-        if (text.startsWith("/start")) {
-            return startHandler.handle(message);
-        }
-        if (text.startsWith("/search")) {
-            return searchHandler.handle(message);
-        }
-        if (text.equals("/nearby")) {
-            return nearbyHandler.handle(message);
-        }
-        if (text.equals("/my_applications")) {
-            return applyHandler.handleMyApplications(message.getChatId(), message.getFrom().getId());
-        }
-        if (text.equals("/referral")) {
-            return referralHandler.handle(message);
-        }
-        if (text.equals("/profile")) {
-            return profileHandler.handle(message);
-        }
-        if (text.equals("/help")) {
-            return helpMessage(message.getChatId());
-        }
+        // Slash commands
+        if (text.startsWith("/start")) return startHandler.handle(message);
+        if (text.startsWith("/search")) return searchHandler.handle(message);
+        if (text.equals("/nearby")) return nearbyHandler.handle(message);
+        if (text.equals("/my_applications")) return applyHandler.handleMyApplications(message.getChatId(), message.getFrom().getId());
+        if (text.equals("/referral")) return referralHandler.handle(message);
+        if (text.equals("/profile")) return profileHandler.handle(message);
+        if (text.equals("/help")) return startHandler.sendMainMenu(message.getChatId(), null);
 
-        // Unknown text — try AI chat for natural language job search
+        // Reply keyboard menu buttons
+        if (text.contains("Ish qidirish")) return searchHandler.handle(message);
+        if (text.contains("Yaqindagi ishlar")) return nearbyHandler.handle(message);
+        if (text.contains("Arizalarim")) return applyHandler.handleMyApplications(message.getChatId(), message.getFrom().getId());
+        if (text.contains("Saqlangan")) return handleFavorites(message);
+        if (text.contains("Profilim")) return profileHandler.handle(message);
+        if (text.contains("Taklif qilish")) return referralHandler.handle(message);
+
+        // Natural language → AI chat / keyword search
         if (!text.startsWith("/")) {
             return aiChatHandler.handle(message);
         }
 
         return helpMessage(message.getChatId());
+    }
+
+    private SendMessage handleFavorites(Message message) {
+        Long chatId = message.getChatId();
+        Long telegramId = message.getFrom().getId();
+        Candidate candidate = candidateRepository.findByTelegramId(telegramId).orElse(null);
+        if (candidate == null) {
+            SendMessage msg = new SendMessage();
+            msg.setChatId(chatId.toString());
+            msg.setText("❌ Avval ro'yxatdan o'ting: /start");
+            return msg;
+        }
+
+        List<FavoriteVacancy> favs = favoriteVacancyRepository
+                .findByCandidateIdOrderByCreatedAtDesc(candidate.getId(), PageRequest.of(0, 10))
+                .getContent();
+
+        if (favs.isEmpty()) {
+            SendMessage msg = new SendMessage();
+            msg.setChatId(chatId.toString());
+            msg.setText("❤️ <b>Saqlangan vakansiyalar</b>\n\nHali saqlangan vakansiya yo'q.\n\n🔍 Ish qidirish uchun \"Ish qidirish\" tugmasini bosing.");
+            msg.setParseMode("HTML");
+            return msg;
+        }
+
+        StringBuilder sb = new StringBuilder("❤️ <b>Saqlangan vakansiyalar</b> (" + favs.size() + ")\n\n");
+        for (int i = 0; i < favs.size(); i++) {
+            Vacancy v = vacancyRepository.findById(favs.get(i).getVacancyId()).orElse(null);
+            if (v == null) continue;
+            sb.append(i + 1).append(". <b>").append(v.getTitle()).append("</b>\n");
+            if (v.getEmployer() != null) sb.append("   🏢 ").append(v.getEmployer().getName()).append("\n");
+            if (v.getCity() != null) sb.append("   📍 ").append(v.getCity());
+            if (v.getSalaryFrom() != null) {
+                sb.append("  💰 ").append(formatSalary(v.getSalaryFrom()));
+                if (v.getSalaryTo() != null) sb.append(" – ").append(formatSalary(v.getSalaryTo()));
+                sb.append(" UZS");
+            }
+            sb.append("\n\n");
+        }
+
+        SendMessage msg = new SendMessage();
+        msg.setChatId(chatId.toString());
+        msg.setText(sb.toString());
+        msg.setParseMode("HTML");
+        return msg;
+    }
+
+    private String formatSalary(java.math.BigDecimal n) {
+        if (n == null) return "0";
+        long val = n.longValue();
+        if (val >= 1_000_000) return String.format("%.1fM", val / 1_000_000.0);
+        if (val >= 1_000) return (val / 1_000) + "K";
+        return String.valueOf(val);
     }
 
     private SendMessage helpMessage(Long chatId) {
