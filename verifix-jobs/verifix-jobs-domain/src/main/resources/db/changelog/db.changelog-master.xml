@@ -25,5 +25,6 @@
     <include file="db/changelog/changelog-017-automation-semantic.xml"/>
     <include file="db/changelog/changelog-018-geo-reference-dictionaries.xml"/>
     <include file="db/changelog/changelog-020-company-reviews.xml"/>
+    <include file="db/changelog/changelog-021-chat.xml"/>
 
 </databaseChangeLog>

@@ -36,6 +36,7 @@ export const appRoutes: Routes = [
       { path: 'integrations', loadComponent: () => import('./features/integrations/integrations.component').then(m => m.IntegrationsComponent) },
       { path: 'automations', loadComponent: () => import('./features/automations/automations.component').then(m => m.AutomationsComponent) },
       { path: 'saved-searches', loadComponent: () => import('./features/saved-searches/saved-searches.component').then(m => m.SavedSearchesComponent) },
+      { path: 'chat', loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent) },
     ]
   },
 
@@ -51,6 +52,7 @@ export const appRoutes: Routes = [
       { path: 'employers', loadComponent: () => import('./features/admin/admin-employers.component').then(m => m.AdminEmployersComponent) },
       { path: 'moderation', loadComponent: () => import('./features/admin/admin-moderation.component').then(m => m.AdminModerationComponent) },
       { path: 'fraud', loadComponent: () => import('./features/admin/admin-fraud.component').then(m => m.AdminFraudComponent) },
+      { path: 'gov-sync', loadComponent: () => import('./features/admin/admin-gov.component').then(m => m.AdminGovComponent) },
     ]
   },
 

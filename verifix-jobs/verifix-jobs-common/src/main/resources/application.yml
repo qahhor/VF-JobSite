@@ -80,6 +80,40 @@ management:
         include: health,info,prometheus
   endpoint:
     health:
+
+# Resilience4j Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+    instances:
+      govSync:
+        base-config: default
+      smsGateway:
+        base-config: default
+        failure-rate-threshold: 70
+      paymentGateway:
+        base-config: default
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 2s
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+    instances:
+      govSync:
+        base-config: default
+      smsGateway:
+        base-config: default
+        max-attempts: 2
+
+management:
+  endpoint:
       probes:
         enabled: true
   metrics:

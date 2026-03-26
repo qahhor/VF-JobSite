@@ -65,6 +65,7 @@ export class AdminLayoutComponent {
     { path: '/admin/employers', icon: '🏢', label: 'Kompaniyalar' },
     { path: '/admin/moderation', icon: '🔍', label: 'Moderatsiya' },
     { path: '/admin/fraud', icon: '🚨', label: 'Frod nazorati' },
+    { path: '/admin/gov-sync', icon: '🏛️', label: 'Davlat sinx.' },
   ];
 
   constructor(private router: Router) {}

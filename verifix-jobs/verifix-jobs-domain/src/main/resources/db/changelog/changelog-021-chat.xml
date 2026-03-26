@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="021-chat-messages" author="claude">
+        <createTable tableName="chat_message">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="candidate_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="vacancy_id" type="uuid"/>
+            <column name="sender_type" type="varchar(20)"><constraints nullable="false"/></column>
+            <column name="message" type="text"><constraints nullable="false"/></column>
+            <column name="is_read" type="boolean" defaultValueBoolean="false"/>
+            <column name="created_at" type="timestamptz" defaultValueComputed="now()"/>
+        </createTable>
+        <createIndex tableName="chat_message" indexName="idx_chat_employer_candidate">
+            <column name="employer_id"/>
+            <column name="candidate_id"/>
+        </createIndex>
+        <createIndex tableName="chat_message" indexName="idx_chat_created">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
