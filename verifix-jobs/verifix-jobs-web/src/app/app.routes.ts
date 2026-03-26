@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const appRoutes: Routes = [
   // Public routes
@@ -33,7 +34,22 @@ export const appRoutes: Routes = [
     ]
   },
 
-  // Legacy redirects (keep old employer routes working)
+  // Admin panel
+  { path: 'admin/login', loadComponent: () => import('./features/admin/admin-login.component').then(m => m.AdminLoginComponent) },
+  {
+    path: 'admin',
+    loadComponent: () => import('./features/admin/admin-layout.component').then(m => m.AdminLayoutComponent),
+    canActivate: [adminGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', loadComponent: () => import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
+      { path: 'employers', loadComponent: () => import('./features/admin/admin-employers.component').then(m => m.AdminEmployersComponent) },
+      { path: 'moderation', loadComponent: () => import('./features/admin/admin-moderation.component').then(m => m.AdminModerationComponent) },
+      { path: 'fraud', loadComponent: () => import('./features/admin/admin-fraud.component').then(m => m.AdminFraudComponent) },
+    ]
+  },
+
+  // Legacy redirects
   { path: 'dashboard', redirectTo: 'employer/dashboard', pathMatch: 'full' },
   { path: 'vacancies', redirectTo: 'employer/vacancies', pathMatch: 'full' },
   { path: 'pipeline', redirectTo: 'employer/pipeline', pathMatch: 'full' },
