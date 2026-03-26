@@ -13,128 +13,175 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
   template: `
     <vjw-public-header />
 
-    <!-- HERO SEARCH -->
-    <section class="bg-white py-10 md:py-16">
+    <!-- HERO — big search, mobile-first -->
+    <section class="bg-gradient-to-b from-gray-50 to-white pt-8 pb-6 md:pt-14 md:pb-10">
       <div class="max-w-3xl mx-auto px-4 text-center">
-        <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">Ish qidirish</h1>
-        <p class="text-gray-500 text-sm md:text-base mb-8">Minglab vakansiyalar orasidan mosini toping</p>
-        <div class="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto">
-          <input type="text" [(ngModel)]="searchQuery" placeholder="Kasb, lavozim yoki kompaniya..."
-                 class="flex-1 h-12 px-4 border border-gray-300 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
-                 (keyup.enter)="doSearch()">
-          <select [(ngModel)]="searchCity" class="h-12 px-4 border border-gray-300 rounded-lg text-sm bg-white sm:w-44">
-            <option value="">Barcha shaharlar</option>
-            @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
-          </select>
-          <a [routerLink]="['/jobs']" [queryParams]="{q: searchQuery, city: searchCity}"
-             class="h-12 px-6 bg-black text-white rounded-lg text-sm font-medium flex items-center justify-center hover:bg-gray-800 transition">Topish</a>
-        </div>
-        <div class="flex flex-wrap justify-center gap-2 mt-5">
-          @for (tag of popularTags; track tag) {
-            <a [routerLink]="['/jobs']" [queryParams]="{q: tag}" class="text-xs px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition">{{ tag }}</a>
-          }
+        <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-2 leading-tight">Sizga yaqin ish toping</h1>
+        <p class="text-gray-400 text-sm md:text-base mb-6">Minglab vakansiyalar — tez va oson</p>
+        <div class="flex flex-col sm:flex-row gap-2 max-w-xl mx-auto">
+          <div class="relative flex-1">
+            <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" [(ngModel)]="searchQuery" placeholder="Kasb yoki kompaniya..."
+                   class="w-full h-12 pl-10 pr-4 border border-gray-200 rounded-xl text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+                   (keyup.enter)="doSearch()">
+          </div>
+          <a [routerLink]="['/jobs']" [queryParams]="{q: searchQuery}"
+             class="h-12 px-8 bg-black text-white rounded-xl text-sm font-semibold flex items-center justify-center hover:bg-gray-800 transition whitespace-nowrap">
+            Topish
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- CATEGORIES -->
-    <section class="bg-gray-50 py-10 md:py-14">
+    <!-- CATEGORIES — large icons, easy tap -->
+    <section class="py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-xl font-bold text-gray-900 mb-6">Professional sohalar</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          @for (cat of categories(); track cat.key) {
-            <a [routerLink]="['/jobs']" [queryParams]="{category: cat.key}" class="bg-white rounded-lg p-4 hover:shadow-md transition border border-gray-100 group">
-              <div class="text-sm font-medium text-gray-900 group-hover:text-black">{{ cat.label }}</div>
-              <div class="text-xs text-gray-400 mt-1">{{ cat.count }} vakansiya</div>
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Kasblar</h2>
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
+          @for (cat of categoryIcons; track cat.key) {
+            <a [routerLink]="['/jobs']" [queryParams]="{category: cat.key}"
+               class="flex flex-col items-center gap-2 py-4 px-2 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-sm transition bg-white group">
+              <span class="text-3xl">{{ cat.icon }}</span>
+              <span class="text-xs font-medium text-gray-600 group-hover:text-black text-center leading-tight">{{ cat.label }}</span>
+              @if (getCatCount(cat.key); as count) {
+                <span class="text-[10px] text-gray-400">{{ count }}</span>
+              }
             </a>
           }
         </div>
       </div>
     </section>
 
-    <!-- VACANCIES -->
-    <section class="bg-white py-10 md:py-14">
+    <!-- VACANCIES — card style, salary prominent -->
+    <section class="bg-gray-50 py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-gray-900">Yangi vakansiyalar</h2>
-          <a routerLink="/jobs" class="text-sm text-gray-500 hover:text-black transition">Barchasi &#8594;</a>
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-lg font-bold text-gray-900">Yangi vakansiyalar</h2>
+          <a routerLink="/jobs" class="text-sm text-gray-500 hover:text-black font-medium transition">Barchasi &rarr;</a>
         </div>
-        <div class="space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           @for (v of vacancies(); track v.id) {
-            <a [routerLink]="['/jobs', v.slug || v.id]" class="block bg-white border border-gray-100 rounded-lg p-4 md:p-5 hover:shadow-md transition group">
-              <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                <div class="flex-1 min-w-0">
-                  <h3 class="text-base font-medium text-gray-900 group-hover:text-black truncate">{{ v.title }}</h3>
-                  <div class="text-sm text-gray-500 mt-0.5">{{ v.employer?.name || v.employerName }}</div>
+            <a [routerLink]="['/jobs', v.slug || v.id]"
+               class="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition group">
+              <!-- Salary — most important for blue collar -->
+              @if (v.salaryFrom) {
+                <div class="text-lg font-bold text-gray-900 mb-1">
+                  {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' – ' + fmt(v.salaryTo) : '+' }}
+                  <span class="text-xs font-normal text-gray-400">UZS</span>
                 </div>
-                <div class="flex items-center gap-4 text-sm shrink-0">
-                  @if (v.salaryFrom) {
-                    <span class="font-semibold text-gray-900 whitespace-nowrap">{{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' - ' + fmt(v.salaryTo) : '+' }} UZS</span>
-                  }
-                  <span class="text-gray-400">{{ v.city }}</span>
-                </div>
+              }
+              <h3 class="text-sm font-semibold text-gray-800 group-hover:text-black truncate">{{ v.title }}</h3>
+              <div class="text-xs text-gray-400 mt-1 truncate">{{ v.employer?.name || v.employerName }}</div>
+              <div class="flex items-center gap-2 mt-3 text-xs text-gray-400">
+                <span class="flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  {{ v.city || 'Toshkent' }}
+                </span>
+                @if (v.employmentType) {
+                  <span class="px-2 py-0.5 bg-gray-100 rounded-full">{{ empType(v.employmentType) }}</span>
+                }
               </div>
             </a>
           } @empty {
-            <div class="text-center py-10 text-gray-400 text-sm">Yuklanmoqda...</div>
+            <div class="col-span-full text-center py-12 text-gray-400 text-sm">Yuklanmoqda...</div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- POPULAR CITIES — quick access -->
+    <section class="py-8 md:py-10">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Shaharlar bo'yicha</h2>
+        <div class="flex flex-wrap gap-2">
+          @for (city of cities; track city) {
+            <a [routerLink]="['/jobs']" [queryParams]="{city: city}"
+               class="h-10 px-5 border border-gray-200 rounded-full text-sm font-medium text-gray-600 hover:bg-black hover:text-white hover:border-black transition flex items-center">
+              {{ city }}
+            </a>
           }
         </div>
       </div>
     </section>
 
     <!-- STATS -->
-    <section class="bg-gray-50 py-10">
-      <div class="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-6 text-center">
-        <div><div class="text-2xl md:text-3xl font-bold text-gray-900">{{ stats().vacancies }}+</div><div class="text-xs text-gray-500 mt-1">Vakansiyalar</div></div>
-        <div><div class="text-2xl md:text-3xl font-bold text-gray-900">{{ stats().employers }}+</div><div class="text-xs text-gray-500 mt-1">Kompaniyalar</div></div>
-        <div><div class="text-2xl md:text-3xl font-bold text-gray-900">{{ stats().hired }}+</div><div class="text-xs text-gray-500 mt-1">Ishga olingan</div></div>
+    <section class="bg-black text-white py-10">
+      <div class="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-4 text-center">
+        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().vacancies }}+</div><div class="text-xs text-gray-400 mt-1">Vakansiyalar</div></div>
+        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().employers }}+</div><div class="text-xs text-gray-400 mt-1">Kompaniyalar</div></div>
+        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().hired }}+</div><div class="text-xs text-gray-400 mt-1">Ishga olingan</div></div>
       </div>
     </section>
 
-    <!-- TELEGRAM -->
-    <section class="bg-black text-white py-10 md:py-14">
-      <div class="max-w-4xl mx-auto px-4 text-center">
-        <h2 class="text-xl md:text-2xl font-bold mb-3">Telegram bot orqali ish toping</h2>
-        <p class="text-gray-400 text-sm mb-6">Yangi vakansiyalar har kuni telefoningizga keladi</p>
-        <a href="https://t.me/VerifixJobBot" target="_blank" class="inline-flex bg-white text-black px-6 py-3 rounded-lg text-sm font-medium hover:bg-gray-100 transition">Botga o'tish &#8594;</a>
+    <!-- TELEGRAM CTA -->
+    <section class="py-10">
+      <div class="max-w-xl mx-auto px-4 text-center">
+        <div class="text-4xl mb-3">📱</div>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">Telegramda ish qidiring</h2>
+        <p class="text-sm text-gray-400 mb-5">Bot har kuni yangi vakansiyalarni yuboradi</p>
+        <a href="https://t.me/VerifixJobBot" target="_blank"
+           class="inline-flex items-center gap-2 h-12 px-6 bg-[#2AABEE] text-white rounded-xl text-sm font-semibold hover:bg-[#229ED9] transition">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-2.01 9.47c-.15.68-.54.84-1.1.53l-3.03-2.24-1.46 1.41c-.16.16-.3.3-.61.3l.22-3.06 5.56-5.02c.24-.22-.05-.34-.38-.13L8.6 14.27l-2.98-.93c-.65-.2-.66-.65.14-.96l11.65-4.49c.54-.2 1.01.13.84.96l-.3 1.28z"/></svg>
+          Telegram Bot
+        </a>
       </div>
     </section>
 
+    <div class="mb-16 md:mb-0"></div><!-- space for mobile bottom nav -->
     <vjw-public-footer />
   `,
 })
 export class PublicHomeComponent implements OnInit {
   searchQuery = '';
-  searchCity = '';
-  categories = signal<{key:string;label:string;count:number}[]>([]);
+  categories = signal<any[]>([]);
   vacancies = signal<any[]>([]);
   stats = signal({vacancies:0,employers:0,hired:0});
-  cities = ['Toshkent','Samarqand','Buxoro','Andijon','Namangan','Fargona','Nukus','Navoiy','Qarshi'];
-  popularTags = ['Oshpaz','Haydovchi','Sotuvchi','Kuryer','Elektrik','Tikuvchi','Omborchi'];
+  cities = ['Toshkent','Samarqand','Buxoro','Andijon','Namangan','Farg\'ona','Nukus','Navoiy','Qarshi','Jizzax','Termiz','Urganch','Guliston'];
+
+  categoryIcons = [
+    {key:'COOK',label:'Oshpaz',icon:'👨‍🍳'},
+    {key:'DRIVER',label:'Haydovchi',icon:'🚗'},
+    {key:'SALES',label:'Sotuvchi',icon:'🛒'},
+    {key:'BUILDER',label:'Qurilishchi',icon:'🏗️'},
+    {key:'WAITER',label:'Ofitsiant',icon:'🍽️'},
+    {key:'SECURITY',label:'Qo\'riqchi',icon:'🛡️'},
+    {key:'WAREHOUSE',label:'Omborchi',icon:'📦'},
+    {key:'CLEANER',label:'Tozalovchi',icon:'🧹'},
+    {key:'ELECTRICIAN',label:'Elektrik',icon:'⚡'},
+    {key:'TAILOR',label:'Tikuvchi',icon:'🧵'},
+    {key:'COURIER',label:'Kuryer',icon:'🏍️'},
+    {key:'CASHIER',label:'Kassir',icon:'💰'},
+    {key:'LOADER',label:'Yukchi',icon:'💪'},
+    {key:'PLUMBER',label:'Santexnik',icon:'🔧'},
+  ];
 
   constructor(private api: PublicApiService) {}
 
   ngOnInit() {
     this.api.getCategories().subscribe({
       next: (cats:any[]) => {
-        this.categories.set(cats.map(c => ({key:c.category, label:this.lbl(c.category), count:c.vacancyCount})));
-        const total = cats.reduce((a:number,c:any) => a+c.vacancyCount, 0);
+        this.categories.set(cats);
+        const total = cats.reduce((a:number,c:any) => a+(c.vacancyCount||0), 0);
         this.stats.set({vacancies: total, employers: cats.length, hired: Math.round(total*0.05)});
       },
       error: () => {}
     });
-    this.api.getVacancies({page:0,size:8}).subscribe({
+    this.api.getVacancies({page:0,size:9,sort:'newest'}).subscribe({
       next: (r:any) => this.vacancies.set(r.content||[]),
       error: () => {}
     });
   }
 
+  getCatCount(key:string): number {
+    const c = this.categories().find((x:any) => x.category === key);
+    return c?.vacancyCount || 0;
+  }
+
   doSearch() {}
 
-  fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':''+n; }
+  fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':''+n; }
 
-  lbl(k:string):string {
-    const m:Record<string,string>={COOK:'Oshpaz',DRIVER:'Haydovchi',SALES:'Sotuvchi',BUILDER:'Qurilishchi',CLEANER:'Tozalovchi',WAITER:'Ofitsiant',CASHIER:'Kassir',WAREHOUSE:'Omborchi',SECURITY:'Qo\'riqchi',ELECTRICIAN:'Elektrik',PLUMBER:'Santexnik',TAILOR:'Tikuvchi',COURIER:'Kuryer',LOADER:'Yukchi'};
-    return m[k]||k;
+  empType(t:string):string {
+    return ({FULL_TIME:"To'liq",PART_TIME:'Yarim',CONTRACT:'Shartnoma',TEMPORARY:'Vaqtinchalik'} as Record<string,string>)[t]||t;
   }
 }

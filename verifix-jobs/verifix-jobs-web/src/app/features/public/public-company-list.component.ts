@@ -13,31 +13,40 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
   template: `
     <vjw-public-header />
 
-    <div class="max-w-6xl mx-auto px-4 py-8">
-      <h1 class="text-xl font-bold text-gray-900 mb-6">Kompaniyalar</h1>
+    <div class="max-w-6xl mx-auto px-4 pt-4 pb-20 md:pb-8">
+      <h1 class="text-xl font-bold text-gray-900 mb-4">Kompaniyalar</h1>
 
       <div class="flex gap-2 mb-6">
-        <input type="text" [(ngModel)]="query" placeholder="Kompaniya nomi..."
-               class="flex-1 h-12 px-4 border border-gray-300 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
-               (keyup.enter)="search()">
-        <button (click)="search()" class="h-12 px-6 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Qidirish</button>
+        <div class="relative flex-1">
+          <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" [(ngModel)]="query" placeholder="Kompaniya nomi..."
+                 class="w-full h-12 pl-10 pr-4 border border-gray-200 rounded-xl text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
+                 (keyup.enter)="search()">
+        </div>
+        <button (click)="search()" class="h-12 px-6 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">Topish</button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         @for (c of companies(); track c.id) {
-          <a [routerLink]="['/companies', c.slug || c.id]" class="bg-white border border-gray-100 rounded-lg p-5 hover:shadow-md transition group">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-sm font-bold shrink-0">
+          <a [routerLink]="['/companies', c.slug || c.id]" class="bg-white border border-gray-100 rounded-xl p-5 hover:shadow-md transition group">
+            <div class="flex items-center gap-4 mb-3">
+              <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 text-lg font-bold shrink-0">
                 {{ (c.name || '?').charAt(0) }}
               </div>
               <div class="min-w-0">
-                <div class="text-sm font-medium text-gray-900 group-hover:text-black truncate">{{ c.name }}</div>
+                <div class="text-sm font-semibold text-gray-900 group-hover:text-black truncate">{{ c.name }}</div>
                 @if (c.industry) { <div class="text-xs text-gray-400">{{ c.industry }}</div> }
               </div>
             </div>
             <div class="flex items-center gap-3 text-xs text-gray-400">
-              @if (c.city) { <span>{{ c.city }}</span> }
-              @if (c.isVerified) { <span class="text-green-600">&#10003; Tasdiqlangan</span> }
+              @if (c.city) {
+                <span class="flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                  {{ c.city }}
+                </span>
+              }
+              @if (c.isVerified) { <span class="text-green-600 font-medium">&#10003; Tasdiqlangan</span> }
+              @if (c.vacancyCount) { <span>{{ c.vacancyCount }} vakansiya</span> }
             </div>
           </a>
         } @empty {
