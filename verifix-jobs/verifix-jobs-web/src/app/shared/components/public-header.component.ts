@@ -1,11 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LangSwitcherComponent } from './lang-switcher.component';
 
 @Component({
   selector: 'vjw-public-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, LangSwitcherComponent],
   template: `
     <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
       <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
@@ -21,6 +22,7 @@ import { CommonModule } from '@angular/common';
         </nav>
 
         <div class="flex items-center gap-2">
+          <vjw-lang-switcher />
           <a routerLink="/login" class="hidden sm:inline-flex items-center h-9 px-4 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition">Kirish</a>
           <a routerLink="/login" class="h-9 px-4 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition flex items-center">Ish beruvchi</a>
         </div>
