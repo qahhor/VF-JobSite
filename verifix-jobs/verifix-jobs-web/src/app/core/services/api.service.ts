@@ -28,12 +28,14 @@ export class ApiService {
   // Applications
   getApplications(vacancyId?: string, status?: string, page = 0, size = 20): Observable<PageResponse<Application>> {
     let params = new HttpParams().set('page', page).set('size', size);
-    if (vacancyId) params = params.set('vacancyId', vacancyId);
     if (status) params = params.set('status', status);
-    return this.http.get<PageResponse<Application>>(`${this.base}/applications`, { params });
+    if (vacancyId) {
+      return this.http.get<PageResponse<Application>>(`${this.base}/applications/vacancy/${vacancyId}`, { params });
+    }
+    return this.http.get<PageResponse<Application>>(`${this.base}/applications/vacancy/all`, { params });
   }
   changeApplicationStatus(id: string, status: string, note?: string): Observable<Application> {
-    return this.http.put<Application>(`${this.base}/applications/${id}/status`, { status, note });
+    return this.http.patch<Application>(`${this.base}/applications/${id}/status`, null, { params: { status } });
   }
 
   // Candidates (POST with search body)
@@ -54,8 +56,11 @@ export class ApiService {
 
   // Billing
   getPlans(): Observable<PricingPlan[]> { return this.http.get<PricingPlan[]>(`${this.base}/subscription/plans`); }
-  getPayments(page = 0): Observable<PageResponse<Payment>> { return this.http.get<PageResponse<Payment>>(`${this.base}/payments`, { params: { page } }); }
-  initiatePayment(planCode: string, period: string): Observable<{ redirectUrl: string }> {
-    return this.http.post<{ redirectUrl: string }>(`${this.base}/payments/initiate`, { planCode, period });
+  getCurrentSubscription(): Observable<any> { return this.http.get<any>(`${this.base}/subscription/current`); }
+  getPayments(page = 0): Observable<PageResponse<Payment>> {
+    return this.http.get<PageResponse<Payment>>(`${this.base}/subscription/history`, { params: new HttpParams().set('page', page) });
+  }
+  purchaseSubscription(planCode: string, period: string): Observable<any> {
+    return this.http.post<any>(`${this.base}/subscription/purchase`, { planCode, period });
   }
 }

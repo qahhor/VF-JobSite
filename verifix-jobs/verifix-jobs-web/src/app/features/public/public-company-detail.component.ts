@@ -75,6 +75,7 @@ export class PublicCompanyDetailComponent implements OnInit {
   ngOnInit() {
     const slug = this.route.snapshot.params['slug'];
     this.api.getCompany(slug).subscribe({ next: (c: any) => this.company.set(c), error: () => {} });
+    this.api.getCompanyVacancies(slug).subscribe({ next: (r: any) => this.vacancies.set(r.content || []), error: () => {} });
   }
 
   fmt(n: number): string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':''+n; }

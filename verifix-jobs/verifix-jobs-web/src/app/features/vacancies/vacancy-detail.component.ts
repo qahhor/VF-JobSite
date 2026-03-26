@@ -18,9 +18,9 @@ import { Vacancy, Application, PageResponse } from '../../core/models';
             <p class="text-sm text-gray-500 mt-1">{{ v.category }} · {{ v.city }} · {{ v.employmentType }}</p>
           </div>
           <div class="flex gap-2">
-            <a [routerLink]="['/vacancies', v.id, 'edit']" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">Tahrirlash</a>
+            <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">Tahrirlash</a>
             @if (v.status === 'DRAFT') {
-              <button (click)="publish()" class="px-4 py-2 bg-secondary text-white rounded-lg text-sm font-medium hover:bg-secondary-600">Nashr qilish</button>
+              <button (click)="publish()" class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800">Nashr qilish</button>
             }
           </div>
         </div>

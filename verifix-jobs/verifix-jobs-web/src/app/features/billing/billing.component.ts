@@ -120,8 +120,9 @@ export class BillingComponent implements OnInit {
   }
 
   upgrade(planCode: string) {
-    this.api.initiatePayment(planCode, 'MONTHLY').subscribe(res => {
-      if (res.redirectUrl) window.location.href = res.redirectUrl;
+    this.api.purchaseSubscription(planCode, 'MONTHLY').subscribe({
+      next: (res: any) => { if (res.redirectUrl) window.location.href = res.redirectUrl; },
+      error: () => {}
     });
   }
 }
