@@ -19,9 +19,11 @@ import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.enums.ApplicationSource;
 import uz.verifix.jobs.domain.enums.ApplicationStatus;
 import uz.verifix.jobs.domain.enums.VacancyStatus;
+import uz.verifix.jobs.domain.entity.FavoriteVacancy;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
+import uz.verifix.jobs.domain.repository.FavoriteVacancyRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.auth.OtpService;
 import uz.verifix.jobs.service.marketplace.CategoryHubService;
@@ -44,6 +46,7 @@ public class PublicVacancyController {
     private final VacancyRepository vacancyRepository;
     private final CandidateRepository candidateRepository;
     private final ApplicationRepository applicationRepository;
+    private final FavoriteVacancyRepository favoriteVacancyRepository;
     private final OtpService otpService;
 
     @Operation(summary = "Поиск вакансий", description = "Фильтрация по городу, категории, зарплате, типу занятости и текстовому запросу")
@@ -199,6 +202,67 @@ public class PublicVacancyController {
                 .build();
         applicationRepository.save(application);
 
-        return ResponseEntity.ok(Map.of("success", true, "applicationId", application.getId().toString()));
+        return ResponseEntity.ok(Map.of("success", true,
+                "applicationId", application.getId().toString(),
+                "candidateId", candidate.getId().toString()));
+    }
+
+    // --- Favorites (server-side, by candidateId) ---
+
+    @Operation(summary = "Получить избранные вакансии кандидата")
+    @GetMapping("/favorites")
+    public ResponseEntity<?> getFavorites(@RequestParam String candidateId,
+                                          @RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "20") int size) {
+        try {
+            UUID cid = UUID.fromString(candidateId);
+            Page<FavoriteVacancy> favs = favoriteVacancyRepository.findByCandidateIdOrderByCreatedAtDesc(cid, PageRequest.of(page, size));
+            List<Map<String, Object>> result = favs.getContent().stream().map(fav -> {
+                Vacancy v = vacancyRepository.findById(fav.getVacancyId()).orElse(null);
+                if (v == null) return null;
+                return Map.<String, Object>of(
+                        "id", v.getId().toString(),
+                        "title", v.getTitle(),
+                        "city", v.getCity() != null ? v.getCity() : "",
+                        "salaryFrom", v.getSalaryFrom() != null ? v.getSalaryFrom() : 0,
+                        "salaryTo", v.getSalaryTo() != null ? v.getSalaryTo() : 0,
+                        "employerName", v.getEmployer() != null ? v.getEmployer().getName() : "",
+                        "slug", v.getSlug() != null ? v.getSlug() : v.getId().toString()
+                );
+            }).filter(java.util.Objects::nonNull).toList();
+            return ResponseEntity.ok(Map.of("content", result, "totalElements", favs.getTotalElements()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Noto'g'ri candidateId"));
+        }
+    }
+
+    @Operation(summary = "Добавить в избранное")
+    @PostMapping("/favorites")
+    public ResponseEntity<?> addFavorite(@RequestBody Map<String, String> body) {
+        try {
+            UUID candidateId = UUID.fromString(body.get("candidateId"));
+            UUID vacancyId = UUID.fromString(body.get("vacancyId"));
+            if (favoriteVacancyRepository.existsByCandidateIdAndVacancyId(candidateId, vacancyId)) {
+                return ResponseEntity.ok(Map.of("status", "already_exists"));
+            }
+            FavoriteVacancy fav = FavoriteVacancy.builder().candidateId(candidateId).vacancyId(vacancyId).build();
+            favoriteVacancyRepository.save(fav);
+            return ResponseEntity.ok(Map.of("status", "added"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Noto'g'ri ma'lumot"));
+        }
+    }
+
+    @Operation(summary = "Удалить из избранного")
+    @DeleteMapping("/favorites")
+    @org.springframework.transaction.annotation.Transactional
+    public ResponseEntity<?> removeFavorite(@RequestParam String candidateId, @RequestParam String vacancyId) {
+        try {
+            favoriteVacancyRepository.deleteByCandidateIdAndVacancyId(
+                    UUID.fromString(candidateId), UUID.fromString(vacancyId));
+            return ResponseEntity.ok(Map.of("status", "removed"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Noto'g'ri ma'lumot"));
+        }
     }
 }

@@ -146,7 +146,20 @@ export class PublicApiService {
     return this.http.post<{ success: boolean }>(`${environment.apiUrl}/auth/candidate/otp/send`, { phone });
   }
 
-  quickApply(data: QuickApplyRequest): Observable<{ success: boolean; applicationId: string }> {
-    return this.http.post<{ success: boolean; applicationId: string }>(`${this.base}/apply`, data);
+  quickApply(data: QuickApplyRequest): Observable<{ success: boolean; applicationId: string; candidateId: string }> {
+    return this.http.post<{ success: boolean; applicationId: string; candidateId: string }>(`${this.base}/apply`, data);
+  }
+
+  // Favorites (server-side)
+  getFavorites(candidateId: string, page = 0): Observable<any> {
+    return this.http.get<any>(`${this.base}/favorites`, { params: { candidateId, page: page.toString() } });
+  }
+
+  addFavorite(candidateId: string, vacancyId: string): Observable<any> {
+    return this.http.post<any>(`${this.base}/favorites`, { candidateId, vacancyId });
+  }
+
+  removeFavorite(candidateId: string, vacancyId: string): Observable<any> {
+    return this.http.delete<any>(`${this.base}/favorites`, { params: { candidateId, vacancyId } });
   }
 }

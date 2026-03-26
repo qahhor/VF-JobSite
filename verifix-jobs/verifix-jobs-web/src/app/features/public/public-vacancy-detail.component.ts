@@ -95,6 +95,10 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
                     class="flex-1 h-12 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">
               Ariza topshirish
             </button>
+            <button (click)="toggleFavorite()" class="h-12 w-12 border border-gray-200 rounded-xl flex items-center justify-center hover:bg-gray-50 transition shrink-0"
+                    [class.text-red-500]="isFavorited()" [class.text-gray-300]="!isFavorited()">
+              <span class="text-xl">{{ isFavorited() ? '&#9829;' : '&#9825;' }}</span>
+            </button>
             <a href="https://t.me/VerifixJobBot" target="_blank"
                class="h-12 w-12 border border-gray-200 rounded-xl flex items-center justify-center hover:bg-gray-50 transition shrink-0">
               <svg class="w-5 h-5 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-2.01 9.47c-.15.68-.54.84-1.1.53l-3.03-2.24-1.46 1.41c-.16.16-.3.3-.61.3l.22-3.06 5.56-5.02c.24-.22-.05-.34-.38-.13L8.6 14.27l-2.98-.93c-.65-.2-.66-.65.14-.96l11.65-4.49c.54-.2 1.01.13.84.96l-.3 1.28z"/></svg>
@@ -121,12 +125,42 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
 export class PublicVacancyDetailComponent implements OnInit {
   vacancy = signal<any>(null);
   showApplyModal = signal(false);
+  isFavorited = signal(false);
 
   constructor(private api: PublicApiService, private route: ActivatedRoute) {}
 
   ngOnInit() {
     const slug = this.route.snapshot.params['slug'];
-    this.api.getVacancy(slug).subscribe({ next: (v:any) => this.vacancy.set(v), error: () => {} });
+    this.api.getVacancy(slug).subscribe({
+      next: (v: any) => {
+        this.vacancy.set(v);
+        this.checkFavorite(v.id);
+      },
+      error: () => {}
+    });
+  }
+
+  private checkFavorite(vacancyId: string) {
+    const cid = localStorage.getItem('vjw_candidate_id');
+    if (!cid) return;
+    this.api.getFavorites(cid).subscribe({
+      next: (r: any) => {
+        const ids = (r.content || []).map((v: any) => v.id);
+        this.isFavorited.set(ids.includes(vacancyId));
+      },
+      error: () => {}
+    });
+  }
+
+  toggleFavorite() {
+    const cid = localStorage.getItem('vjw_candidate_id');
+    const v = this.vacancy();
+    if (!cid || !v) return;
+    if (this.isFavorited()) {
+      this.api.removeFavorite(cid, v.id).subscribe({ next: () => this.isFavorited.set(false), error: () => {} });
+    } else {
+      this.api.addFavorite(cid, v.id).subscribe({ next: () => this.isFavorited.set(true), error: () => {} });
+    }
   }
 
   fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':''+n; }

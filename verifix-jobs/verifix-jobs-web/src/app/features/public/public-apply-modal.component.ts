@@ -263,9 +263,12 @@ export class PublicApplyModalComponent {
       firstName: this.firstName.trim(),
       city: this.city,
     }).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.submitting.set(false);
         this.step.set('success');
+        if (res?.candidateId) {
+          localStorage.setItem('vjw_candidate_id', res.candidateId);
+        }
       },
       error: () => {
         this.submitting.set(false);
