@@ -19,6 +19,7 @@ import { LangSwitcherComponent } from './lang-switcher.component';
         <nav class="hidden md:flex items-center gap-6 text-sm">
           <a routerLink="/jobs" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Vakansiyalar</a>
           <a routerLink="/companies" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Kompaniyalar</a>
+          <a routerLink="/salary" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">💰 Maoshlar</a>
         </nav>
 
         <div class="flex items-center gap-2">

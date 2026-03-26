@@ -13,7 +13,7 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Vacancies — employer's own vacancies
+  // === Vacancies ===
   getVacancies(page = 0, size = 20, status?: string): Observable<PageResponse<Vacancy>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
@@ -25,20 +25,18 @@ export class ApiService {
   deleteVacancy(id: string): Observable<void> { return this.http.delete<void>(`${this.base}/vacancies/${id}`); }
   publishVacancy(id: string): Observable<Vacancy> { return this.http.post<Vacancy>(`${this.base}/vacancies/${id}/publish`, {}); }
 
-  // Applications
+  // === Applications ===
   getApplications(vacancyId?: string, status?: string, page = 0, size = 20): Observable<PageResponse<Application>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
-    if (vacancyId) {
-      return this.http.get<PageResponse<Application>>(`${this.base}/applications/vacancy/${vacancyId}`, { params });
-    }
+    if (vacancyId) return this.http.get<PageResponse<Application>>(`${this.base}/applications/vacancy/${vacancyId}`, { params });
     return this.http.get<PageResponse<Application>>(`${this.base}/applications/vacancy/all`, { params });
   }
   changeApplicationStatus(id: string, status: string, note?: string): Observable<Application> {
     return this.http.patch<Application>(`${this.base}/applications/${id}/status`, null, { params: { status } });
   }
 
-  // Candidates (POST with search body)
+  // === Candidates ===
   searchCandidates(query: string, page = 0, size = 20): Observable<PageResponse<Candidate>> {
     return this.http.post<PageResponse<Candidate>>(`${this.base}/candidates/search`, {
       city: null, skills: null, category: query || null, page, size,
@@ -46,15 +44,60 @@ export class ApiService {
     });
   }
 
-  // Analytics
+  // === Analytics & Dashboard ===
   getDashboard(): Observable<any> { return this.http.get<any>(`${this.base}/analytics/overview`); }
   getFunnel(): Observable<any> { return this.http.get<any>(`${this.base}/analytics/funnel`); }
+  getHiringFunnels(): Observable<any[]> { return this.http.get<any[]>(`${this.base}/intelligence/hiring/funnel`); }
 
-  // Employer
+  // === Salary Intelligence ===
+  getSalaryPredict(category: string, city?: string): Observable<any> {
+    let params = new HttpParams().set('category', category);
+    if (city) params = params.set('city', city);
+    return this.http.get<any>(`${this.base}/salary/predict`, { params });
+  }
+  getSalaryTrends(category: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/intelligence/salary/trends`, { params: { category } });
+  }
+  getSalaryCities(category: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/intelligence/salary/cities`, { params: { category } });
+  }
+
+  // === Vacancy Health ===
+  getVacancyHealth(vacancyId: string): Observable<any> {
+    return this.http.get<any>(`${this.base}/vacancy-health/${vacancyId}`);
+  }
+  getAllVacancyHealth(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/vacancy-health/all`);
+  }
+
+  // === Vacancy Board & Response Inbox ===
+  getVacancyBoard(status?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (status) params = params.set('status', status);
+    return this.http.get<any[]>(`${this.base}/employer/vacancy-board`, { params });
+  }
+  getResponseInbox(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/employer/response-inbox`);
+  }
+  bulkAction(applicationIds: string[], status: string, note?: string): Observable<any> {
+    return this.http.post<any>(`${this.base}/employer/response-inbox/bulk`, { applicationIds, status, note });
+  }
+
+  // === Activity Feed ===
+  getActivityFeed(page = 0, size = 20): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/employer/activity`, { params: { page: page.toString(), size: size.toString() } });
+  }
+
+  // === Value Report (ROI) ===
+  getValueReport(): Observable<any> {
+    return this.http.get<any>(`${this.base}/employer/value-report`);
+  }
+
+  // === Employer Profile ===
   getProfile(): Observable<EmployerProfile> { return this.http.get<EmployerProfile>(`${this.base}/employer/profile`); }
   updateProfile(data: Partial<EmployerProfile>): Observable<EmployerProfile> { return this.http.put<EmployerProfile>(`${this.base}/employer/profile`, data); }
 
-  // Billing
+  // === Billing ===
   getPlans(): Observable<PricingPlan[]> { return this.http.get<PricingPlan[]>(`${this.base}/subscription/plans`); }
   getCurrentSubscription(): Observable<any> { return this.http.get<any>(`${this.base}/subscription/current`); }
   getPayments(page = 0): Observable<PageResponse<Payment>> {

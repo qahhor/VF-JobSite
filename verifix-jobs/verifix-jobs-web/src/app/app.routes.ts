@@ -10,6 +10,7 @@ export const appRoutes: Routes = [
   { path: 'companies', loadComponent: () => import('./features/public/public-company-list.component').then(m => m.PublicCompanyListComponent) },
   { path: 'companies/:slug', loadComponent: () => import('./features/public/public-company-detail.component').then(m => m.PublicCompanyDetailComponent) },
   { path: 'favorites', loadComponent: () => import('./features/public/public-favorites.component').then(m => m.PublicFavoritesComponent) },
+  { path: 'salary', loadComponent: () => import('./features/public/public-salary.component').then(m => m.PublicSalaryComponent) },
 
   // Auth
   { path: 'login', loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent) },
