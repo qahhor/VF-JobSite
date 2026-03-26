@@ -114,13 +114,19 @@ public class VacancyService {
 
     @Transactional(readOnly = true)
     public Vacancy getById(UUID vacancyId) {
-        return vacancyRepository.findById(vacancyId)
+        Vacancy v = vacancyRepository.findById(vacancyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vacancy", vacancyId));
+        if (v.getEmployer() != null) org.hibernate.Hibernate.initialize(v.getEmployer());
+        return v;
     }
 
     @Transactional(readOnly = true)
     public Page<Vacancy> findByEmployer(UUID employerId, Pageable pageable) {
-        return vacancyRepository.findByEmployerId(employerId, pageable);
+        Page<Vacancy> page = vacancyRepository.findByEmployerId(employerId, pageable);
+        page.getContent().forEach(v -> {
+            if (v.getEmployer() != null) org.hibernate.Hibernate.initialize(v.getEmployer());
+        });
+        return page;
     }
 
     @Transactional(readOnly = true)
@@ -128,12 +134,21 @@ public class VacancyService {
                                 BigDecimal salaryTo, Pageable pageable) {
         Specification<Vacancy> spec = VacancySpecification.withFilters(
                 city, category, salaryFrom, salaryTo, null, null);
-        return vacancyRepository.findAll(spec, pageable);
+        Page<Vacancy> page = vacancyRepository.findAll(spec, pageable);
+        // Initialize lazy employer to avoid LazyInitializationException outside transaction
+        page.getContent().forEach(v -> {
+            if (v.getEmployer() != null) org.hibernate.Hibernate.initialize(v.getEmployer());
+        });
+        return page;
     }
 
     @Transactional(readOnly = true)
     public List<Vacancy> findNearby(double lat, double lon, double radiusKm) {
-        return vacancyRepository.findNearLocation(lon, lat, radiusKm * 1000);
+        List<Vacancy> list = vacancyRepository.findNearLocation(lon, lat, radiusKm * 1000);
+        list.forEach(v -> {
+            if (v.getEmployer() != null) org.hibernate.Hibernate.initialize(v.getEmployer());
+        });
+        return list;
     }
 
     @Transactional
