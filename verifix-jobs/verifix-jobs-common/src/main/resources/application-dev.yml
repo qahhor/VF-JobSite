@@ -1,7 +1,17 @@
+spring:
+  jpa:
+    show-sql: true
+    open-in-view: true
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
 logging:
   level:
     uz.verifix.jobs: DEBUG
     org.hibernate.SQL: DEBUG
+    org.telegram.telegrambots: DEBUG
 
 app:
   kafka:
@@ -10,7 +20,5 @@ app:
     enabled: ${ELASTICSEARCH_ENABLED:false}
   minio:
     enabled: ${MINIO_ENABLED:false}
-
-spring:
-  jpa:
-    open-in-view: true
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:4200}
