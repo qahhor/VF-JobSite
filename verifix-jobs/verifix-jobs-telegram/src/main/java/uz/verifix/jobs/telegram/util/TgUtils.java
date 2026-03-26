@@ -47,7 +47,7 @@ public final class TgUtils {
     public static String formatSalary(BigDecimal n) {
         if (n == null) return "0";
         long val = n.longValue();
-        if (val >= 1_000_000) return String.format("%.1fM", val / 1_000_000.0);
+        if (val >= 1_000_000) return String.format(java.util.Locale.US, "%.1fM", val / 1_000_000.0);
         if (val >= 1_000) return (val / 1_000) + "K";
         return String.valueOf(val);
     }
