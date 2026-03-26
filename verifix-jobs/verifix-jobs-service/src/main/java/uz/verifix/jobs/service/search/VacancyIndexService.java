@@ -40,16 +40,25 @@ public class VacancyIndexService {
         Criteria criteria = new Criteria();
 
         if (query != null && !query.isBlank()) {
-            criteria = criteria.and(new Criteria("title").matches(query)
-                    .or(new Criteria("description").matches(query)));
+            // Search across title, description, and multilingual keywords
+            criteria = criteria.and(
+                    new Criteria("searchKeywords").matches(query)
+                    .or(new Criteria("title").matches(query))
+                    .or(new Criteria("description").matches(query))
+                    .or(new Criteria("employerName").matches(query))
+            );
         }
 
         if (city != null) {
-            criteria = criteria.and(new Criteria("city").is(city));
+            // Resolve city synonym to canonical name
+            String resolvedCity = resolveCity(city);
+            criteria = criteria.and(new Criteria("city").is(resolvedCity));
         }
 
         if (category != null) {
-            criteria = criteria.and(new Criteria("category").is(category));
+            // Resolve category synonym to code
+            String resolvedCategory = resolveCategory(category);
+            criteria = criteria.and(new Criteria("category").is(resolvedCategory));
         }
 
         if (salaryFrom != null) {
@@ -104,6 +113,40 @@ public class VacancyIndexService {
             builder.location(new GeoPoint(v.getLocation().getY(), v.getLocation().getX()));
         }
 
+        // Multilingual search keywords
+        builder.searchKeywords(SearchSynonyms.buildKeywords(
+                v.getTitle(),
+                v.getCategory(),
+                v.getCity()
+        ));
+
         return builder.build();
+    }
+
+    /** Resolve city name in any language to canonical English name */
+    private String resolveCity(String input) {
+        if (input == null) return null;
+        String lower = input.toLowerCase();
+        for (var entry : SearchSynonyms.CITIES.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(input) || entry.getValue().stream().anyMatch(s -> s.equalsIgnoreCase(lower))) {
+                return entry.getKey();
+            }
+        }
+        return input; // return as-is if not found
+    }
+
+    /** Resolve category name in any language to category code */
+    private String resolveCategory(String input) {
+        if (input == null) return null;
+        String lower = input.toLowerCase();
+        // Check if already a code
+        if (SearchSynonyms.CATEGORIES.containsKey(input.toUpperCase())) return input.toUpperCase();
+        // Search in synonyms
+        for (var entry : SearchSynonyms.CATEGORIES.entrySet()) {
+            if (entry.getValue().stream().anyMatch(s -> s.equalsIgnoreCase(lower))) {
+                return entry.getKey();
+            }
+        }
+        return input;
     }
 }

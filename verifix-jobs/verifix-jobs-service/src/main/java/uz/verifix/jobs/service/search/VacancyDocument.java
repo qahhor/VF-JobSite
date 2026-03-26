@@ -84,4 +84,8 @@ public class VacancyDocument {
 
     @Field(type = FieldType.Date, format = DateFormat.epoch_millis)
     private Instant createdAt;
+
+    /** All translations of title, category, city for multilingual search */
+    @Field(type = FieldType.Text, analyzer = "standard")
+    private String searchKeywords;
 }
