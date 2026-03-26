@@ -108,6 +108,7 @@ export class LayoutComponent {
     { path: '/employer/analytics', icon: '📈', label: 'Analitika' },
     { path: '/employer/chat', icon: '💬', label: 'Xabarlar' },
     { path: '/employer/billing', icon: '💳', label: 'Billing' },
+    { path: '/employer/ai-agent', icon: '🤖', label: 'AI Agent' },
     { path: '/employer/org-memory', icon: '🧠', label: 'Xotira' },
     { path: '/employer/integrations', icon: '🔗', label: 'Integratsiya' },
     { path: '/employer/settings', icon: '⚙️', label: 'Sozlamalar' },

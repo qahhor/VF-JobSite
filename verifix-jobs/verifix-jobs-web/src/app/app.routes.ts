@@ -46,6 +46,8 @@ export const appRoutes: Routes = [
       { path: 'hiring-projects', loadComponent: () => import('./features/hiring-projects/hiring-projects.component').then(m => m.HiringProjectsComponent) },
       { path: 'org-memory', loadComponent: () => import('./features/org-memory/org-memory.component').then(m => m.OrgMemoryComponent) },
       { path: 'talent-hub', loadComponent: () => import('./features/talent-hub/talent-hub.component').then(m => m.TalentHubComponent) },
+      { path: 'ai-agent', loadComponent: () => import('./features/ai-agent/ai-agent.component').then(m => m.AiAgentComponent) },
+      { path: 'churn-alerts', loadComponent: () => import('./features/ai-agent/churn-alerts.component').then(m => m.ChurnAlertsComponent) },
     ]
   },
 
