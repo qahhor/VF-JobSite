@@ -1,8 +1,11 @@
 package uz.verifix.jobs.service.search;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -37,46 +40,42 @@ public class VacancyIndexService {
                                          BigDecimal salaryFrom, BigDecimal salaryTo,
                                          Double lat, Double lon, Double radiusKm,
                                          int page, int size) {
-        Criteria criteria = new Criteria();
+
+        BoolQuery.Builder boolBuilder = new BoolQuery.Builder();
 
         if (query != null && !query.isBlank()) {
-            // Search across title, description, and multilingual keywords
-            criteria = criteria.and(
-                    new Criteria("searchKeywords").matches(query)
-                    .or(new Criteria("title").matches(query))
-                    .or(new Criteria("description").matches(query))
-                    .or(new Criteria("employerName").matches(query))
-            );
+            // Multi-field search: searchKeywords (synonyms), title, description, employerName
+            boolBuilder.must(m -> m.multiMatch(mm -> mm
+                    .query(query)
+                    .fields("searchKeywords^3", "title^2", "description", "employerName")
+                    .fuzziness("AUTO")
+            ));
         }
 
         if (city != null) {
-            // Resolve city synonym to canonical name
             String resolvedCity = resolveCity(city);
-            criteria = criteria.and(new Criteria("city").is(resolvedCity));
+            boolBuilder.filter(f -> f.term(t -> t.field("city").value(resolvedCity)));
         }
 
         if (category != null) {
-            // Resolve category synonym to code
             String resolvedCategory = resolveCategory(category);
-            criteria = criteria.and(new Criteria("category").is(resolvedCategory));
+            boolBuilder.filter(f -> f.term(t -> t.field("category").value(resolvedCategory)));
         }
 
         if (salaryFrom != null) {
-            criteria = criteria.and(new Criteria("salaryTo").greaterThanEqual(salaryFrom));
+            boolBuilder.filter(f -> f.range(r -> r.number(n -> n.field("salaryTo").gte(salaryFrom.doubleValue()))));
         }
 
         if (salaryTo != null) {
-            criteria = criteria.and(new Criteria("salaryFrom").lessThanEqual(salaryTo));
+            boolBuilder.filter(f -> f.range(r -> r.number(n -> n.field("salaryFrom").lte(salaryTo.doubleValue()))));
         }
 
-        if (lat != null && lon != null && radiusKm != null) {
-            criteria = criteria.and(new Criteria("location").within(new GeoPoint(lat, lon), radiusKm + "km"));
-        }
+        NativeQuery nativeQuery = NativeQuery.builder()
+                .withQuery(q -> q.bool(boolBuilder.build()))
+                .withPageable(PageRequest.of(page, size))
+                .build();
 
-        Query searchQuery = new CriteriaQuery(criteria)
-                .setPageable(PageRequest.of(page, size));
-
-        SearchHits<VacancyDocument> hits = elasticsearchOperations.search(searchQuery, VacancyDocument.class);
+        SearchHits<VacancyDocument> hits = elasticsearchOperations.search(nativeQuery, VacancyDocument.class);
         return hits.getSearchHits().stream().map(SearchHit::getContent).toList();
     }
 
