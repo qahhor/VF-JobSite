@@ -19,8 +19,10 @@ import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.domain.enums.ApplicationSource;
 import uz.verifix.jobs.domain.enums.ApplicationStatus;
 import uz.verifix.jobs.domain.enums.VacancyStatus;
+import uz.verifix.jobs.domain.entity.CompanyReview;
 import uz.verifix.jobs.domain.entity.FavoriteVacancy;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
+import uz.verifix.jobs.domain.repository.CompanyReviewRepository;
 import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.FavoriteVacancyRepository;
@@ -47,6 +49,7 @@ public class PublicVacancyController {
     private final CandidateRepository candidateRepository;
     private final ApplicationRepository applicationRepository;
     private final FavoriteVacancyRepository favoriteVacancyRepository;
+    private final CompanyReviewRepository companyReviewRepository;
     private final OtpService otpService;
 
     @Operation(summary = "Поиск вакансий", description = "Фильтрация по городу, категории, зарплате, типу занятости и текстовому запросу")
@@ -264,5 +267,59 @@ public class PublicVacancyController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Noto'g'ri ma'lumot"));
         }
+    }
+
+    // --- Company Reviews ---
+
+    @Operation(summary = "Отзывы о компании")
+    @GetMapping("/companies/{slug}/reviews")
+    public ResponseEntity<?> getReviews(@PathVariable String slug,
+                                        @RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int size) {
+        var employer = employerRepository.findBySlug(slug)
+                .or(() -> { try { return employerRepository.findById(UUID.fromString(slug)); } catch (Exception e) { return java.util.Optional.empty(); } })
+                .orElse(null);
+        if (employer == null) return ResponseEntity.notFound().build();
+
+        var reviews = companyReviewRepository.findByEmployerIdAndStatusOrderByCreatedAtDesc(
+                employer.getId(), "PUBLISHED", PageRequest.of(page, size));
+        Double avg = companyReviewRepository.getAverageRating(employer.getId());
+        long count = companyReviewRepository.countByEmployer(employer.getId());
+
+        return ResponseEntity.ok(Map.of(
+                "reviews", reviews.getContent(),
+                "totalElements", reviews.getTotalElements(),
+                "averageRating", avg != null ? Math.round(avg * 10) / 10.0 : 0,
+                "totalReviews", count
+        ));
+    }
+
+    @Operation(summary = "Оставить отзыв")
+    @PostMapping("/companies/{slug}/reviews")
+    public ResponseEntity<?> addReview(@PathVariable String slug, @RequestBody Map<String, Object> body) {
+        var employer = employerRepository.findBySlug(slug)
+                .or(() -> { try { return employerRepository.findById(UUID.fromString(slug)); } catch (Exception e) { return java.util.Optional.empty(); } })
+                .orElse(null);
+        if (employer == null) return ResponseEntity.notFound().build();
+
+        String authorName = (String) body.getOrDefault("authorName", "Anonim");
+        Integer rating = body.get("rating") != null ? ((Number) body.get("rating")).intValue() : 5;
+        String pros = (String) body.get("pros");
+        String cons = (String) body.get("cons");
+        String title = (String) body.get("title");
+
+        if (rating < 1 || rating > 5) return ResponseEntity.badRequest().body(Map.of("error", "Rating 1-5 orasida bo'lishi kerak"));
+
+        CompanyReview review = CompanyReview.builder()
+                .employerId(employer.getId())
+                .authorName(authorName)
+                .rating(rating)
+                .title(title)
+                .pros(pros)
+                .cons(cons)
+                .isAnonymous(Boolean.TRUE.equals(body.get("isAnonymous")))
+                .build();
+        companyReviewRepository.save(review);
+        return ResponseEntity.ok(Map.of("success", true, "reviewId", review.getId().toString()));
     }
 }

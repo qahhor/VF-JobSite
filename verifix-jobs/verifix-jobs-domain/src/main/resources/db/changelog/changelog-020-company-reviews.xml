@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="020-company-reviews" author="claude">
+        <createTable tableName="company_review">
+            <column name="id" type="uuid" defaultValueComputed="gen_random_uuid()"><constraints primaryKey="true"/></column>
+            <column name="employer_id" type="uuid"><constraints nullable="false"/></column>
+            <column name="candidate_id" type="uuid"/>
+            <column name="author_name" type="varchar(100)"><constraints nullable="false"/></column>
+            <column name="rating" type="int"><constraints nullable="false"/></column>
+            <column name="title" type="varchar(200)"/>
+            <column name="pros" type="text"/>
+            <column name="cons" type="text"/>
+            <column name="is_anonymous" type="boolean" defaultValueBoolean="false"/>
+            <column name="status" type="varchar(20)" defaultValue="PUBLISHED"/>
+            <column name="created_at" type="timestamptz" defaultValueComputed="now()"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="company_review" baseColumnNames="employer_id"
+                                 referencedTableName="employer" referencedColumnNames="id"
+                                 constraintName="fk_review_employer"/>
+        <createIndex tableName="company_review" indexName="idx_review_employer">
+            <column name="employer_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

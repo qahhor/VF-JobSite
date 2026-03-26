@@ -1,6 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
@@ -8,7 +11,7 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
 @Component({
   selector: 'vjw-public-company-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, PublicHeaderComponent, PublicFooterComponent],
+  imports: [CommonModule, RouterLink, FormsModule, PublicHeaderComponent, PublicFooterComponent],
   template: `
     <vjw-public-header />
 
@@ -58,6 +61,48 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
           </div>
         </div>
 
+        <!-- Reviews section -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Sharhlar</h2>
+            @if (reviewData().averageRating) {
+              <div class="flex items-center gap-2">
+                <span class="text-yellow-500 text-lg">{{ '★'.repeat(Math.round(reviewData().averageRating)) }}{{ '☆'.repeat(5 - Math.round(reviewData().averageRating)) }}</span>
+                <span class="text-sm font-bold text-gray-700">{{ reviewData().averageRating }}</span>
+                <span class="text-xs text-gray-400">({{ reviewData().totalReviews }})</span>
+              </div>
+            }
+          </div>
+
+          <!-- Review list -->
+          @for (r of reviews(); track r.id) {
+            <div class="border border-gray-100 rounded-lg p-4 mb-3">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-yellow-400 text-sm">{{ '★'.repeat(r.rating) }}{{ '☆'.repeat(5 - r.rating) }}</span>
+                <span class="text-xs text-gray-500">{{ r.authorName }}</span>
+              </div>
+              @if (r.pros) { <div class="text-xs text-green-600 mb-1">👍 {{ r.pros }}</div> }
+              @if (r.cons) { <div class="text-xs text-red-500 mb-1">👎 {{ r.cons }}</div> }
+            </div>
+          }
+
+          <!-- Add review form -->
+          <div class="border border-gray-200 rounded-xl p-5 mt-4">
+            <h3 class="text-sm font-semibold text-gray-800 mb-3">Sharh qoldiring</h3>
+            <div class="space-y-3">
+              <div class="flex gap-1">
+                @for (s of [1,2,3,4,5]; track s) {
+                  <button (click)="newReview.rating = s" class="text-2xl" [class]="s <= newReview.rating ? 'text-yellow-400' : 'text-gray-200'">★</button>
+                }
+              </div>
+              <input type="text" [(ngModel)]="newReview.authorName" placeholder="Ismingiz" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <input type="text" [(ngModel)]="newReview.pros" placeholder="👍 Yaxshi tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <input type="text" [(ngModel)]="newReview.cons" placeholder="👎 Yomon tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <button (click)="submitReview()" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Yuborish</button>
+            </div>
+          </div>
+        </div>
+
       } @else {
         <div class="text-center py-20 text-gray-400 text-sm">Yuklanmoqda...</div>
       }
@@ -69,13 +114,41 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
 export class PublicCompanyDetailComponent implements OnInit {
   company = signal<any>(null);
   vacancies = signal<any[]>([]);
+  reviews = signal<any[]>([]);
+  reviewData = signal<any>({averageRating: 0, totalReviews: 0});
+  newReview = { authorName: '', rating: 5, pros: '', cons: '' };
+  Math = Math;
 
-  constructor(private api: PublicApiService, private route: ActivatedRoute) {}
+  private slug = '';
+
+  constructor(private api: PublicApiService, private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit() {
-    const slug = this.route.snapshot.params['slug'];
-    this.api.getCompany(slug).subscribe({ next: (c: any) => this.company.set(c), error: () => {} });
-    this.api.getCompanyVacancies(slug).subscribe({ next: (r: any) => this.vacancies.set(r.content || []), error: () => {} });
+    this.slug = this.route.snapshot.params['slug'];
+    this.api.getCompany(this.slug).subscribe({ next: (c: any) => this.company.set(c), error: () => {} });
+    this.api.getCompanyVacancies(this.slug).subscribe({ next: (r: any) => this.vacancies.set(r.content || []), error: () => {} });
+    this.loadReviews();
+  }
+
+  loadReviews() {
+    this.http.get<any>(`${environment.apiUrl}/public/companies/${this.slug}/reviews`).subscribe({
+      next: (d: any) => {
+        this.reviews.set(d.reviews || []);
+        this.reviewData.set({ averageRating: d.averageRating || 0, totalReviews: d.totalReviews || 0 });
+      },
+      error: () => {}
+    });
+  }
+
+  submitReview() {
+    if (!this.newReview.authorName) return;
+    this.http.post<any>(`${environment.apiUrl}/public/companies/${this.slug}/reviews`, this.newReview).subscribe({
+      next: () => {
+        this.newReview = { authorName: '', rating: 5, pros: '', cons: '' };
+        this.loadReviews();
+      },
+      error: () => {}
+    });
   }
 
   fmt(n: number): string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':''+n; }
