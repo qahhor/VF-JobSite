@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgis/postgis:17-3.5
+    image: postgis/postgis:16-3.4
     container_name: verifix-jobs-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-verifix_jobs}
