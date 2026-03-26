@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
@@ -178,5 +178,37 @@ export class PipelineComponent implements OnInit {
 
   moveApp(app: Application, newStatus: string) {
     this.api.changeApplicationStatus(app.id, newStatus).subscribe(() => this.loadApplications());
+  }
+
+  // Keyboard shortcuts: J=next, K=prev, L=advance, H=reject
+  selectedAppIndex = signal(0);
+  flatApps(): Application[] { return this.allApplications(); }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(e: KeyboardEvent) {
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    const apps = this.flatApps();
+    if (!apps.length) return;
+    const idx = this.selectedAppIndex();
+
+    switch (e.key) {
+      case 'j': case 'J':
+        this.selectedAppIndex.set(Math.min(idx + 1, apps.length - 1));
+        this.selectedApp.set(apps[this.selectedAppIndex()]);
+        break;
+      case 'k': case 'K':
+        this.selectedAppIndex.set(Math.max(idx - 1, 0));
+        this.selectedApp.set(apps[this.selectedAppIndex()]);
+        break;
+      case 'l': case 'L':
+        if (apps[idx]) {
+          const next = this.getNextActions(apps[idx].status);
+          if (next.length) this.moveApp(apps[idx], next[0].status);
+        }
+        break;
+      case 'h': case 'H':
+        if (apps[idx]) this.moveApp(apps[idx], 'REJECTED');
+        break;
+    }
   }
 }

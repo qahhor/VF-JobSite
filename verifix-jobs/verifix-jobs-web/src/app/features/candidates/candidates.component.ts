@@ -38,12 +38,21 @@ import { Candidate } from '../../core/models';
                 </div>
               }
             </div>
-            <div class="flex items-center gap-2 mb-3">
+            <!-- Activity badges -->
+            <div class="flex flex-wrap items-center gap-1.5 mb-3">
               @if (c.myidStatus === 'VERIFIED') {
-                <span class="text-xs px-2 py-0.5 bg-green-50 text-green-600 rounded-full">Tasdiqlangan</span>
+                <span class="text-[10px] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">✅ MyID</span>
+              }
+              @if (c.lastActiveAt && isRecentlyActive(c.lastActiveAt)) {
+                <span class="text-[10px] px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full font-medium">🟢 Faol</span>
+              }
+              @if (c.matchScore && c.matchScore >= 0.8) {
+                <span class="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full font-medium">⭐ Ajoyib moslik</span>
+              } @else if (c.matchScore && c.matchScore >= 0.6) {
+                <span class="text-[10px] px-2 py-0.5 bg-yellow-50 text-yellow-600 rounded-full font-medium">👍 Yaxshi moslik</span>
               }
               @if (c.educationLevel) {
-                <span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">{{ c.educationLevel }}</span>
+                <span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">🎓 {{ c.educationLevel }}</span>
               }
             </div>
             @if (c.skills?.length) {
@@ -140,5 +149,11 @@ export class CandidatesComponent implements OnInit {
       next: () => { this.inviteCandidate.set(null); },
       error: () => { this.inviteCandidate.set(null); }
     });
+  }
+
+  isRecentlyActive(dateStr: string): boolean {
+    if (!dateStr) return false;
+    const diff = Date.now() - new Date(dateStr).getTime();
+    return diff < 7 * 24 * 60 * 60 * 1000; // 7 days
   }
 }

@@ -66,7 +66,8 @@ import { Vacancy, PageResponse } from '../../core/models';
                     <span class="text-xs px-2 py-0.5 rounded-full" [class]="getStatusClass(v.status)">{{ getStatusLabel(v.status) }}</span>
                   </td>
                   <td class="px-5 py-3 text-sm text-gray-600 hidden sm:table-cell">{{ v.positionsFilled }}/{{ v.positionsCount }}</td>
-                  <td class="px-5 py-3 text-right">
+                  <td class="px-5 py-3 text-right flex items-center gap-2 justify-end">
+                    <button (click)="bump(v.id)" class="text-xs px-2 py-1 border border-gray-200 rounded hover:bg-gray-50 transition" title="Ko'tarish">⬆️</button>
                     <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="text-sm text-black hover:underline">Tahrirlash</a>
                   </td>
                 </tr>
@@ -141,5 +142,9 @@ export class VacancyListComponent implements OnInit {
       'CLOSED': 'Yopilgan', 'PENDING_MODERATION': 'Moderatsiya', 'ARCHIVED': 'Arxiv',
     };
     return m[s] || s;
+  }
+
+  bump(id: string) {
+    this.api.publishVacancy(id).subscribe({ next: () => this.load(), error: () => {} });
   }
 }
