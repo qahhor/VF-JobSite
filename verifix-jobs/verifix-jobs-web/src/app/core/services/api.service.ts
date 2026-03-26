@@ -13,13 +13,11 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Vacancies
-  getVacancies(page = 0, size = 20, status?: string, category?: string, city?: string): Observable<PageResponse<Vacancy>> {
+  // Vacancies — employer's own vacancies
+  getVacancies(page = 0, size = 20, status?: string): Observable<PageResponse<Vacancy>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
-    if (category) params = params.set('category', category);
-    if (city) params = params.set('city', city);
-    return this.http.get<PageResponse<Vacancy>>(`${this.base}/vacancies`, { params });
+    return this.http.get<PageResponse<Vacancy>>(`${this.base}/vacancies/employer`, { params });
   }
   getVacancy(id: string): Observable<Vacancy> { return this.http.get<Vacancy>(`${this.base}/vacancies/${id}`); }
   createVacancy(req: VacancyCreateRequest): Observable<Vacancy> { return this.http.post<Vacancy>(`${this.base}/vacancies`, req); }
@@ -38,17 +36,21 @@ export class ApiService {
     return this.http.put<Application>(`${this.base}/applications/${id}/status`, { status, note });
   }
 
-  // Candidates
+  // Candidates (POST with search body)
   searchCandidates(query: string, page = 0, size = 20): Observable<PageResponse<Candidate>> {
-    return this.http.get<PageResponse<Candidate>>(`${this.base}/candidates/search`, { params: { query, page, size } });
+    return this.http.post<PageResponse<Candidate>>(`${this.base}/candidates/search`, {
+      city: null, skills: null, category: query || null, page, size,
+      minSalary: null, maxSalary: null, educationLevel: null, gender: null, myidVerified: null
+    });
   }
 
   // Analytics
-  getDashboard(): Observable<DashboardData> { return this.http.get<DashboardData>(`${this.base}/analytics/dashboard`); }
+  getDashboard(): Observable<any> { return this.http.get<any>(`${this.base}/analytics/overview`); }
+  getFunnel(): Observable<any> { return this.http.get<any>(`${this.base}/analytics/funnel`); }
 
   // Employer
-  getProfile(): Observable<EmployerProfile> { return this.http.get<EmployerProfile>(`${this.base}/employers/profile`); }
-  updateProfile(data: Partial<EmployerProfile>): Observable<EmployerProfile> { return this.http.put<EmployerProfile>(`${this.base}/employers/profile`, data); }
+  getProfile(): Observable<EmployerProfile> { return this.http.get<EmployerProfile>(`${this.base}/employer/profile`); }
+  updateProfile(data: Partial<EmployerProfile>): Observable<EmployerProfile> { return this.http.put<EmployerProfile>(`${this.base}/employer/profile`, data); }
 
   // Billing
   getPlans(): Observable<PricingPlan[]> { return this.http.get<PricingPlan[]>(`${this.base}/subscription/plans`); }

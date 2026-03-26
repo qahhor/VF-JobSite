@@ -197,7 +197,7 @@ export class VacancyFormComponent implements OnInit {
     this.form.benefits = this.benefitsStr.split(',').map(s => s.trim()).filter(Boolean);
     const req = this.isEdit ? this.api.updateVacancy(this.vacancyId!, this.form) : this.api.createVacancy(this.form);
     req.subscribe({
-      next: () => this.router.navigate(['/vacancies']),
+      next: () => this.router.navigate(['/employer/vacancies']),
       error: () => this.saving.set(false),
     });
   }

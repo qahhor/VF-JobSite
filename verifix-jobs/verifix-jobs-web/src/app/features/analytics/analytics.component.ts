@@ -100,22 +100,26 @@ export class AnalyticsComponent implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit() {
-    this.api.getDashboard().subscribe(d => {
+    this.api.getDashboard().subscribe((d: any) => {
       this.data.set(d);
-      this.avgTimeToHire.set(d.avgTimeToHire);
+      this.avgTimeToHire.set(0);
       const total = d.totalApplications || 1;
       this.funnel.set([
         { label: 'Arizalar', count: total, percent: 100, color: 'bg-blue-400' },
-        { label: "Ko'rilgan", count: Math.round(total * 0.7), percent: 70, color: 'bg-indigo-400' },
-        { label: 'Suhbat', count: Math.round(total * 0.3), percent: 30, color: 'bg-purple-400' },
-        { label: 'Taklif', count: Math.round(total * 0.15), percent: 15, color: 'bg-orange-400' },
-        { label: 'Yollangan', count: d.hiredThisMonth, percent: (d.hiredThisMonth / total) * 100, color: 'bg-green-400' },
+        { label: 'Yangi', count: d.newApplications || 0, percent: ((d.newApplications||0) / total) * 100, color: 'bg-indigo-400' },
+        { label: 'Yollangan', count: d.hiredCount || 0, percent: ((d.hiredCount||0) / total) * 100, color: 'bg-green-400' },
       ]);
-      const maxDay = Math.max(...d.applicationsByDay.map(x => x.count), 1);
-      this.dailyBars.set(d.applicationsByDay.map(x => ({ date: x.date, count: x.count, percent: (x.count / maxDay) * 100 })));
-      const totalSrc = d.applicationsBySource.reduce((s, x) => s + x.count, 0) || 1;
-      const colors = ['bg-primary', 'bg-secondary', 'bg-accent', 'bg-purple-400', 'bg-pink-400'];
-      this.sources.set(d.applicationsBySource.map((s, i) => ({ ...s, percent: (s.count / totalSrc) * 100, color: colors[i % colors.length] })));
+    });
+
+    this.api.getFunnel().subscribe((data: any) => {
+      if (data?.statusCounts) {
+        const entries: [string, number][] = Object.entries(data.statusCounts).map(([k, v]: any) => [k, Number(v)]);
+        const total: number = entries.reduce((s: number, [, v]: [string, number]) => s + v, 0) || 1;
+        const colors = ['bg-blue-400', 'bg-gray-400', 'bg-yellow-400', 'bg-purple-400', 'bg-pink-400'];
+        this.sources.set(entries.map(([source, count]: [string, number], i: number) => ({
+          source: this.getSourceLabel(source), count, percent: (count / total) * 100, color: colors[i % colors.length]
+        })));
+      }
     });
   }
 

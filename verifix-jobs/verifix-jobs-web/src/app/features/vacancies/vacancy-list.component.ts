@@ -51,7 +51,7 @@ import { Vacancy, PageResponse } from '../../core/models';
               @for (v of vacancies(); track v.id) {
                 <tr class="hover:bg-gray-50 transition-colors">
                   <td class="px-5 py-3">
-                    <a [routerLink]="['/vacancies', v.id]" class="text-sm font-medium text-gray-800 hover:text-black">{{ v.title }}</a>
+                    <a [routerLink]="['/employer/vacancies', v.id]" class="text-sm font-medium text-gray-800 hover:text-black">{{ v.title }}</a>
                     <div class="text-xs text-gray-400 mt-0.5">{{ v.category }}</div>
                   </td>
                   <td class="px-5 py-3 text-sm text-gray-600 hidden md:table-cell">{{ v.city }}</td>
@@ -67,7 +67,7 @@ import { Vacancy, PageResponse } from '../../core/models';
                   </td>
                   <td class="px-5 py-3 text-sm text-gray-600 hidden sm:table-cell">{{ v.positionsFilled }}/{{ v.positionsCount }}</td>
                   <td class="px-5 py-3 text-right">
-                    <a [routerLink]="['/vacancies', v.id, 'edit']" class="text-sm text-black hover:underline">Tahrirlash</a>
+                    <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="text-sm text-black hover:underline">Tahrirlash</a>
                   </td>
                 </tr>
               } @empty {
