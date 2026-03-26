@@ -73,18 +73,29 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
           </div>
         }
 
-        <!-- Employer card -->
+        <!-- Employer card with trust badges -->
         <a [routerLink]="['/companies', v.employer?.slug || v.employerId]"
            class="block mt-8 bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-gray-400 text-lg font-bold shrink-0">
               {{ ((v.employer?.name || v.employerName) || '?').charAt(0) }}
             </div>
-            <div>
+            <div class="flex-1 min-w-0">
               <div class="text-sm font-semibold text-gray-900">{{ v.employer?.name || v.employerName }}</div>
               @if (v.employerIndustry) { <div class="text-xs text-gray-400">{{ v.employerIndustry }}</div> }
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                @if (v.employerVerified || v.employer?.isVerified) {
+                  <span class="text-[10px] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">✅ Tasdiqlangan</span>
+                }
+                @if (v.applicationCount != null && v.applicationCount > 20) {
+                  <span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-medium">👥 {{ v.applicationCount }}+ ariza</span>
+                }
+                @if (v.employer?.activeVacancies > 3) {
+                  <span class="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full font-medium">📋 {{ v.employer.activeVacancies }} vakansiya</span>
+                }
+              </div>
             </div>
-            <svg class="w-5 h-5 text-gray-300 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <svg class="w-5 h-5 text-gray-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </div>
         </a>
 

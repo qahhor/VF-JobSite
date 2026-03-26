@@ -12,7 +12,7 @@ import { AdminApiService } from '../core/api.service';
     <div class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
       <div class="w-full max-w-sm">
         <div class="text-center mb-8">
-          <div class="w-14 h-14 flex items-center justify-center mx-auto mb-3"><img src="assets/logo-icon.svg" alt="Verifix" class="h-12"</div>
+          <div class="w-14 h-14 flex items-center justify-center mx-auto mb-3"><img src="assets/logo-icon.svg" alt="Verifix" class="h-12" /></div>
           <h1 class="text-xl font-bold text-white">Verifix Admin</h1>
           <p class="text-slate-400 text-sm mt-1">Boshqaruv paneli</p>
         </div>

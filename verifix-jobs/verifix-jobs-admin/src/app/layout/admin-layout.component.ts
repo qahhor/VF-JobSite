@@ -10,7 +10,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/rou
     <!-- Dark sidebar -->
     <aside class="fixed left-0 top-0 h-full w-60 bg-slate-800 text-white z-30 flex flex-col">
       <div class="p-4 border-b border-slate-700 flex items-center gap-3">
-        <div class="w-9 h-9 flex items-center"><img src="assets/logo-icon.svg" alt="Verifix" class="h-7"</div>
+        <div class="w-9 h-9 flex items-center"><img src="assets/logo-icon.svg" alt="Verifix" class="h-7" /></div>
         <span class="font-semibold text-sm">Verifix Admin</span>
       </div>
       <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">

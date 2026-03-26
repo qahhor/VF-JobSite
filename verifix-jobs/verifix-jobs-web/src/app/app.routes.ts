@@ -12,8 +12,9 @@ export const appRoutes: Routes = [
   { path: 'favorites', loadComponent: () => import('./features/public/public-favorites.component').then(m => m.PublicFavoritesComponent) },
   { path: 'salary', loadComponent: () => import('./features/public/public-salary.component').then(m => m.PublicSalaryComponent) },
 
-  // Auth
+  // Auth & Onboarding
   { path: 'login', loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent) },
+  { path: 'onboarding', loadComponent: () => import('./features/onboarding/onboarding.component').then(m => m.OnboardingComponent), canActivate: [authGuard] },
 
   // Employer portal (authenticated)
   {
