@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   Vacancy, VacancyCreateRequest, Application, Candidate,
-  DashboardData, EmployerProfile, PricingPlan, Payment, PageResponse
+  EmployerProfile, PricingPlan, Payment, PageResponse
 } from '../models';
 
 @Injectable({ providedIn: 'root' })
@@ -69,6 +69,9 @@ export class ApiService {
   getAllVacancyHealth(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/vacancy-health/all`);
   }
+  getCivilityScore(): Observable<any> {
+    return this.http.get<any>(`${this.base}/vacancy-health/civility`);
+  }
 
   // === Vacancy Board & Response Inbox ===
   getVacancyBoard(status?: string): Observable<any[]> {
@@ -84,8 +87,21 @@ export class ApiService {
   }
 
   // === Activity Feed ===
-  getActivityFeed(page = 0, size = 20): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/employer/activity`, { params: { page: page.toString(), size: size.toString() } });
+  getActivityFeed(page = 0, size = 20): Observable<PageResponse<any>> {
+    return this.http.get<PageResponse<any>>(`${this.base}/employer/dashboard/feed`, {
+      params: { page: page.toString(), size: size.toString() }
+    });
+  }
+  getTaskCounts(): Observable<{ open: number; urgent: number }> {
+    return this.http.get<{ open: number; urgent: number }>(`${this.base}/employer/dashboard/tasks/count`);
+  }
+  getTasks(status = 'OPEN', page = 0, size = 20): Observable<PageResponse<any>> {
+    return this.http.get<PageResponse<any>>(`${this.base}/employer/dashboard/tasks`, {
+      params: { status, page: page.toString(), size: size.toString() }
+    });
+  }
+  updateTask(taskId: string, status: string): Observable<any> {
+    return this.http.patch<any>(`${this.base}/employer/dashboard/tasks/${taskId}`, { status });
   }
 
   // === Value Report (ROI) ===

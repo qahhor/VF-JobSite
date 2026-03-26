@@ -7,9 +7,13 @@ export const appRoutes: Routes = [
   { path: '', loadComponent: () => import('./features/public/public-home.component').then(m => m.PublicHomeComponent) },
   { path: 'jobs', loadComponent: () => import('./features/public/public-vacancy-list.component').then(m => m.PublicVacancyListComponent) },
   { path: 'jobs/:slug', loadComponent: () => import('./features/public/public-vacancy-detail.component').then(m => m.PublicVacancyDetailComponent) },
+  { path: 'categories', loadComponent: () => import('./features/public/public-categories.component').then(m => m.PublicCategoriesComponent) },
+  { path: 'vacancies/:city/:category', loadComponent: () => import('./features/public/public-vacancy-list.component').then(m => m.PublicVacancyListComponent) },
+  { path: 'vacancies/:city', loadComponent: () => import('./features/public/public-vacancy-list.component').then(m => m.PublicVacancyListComponent) },
   { path: 'companies', loadComponent: () => import('./features/public/public-company-list.component').then(m => m.PublicCompanyListComponent) },
   { path: 'companies/:slug', loadComponent: () => import('./features/public/public-company-detail.component').then(m => m.PublicCompanyDetailComponent) },
   { path: 'favorites', loadComponent: () => import('./features/public/public-favorites.component').then(m => m.PublicFavoritesComponent) },
+  { path: 'saved-searches', loadComponent: () => import('./features/saved-searches/saved-searches.component').then(m => m.SavedSearchesComponent) },
   { path: 'salary', loadComponent: () => import('./features/public/public-salary.component').then(m => m.PublicSalaryComponent) },
 
   // Auth & Onboarding

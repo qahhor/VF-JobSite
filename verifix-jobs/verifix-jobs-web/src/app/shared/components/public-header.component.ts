@@ -18,6 +18,7 @@ import { LangSwitcherComponent } from './lang-switcher.component';
         <!-- Desktop nav -->
         <nav class="hidden md:flex items-center gap-6 text-sm">
           <a routerLink="/jobs" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Vakansiyalar</a>
+          <a routerLink="/categories" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Kategoriyalar</a>
           <a routerLink="/companies" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Kompaniyalar</a>
           <a routerLink="/salary" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">💰 Maoshlar</a>
         </nav>

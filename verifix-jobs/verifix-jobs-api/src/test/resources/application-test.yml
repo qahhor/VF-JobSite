@@ -33,3 +33,8 @@ logging:
   level:
     root: WARN
     uz.verifix.jobs: INFO
+
+management:
+  health:
+    elasticsearch:
+      enabled: false

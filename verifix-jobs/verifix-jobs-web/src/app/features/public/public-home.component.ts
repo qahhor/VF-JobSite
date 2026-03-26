@@ -95,7 +95,7 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
         <h2 class="text-lg font-bold text-gray-900 mb-4">Shaharlar bo'yicha</h2>
         <div class="flex flex-wrap gap-2">
           @for (city of cities; track city) {
-            <a [routerLink]="['/jobs']" [queryParams]="{city: city}"
+            <a [routerLink]="['/vacancies', city]"
                class="h-10 px-5 border border-gray-200 rounded-full text-sm font-medium text-gray-600 hover:bg-black hover:text-white hover:border-black transition flex items-center">
               {{ city }}
             </a>
@@ -166,7 +166,7 @@ export class PublicHomeComponent implements OnInit {
       },
       error: () => {}
     });
-    this.api.getVacancies({page:0,size:9,sort:'newest'}).subscribe({
+    this.api.getVacancies({page:0,size:9,sort:'date_desc'}).subscribe({
       next: (r:any) => this.vacancies.set(r.content||[]),
       error: () => {}
     });

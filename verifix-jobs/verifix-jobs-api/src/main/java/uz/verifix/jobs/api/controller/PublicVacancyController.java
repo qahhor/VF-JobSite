@@ -30,6 +30,7 @@ import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.auth.OtpService;
 import uz.verifix.jobs.service.marketplace.CategoryHubService;
 import uz.verifix.jobs.service.marketplace.PublicVacancyService;
+import uz.verifix.jobs.service.marketplace.RecommendationService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -51,6 +52,7 @@ public class PublicVacancyController {
     private final FavoriteVacancyRepository favoriteVacancyRepository;
     private final CompanyReviewRepository companyReviewRepository;
     private final OtpService otpService;
+    private final RecommendationService recommendationService;
 
     @Operation(summary = "Поиск вакансий", description = "Фильтрация по городу, категории, зарплате, типу занятости и текстовому запросу")
     @ApiResponse(responseCode = "200", description = "Страница с вакансиями")
@@ -59,11 +61,28 @@ public class PublicVacancyController {
             @Parameter(description = "Город (напр. Tashkent)") @RequestParam(required = false) String city,
             @Parameter(description = "Категория (напр. COOK, DRIVER)") @RequestParam(required = false) String category,
             @Parameter(description = "Минимальная зарплата (UZS)") @RequestParam(required = false) BigDecimal salaryMin,
+            @Parameter(description = "Максимальная зарплата (UZS)") @RequestParam(required = false) BigDecimal salaryMax,
             @Parameter(description = "Тип занятости: FULL_TIME, PART_TIME, CONTRACT, TEMPORARY") @RequestParam(required = false) String employmentType,
+            @Parameter(description = "Смена: MORNING, EVENING, NIGHT, FLEXIBLE") @RequestParam(required = false) String shiftSchedule,
+            @Parameter(description = "Фильтр по бенефитам (можно передавать несколько значений)") @RequestParam(required = false) List<String> benefits,
+            @Parameter(description = "Только верифицированные работодатели") @RequestParam(defaultValue = "false") boolean verifiedOnly,
             @Parameter(description = "Текстовый поиск по названию и описанию") @RequestParam(required = false) String q,
+            @Parameter(description = "Сортировка: date_desc, date_asc, salary_desc, salary_asc, relevance") @RequestParam(defaultValue = "date_desc") String sort,
             @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(PageResponse.of(
-                publicVacancyService.listActiveVacancies(city, category, salaryMin, employmentType, q, pageable)));
+                publicVacancyService.listActiveVacancies(
+                        city,
+                        category,
+                        salaryMin,
+                        salaryMax,
+                        employmentType,
+                        shiftSchedule,
+                        benefits,
+                        verifiedOnly,
+                        q,
+                        sort,
+                        pageable
+                )));
     }
 
     @Operation(summary = "Детали вакансии", description = "Получение вакансии по SEO slug или UUID")
@@ -77,6 +96,23 @@ public class PublicVacancyController {
             try { vacancy = publicVacancyService.getById(UUID.fromString(slug)); } catch (Exception ignored) {}
         }
         return vacancy != null ? ResponseEntity.ok(vacancy) : ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Похожие вакансии", description = "Подбор похожих вакансий по категории и городу")
+    @GetMapping("/vacancies/{slug}/similar")
+    public ResponseEntity<List<Vacancy>> getSimilarVacancies(
+            @PathVariable String slug,
+            @RequestParam(defaultValue = "4") int size) {
+        Vacancy vacancy = publicVacancyService.getBySlug(slug);
+        if (vacancy == null) {
+            try { vacancy = publicVacancyService.getById(UUID.fromString(slug)); } catch (Exception ignored) {}
+        }
+        if (vacancy == null) {
+            return ResponseEntity.notFound().build();
+        }
+        List<Vacancy> similar = recommendationService.getSimilarVacancies(vacancy.getId(), size);
+        similar.forEach(publicVacancyService::initializePublicVacancy);
+        return ResponseEntity.ok(similar);
     }
 
     @Operation(summary = "Вакансии по категории", description = "Все активные вакансии в указанной категории")
@@ -144,8 +180,9 @@ public class PublicVacancyController {
                 .or(() -> { try { return employerRepository.findById(UUID.fromString(slug)); } catch (Exception e) { return java.util.Optional.empty(); } })
                 .orElse(null);
         if (employer == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(PageResponse.of(
-                vacancyRepository.findByEmployerIdAndStatus(employer.getId(), VacancyStatus.ACTIVE, PageRequest.of(page, size))));
+        Page<Vacancy> vacancies = vacancyRepository.findByEmployerIdAndStatus(employer.getId(), VacancyStatus.ACTIVE, PageRequest.of(page, size));
+        vacancies.getContent().forEach(publicVacancyService::initializePublicVacancy);
+        return ResponseEntity.ok(PageResponse.of(vacancies));
     }
 
     @Operation(summary = "Быстрая подача заявки (без регистрации)")

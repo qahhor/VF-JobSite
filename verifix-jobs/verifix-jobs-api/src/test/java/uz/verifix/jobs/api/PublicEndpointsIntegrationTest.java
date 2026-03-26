@@ -25,6 +25,20 @@ class PublicEndpointsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void publicVacanciesAcceptExtendedFilters() throws Exception {
+        mockMvc.perform(get("/api/v1/public/vacancies")
+                        .param("salaryMin", "1000000")
+                        .param("salaryMax", "7000000")
+                        .param("employmentType", "FULL_TIME")
+                        .param("shiftSchedule", "MORNING")
+                        .param("benefits", "transport,bonus")
+                        .param("verifiedOnly", "true")
+                        .param("sort", "salary_desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray());
+    }
+
+    @Test
     void publicCompanies() throws Exception {
         mockMvc.perform(get("/api/v1/public/companies"))
                 .andExpect(status().isOk())
@@ -64,8 +78,24 @@ class PublicEndpointsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    void publicSavedSearchValidation() throws Exception {
+        mockMvc.perform(post("/api/v1/public/saved-searches")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"candidateId":"invalid","name":"Test search"}
+                            """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void publicCompanyReviews() throws Exception {
         mockMvc.perform(get("/api/v1/public/companies/nonexistent/reviews"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void publicSimilarVacanciesMissingVacancyReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/api/v1/public/vacancies/nonexistent/similar"))
                 .andExpect(status().isNotFound());
     }
 

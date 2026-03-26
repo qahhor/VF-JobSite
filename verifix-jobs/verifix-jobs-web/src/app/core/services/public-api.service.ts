@@ -36,6 +36,16 @@ export interface PublicStats {
   totalHired: number;
 }
 
+export interface SalaryMarketInsight {
+  p25: number | null;
+  median: number | null;
+  p75: number | null;
+  sampleSize: number;
+  category: string;
+  city?: string;
+  currency: string;
+}
+
 export interface OtpSendRequest {
   phone: string;
 }
@@ -60,6 +70,9 @@ export interface VacancySearchParams {
   salaryMin?: number;
   salaryMax?: number;
   employmentType?: string;
+  shiftSchedule?: string;
+  benefits?: string[];
+  verifiedOnly?: boolean;
   sort?: string;
   page?: number;
   size?: number;
@@ -79,6 +92,9 @@ export class PublicApiService {
     if (params.salaryMin) httpParams = httpParams.set('salaryMin', params.salaryMin);
     if (params.salaryMax) httpParams = httpParams.set('salaryMax', params.salaryMax);
     if (params.employmentType) httpParams = httpParams.set('employmentType', params.employmentType);
+    if (params.shiftSchedule) httpParams = httpParams.set('shiftSchedule', params.shiftSchedule);
+    if (params.benefits?.length) httpParams = httpParams.set('benefits', params.benefits.join(','));
+    if (params.verifiedOnly) httpParams = httpParams.set('verifiedOnly', 'true');
     if (params.sort) httpParams = httpParams.set('sort', params.sort);
     httpParams = httpParams.set('page', params.page ?? 0).set('size', params.size ?? 12);
     return this.http.get<PageResponse<PublicVacancy>>(`${this.base}/vacancies`, { params: httpParams });
@@ -102,7 +118,7 @@ export class PublicApiService {
 
   getLatestVacancies(size = 6): Observable<PageResponse<PublicVacancy>> {
     return this.http.get<PageResponse<PublicVacancy>>(`${this.base}/vacancies`, {
-      params: new HttpParams().set('page', 0).set('size', size).set('sort', 'newest')
+      params: new HttpParams().set('page', 0).set('size', size).set('sort', 'date_desc')
     });
   }
 
@@ -140,6 +156,37 @@ export class PublicApiService {
     return this.http.get<PublicVacancy[]>(`${this.base}/vacancies/${slug}/similar`, {
       params: new HttpParams().set('size', size)
     });
+  }
+
+  getSalaryMarket(category: string, city?: string): Observable<SalaryMarketInsight> {
+    let params = new HttpParams().set('category', category);
+    if (city) params = params.set('city', city);
+    return this.http.get<SalaryMarketInsight>(`${environment.apiUrl}/salary/market`, { params });
+  }
+
+  savePublicSearch(payload: {
+    candidateId: string;
+    name: string;
+    query?: string;
+    city?: string;
+    category?: string;
+    minSalary?: number;
+    maxSalary?: number;
+    employmentType?: string;
+    shiftSchedule?: string;
+    benefits?: string[];
+    verifiedOnly?: boolean;
+    notifyEnabled?: boolean;
+  }): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/public/saved-searches`, payload);
+  }
+
+  getPublicSavedSearches(candidateId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/public/saved-searches`, { params: { candidateId } });
+  }
+
+  deletePublicSavedSearch(id: string, candidateId: string): Observable<void> {
+    return this.http.delete<void>(`${environment.apiUrl}/public/saved-searches/${id}`, { params: { candidateId } });
   }
 
   sendOtp(phone: string): Observable<{ success: boolean }> {

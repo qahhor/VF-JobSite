@@ -21,8 +21,10 @@ import { RouterLink } from '@angular/router';
             <h4 class="text-xs font-semibold text-gray-900 uppercase tracking-wider mb-3">Ish qidiruvchilar</h4>
             <div class="space-y-2 text-xs text-gray-500">
               <a routerLink="/jobs" class="block hover:text-black">Vakansiyalar</a>
+              <a routerLink="/categories" class="block hover:text-black">Kategoriyalar</a>
               <a routerLink="/companies" class="block hover:text-black">Kompaniyalar</a>
               <a routerLink="/favorites" class="block hover:text-black">Saqlangan</a>
+              <a routerLink="/saved-searches" class="block hover:text-black">Qidiruvlar</a>
             </div>
           </div>
           <div>

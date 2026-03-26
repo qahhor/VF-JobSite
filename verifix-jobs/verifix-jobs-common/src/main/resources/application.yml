@@ -73,14 +73,6 @@ spring:
   elasticsearch:
     uris: ${ELASTICSEARCH_URI:http://${ELASTICSEARCH_HOST:localhost}:${ELASTICSEARCH_PORT:9200}}
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,prometheus
-  endpoint:
-    health:
-
 # Resilience4j Circuit Breaker
 resilience4j:
   circuitbreaker:
@@ -113,7 +105,12 @@ resilience4j:
         max-attempts: 2
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
   endpoint:
+    health:
       probes:
         enabled: true
   metrics:

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PublicApiService } from '../../core/services/public-api.service';
@@ -176,7 +176,7 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
     </div>
   `,
 })
-export class PublicApplyModalComponent {
+export class PublicApplyModalComponent implements OnInit {
   @Input() vacancyId = '';
   @Input() vacancyTitle = '';
   @Output() closed = new EventEmitter<void>();
@@ -200,6 +200,13 @@ export class PublicApplyModalComponent {
   ];
 
   constructor(private publicApi: PublicApiService) {}
+
+  ngOnInit() {
+    const savedPhone = localStorage.getItem('vjw_candidate_phone');
+    this.phone = savedPhone ? savedPhone.replace(/^\+998/, '') : '';
+    this.firstName = localStorage.getItem('vjw_candidate_first_name') || '';
+    this.city = localStorage.getItem('vjw_candidate_city') || '';
+  }
 
   close() {
     this.closed.emit();
@@ -269,6 +276,9 @@ export class PublicApplyModalComponent {
         if (res?.candidateId) {
           localStorage.setItem('vjw_candidate_id', res.candidateId);
         }
+        localStorage.setItem('vjw_candidate_phone', '+998' + this.phone.replace(/\s/g, ''));
+        localStorage.setItem('vjw_candidate_first_name', this.firstName.trim());
+        localStorage.setItem('vjw_candidate_city', this.city);
       },
       error: () => {
         this.submitting.set(false);

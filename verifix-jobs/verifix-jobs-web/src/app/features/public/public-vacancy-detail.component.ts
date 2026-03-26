@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Title } from '@angular/platform-browser';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
@@ -48,16 +49,45 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
           @if (v.employmentType) {
             <span class="h-8 px-3 bg-gray-100 text-gray-700 rounded-full text-xs font-medium flex items-center">{{ empType(v.employmentType) }}</span>
           }
+          @if (v.shiftSchedule) {
+            <span class="h-8 px-3 bg-amber-50 text-amber-700 rounded-full text-xs font-medium flex items-center">{{ shiftLabel(v.shiftSchedule) }}</span>
+          }
           @if (v.positionsCount > 1) {
             <span class="h-8 px-3 bg-green-50 text-green-700 rounded-full text-xs font-medium flex items-center">{{ v.positionsCount }} o'rin ochiq</span>
           }
         </div>
+
+        @if (salaryInsight(); as insight) {
+          <div class="mt-6 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+            <div class="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">Salary Intelligence</div>
+            <div class="text-sm text-emerald-900 font-medium">
+              Bozor o'rtachasi: {{ fmt(insight.p25 || 0) }} - {{ fmt(insight.p75 || 0) }} {{ insight.currency }}
+            </div>
+            <div class="text-xs text-emerald-700 mt-1">
+              {{ marketPosition(v) }}
+              @if (insight.sampleSize) {
+                <span>· {{ insight.sampleSize }} ta vakansiya asosida</span>
+              }
+            </div>
+          </div>
+        }
 
         <!-- Description -->
         @if (v.description) {
           <div class="mt-6">
             <h2 class="text-base font-semibold text-gray-900 mb-2">Tavsif</h2>
             <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{{ v.description }}</div>
+          </div>
+        }
+
+        @if (v.branchName || v.branchAddress || v.district) {
+          <div class="mt-6">
+            <h2 class="text-base font-semibold text-gray-900 mb-2">Filial va manzil</h2>
+            <div class="rounded-2xl border border-gray-100 bg-white p-4 text-sm text-gray-600 space-y-1">
+              @if (v.branchName) { <div><span class="font-medium text-gray-900">Filial:</span> {{ v.branchName }}</div> }
+              @if (v.branchAddress) { <div><span class="font-medium text-gray-900">Manzil:</span> {{ v.branchAddress }}</div> }
+              @if (v.district) { <div><span class="font-medium text-gray-900">Tuman:</span> {{ v.district }}</div> }
+            </div>
           </div>
         }
 
@@ -99,6 +129,31 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
           </div>
         </a>
 
+        @if (similarVacancies().length) {
+          <div class="mt-8">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-base font-semibold text-gray-900">O'xshash vakansiyalar</h2>
+              <a routerLink="/jobs" class="text-xs text-gray-500 hover:text-black">Barchasini ko'rish</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              @for (item of similarVacancies(); track item.id) {
+                <a [routerLink]="['/jobs', item.slug || item.id]"
+                   class="rounded-2xl border border-gray-100 bg-white p-4 hover:shadow-md transition">
+                  <div class="text-base font-semibold text-gray-900">{{ item.title }}</div>
+                  <div class="text-sm text-gray-500 mt-1">{{ item.employer?.name || item.employerName }}</div>
+                  <div class="flex flex-wrap items-center gap-2 text-xs text-gray-400 mt-3">
+                    @if (item.salaryFrom) {
+                      <span class="text-gray-800 font-medium">{{ fmt(item.salaryFrom) }}{{ item.salaryTo ? ' - ' + fmt(item.salaryTo) : '+' }} UZS</span>
+                    }
+                    @if (item.city) { <span>{{ item.city }}</span> }
+                    @if (item.shiftSchedule) { <span>{{ shiftLabel(item.shiftSchedule) }}</span> }
+                  </div>
+                </a>
+              }
+            </div>
+          </div>
+        }
+
         <!-- Fixed bottom apply bar (mobile) -->
         <div class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 md:p-4 z-40 safe-bottom">
           <div class="max-w-4xl mx-auto flex gap-2">
@@ -135,17 +190,30 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
 })
 export class PublicVacancyDetailComponent implements OnInit {
   vacancy = signal<any>(null);
+  salaryInsight = signal<any>(null);
+  similarVacancies = signal<any[]>([]);
   showApplyModal = signal(false);
   isFavorited = signal(false);
 
-  constructor(private api: PublicApiService, private route: ActivatedRoute) {}
+  constructor(private api: PublicApiService, private route: ActivatedRoute, private title: Title) {}
 
   ngOnInit() {
     const slug = this.route.snapshot.params['slug'];
     this.api.getVacancy(slug).subscribe({
       next: (v: any) => {
         this.vacancy.set(v);
+        this.title.setTitle([v.title, v.city, 'Verifix Jobs'].filter(Boolean).join(' | '));
         this.checkFavorite(v.id);
+        if (v.category) {
+          this.api.getSalaryMarket(v.category, v.city).subscribe({
+            next: (insight: any) => this.salaryInsight.set(insight),
+            error: () => {}
+          });
+        }
+        this.api.getSimilarVacancies(v.slug || v.id, 4).subscribe({
+          next: (items: any[]) => this.similarVacancies.set(items || []),
+          error: () => {}
+        });
       },
       error: () => {}
     });
@@ -172,6 +240,23 @@ export class PublicVacancyDetailComponent implements OnInit {
     } else {
       this.api.addFavorite(cid, v.id).subscribe({ next: () => this.isFavorited.set(true), error: () => {} });
     }
+  }
+
+  marketPosition(v: any): string {
+    const insight = this.salaryInsight();
+    if (!v?.salaryFrom || !insight?.median) return '';
+    if (v.salaryFrom >= insight.p75) return "Bozordan yuqori ↑";
+    if (v.salaryFrom >= insight.median) return "Bozor darajasi";
+    return "Bozordan past";
+  }
+
+  shiftLabel(value: string): string {
+    return ({
+      MORNING: 'Ertalabgi smena',
+      EVENING: 'Kechki smena',
+      NIGHT: 'Tungi smena',
+      FLEXIBLE: 'Moslashuvchan'
+    } as Record<string, string>)[value] || value;
   }
 
   fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':''+n; }
