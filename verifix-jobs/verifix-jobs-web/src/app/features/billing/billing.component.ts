@@ -1,5 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { ApiService } from '../../core/services/api.service';
 import { PricingPlan, Payment } from '../../core/models';
 
@@ -97,6 +99,29 @@ import { PricingPlan, Payment } from '../../core/models';
             </tbody>
           </table>
         </div>
+      <!-- Entitlements / Limits -->
+      @if (entitlements().length) {
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+          <div class="px-5 py-4 border-b border-gray-100"><h3 class="font-semibold text-gray-800">📊 Limitlar va kreditlar</h3></div>
+          <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            @for (e of entitlements(); track e.id) {
+              <div class="border border-gray-100 rounded-lg p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium text-gray-700">{{ entitlementLabel(e.type) }}</span>
+                  <span class="text-xs text-gray-400">{{ e.used }} / {{ e.total }}</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-2">
+                  <div class="rounded-full h-2 transition-all" [style.width.%]="(e.used / e.total) * 100"
+                       [class]="e.remaining > 0 ? 'bg-black' : 'bg-red-500'"></div>
+                </div>
+                <div class="text-xs mt-1" [class]="e.remaining > 0 ? 'text-gray-400' : 'text-red-500'">
+                  {{ e.remaining > 0 ? e.remaining + ' ta qoldi' : 'Limit tugadi!' }}
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
       </div>
     </div>
   `,
@@ -105,18 +130,31 @@ export class BillingComponent implements OnInit {
   plans = signal<PricingPlan[]>([]);
   payments = signal<Payment[]>([]);
   currentPlan = signal<string>('');
+  entitlements = signal<any[]>([]);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private http: HttpClient) {}
 
   ngOnInit() {
-    this.api.getPlans().subscribe(p => this.plans.set(p));
-    this.api.getPayments().subscribe(r => this.payments.set(r.content));
-    this.api.getProfile().subscribe(p => this.currentPlan.set(p.subscriptionPlan || ''));
+    this.api.getPlans().subscribe({ next: (p: any) => this.plans.set(p), error: () => {} });
+    this.api.getPayments().subscribe({ next: (r: any) => this.payments.set(r.content || []), error: () => {} });
+    this.api.getProfile().subscribe({ next: (p: any) => this.currentPlan.set(p.subscriptionPlan || ''), error: () => {} });
+    this.http.get<any[]>(`${environment.apiUrl}/employer/entitlements`).subscribe({
+      next: (e: any[]) => this.entitlements.set(e || []),
+      error: () => {}
+    });
   }
 
   formatPrice(n: number): string {
     if (!n) return 'Bepul';
     return new Intl.NumberFormat('uz-UZ').format(n);
+  }
+
+  entitlementLabel(type: string): string {
+    return ({
+      VACANCY_POST: 'Vakansiya joylash', CONTACT_VIEW: 'Kontakt ko\'rish',
+      VACANCY_PROMOTION: 'Vakansiya ko\'tarish', RESUME_DOWNLOAD: 'Rezume yuklab olish',
+      ATS_ACCESS: 'ATS Pipeline', ANALYTICS_ACCESS: 'Analitika'
+    } as Record<string, string>)[type] || type;
   }
 
   upgrade(planCode: string) {

@@ -105,6 +105,7 @@ export class LayoutComponent {
     { path: '/employer/candidates', icon: '👥', label: 'Nomzodlar' },
     { path: '/employer/analytics', icon: '📈', label: 'Analitika' },
     { path: '/employer/billing', icon: '💳', label: 'Billing' },
+    { path: '/employer/integrations', icon: '🔗', label: 'Integratsiya' },
     { path: '/employer/settings', icon: '⚙️', label: 'Sozlamalar' },
   ];
 

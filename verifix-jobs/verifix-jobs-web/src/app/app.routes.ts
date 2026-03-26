@@ -33,6 +33,7 @@ export const appRoutes: Routes = [
       { path: 'analytics', loadComponent: () => import('./features/analytics/analytics.component').then(m => m.AnalyticsComponent) },
       { path: 'billing', loadComponent: () => import('./features/billing/billing.component').then(m => m.BillingComponent) },
       { path: 'settings', loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent) },
+      { path: 'integrations', loadComponent: () => import('./features/integrations/integrations.component').then(m => m.IntegrationsComponent) },
     ]
   },
 
