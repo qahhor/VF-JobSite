@@ -113,17 +113,17 @@ export class OrgMemoryComponent implements OnInit {
   }
 
   loadFacts() {
-    // Store in localStorage until backend entity is ready
-    const saved = localStorage.getItem('vjw_org_memory');
-    if (saved) this.facts.set(JSON.parse(saved));
+    this.http.get<any[]>(`${environment.apiUrl}/employer/org-memory`).subscribe({
+      next: (facts: any[]) => this.facts.set(facts || []),
+      error: () => {}
+    });
   }
 
   addFact() {
-    const fact = { id: Date.now().toString(), ...this.newFact, source: 'Manual', createdAt: new Date().toISOString() };
-    this.facts.update(list => [...list, fact]);
-    localStorage.setItem('vjw_org_memory', JSON.stringify(this.facts()));
-    this.showAdd.set(false);
-    this.newFact = { category: 'HIRING_PATTERN', content: '' };
+    this.http.post<any>(`${environment.apiUrl}/employer/org-memory`, this.newFact).subscribe({
+      next: () => { this.showAdd.set(false); this.newFact = { category: 'HIRING_PATTERN', content: '' }; this.loadFacts(); },
+      error: () => {}
+    });
   }
 
   addPreset(p: any) {
@@ -133,8 +133,10 @@ export class OrgMemoryComponent implements OnInit {
   }
 
   removeFact(id: string) {
-    this.facts.update(list => list.filter(f => f.id !== id));
-    localStorage.setItem('vjw_org_memory', JSON.stringify(this.facts()));
+    this.http.delete(`${environment.apiUrl}/employer/org-memory/${id}`).subscribe({
+      next: () => this.loadFacts(),
+      error: () => {}
+    });
   }
 
   factIcon(cat: string): string {
