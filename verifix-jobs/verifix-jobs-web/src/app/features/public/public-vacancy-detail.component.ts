@@ -203,6 +203,7 @@ export class PublicVacancyDetailComponent implements OnInit {
       next: (v: any) => {
         this.vacancy.set(v);
         this.title.setTitle([v.title, v.city, 'Verifix Jobs'].filter(Boolean).join(' | '));
+        this.injectJsonLd(v);
         this.checkFavorite(v.id);
         if (v.category) {
           this.api.getSalaryMarket(v.category, v.city).subscribe({
@@ -261,4 +262,29 @@ export class PublicVacancyDetailComponent implements OnInit {
 
   fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':''+n; }
   empType(t:string):string { return ({FULL_TIME:"To'liq stavka",PART_TIME:'Yarim stavka',CONTRACT:'Shartnoma',TEMPORARY:'Vaqtinchalik'} as Record<string,string>)[t]||t; }
+
+  /** Inject JSON-LD JobPosting for SEO */
+  private injectJsonLd(v: any) {
+    const existing = document.getElementById('json-ld-job');
+    if (existing) existing.remove();
+    const ld: any = {
+      '@context': 'https://schema.org/',
+      '@type': 'JobPosting',
+      title: v.title,
+      description: v.description || v.title,
+      datePosted: v.createdAt,
+      validThrough: v.expiresAt,
+      employmentType: v.employmentType,
+      jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', addressLocality: v.city, addressCountry: 'UZ' } },
+      hiringOrganization: { '@type': 'Organization', name: v.employer?.name || v.employerName, sameAs: 'https://job.verifix.uz/companies/' + (v.employer?.slug || v.employerId) },
+    };
+    if (v.salaryFrom) {
+      ld.baseSalary = { '@type': 'MonetaryAmount', currency: v.currency || 'UZS', value: { '@type': 'QuantitativeValue', minValue: v.salaryFrom, maxValue: v.salaryTo || v.salaryFrom, unitText: 'MONTH' } };
+    }
+    const script = document.createElement('script');
+    script.id = 'json-ld-job';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(ld);
+    document.head.appendChild(script);
+  }
 }
