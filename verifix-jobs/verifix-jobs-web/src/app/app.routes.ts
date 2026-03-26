@@ -42,6 +42,7 @@ export const appRoutes: Routes = [
       { path: 'automations', loadComponent: () => import('./features/automations/automations.component').then(m => m.AutomationsComponent) },
       { path: 'saved-searches', loadComponent: () => import('./features/saved-searches/saved-searches.component').then(m => m.SavedSearchesComponent) },
       { path: 'chat', loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent) },
+      { path: 'team', loadComponent: () => import('./features/team/team.component').then(m => m.TeamComponent) },
     ]
   },
 

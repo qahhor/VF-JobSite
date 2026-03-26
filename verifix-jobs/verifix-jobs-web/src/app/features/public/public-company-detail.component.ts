@@ -37,10 +37,87 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
           </div>
         </div>
 
+        <!-- Branding cover -->
+        @if (branding()?.coverImages?.length) {
+          <div class="mb-6 rounded-xl overflow-hidden">
+            <img [src]="branding().coverImages[0].imageUrl" alt="Cover" class="w-full h-48 md:h-64 object-cover">
+          </div>
+        }
+
         @if (c.description) {
           <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-2">Kompaniya haqida</h2>
             <p class="text-sm text-gray-600 leading-relaxed">{{ c.description }}</p>
+          </div>
+        }
+
+        <!-- Branding benefits -->
+        @if (branding()?.benefits?.length) {
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Imtiyozlar</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              @for (b of branding().benefits; track b.id) {
+                <div class="bg-emerald-50 rounded-xl p-4 text-center">
+                  <div class="text-2xl mb-1">{{ b.icon || '✅' }}</div>
+                  <div class="text-sm font-medium text-gray-800">{{ b.title }}</div>
+                  @if (b.description) { <div class="text-xs text-gray-500 mt-1">{{ b.description }}</div> }
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Branding gallery -->
+        @if (branding()?.galleries?.length) {
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Galereya</h2>
+            <div class="grid grid-cols-3 gap-2">
+              @for (g of branding().galleries[0]?.images || []; track g.id) {
+                <img [src]="g.imageUrl" [alt]="g.caption || 'Photo'" class="rounded-lg w-full h-32 object-cover">
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Branding video -->
+        @if (branding()?.videos?.length) {
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Video</h2>
+            @for (v of branding().videos; track v.id) {
+              <div class="rounded-xl overflow-hidden bg-black aspect-video">
+                <iframe [src]="v.videoUrl" class="w-full h-full" allowfullscreen></iframe>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Branding FAQ -->
+        @if (branding()?.faqs?.length) {
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Ko'p so'raladigan savollar</h2>
+            <div class="space-y-2">
+              @for (faq of branding().faqs; track faq.id) {
+                <details class="bg-gray-50 rounded-xl p-4 group">
+                  <summary class="text-sm font-medium text-gray-800 cursor-pointer">{{ faq.question }}</summary>
+                  <p class="text-sm text-gray-600 mt-2">{{ faq.answer }}</p>
+                </details>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Branding testimonials -->
+        @if (branding()?.testimonials?.length) {
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Xodimlar fikrlari</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              @for (t of branding().testimonials; track t.id) {
+                <div class="bg-white border border-gray-100 rounded-xl p-4">
+                  <p class="text-sm text-gray-600 italic">"{{ t.quote }}"</p>
+                  <div class="text-xs text-gray-400 mt-2">— {{ t.authorName }}, {{ t.authorRole }}</div>
+                </div>
+              }
+            </div>
           </div>
         }
 
@@ -114,6 +191,7 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
 export class PublicCompanyDetailComponent implements OnInit {
   company = signal<any>(null);
   vacancies = signal<any[]>([]);
+  branding = signal<any>(null);
   reviews = signal<any[]>([]);
   reviewData = signal<any>({averageRating: 0, totalReviews: 0});
   newReview = { authorName: '', rating: 5, pros: '', cons: '' };
@@ -127,6 +205,10 @@ export class PublicCompanyDetailComponent implements OnInit {
     this.slug = this.route.snapshot.params['slug'];
     this.api.getCompany(this.slug).subscribe({ next: (c: any) => this.company.set(c), error: () => {} });
     this.api.getCompanyVacancies(this.slug).subscribe({ next: (r: any) => this.vacancies.set(r.content || []), error: () => {} });
+    this.http.get<any>(`${environment.apiUrl}/company/${this.slug}/branding`).subscribe({
+      next: (b: any) => this.branding.set(b),
+      error: () => {}
+    });
     this.loadReviews();
   }
 

@@ -1,6 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { ApiService } from '../../core/services/api.service';
 import { Vacancy, Application, PageResponse } from '../../core/models';
 
@@ -21,6 +23,9 @@ import { Vacancy, Application, PageResponse } from '../../core/models';
             <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">Tahrirlash</a>
             @if (v.status === 'DRAFT') {
               <button (click)="publish()" class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800">Nashr qilish</button>
+            }
+            @if (v.status === 'ACTIVE' && !v.isBranded) {
+              <button (click)="promote()" class="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600">⭐ TOP</button>
             }
           </div>
         </div>
@@ -95,7 +100,7 @@ export class VacancyDetailComponent implements OnInit {
   vacancy = signal<Vacancy | null>(null);
   applications = signal<Application[]>([]);
 
-  constructor(private api: ApiService, private route: ActivatedRoute) {}
+  constructor(private api: ApiService, private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
@@ -106,6 +111,16 @@ export class VacancyDetailComponent implements OnInit {
   publish() {
     const v = this.vacancy();
     if (v) this.api.publishVacancy(v.id).subscribe(updated => this.vacancy.set(updated));
+  }
+
+  promote() {
+    const v = this.vacancy();
+    if (!v) return;
+    // Use commerce endpoint for promotion
+    this.http.post<any>(`${environment.apiUrl}/employer/vacancies/${v.id}/promote`, {}).subscribe({
+      next: () => { (v as any).isBranded = true; this.vacancy.set({...v}); },
+      error: () => {}
+    });
   }
 
   formatSalary(n: number): string {
