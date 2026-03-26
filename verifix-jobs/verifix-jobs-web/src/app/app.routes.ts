@@ -43,6 +43,9 @@ export const appRoutes: Routes = [
       { path: 'saved-searches', loadComponent: () => import('./features/saved-searches/saved-searches.component').then(m => m.SavedSearchesComponent) },
       { path: 'chat', loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent) },
       { path: 'team', loadComponent: () => import('./features/team/team.component').then(m => m.TeamComponent) },
+      { path: 'hiring-projects', loadComponent: () => import('./features/hiring-projects/hiring-projects.component').then(m => m.HiringProjectsComponent) },
+      { path: 'org-memory', loadComponent: () => import('./features/org-memory/org-memory.component').then(m => m.OrgMemoryComponent) },
+      { path: 'talent-hub', loadComponent: () => import('./features/talent-hub/talent-hub.component').then(m => m.TalentHubComponent) },
     ]
   },
 
