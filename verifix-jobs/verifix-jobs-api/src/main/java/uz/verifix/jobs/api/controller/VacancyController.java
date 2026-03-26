@@ -97,6 +97,26 @@ public class VacancyController {
         return ResponseEntity.ok(PageResponse.of(page.map(vacancyMapper::toResponse)));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<VacancyResponse> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody VacancyCreateRequest request,
+            Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        Vacancy vacancy = vacancyService.update(id, employerId,
+                request.getTitle(), request.getDescription(),
+                request.getCategory(), request.getCity(),
+                request.getSalaryFrom(), request.getSalaryTo());
+        return ResponseEntity.ok(vacancyMapper.toResponse(vacancy));
+    }
+
+    @PostMapping("/{id}/publish")
+    public ResponseEntity<VacancyResponse> publish(@PathVariable UUID id, Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        Vacancy vacancy = vacancyService.changeStatus(id, employerId, VacancyStatus.ACTIVE);
+        return ResponseEntity.ok(vacancyMapper.toResponse(vacancy));
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<VacancyResponse> changeStatus(
             @PathVariable UUID id,

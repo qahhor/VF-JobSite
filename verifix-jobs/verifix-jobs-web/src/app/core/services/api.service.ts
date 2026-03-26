@@ -60,7 +60,9 @@ export class ApiService {
   getPayments(page = 0): Observable<PageResponse<Payment>> {
     return this.http.get<PageResponse<Payment>>(`${this.base}/subscription/history`, { params: new HttpParams().set('page', page) });
   }
-  purchaseSubscription(planCode: string, period: string): Observable<any> {
-    return this.http.post<any>(`${this.base}/subscription/purchase`, { planCode, period });
+  purchaseSubscription(planCode: string, billingPeriod: string, gateway = 'CLICK'): Observable<any> {
+    return this.http.post<any>(`${this.base}/subscription/purchase`, {
+      planCode, gateway, billingPeriod, returnUrl: window.location.origin + '/employer/billing'
+    });
   }
 }

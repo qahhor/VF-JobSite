@@ -12,11 +12,18 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.common.dto.PageResponse;
+import uz.verifix.jobs.domain.entity.Application;
+import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.entity.Employer;
 import uz.verifix.jobs.domain.entity.Vacancy;
+import uz.verifix.jobs.domain.enums.ApplicationSource;
+import uz.verifix.jobs.domain.enums.ApplicationStatus;
 import uz.verifix.jobs.domain.enums.VacancyStatus;
+import uz.verifix.jobs.domain.repository.ApplicationRepository;
+import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
+import uz.verifix.jobs.service.auth.OtpService;
 import uz.verifix.jobs.service.marketplace.CategoryHubService;
 import uz.verifix.jobs.service.marketplace.PublicVacancyService;
 
@@ -35,6 +42,9 @@ public class PublicVacancyController {
     private final CategoryHubService categoryHubService;
     private final EmployerRepository employerRepository;
     private final VacancyRepository vacancyRepository;
+    private final CandidateRepository candidateRepository;
+    private final ApplicationRepository applicationRepository;
+    private final OtpService otpService;
 
     @Operation(summary = "Поиск вакансий", description = "Фильтрация по городу, категории, зарплате, типу занятости и текстовому запросу")
     @ApiResponse(responseCode = "200", description = "Страница с вакансиями")
@@ -130,5 +140,65 @@ public class PublicVacancyController {
         if (employer == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(PageResponse.of(
                 vacancyRepository.findByEmployerIdAndStatus(employer.getId(), VacancyStatus.ACTIVE, PageRequest.of(page, size))));
+    }
+
+    @Operation(summary = "Быстрая подача заявки (без регистрации)")
+    @PostMapping("/apply")
+    public ResponseEntity<?> quickApply(@RequestBody Map<String, String> body) {
+        String vacancyId = body.get("vacancyId");
+        String phone = body.get("phone");
+        String otpCode = body.get("otpCode");
+        String firstName = body.get("firstName");
+        String city = body.get("city");
+
+        if (vacancyId == null || phone == null || firstName == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "vacancyId, phone, firstName majburiy"));
+        }
+
+        // Verify OTP
+        if (otpCode != null && !otpCode.isBlank()) {
+            boolean valid = otpService.verifyOtp(phone, otpCode);
+            if (!valid) {
+                return ResponseEntity.badRequest().body(Map.of("error", "OTP kod noto'g'ri"));
+            }
+        }
+
+        // Find or create candidate by phone
+        Candidate candidate = candidateRepository.findByPhone(phone).orElseGet(() -> {
+            Candidate c = Candidate.builder()
+                    .firstName(firstName)
+                    .phone(phone)
+                    .city(city)
+                    .build();
+            return candidateRepository.save(c);
+        });
+
+        // Check vacancy
+        Vacancy vacancy;
+        try {
+            vacancy = vacancyRepository.findById(UUID.fromString(vacancyId)).orElse(null);
+        } catch (Exception e) {
+            vacancy = null;
+        }
+        if (vacancy == null || vacancy.getStatus() != VacancyStatus.ACTIVE) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Vakansiya topilmadi"));
+        }
+
+        // Check duplicate
+        if (applicationRepository.existsByVacancyIdAndCandidateId(vacancy.getId(), candidate.getId())) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Siz allaqachon ariza topshirgansiz"));
+        }
+
+        // Create application
+        Application application = Application.builder()
+                .vacancy(vacancy)
+                .candidate(candidate)
+                .status(ApplicationStatus.NEW)
+                .source(ApplicationSource.WEB)
+                .appliedAt(java.time.Instant.now())
+                .build();
+        applicationRepository.save(application);
+
+        return ResponseEntity.ok(Map.of("success", true, "applicationId", application.getId().toString()));
     }
 }

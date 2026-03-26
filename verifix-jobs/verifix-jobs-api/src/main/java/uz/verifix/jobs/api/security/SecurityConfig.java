@@ -61,6 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/sitemap.xml").permitAll()
                         // Public Marketplace & Intelligence
                         .requestMatchers(HttpMethod.GET, "/api/v1/public/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/public/apply").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/intelligence/salary/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/partner/**").permitAll()
                         // Swagger UI

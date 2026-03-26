@@ -147,6 +147,6 @@ export class PublicApiService {
   }
 
   quickApply(data: QuickApplyRequest): Observable<{ success: boolean; applicationId: string }> {
-    return this.http.post<{ success: boolean; applicationId: string }>(`${environment.apiUrl}/applications`, data);
+    return this.http.post<{ success: boolean; applicationId: string }>(`${this.base}/apply`, data);
   }
 }
