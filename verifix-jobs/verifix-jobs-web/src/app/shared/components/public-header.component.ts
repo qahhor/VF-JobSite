@@ -20,6 +20,7 @@ import { LangSwitcherComponent } from './lang-switcher.component';
           <a routerLink="/jobs" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Vakansiyalar</a>
           <a routerLink="/categories" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Kategoriyalar</a>
           <a routerLink="/companies" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">Kompaniyalar</a>
+          <a routerLink="/map" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">📍 Xarita</a>
           <a routerLink="/salary" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">💰 Maoshlar</a>
         </nav>
 

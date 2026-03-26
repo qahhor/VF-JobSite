@@ -6,6 +6,7 @@ export const appRoutes: Routes = [
   // Public routes
   { path: '', loadComponent: () => import('./features/public/public-home.component').then(m => m.PublicHomeComponent) },
   { path: 'jobs', loadComponent: () => import('./features/public/public-vacancy-list.component').then(m => m.PublicVacancyListComponent) },
+  { path: 'map', loadComponent: () => import('./features/public/vacancy-map.component').then(m => m.VacancyMapComponent) },
   { path: 'jobs/:slug', loadComponent: () => import('./features/public/public-vacancy-detail.component').then(m => m.PublicVacancyDetailComponent) },
   { path: 'categories', loadComponent: () => import('./features/public/public-categories.component').then(m => m.PublicCategoriesComponent) },
   { path: 'vacancies/:city/:category', loadComponent: () => import('./features/public/public-vacancy-list.component').then(m => m.PublicVacancyListComponent) },
