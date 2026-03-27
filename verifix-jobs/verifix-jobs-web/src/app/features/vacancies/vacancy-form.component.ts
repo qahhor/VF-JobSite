@@ -156,6 +156,10 @@ import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-te
           </div>
         }
 
+        @if (formError()) {
+          <div class="mt-4 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg">{{ formError() }}</div>
+        }
+
         <!-- Navigation -->
         <div class="flex justify-between mt-6 pt-4 border-t border-gray-100">
           <button (click)="prevStep()" [disabled]="step() === 0"
@@ -216,16 +220,33 @@ export class VacancyFormComponent implements OnInit {
     }
   }
 
-  nextStep() { if (this.step() < 4) this.step.update(s => s + 1); }
+  formError = signal('');
+
+  nextStep() {
+    this.formError.set('');
+    const s = this.step();
+    // Validate before advancing
+    if (s === 0 && (!this.form.title?.trim() || !this.form.category || !this.form.city)) {
+      this.formError.set('Sarlavha, kategoriya va shaharni kiriting');
+      return;
+    }
+    if (s === 1 && (!this.form.description || this.form.description.trim().length < 10)) {
+      this.formError.set('Tavsifni kamida 10 belgi kiriting');
+      return;
+    }
+    if (this.step() < 4) this.step.update(v => v + 1);
+  }
   prevStep() { if (this.step() > 0) this.step.update(s => s - 1); }
 
   submit() {
+    if (!this.form.title?.trim()) { this.formError.set('Sarlavha kiritilmagan'); return; }
     this.saving.set(true);
+    this.formError.set('');
     this.form.benefits = this.benefitsStr.split(',').map(s => s.trim()).filter(Boolean);
     const req = this.isEdit ? this.api.updateVacancy(this.vacancyId!, this.form) : this.api.createVacancy(this.form);
     req.subscribe({
       next: () => this.router.navigate(['/employer/vacancies']),
-      error: () => this.saving.set(false),
+      error: (err: any) => { this.saving.set(false); this.formError.set(err.error?.message || 'Xatolik yuz berdi'); },
     });
   }
 }

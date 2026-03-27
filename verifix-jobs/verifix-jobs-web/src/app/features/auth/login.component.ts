@@ -133,6 +133,7 @@ export class LoginComponent {
     this.success.set('');
     this.http.post<any>(`${environment.apiUrl}/auth/employer/login`, { email: this.email, password: this.password }).subscribe({
       next: (res) => {
+        this.loading.set(false);
         this.auth.setAuthFromTokens(res.accessToken, res.refreshToken);
         this.router.navigate(['/employer/dashboard']);
       },

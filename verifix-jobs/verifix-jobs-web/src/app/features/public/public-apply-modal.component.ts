@@ -217,9 +217,9 @@ export class PublicApplyModalComponent implements OnInit {
   }
 
   sendOtp() {
-    const cleaned = this.phone.replace(/\s/g, '');
-    if (cleaned.length < 9) {
-      this.phoneError.set('Telefon raqamni to\'liq kiriting');
+    const cleaned = this.phone.replace(/[^0-9]/g, '');
+    if (cleaned.length < 9 || !/^[0-9]{9,12}$/.test(cleaned)) {
+      this.phoneError.set('To\'g\'ri telefon raqam kiriting (9 raqam)');
       return;
     }
     this.phoneError.set('');

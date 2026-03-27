@@ -1,7 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 import { ApiService } from '../../core/services/api.service';
 import { AuthService } from '../../core/services/auth.service';
 import { EmployerProfile } from '../../core/models';
@@ -110,7 +112,7 @@ export class SettingsComponent implements OnInit {
 
   notifications: {key: string; label: string; description: string; enabled: boolean}[] = [];
 
-  constructor(private api: ApiService, private auth: AuthService, private router: Router) {}
+  constructor(private api: ApiService, private auth: AuthService, private router: Router, private http: HttpClient) {}
 
   ngOnInit() {
     this.api.getProfile().subscribe({
@@ -155,7 +157,11 @@ export class SettingsComponent implements OnInit {
   }
 
   deleteAccount() {
-    this.auth.logout();
+    // Request account deletion via API, then logout
+    this.http.delete(`${environment.apiUrl}/employer/profile`).subscribe({
+      next: () => this.auth.logout(),
+      error: () => this.auth.logout()  // Logout regardless
+    });
     this.router.navigate(['/']);
   }
 }

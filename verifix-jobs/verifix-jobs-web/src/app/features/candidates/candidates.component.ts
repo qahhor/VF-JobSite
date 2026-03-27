@@ -1,6 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { ApiService } from '../../core/services/api.service';
 import { Candidate } from '../../core/models';
 
@@ -117,7 +119,7 @@ export class CandidatesComponent implements OnInit {
   inviteMessage = '';
   vacancyOptions = signal<any[]>([]);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private http: HttpClient) {}
 
   ngOnInit() {
     this.api.getVacancies(0, 100).subscribe({
@@ -144,8 +146,13 @@ export class CandidatesComponent implements OnInit {
   sendInvite() {
     const c = this.inviteCandidate();
     if (!c || !this.inviteVacancyId) return;
-    // Create application with INVITED status for this candidate
-    this.api.changeApplicationStatus(c.id, 'INVITED', this.inviteMessage).subscribe({
+    // POST to create an application with INVITED status
+    this.http.post<any>(`${environment.apiUrl}/candidates/apply`, {
+      candidateId: c.id,
+      vacancyId: this.inviteVacancyId,
+      status: 'INVITED',
+      note: this.inviteMessage
+    }).subscribe({
       next: () => { this.inviteCandidate.set(null); },
       error: () => { this.inviteCandidate.set(null); }
     });

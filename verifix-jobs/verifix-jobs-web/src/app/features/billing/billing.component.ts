@@ -153,7 +153,7 @@ import { PricingPlan, Payment } from '../../core/models';
                   <span class="text-xs text-gray-400">{{ e.used }} / {{ e.total }}</span>
                 </div>
                 <div class="w-full bg-gray-100 rounded-full h-2">
-                  <div class="rounded-full h-2 transition-all" [style.width.%]="(e.used / e.total) * 100"
+                  <div class="rounded-full h-2 transition-all" [style.width.%]="e.total > 0 ? (e.used / e.total) * 100 : 0"
                        [class]="e.remaining > 0 ? 'bg-black' : 'bg-red-500'"></div>
                 </div>
                 <div class="text-xs mt-1" [class]="e.remaining > 0 ? 'text-gray-400' : 'text-red-500'">
@@ -219,7 +219,9 @@ export class BillingComponent implements OnInit {
   }
 
   buyPromotion(pkg: any) {
-    // TODO: integrate with payment gateway
-    alert(`TOP-${pkg.days} — ${this.formatPrice(pkg.price)} UZS. To'lov sahifasiga yo'naltiriladi.`);
+    this.api.purchaseSubscription(`TOP_${pkg.days}`, `${pkg.days}_DAYS`, 'CLICK').subscribe({
+      next: (res: any) => { if (res.redirectUrl) window.location.href = res.redirectUrl; },
+      error: () => {}
+    });
   }
 }
