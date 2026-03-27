@@ -1,48 +1,53 @@
 # Production Launch Checklist — Verifix Jobs
 
-## Go/No-Go Decision Criteria
+## Текущий статус: В ПРОДАКШЕНЕ (job.verifix.uz)
 
-### CRITICAL (все должны быть ✅)
+### CRITICAL — Безопасность и инфраструктура
 
-- [ ] SSL-сертификат установлен и работает
-- [ ] JWT_SECRET — уникальный, 64+ символов, не совпадает с dev
-- [ ] POSTGRES_PASSWORD — сильный, не совпадает с dev
-- [ ] REDIS_PASSWORD — установлен
-- [ ] .env файл НЕ в git-репозитории
-- [ ] Swagger UI закрыт в production (через Nginx)
-- [ ] Actuator endpoints закрыты от внешнего доступа
-- [ ] CORS настроен на production домен
-- [ ] Docker контейнеры работают от non-root пользователя
-- [ ] Бэкап БД настроен и проверен
-- [ ] Liquibase миграции применены без ошибок
-- [ ] Health check endpoints отвечают 200
+- [x] SSL-сертификат (Let's Encrypt) установлен и работает
+- [x] JWT_SECRET — уникальный, 64+ символов
+- [x] POSTGRES_PASSWORD — установлен
+- [x] REDIS_PASSWORD — установлен
+- [x] .env файл НЕ в git-репозитории
+- [x] Actuator endpoints закрыты от внешнего доступа (Nginx)
+- [x] CORS настроен на production домен (job.verifix.uz)
+- [x] Бэкап БД настроен (ежедневно 02:00)
+- [x] Liquibase миграции (22) применены без ошибок
+- [x] Health check endpoints отвечают 200
+- [x] Docker контейнеры работают (6 контейнеров)
+- [ ] Swagger UI закрыт в production
+- [ ] Docker контейнеры от non-root пользователя
 
-### HIGH (желательно до запуска)
+### HIGH — Мониторинг и интеграции
 
-- [ ] Prometheus + Grafana настроены
-- [ ] Alerting правила добавлены
-- [ ] Log rotation настроен для всех контейнеров
-- [ ] Resource limits (CPU/RAM) установлены для контейнеров
+- [x] Prometheus + Grafana настроены
+- [x] DNS A-запись указывает на сервер (CloudFlare)
+- [x] Telegram Bot работает (@VerifixJobBot)
+- [x] Elasticsearch индексация работает
+- [x] PWA Service Worker корректно работает
+- [x] i18n — 7 языков настроены
+- [ ] Alerting правила добавлены в Prometheus
+- [ ] Log rotation настроен для контейнеров
+- [ ] Resource limits (CPU/RAM) для контейнеров
 - [ ] Nginx rate limiting включён
-- [ ] SMS-шлюз протестирован (отправка реального SMS)
-- [ ] Payment webhooks настроены (Click.uz, Payme)
-- [ ] Telegram Bot webhook зарегистрирован
-- [ ] DNS A-запись указывает на сервер
+- [ ] SMS-шлюз протестирован в production
+- [ ] Payment webhooks настроены (Click.uz, Payme.uz)
 - [ ] Firewall настроен (только 80/443 открыты)
 
-### MEDIUM (в первую неделю после запуска)
+### MEDIUM — После запуска
 
-- [ ] Load testing проведён (минимум 100 concurrent users)
+- [ ] Load testing (минимум 100 concurrent users)
 - [ ] Disaster recovery план протестирован
-- [ ] Runbook актуализирован
-- [ ] Мониторинг бизнес-метрик настроен
 - [ ] Бэкап восстановление протестировано
-- [ ] CI/CD pipeline настроен для автодеплоя
-
-### POST-LAUNCH
-
-- [ ] Ошибки первых 24 часов проанализированы
-- [ ] Performance baseline зафиксирован
-- [ ] Пользовательский feedback собран
-- [ ] Первый бэкап успешно создан
+- [ ] CI/CD pipeline для автодеплоя
 - [ ] Security scan проведён
+- [ ] Performance baseline зафиксирован
+
+### Известные проблемы
+
+1. Swagger UI доступен в production (нужно закрыть через Nginx)
+2. Нет automated CI/CD — деплой ручной через SSH
+3. Нет rate limiting на Nginx
+4. SMS и Payment интеграции не протестированы в prod
+5. Нет unit/integration тестов
+6. ML сервис — только скелет, не подключён

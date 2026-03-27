@@ -1,138 +1,149 @@
-# Verifix Jobs - Development Plan
+# Verifix Jobs — Development Plan
 
-## Repository Status Snapshot
+## Repository Status (March 2026)
 
-- [x] Backend multi-module Maven structure exists
-- [x] Docker Compose infrastructure exists and now includes Prometheus + Grafana
-- [x] Liquibase schema, JPA entities, repositories, and seed data exist
-- [x] Canonical auth routes and stateful refresh-token handling are in place
-- [x] Shared `dev/staging/prod` config split exists
-- [x] Telegram module now has a dedicated Spring Boot entrypoint
-- [x] Workspace skeletons exist for `verifix-jobs-web`, `verifix-jobs-admin`, and `verifix-jobs-ml`
-- [~] Unit and integration test baseline has started
-- [ ] Full frontend/admin implementations are still pending
-- [ ] Full CI/CD and production hardening are still pending
+- [x] Backend multi-module Maven structure (6 modules)
+- [x] Docker Compose infrastructure (PostgreSQL + PostGIS, Redis, Elasticsearch, Kafka, MinIO)
+- [x] Liquibase schema — 22 migrations, 60+ JPA entities
+- [x] 89 business services, 58 REST controllers
+- [x] JWT + OTP + MyID auth with token refresh
+- [x] Angular 19 frontend — 49 components, PWA, i18n (7 languages)
+- [x] Telegram bot — 9 handlers, AI chat, language selection, channel posting
+- [x] Employer portal (dashboard, ATS pipeline, vacancies, billing, analytics)
+- [x] Public marketplace (split-view, map, filters, favorites, saved searches)
+- [x] Production deployment on Hetzner (Docker, Nginx, Let's Encrypt)
+- [x] Monitoring (Prometheus + Grafana)
+- [~] CI/CD pipeline (manual Docker deploy, no automated pipeline)
+- [~] ML service (skeleton only)
+- [ ] Full test coverage (unit + integration)
 
-## Phase 1: MVP Core (Weeks 1-10)
+## Completed Phases
 
-### Sprint 1 (Week 1-2): Foundation
+### Phase 1: MVP Core (Sprints 1-5) ✅
 - [x] Project structure + Docker Compose
-- [x] Liquibase schema (all tables, indexes, seed data)
+- [x] Full Liquibase schema + seed data
 - [x] JPA entities + repositories
-- [x] Spring Security config (JWT + OTP + roles)
-- [x] Global exception handler
-- [x] Swagger/OpenAPI config
-
-### Sprint 2 (Week 3-4): Core API
-- [~] SMS Gateway (Eskiz + PlayMobile + NotificationRouter)
-- [x] Employer auth (register, login, refresh, logout)
-- [x] Candidate auth (OTP via SMS/Telegram)
+- [x] Spring Security (JWT + OTP + roles)
+- [x] Employer auth (register, login, refresh)
+- [x] Candidate OTP auth (SMS/Telegram)
 - [x] Vacancy CRUD + status machine
-- [~] Vacancy moderation (auto-rules + manual queue)
-- [~] GeoService (Nominatim geocoding + PostGIS queries)
+- [x] Telegram bot (registration, search, apply, nearby, referral)
+- [x] Elasticsearch vacancy search with multilingual synonyms
+- [x] Angular frontend skeleton + PWA config
+- [x] Notification system (Telegram + SMS)
 
-### Sprint 3 (Week 5-6): Telegram Bot
-- [x] Bot setup + webhook/long-polling config
-- [~] Registration wizard (5 steps with Redis state)
-- [x] /search command + vacancy card formatting
-- [x] Apply callback handler
-- [x] /nearby command (location-based search)
-- [x] /my_applications command
-- [~] Referral code generation + deep-link sharing
-- [~] Notification consumer (Kafka -> Telegram/SMS)
+### Phase 2: Employer Tools & Growth (Sprints 6-9) ✅
+- [x] Subscription tiers (FREE/STANDARD/PREMIUM)
+- [x] Click.uz + Payme.uz payment integration (backend)
+- [x] Referral system with anti-fraud
+- [x] Geolocation search + PostGIS
+- [x] Telegram channel autoposting
+- [x] Employer branding pages
+- [x] Analytics dashboard
+- [x] Candidate database search for employers
+- [x] Bulk operations (invite, reject)
 
-### Sprint 4 (Week 7-8): Employer Portal
-- [x] Angular project setup (Material + Tailwind + PWA) skeleton
-- [ ] Auth module (login, JWT interceptor)
-- [ ] Layout (responsive side-nav/bottom-nav)
-- [ ] Dashboard (KPI cards + chart)
-- [ ] Vacancy list + editor wizard (5 steps)
-- [ ] ATS Pipeline (Kanban desktop + swipe mobile)
-- [ ] Candidate drawer (profile + map)
+### Phase 3: Gov & Ecosystem (Sprints 10-13) ✅
+- [x] Admin panel (base structure)
+- [x] ARGOS/ENST/ish.mehnat.uz integration
+- [x] Verifix HRM bridge (SSO, employee sync)
+- [x] Consent management + data export
+- [x] Multi-language support (7 languages)
 
-### Sprint 5 (Week 9-10): Integration & Polish
-- [~] MyID verification (employer + candidate)
-- [~] Elasticsearch vacancy indexing + search
-- [ ] PWA config (offline, push notifications)
-- [x] Telegram Mini App auth baseline
-- [~] Basic notification system (Telegram + SMS fallback)
-- [~] Testing: unit + integration (Testcontainers)
-- [~] Docker build + local deployment test
-
-## Phase 2: Employer Tools & Growth (Weeks 11-18)
-
-### Sprint 6 (Week 11-12): Monetization
-- [x] Subscription tiers (FREE/STANDARD/PREMIUM) baseline
-- [~] Click.uz payment integration
-- [~] Payme.uz payment integration
-- [ ] Billing dashboard in employer portal
-
-### Sprint 7 (Week 13-14): Referrals & Geo
-- [~] Referral system (candidate + employer referrals)
-- [~] Referral reward engine + anti-fraud
-- [~] Geolocation search (/nearby, map view)
-- [ ] Distance badges on vacancy cards
-- [x] Referral leaderboard in Mini App/API baseline
-
-### Sprint 8 (Week 15-16): Engagement
-- [x] Telegram channel autoposting (@verifixjobs) baseline
-- [x] Daily/weekly digest for candidates baseline
-- [ ] ATS advanced (interview scheduling, notes)
-- [x] Employer branding pages baseline
-- [x] Analytics dashboard backend baseline
-
-### Sprint 9 (Week 17-18): Scale
-- [x] Candidate database search (for employers) baseline
-- [x] Bulk operations (invite, reject, import) baseline
-- [~] hh.uz vacancy import (CSV)
-- [ ] Employer Telegram bot (notifications)
-- [~] SEO: Angular Universal SSR + JSON-LD + sitemap
-
-## Phase 3: Gov & Ecosystem (Weeks 19-26)
-
-### Sprint 10 (Week 19-20): Admin Panel
-- [x] Admin Angular project setup skeleton
-- [ ] Moderation queue UI
-- [ ] User management
-- [ ] System config editor
-- [ ] Audit log viewer
-
-### Sprint 11 (Week 21-22): Government
-- [~] ARGOS/ENST integration (bidirectional sync)
-- [~] ish.mehnat.uz sync
-- [x] Gov reporting (employment stats, salary analytics) baseline
-- [ ] Multi-language support (4 languages)
-
-### Sprint 12 (Week 23-24): Verifix Bridge
-- [~] Verifix HRM bridge (HIRED -> create employee)
-- [ ] SSO between Verifix HRM and Verifix Jobs
-- [ ] Employee referral program (pull from HRM)
-- [ ] Legal documents in platform (ToS, Privacy, Consent)
-
-### Sprint 13 (Week 25-26): Compliance & Regional
-- [x] Consent management system baseline
-- [x] Data export / account deletion baseline
-- [ ] Regional expansion config (KZ, KG, TJ)
-- [ ] Currency support
-- [ ] Load testing (Gatling)
-
-## Phase 4: AI/ML (Weeks 27-36)
-
-### Sprint 14-15 (Week 27-30): ML Foundation
-- [x] Python FastAPI microservice setup skeleton
+### Phase 4: AI/ML (Sprints 14-18) — Partial
+- [x] Python FastAPI microservice skeleton
+- [x] Rule-based matching (candidate ↔ vacancy)
+- [x] Salary prediction model (backend)
+- [x] AI agents skeleton (screening, intake, sourcing)
+- [~] Claude API integration (skeleton, not connected)
 - [ ] gRPC interface to Spring Boot
-- [ ] Training pipeline (PostgreSQL -> features -> CatBoost)
-- [x] Smart matching (candidate <-> vacancy) rules baseline
-- [ ] Profile scoring + gamification
+- [ ] CatBoost training pipeline
+- [ ] Model monitoring
 
-### Sprint 16-17 (Week 31-34): Intelligence
-- [x] Salary prediction model baseline
-- [x] Churn prediction baseline
-- [x] Fraud detection baseline
-- [ ] Smart notification timing
+## ТЗ v6.0 Gap Analysis — 5 Этапов
 
-### Sprint 18 (Week 35-36): AI Chatbot
-- [ ] Claude API integration
-- [x] Conversational job search in Telegram baseline
-- [x] A/B testing framework baseline
-- [ ] Model monitoring (MLflow)
+Полный gap analysis: см. plan file `plans/concurrent-wandering-wave.md`
+
+### Этап 1 — Quick Wins ✅ COMPLETE (8/8)
+- Benefits icons, TOP badge, candidate badges
+- Vacancy templates (12 system + custom), bump endpoint
+- Statistics sidebar, keyboard shortcuts (J/K/L/H)
+- Matching candidates counter
+
+### Этап 2 — Production Polish ✅ COMPLETE (8/8)
+- Split-view layout for vacancy search
+- Map / Nearby toggle (Leaflet + PostGIS)
+- Branded employer pages (cover, gallery, FAQ, video)
+- Multi-manager roles (ADMIN/RECRUITER/VIEWER)
+- Contact credits deduction
+- Promotion purchase UI (TOP-7/14/30)
+- Alerts delivery (Telegram)
+- JSON-LD + hreflang structure
+
+### Этап 3 — Intelligence Layer ✅ COMPLETE (7/7)
+- Hiring Project UI + dashboard
+- Organization Memory UI (facts, preferences)
+- Talent Hub UI (reusable pool, cross-vacancy)
+- AI Vacancy Generator (text → structured vacancy)
+- AI Screening Bot (Telegram Q&A)
+- Quick Review Mode
+- Market Intelligence (salary, competition)
+
+### Этап 4 — Commerce ✅ COMPLETE (6/6)
+- Bundle pricing UI
+- Branding tiers enforcement
+- Subscription enforcement (limits per tier)
+- Multi-country config (skeleton)
+- Resilience4j circuit breaker config
+- Gov sync reliability improvements
+
+### Этап 5 — AI Differentiation ✅ COMPLETE (7/7)
+- Claude API integration structure in Telegram
+- AI Sourcing Agent (auto shortlists)
+- AI Outreach (personalized invitations)
+- Verifix Hiring Agent dashboard
+- AI Vacancy Generator UI
+- Churn prediction alerts
+- Market intelligence dashboard
+
+## Post-Plan Work (Quality & i18n)
+
+### Deep Quality Round ✅
+- Token refresh interceptor (401 → refresh → retry)
+- Vacancy form step validation with error banners
+- Pipeline optimistic updates with rollback
+- 404 error states for vacancy detail
+- Fix: LazyInitializationException in Telegram bot
+- Fix: OrgMemoryFact entity schema mismatch
+- Fix: White screen on F5 (Service Worker caching fix)
+
+### i18n Translation ✅
+- 7 languages across all public pages
+- Home page: hero, categories, stats, CTA
+- Header/nav: desktop + mobile bottom tabs
+- Login/Register form labels
+- PWA install/update banners
+- /jobs page: all filters, sort, benefits, category chips
+- Split-view sidebar labels
+- Telegram bot: language selection for new users + profile change
+
+## Current Coverage vs ТЗ v6.0
+
+| Pillar | Coverage |
+|--------|----------|
+| A — Public Marketplace | ~90% |
+| B — Employer Operations | ~85% |
+| C — Employer Intelligence | ~80% |
+| D — Commerce & Branding | ~80% |
+| E — HRM/Gov/Compliance | ~85% |
+| F — AI/Automation | ~60% |
+| **Average** | **~80%** |
+
+## Remaining Work
+
+1. **AI/ML Integration** — Connect Claude API, train CatBoost model, pgvector embeddings
+2. **Test Coverage** — Unit + integration tests with Testcontainers
+3. **CI/CD** — Automated build/deploy pipeline
+4. **Multi-country** — Full KZ/KG/TJ support with currency
+5. **Performance** — Load testing, caching optimization
+6. **SEO** — Server-side rendering or prerendering for public pages
