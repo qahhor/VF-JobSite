@@ -17,11 +17,17 @@ public class OrgMemoryFact {
     @Column(name = "employer_id", nullable = false)
     private UUID employerId;
 
-    @Column(name = "fact_type", length = 50)
+    @Column(name = "fact_type", length = 50, nullable = false)
     private String factType;
 
-    @Column(columnDefinition = "text", nullable = false)
+    @Column(name = "fact_key", length = 200)
+    private String factKey;
+
+    @Column(name = "fact_value", columnDefinition = "text")
     private String content;
+
+    @Column(columnDefinition = "jsonb")
+    private String metadata;
 
     @Column(length = 50)
     private String source;
