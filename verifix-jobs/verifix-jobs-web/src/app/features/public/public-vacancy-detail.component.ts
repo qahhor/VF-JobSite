@@ -173,7 +173,16 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
         </div>
 
       } @else {
-        <div class="text-center py-20 text-gray-400 text-sm">Yuklanmoqda...</div>
+        @if (notFound()) {
+          <div class="text-center py-20">
+            <div class="text-4xl mb-3">😔</div>
+            <div class="text-lg font-semibold text-gray-800">Vakansiya topilmadi</div>
+            <div class="text-sm text-gray-400 mt-2">Bu vakansiya o'chirilgan yoki mavjud emas</div>
+            <a routerLink="/jobs" class="inline-flex mt-4 h-10 px-6 bg-black text-white rounded-lg text-sm font-medium items-center hover:bg-gray-800">Vakansiyalarga qaytish</a>
+          </div>
+        } @else {
+          <div class="text-center py-20 text-gray-400 text-sm">Yuklanmoqda...</div>
+        }
       }
     </div>
 
@@ -216,9 +225,11 @@ export class PublicVacancyDetailComponent implements OnInit {
           error: () => {}
         });
       },
-      error: () => {}
+      error: () => { this.notFound.set(true); }
     });
   }
+
+  notFound = signal(false);
 
   private checkFavorite(vacancyId: string) {
     const cid = localStorage.getItem('vjw_candidate_id');

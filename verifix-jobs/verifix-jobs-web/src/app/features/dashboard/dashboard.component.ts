@@ -240,6 +240,8 @@ import { ApiService } from '../../core/services/api.service';
   `,
 })
 export class DashboardComponent implements OnInit {
+  loading = signal(true);
+  loadError = signal('');
   kpis = signal<{ value: string | number; label: string; hint?: string }[]>([]);
   taskCounts = signal({ open: 0, urgent: 0 });
   tasks = signal<any[]>([]);
@@ -253,6 +255,7 @@ export class DashboardComponent implements OnInit {
   constructor(private api: ApiService) {}
 
   ngOnInit() {
+    this.loading.set(true);
     this.loadDashboard();
     this.loadTasks();
     this.loadCivility();
@@ -261,6 +264,8 @@ export class DashboardComponent implements OnInit {
     this.loadValueReport();
     this.loadActivityFeed();
     this.loadFunnel();
+    // Clear loading after 3s max (all parallel requests should finish)
+    setTimeout(() => this.loading.set(false), 3000);
   }
 
   markTaskDone(taskId: string) {

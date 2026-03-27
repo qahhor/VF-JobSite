@@ -177,7 +177,19 @@ export class PipelineComponent implements OnInit {
   }
 
   moveApp(app: Application, newStatus: string) {
-    this.api.changeApplicationStatus(app.id, newStatus).subscribe(() => this.loadApplications());
+    const prevStatus = app.status;
+    // Optimistic update
+    app.status = newStatus as any;
+    this.allApplications.update(list => [...list]);
+
+    this.api.changeApplicationStatus(app.id, newStatus).subscribe({
+      next: () => this.loadApplications(),
+      error: () => {
+        // Rollback on failure
+        app.status = prevStatus as any;
+        this.allApplications.update(list => [...list]);
+      }
+    });
   }
 
   // Keyboard shortcuts: J=next, K=prev, L=advance, H=reject

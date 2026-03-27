@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -48,7 +48,7 @@ import { environment } from '../../../environments/environment';
           </div>
 
           <!-- Messages -->
-          <div class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col-reverse">
+          <div #chatScroll class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col-reverse">
             @for (m of messages(); track m.id) {
               <div class="flex" [class.justify-end]="m.senderType === 'EMPLOYER'">
                 <div class="max-w-[70%] px-4 py-2 rounded-2xl text-sm"
@@ -85,12 +85,17 @@ import { environment } from '../../../environments/environment';
   `,
 })
 export class ChatComponent implements OnInit {
+  @ViewChild('chatScroll') chatScroll!: ElementRef;
+
   conversations = signal<any[]>([]);
   messages = signal<any[]>([]);
   selectedCandidate = signal<string | null>(null);
   unreadCount = signal(0);
   newMessage = '';
   isMobile = window.innerWidth < 640;
+
+  @HostListener('window:resize')
+  onResize() { this.isMobile = window.innerWidth < 640; }
 
   private base = environment.apiUrl;
 
@@ -108,9 +113,21 @@ export class ChatComponent implements OnInit {
   selectConversation(candidateId: string) {
     this.selectedCandidate.set(candidateId);
     this.http.get<any>(`${this.base}/chat/messages/${candidateId}`).subscribe({
-      next: (d: any) => { this.messages.set(d.messages || []); this.loadConversations(); },
+      next: (d: any) => {
+        this.messages.set(d.messages || []);
+        this.loadConversations();
+        setTimeout(() => this.scrollToBottom(), 100);
+      },
       error: () => {}
     });
+  }
+
+  private scrollToBottom() {
+    try {
+      if (this.chatScroll?.nativeElement) {
+        this.chatScroll.nativeElement.scrollTop = 0; // flex-col-reverse: top = newest
+      }
+    } catch {}
   }
 
   selectedName(): string {
