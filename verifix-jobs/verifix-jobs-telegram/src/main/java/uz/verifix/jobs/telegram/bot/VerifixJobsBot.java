@@ -176,6 +176,12 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         if (text.equals("/profile")) return profileHandler.handle(message);
         if (text.equals("/help")) return startHandler.sendMainMenu(message.getChatId(), null);
 
+        // Language selection from existing user (profile change)
+        if (text.contains("O'zbekcha") || text.contains("Русский") || text.contains("English")
+                || text.contains("Қазақша") || text.contains("Тоҷикӣ") || text.contains("Кыргызча")) {
+            return handleLanguageChange(message);
+        }
+
         // Reply keyboard menu buttons
         if (text.contains("Bosh menyu")) return startHandler.sendMainMenu(message.getChatId(), null);
         if (text.contains("Ish qidirish")) return searchHandler.handle(message);
@@ -191,6 +197,39 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         }
 
         return helpMessage(message.getChatId());
+    }
+
+    private SendMessage handleLanguageChange(Message message) {
+        Long chatId = message.getChatId();
+        Long telegramId = message.getFrom().getId();
+        String text = message.getText();
+
+        String lang = "uz";
+        String langName = "O'zbekcha";
+        if (text.contains("Русский")) { lang = "ru"; langName = "Русский"; }
+        else if (text.contains("English")) { lang = "en"; langName = "English"; }
+        else if (text.contains("Қазақша")) { lang = "kk"; langName = "Қазақша"; }
+        else if (text.contains("Тоҷикӣ")) { lang = "tg"; langName = "Тоҷикӣ"; }
+        else if (text.contains("Кыргызча")) { lang = "ky"; langName = "Кыргызча"; }
+
+        // Update existing candidate's language
+        Candidate candidate = candidateRepository.findByTelegramId(telegramId).orElse(null);
+        if (candidate != null) {
+            uz.verifix.jobs.domain.enums.LanguagePreference pref = switch (lang) {
+                case "ru" -> uz.verifix.jobs.domain.enums.LanguagePreference.RU;
+                case "en" -> uz.verifix.jobs.domain.enums.LanguagePreference.EN;
+                default -> uz.verifix.jobs.domain.enums.LanguagePreference.UZ;
+            };
+            candidate.setLanguagePref(pref);
+            candidateRepository.save(candidate);
+        }
+
+        SendMessage msg = new SendMessage();
+        msg.setChatId(chatId.toString());
+        msg.setText("✅ Til o'zgartirildi: <b>" + langName + "</b>");
+        msg.setParseMode("HTML");
+        msg.setReplyMarkup(StartHandler.buildMainMenuKeyboard());
+        return msg;
     }
 
     private SendMessage handleFavorites(Message message) {

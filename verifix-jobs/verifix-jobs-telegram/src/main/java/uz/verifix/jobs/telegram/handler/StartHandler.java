@@ -42,34 +42,16 @@ public class StartHandler {
             return sendMainMenu(chatId, existing.get().getFirstName());
         }
 
-        // Start registration
+        // Start registration — first step: language selection
         ConversationState state = ConversationState.builder()
                 .chatId(chatId)
-                .currentStep(ConversationState.RegistrationStep.PHONE)
+                .currentStep(ConversationState.RegistrationStep.LANGUAGE)
                 .referralCode(referralCode)
                 .build();
         conversationManager.save(chatId, state);
 
-        SendMessage msg = new SendMessage();
-        msg.setChatId(chatId.toString());
-        msg.setText("👋 Salom! <b>Verifix Jobs</b> ga xush kelibsiz!\n\n" +
-                "Ish topish uchun ro'yxatdan o'ting.\n\n" +
-                "📱 Telefon raqamingizni yuboring:");
-        msg.setParseMode("HTML");
-
-        // Phone share button
-        KeyboardButton phoneButton = new KeyboardButton("📱 Telefon raqamni yuborish");
-        phoneButton.setRequestContact(true);
-        KeyboardRow row = new KeyboardRow();
-        row.add(phoneButton);
-        ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
-        keyboard.setKeyboard(List.of(row));
-        keyboard.setResizeKeyboard(true);
-        keyboard.setOneTimeKeyboard(true);
-        msg.setReplyMarkup(keyboard);
-
         log.info("New user started registration: telegramId={}", telegramId);
-        return msg;
+        return buildLanguageSelection(chatId);
     }
 
     public SendMessage sendMainMenu(Long chatId, String name) {
@@ -87,6 +69,42 @@ public class StartHandler {
         msg.setText("👋 Nima qilmoqchisiz?");
         msg.setParseMode("HTML");
         msg.setReplyMarkup(buildMainMenuKeyboard());
+        return msg;
+    }
+
+    /** Language selection screen for new users */
+    public static SendMessage buildLanguageSelection(Long chatId) {
+        SendMessage msg = new SendMessage();
+        msg.setChatId(chatId.toString());
+        msg.setText("👋 <b>Verifix Jobs</b> ga xush kelibsiz!\n\n🌐 Tilni tanlang / Выберите язык / Choose language:");
+        msg.setParseMode("HTML");
+
+        List<KeyboardRow> rows = new ArrayList<>();
+        KeyboardRow r1 = new KeyboardRow();
+        r1.add("🇺🇿 O'zbekcha");
+        r1.add("🇷🇺 Русский");
+        rows.add(r1);
+        KeyboardRow r2 = new KeyboardRow();
+        r2.add("🇬🇧 English");
+        r2.add("🇰🇿 Қазақша");
+        rows.add(r2);
+        KeyboardRow r3 = new KeyboardRow();
+        r3.add("🇹🇯 Тоҷикӣ");
+        r3.add("🇰🇬 Кыргызча");
+        rows.add(r3);
+
+        ReplyKeyboardMarkup kb = new ReplyKeyboardMarkup();
+        kb.setKeyboard(rows);
+        kb.setResizeKeyboard(true);
+        kb.setOneTimeKeyboard(true);
+        msg.setReplyMarkup(kb);
+        return msg;
+    }
+
+    /** Language selection for existing users (from profile) */
+    public static SendMessage buildLanguageChange(Long chatId) {
+        SendMessage msg = buildLanguageSelection(chatId);
+        msg.setText("🌐 Tilni tanlang:");
         return msg;
     }
 

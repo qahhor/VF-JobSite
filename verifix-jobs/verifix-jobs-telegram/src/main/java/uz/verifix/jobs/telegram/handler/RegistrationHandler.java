@@ -32,12 +32,59 @@ public class RegistrationHandler {
         Long chatId = message.getChatId();
 
         return switch (state.getCurrentStep()) {
+            case LANGUAGE -> handleLanguage(message, state);
             case PHONE -> handlePhone(message, state);
             case FIRST_NAME -> handleFirstName(message, state);
             case LAST_NAME -> handleLastName(message, state);
             case CITY -> handleCity(message, state);
             default -> startHandler.sendMainMenu(chatId, state.getFirstName());
         };
+    }
+
+    private SendMessage handleLanguage(Message message, ConversationState state) {
+        String text = message.getText();
+        String lang = "uz";
+        if (text != null) {
+            if (text.contains("Русский")) lang = "ru";
+            else if (text.contains("English")) lang = "en";
+            else if (text.contains("Қазақша")) lang = "kk";
+            else if (text.contains("Тоҷикӣ")) lang = "tg";
+            else if (text.contains("Кыргызча")) lang = "ky";
+        }
+
+        state.setLanguage(lang);
+        state.setCurrentStep(ConversationState.RegistrationStep.PHONE);
+        conversationManager.save(state.getChatId(), state);
+
+        // Language-specific welcome messages
+        String welcomeText = switch (lang) {
+            case "ru" -> "📱 Отправьте ваш номер телефона:";
+            case "en" -> "📱 Send your phone number:";
+            case "kk" -> "📱 Телефон нөміріңізді жіберіңіз:";
+            case "tg" -> "📱 Рақами телефонатонро фиристед:";
+            case "ky" -> "📱 Телефон номериңизди жөнөтүңүз:";
+            default -> "📱 Telefon raqamingizni yuboring:";
+        };
+
+        SendMessage msg = new SendMessage();
+        msg.setChatId(state.getChatId().toString());
+        msg.setText("✅ Til tanlandi!\n\n" + welcomeText);
+        msg.setParseMode("HTML");
+
+        org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton phoneBtn =
+                new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton("📱 Telefon raqamni yuborish");
+        phoneBtn.setRequestContact(true);
+        org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow row =
+                new org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow();
+        row.add(phoneBtn);
+        org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup kb =
+                new org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup();
+        kb.setKeyboard(java.util.List.of(row));
+        kb.setResizeKeyboard(true);
+        kb.setOneTimeKeyboard(true);
+        msg.setReplyMarkup(kb);
+
+        return msg;
     }
 
     private SendMessage handlePhone(Message message, ConversationState state) {
@@ -99,7 +146,11 @@ public class RegistrationHandler {
         state.setCurrentStep(RegistrationStep.COMPLETED);
         conversationManager.save(state.getChatId(), state);
 
-        // Create candidate
+        // Create candidate with language preference
+        uz.verifix.jobs.domain.enums.LanguagePreference langPref = uz.verifix.jobs.domain.enums.LanguagePreference.UZ;
+        if ("ru".equals(state.getLanguage())) langPref = uz.verifix.jobs.domain.enums.LanguagePreference.RU;
+        else if ("en".equals(state.getLanguage())) langPref = uz.verifix.jobs.domain.enums.LanguagePreference.EN;
+
         Candidate candidate = Candidate.builder()
                 .phone(state.getPhone())
                 .telegramId(message.getFrom().getId())
@@ -107,6 +158,7 @@ public class RegistrationHandler {
                 .lastName(state.getLastName())
                 .city(state.getCity())
                 .referralCode(generateReferralCode())
+                .languagePref(langPref)
                 .build();
 
         // Handle referral

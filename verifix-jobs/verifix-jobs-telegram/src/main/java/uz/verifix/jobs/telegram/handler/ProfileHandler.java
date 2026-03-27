@@ -58,7 +58,7 @@ public class ProfileHandler {
         SendMessage msg = html(chatId, sb.toString());
         msg.setReplyMarkup(keyboard(List.of(
                 List.of(btn("📍 Shahar", "profile:edit_city"), btn("🛠 Ko'nikmalar", "profile:edit_skills")),
-                List.of(btn("📂 Kategoriyalar", "profile:edit_categories"))
+                List.of(btn("📂 Kategoriyalar", "profile:edit_categories"), btn("🌐 Til", "profile:change_lang"))
         )));
         return msg;
     }
@@ -95,6 +95,11 @@ public class ProfileHandler {
         Long chatId = cq.getMessage().getChatId();
         Integer msgId = cq.getMessage().getMessageId();
         String data = cq.getData();
+
+        // Language change — return SendMessage (not EditMessage), handled specially
+        if (data.equals("profile:change_lang")) {
+            return null; // Handled in CallbackQueryHandler
+        }
 
         String field = data.replace("profile:edit_", "");
         String prompt = switch (field) {

@@ -60,6 +60,11 @@ public class CallbackQueryHandler {
                 return showApplyConfirmation(chatId, msgId, vid);
             }
 
+            // Profile language change
+            if (data.equals("profile:change_lang")) {
+                return StartHandler.buildLanguageChange(chatId);
+            }
+
             // Profile edit
             if (data.startsWith(CB_PROFILE_EDIT) || data.startsWith("profile:")) {
                 return profileHandler.handleCallback(cq);
