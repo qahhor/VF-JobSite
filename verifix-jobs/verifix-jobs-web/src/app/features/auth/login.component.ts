@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-login',
@@ -28,9 +29,9 @@ import { AuthService } from '../../core/services/auth.service';
             <!-- Tab switcher -->
             <div class="flex border border-gray-200 rounded-lg p-1 mb-6">
               <button (click)="mode.set('login')" class="flex-1 py-2 text-sm font-medium rounded-md transition"
-                      [class]="mode() === 'login' ? 'bg-black text-white' : 'text-gray-500 hover:text-black'">Kirish</button>
+                      [class]="mode() === 'login' ? 'bg-black text-white' : 'text-gray-500 hover:text-black'">{{ i18n.t('auth.login') }}</button>
               <button (click)="mode.set('register')" class="flex-1 py-2 text-sm font-medium rounded-md transition"
-                      [class]="mode() === 'register' ? 'bg-black text-white' : 'text-gray-500 hover:text-black'">Ro'yxatdan o'tish</button>
+                      [class]="mode() === 'register' ? 'bg-black text-white' : 'text-gray-500 hover:text-black'">{{ i18n.t('auth.register') }}</button>
             </div>
 
             @if (error()) {
@@ -44,20 +45,20 @@ import { AuthService } from '../../core/services/auth.service';
             @if (mode() === 'login') {
               <form (ngSubmit)="onLogin()" class="space-y-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.email') }}</label>
                   <input type="email" [(ngModel)]="email" name="email" required autocomplete="email"
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="admin&#64;company.uz">
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Parol</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.password') }}</label>
                   <input type="password" [(ngModel)]="password" name="password" required autocomplete="current-password"
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
                 </div>
                 <button type="submit" [disabled]="loading()"
                         class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50">
-                  {{ loading() ? 'Kirish...' : 'Kirish' }}
+                  {{ loading() ? (i18n.t('auth.login') + '...') : i18n.t('auth.login') }}
                 </button>
               </form>
             }
@@ -78,7 +79,7 @@ import { AuthService } from '../../core/services/auth.service';
                          placeholder="123456789">
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.email') }}</label>
                   <input type="email" [(ngModel)]="regEmail" name="regEmail" required
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="admin&#64;company.uz">
@@ -90,7 +91,7 @@ import { AuthService } from '../../core/services/auth.service';
                          placeholder="+998 90 123 45 67">
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Parol</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.password') }}</label>
                   <input type="password" [(ngModel)]="regPassword" name="regPassword" required
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="Kamida 8 ta belgi (A-z, 0-9)">
@@ -125,7 +126,7 @@ export class LoginComponent {
   error = signal('');
   success = signal('');
 
-  constructor(private http: HttpClient, private router: Router, private auth: AuthService) {}
+  constructor(private http: HttpClient, private router: Router, private auth: AuthService, public i18n: I18nService) {}
 
   onLogin() {
     this.loading.set(true);
