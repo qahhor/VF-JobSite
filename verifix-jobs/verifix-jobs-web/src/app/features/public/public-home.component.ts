@@ -44,7 +44,7 @@ import { I18nService } from '../../core/services/i18n.service';
             <a [routerLink]="['/jobs']" [queryParams]="{category: cat.key}"
                class="flex flex-col items-center gap-2 py-4 px-2 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-sm transition bg-white group">
               <span class="text-3xl">{{ cat.icon }}</span>
-              <span class="text-xs font-medium text-gray-600 group-hover:text-black text-center leading-tight">{{ cat.label }}</span>
+              <span class="text-xs font-medium text-gray-600 group-hover:text-black text-center leading-tight">{{ i18n.t('category.' + cat.key) }}</span>
               @if (getCatCount(cat.key); as count) {
                 <span class="text-[10px] text-gray-400">{{ count }}</span>
               }

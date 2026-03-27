@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-public-vacancy-list',
@@ -23,14 +24,14 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
           <input
             type="text"
             [(ngModel)]="query"
-            placeholder="Kasb, lavozim..."
+            [placeholder]="i18n.t('filter.search_placeholder')"
             class="w-full h-12 pl-10 pr-4 border border-gray-200 rounded-xl text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
             (keyup.enter)="search()">
         </div>
         <button
           (click)="search()"
           class="h-12 px-6 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">
-          Topish
+          {{ i18n.t('filter.find') }}
         </button>
       </div>
 
@@ -39,43 +40,43 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
           <input
             type="number"
             [(ngModel)]="salaryMin"
-            placeholder="Min maosh"
+            [placeholder]="i18n.t('filter.min_salary')"
             class="h-11 px-3 border border-gray-200 rounded-xl text-sm focus:border-black focus:ring-1 focus:ring-black outline-none">
           <input
             type="number"
             [(ngModel)]="salaryMax"
-            placeholder="Max maosh"
+            [placeholder]="i18n.t('filter.max_salary')"
             class="h-11 px-3 border border-gray-200 rounded-xl text-sm focus:border-black focus:ring-1 focus:ring-black outline-none">
           <select
             [(ngModel)]="employmentType"
             class="h-11 px-3 border border-gray-200 rounded-xl text-sm bg-white focus:border-black focus:ring-1 focus:ring-black outline-none">
-            <option value="">Bandlik turi</option>
-            <option value="FULL_TIME">To'liq stavka</option>
-            <option value="PART_TIME">Yarim stavka</option>
-            <option value="CONTRACT">Shartnoma</option>
-            <option value="TEMPORARY">Vaqtinchalik</option>
+            <option value="">{{ i18n.t('filter.employment_type') }}</option>
+            <option value="FULL_TIME">{{ i18n.t('filter.full_time') }}</option>
+            <option value="PART_TIME">{{ i18n.t('filter.part_time') }}</option>
+            <option value="CONTRACT">{{ i18n.t('filter.contract') }}</option>
+            <option value="TEMPORARY">{{ i18n.t('filter.temporary') }}</option>
           </select>
           <select
             [(ngModel)]="shiftSchedule"
             class="h-11 px-3 border border-gray-200 rounded-xl text-sm bg-white focus:border-black focus:ring-1 focus:ring-black outline-none">
-            <option value="">Smena</option>
-            <option value="MORNING">Ertalab</option>
-            <option value="EVENING">Kechki</option>
-            <option value="NIGHT">Tungi</option>
-            <option value="FLEXIBLE">Moslashuvchan</option>
+            <option value="">{{ i18n.t('filter.shift') }}</option>
+            <option value="MORNING">{{ i18n.t('filter.morning') }}</option>
+            <option value="EVENING">{{ i18n.t('filter.evening') }}</option>
+            <option value="NIGHT">{{ i18n.t('filter.night') }}</option>
+            <option value="FLEXIBLE">{{ i18n.t('filter.flexible') }}</option>
           </select>
           <select
             [(ngModel)]="sort"
             class="h-11 px-3 border border-gray-200 rounded-xl text-sm bg-white focus:border-black focus:ring-1 focus:ring-black outline-none">
-            <option value="date_desc">Yangi avval</option>
-            <option value="date_asc">Eski avval</option>
-            <option value="salary_desc">Maosh yuqori</option>
-            <option value="salary_asc">Maosh past</option>
-            <option value="relevance">Dolzarblik</option>
+            <option value="date_desc">{{ i18n.t('filter.sort_newest') }}</option>
+            <option value="date_asc">{{ i18n.t('filter.sort_oldest') }}</option>
+            <option value="salary_desc">{{ i18n.t('filter.sort_salary_high') }}</option>
+            <option value="salary_asc">{{ i18n.t('filter.sort_salary_low') }}</option>
+            <option value="relevance">{{ i18n.t('filter.sort_relevance') }}</option>
           </select>
           <label class="h-11 px-3 border border-gray-200 rounded-xl bg-white flex items-center gap-2 text-sm text-gray-700">
             <input type="checkbox" [(ngModel)]="verifiedOnly" class="rounded border-gray-300 text-black focus:ring-black">
-            Tasdiqlangan kompaniyalar
+            {{ i18n.t('filter.verified') }}
           </label>
         </div>
 
@@ -85,7 +86,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
               (click)="toggleBenefit(benefit.key)"
               class="shrink-0 h-9 px-4 rounded-full text-xs font-medium border transition"
               [class]="selectedBenefits.includes(benefit.key) ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'">
-              {{ benefit.label }}
+              {{ benefitLabel(benefit.key) }}
             </button>
           }
         </div>
@@ -93,9 +94,9 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-3">
           <div class="text-[11px] text-gray-400">
             @if (candidateId()) {
-              Qidiruvni saqlasangiz yangi vakansiyalar haqida alert olasiz.
+              {{ i18n.t('filter.save_hint') }}
             } @else {
-              Saqlash uchun quick apply orqali candidate profil yarating.
+              {{ i18n.t('filter.save_hint_guest') }}
             }
           </div>
           <div class="flex items-center gap-2">
@@ -106,7 +107,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
               (click)="saveCurrentSearch()"
               [disabled]="!candidateId()"
               class="h-10 px-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed">
-              Qidiruvni saqlash
+              {{ i18n.t('filter.save_search') }}
             </button>
           </div>
         </div>
@@ -117,7 +118,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
           (click)="setCity('')"
           class="shrink-0 h-9 px-4 rounded-full text-sm font-medium border transition"
           [class]="!city ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'">
-          Barchasi
+          {{ i18n.t('filter.all') }}
         </button>
         @for (c of cities; track c) {
           <button
@@ -134,14 +135,14 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
           (click)="setCategory('')"
           class="shrink-0 h-8 px-3 rounded-full text-xs font-medium border transition"
           [class]="!category ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-200'">
-          Barcha kasblar
+          {{ i18n.t('filter.all_categories') }}
         </button>
         @for (cat of categoryList; track cat.key) {
           <button
             (click)="setCategory(cat.key)"
             class="shrink-0 h-8 px-3 rounded-full text-xs font-medium border transition"
             [class]="category === cat.key ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-200'">
-            {{ cat.label }}
+            {{ i18n.t('category.' + cat.key) }}
           </button>
         }
       </div>
@@ -149,8 +150,8 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
       <div class="xl:grid xl:grid-cols-[minmax(0,1fr)_360px] 2xl:grid-cols-[minmax(0,1fr)_360px_300px] xl:gap-6 items-start">
         <div>
           <div class="flex items-center justify-between gap-3 mb-3">
-            <div class="text-xs text-gray-400">{{ total() }} ta vakansiya topildi</div>
-            <div class="hidden xl:block text-[11px] text-gray-400">Desktop split view faol</div>
+            <div class="text-xs text-gray-400">{{ total() }} {{ i18n.t('jobs.found') }}</div>
+            <div class="hidden xl:block text-[11px] text-gray-400">{{ i18n.t('jobs.split_view') }}</div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3">
@@ -168,11 +169,11 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
                     <span class="text-xs font-normal text-gray-400">UZS</span>
                   </div>
                 } @else {
-                  <div class="text-sm font-medium text-gray-400 mb-1">Kelishiladi</div>
+                  <div class="text-sm font-medium text-gray-400 mb-1">{{ i18n.t('jobs.negotiable') }}</div>
                 }
 
                 @if (selectedVacancySlug() === (v.slug || v.id)) {
-                  <div class="text-[10px] font-semibold uppercase tracking-wide text-emerald-600 mb-1">Tanlangan</div>
+                  <div class="text-[10px] font-semibold uppercase tracking-wide text-emerald-600 mb-1">{{ i18n.t('jobs.selected') }}</div>
                 }
 
                 <h3 class="text-sm font-semibold text-gray-800 group-hover:text-black truncate">{{ v.title }}</h3>
@@ -190,13 +191,13 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
                     <span class="px-2 py-0.5 bg-gray-100 rounded-full">{{ empType(v.employmentType) }}</span>
                   }
                   @if (v.positionsCount > 1) {
-                    <span class="px-2 py-0.5 bg-green-50 text-green-600 rounded-full">{{ v.positionsCount }} o'rin</span>
+                    <span class="px-2 py-0.5 bg-green-50 text-green-600 rounded-full">{{ v.positionsCount }} {{ i18n.t('jobs.positions') }}</span>
                   }
                 </div>
               </a>
             } @empty {
               <div class="col-span-full text-center py-16 text-gray-400 text-sm">
-                @if (loading()) { Yuklanmoqda... } @else { Vakansiya topilmadi }
+                @if (loading()) { {{ i18n.t('jobs.loading') }} } @else { {{ i18n.t('jobs.not_found') }} }
               </div>
             }
           </div>
@@ -225,7 +226,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
                   {{ fmt(selected.salaryFrom) }}{{ selected.salaryTo ? ' - ' + fmt(selected.salaryTo) : '+' }}
                   <span class="text-xs font-normal text-gray-400">UZS</span>
                 } @else {
-                  Kelishiladi
+                  {{ i18n.t('jobs.negotiable') }}
                 }
               </div>
 
@@ -252,20 +253,20 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
                 <div class="mt-5 rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
                   <div class="text-[10px] uppercase tracking-wide text-emerald-700 mb-2">Salary Intelligence</div>
                   <div class="text-sm font-semibold text-emerald-900">{{ marketRange() }}</div>
-                  <div class="text-xs text-emerald-700 mt-1">Bozor diapazoni</div>
+                  <div class="text-xs text-emerald-700 mt-1">{{ i18n.t('jobs.market_range') }}</div>
                 </div>
               }
 
               @if (selected.description) {
                 <div class="mt-5">
-                  <div class="text-sm font-semibold text-gray-900 mb-2">Qisqacha tavsif</div>
+                  <div class="text-sm font-semibold text-gray-900 mb-2">{{ i18n.t('jobs.description') }}</div>
                   <div class="text-sm text-gray-600 leading-relaxed line-clamp-6">{{ selected.description }}</div>
                 </div>
               }
 
               @if (selected.benefits?.length) {
                 <div class="mt-5">
-                  <div class="text-sm font-semibold text-gray-900 mb-2">Imtiyozlar</div>
+                  <div class="text-sm font-semibold text-gray-900 mb-2">{{ i18n.t('jobs.benefits') }}</div>
                   <div class="flex flex-wrap gap-2">
                     @for (benefit of selected.benefits; track benefit) {
                       <span class="px-3 py-1 rounded-full bg-emerald-50 text-xs text-emerald-700">{{ benefit }}</span>
@@ -278,16 +279,16 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
                 <a
                   [routerLink]="['/jobs', selected.slug || selected.id]"
                   class="h-11 rounded-xl bg-black text-white text-sm font-medium flex items-center justify-center hover:bg-gray-800 transition">
-                  Batafsil ko'rish
+                  {{ i18n.t('jobs.detail') }}
                 </a>
                 <button
                   (click)="setSelectedVacancy(selected.slug || selected.id)"
                   class="h-11 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
-                  Tanlangan
+                  {{ i18n.t('jobs.selected') }}
                 </button>
               </div>
             } @else {
-              <div class="text-sm text-gray-400">Ko'rish uchun vakansiyani tanlang</div>
+              <div class="text-sm text-gray-400">{{ i18n.t('jobs.select_to_view') }}</div>
             }
           </div>
         </aside>
@@ -295,7 +296,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
         <aside class="hidden 2xl:block sticky top-20">
           <div class="space-y-4">
             <div class="rounded-2xl bg-black text-white p-5">
-              <div class="text-xs uppercase tracking-wide text-gray-400 mb-3">Platforma statistikasi</div>
+              <div class="text-xs uppercase tracking-wide text-gray-400 mb-3">{{ i18n.t('jobs.stats_title') }}</div>
               <div class="grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div class="text-xl font-bold">{{ stats().vacancies }}</div>
@@ -314,8 +315,8 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
 
             <div class="rounded-2xl border border-gray-100 bg-white p-5">
               <div class="flex items-center justify-between mb-3">
-                <div class="text-sm font-semibold text-gray-900">Top kompaniyalar</div>
-                <a routerLink="/companies" class="text-xs text-gray-400 hover:text-black">Barchasi</a>
+                <div class="text-sm font-semibold text-gray-900">{{ i18n.t('jobs.top_companies') }}</div>
+                <a routerLink="/companies" class="text-xs text-gray-400 hover:text-black">{{ i18n.t('jobs.view_all') }}</a>
               </div>
               <div class="grid grid-cols-3 gap-2">
                 @for (company of topCompanies(); track company.id) {
@@ -332,7 +333,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
             </div>
 
             <div class="rounded-2xl border border-gray-100 bg-white p-5">
-              <div class="text-sm font-semibold text-gray-900 mb-3">Mobil va Telegram</div>
+              <div class="text-sm font-semibold text-gray-900 mb-3">{{ i18n.t('jobs.mobile_telegram') }}</div>
               <div class="space-y-2">
                 <a
                   href="https://t.me/VerifixJobBot"
@@ -343,7 +344,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
                 <a
                   routerLink="/favorites"
                   class="h-11 px-4 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 flex items-center justify-center hover:bg-gray-50 transition">
-                  Saqlangan vakansiyalar
+                  {{ i18n.t('jobs.saved_vacancies') }}
                 </a>
               </div>
             </div>
@@ -410,7 +411,8 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     private api: PublicApiService,
     private route: ActivatedRoute,
     private router: Router,
-    private title: Title
+    private title: Title,
+    public i18n: I18nService
   ) {}
 
   ngOnInit() {
@@ -595,7 +597,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   saveCurrentSearch() {
     const candidateId = this.candidateId();
     if (!candidateId) {
-      this.searchSaveState.set("Avval candidate profilingizni yarating");
+      this.searchSaveState.set(this.i18n.t('filter.save_hint_guest'));
       return;
     }
 
@@ -613,13 +615,13 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
       verifiedOnly: this.verifiedOnly,
       notifyEnabled: true
     }).subscribe({
-      next: () => this.searchSaveState.set("Qidiruv saqlandi"),
-      error: () => this.searchSaveState.set("Qidiruvni saqlab bo'lmadi")
+      next: () => this.searchSaveState.set(this.i18n.t('filter.search_saved')),
+      error: () => this.searchSaveState.set(this.i18n.t('filter.search_save_fail'))
     });
   }
 
   buildSearchName(): string {
-    const categoryLabel = this.categoryList.find(item => item.key === this.category)?.label || this.category;
+    const categoryLabel = this.category ? this.i18n.t('category.' + this.category) : '';
     const parts = [categoryLabel, this.city, this.query].filter(Boolean);
     if (parts.length) {
       return parts.join(' / ');
@@ -639,25 +641,31 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   }
 
   shiftLabel(value: string): string {
-    return ({
-      MORNING: 'Ertalab',
-      EVENING: 'Kechki',
-      NIGHT: 'Tungi',
-      FLEXIBLE: 'Moslashuvchan'
-    } as Record<string, string>)[value] || value;
+    const map: Record<string, string> = {
+      MORNING: 'filter.morning',
+      EVENING: 'filter.evening',
+      NIGHT: 'filter.night',
+      FLEXIBLE: 'filter.flexible'
+    };
+    return map[value] ? this.i18n.t(map[value]) : value;
   }
 
   fmt(value: number): string {
     return value >= 1e6 ? `${(value / 1e6).toFixed(1)}M` : value >= 1e3 ? `${Math.round(value / 1e3)}K` : `${value}`;
   }
 
+  benefitLabel(key: string): string {
+    return this.i18n.t('benefit.' + key.replace('-', '_'));
+  }
+
   empType(value: string): string {
-    return ({
-      FULL_TIME: "To'liq",
-      PART_TIME: 'Yarim',
-      CONTRACT: 'Shartnoma',
-      TEMPORARY: 'Vaqtinchalik'
-    } as Record<string, string>)[value] || value;
+    const map: Record<string, string> = {
+      FULL_TIME: 'filter.full_time',
+      PART_TIME: 'filter.part_time',
+      CONTRACT: 'filter.contract',
+      TEMPORARY: 'filter.temporary'
+    };
+    return map[value] ? this.i18n.t(map[value]) : value;
   }
 
   private routeCommands(): string[] {
@@ -675,7 +683,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   }
 
   private updateTitle() {
-    const categoryLabel = this.categoryList.find(item => item.key === this.category)?.label || this.category;
+    const categoryLabel = this.category ? this.i18n.t('category.' + this.category) : '';
     const parts = [categoryLabel, this.city, 'Verifix Jobs'].filter(Boolean);
     this.title.setTitle(parts.join(' | '));
   }
