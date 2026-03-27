@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import uz.verifix.jobs.domain.entity.Vacancy;
 import uz.verifix.jobs.service.vacancy.VacancyService;
 import uz.verifix.jobs.telegram.formatter.VacancyCardFormatter;
+import uz.verifix.jobs.telegram.util.TgUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,10 @@ public class NearbyHandler {
         List<Vacancy> vacancies = vacancyService.findNearby(lat, lon, 10);
 
         if (vacancies.isEmpty()) {
-            return reply(chatId, "😔 Yaqin atrofda (10 km) hozircha ishlar topilmadi.\n\n" +
-                    "Qidiruv radiusini kengaytirish uchun /search buyrug'idan foydalaning.");
+            SendMessage empty = reply(chatId, "😔 Yaqin atrofda (10 km) hozircha ishlar topilmadi.\n\n" +
+                    "🔍 Ish qidirish tugmasini bosing yoki shahar bo'yicha qidiring.");
+            empty.setReplyMarkup(StartHandler.buildMainMenuKeyboard());
+            return empty;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -58,10 +61,11 @@ public class NearbyHandler {
             i++;
         }
 
+        // Add "back to menu" button
+        rows.add(List.of(TgUtils.btn("🔙 Bosh menyu", "show_main_menu")));
+
         SendMessage msg = reply(chatId, sb.toString());
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
-        keyboard.setKeyboard(rows);
-        msg.setReplyMarkup(keyboard);
+        msg.setReplyMarkup(TgUtils.keyboard(rows));
         return msg;
     }
 
@@ -73,12 +77,16 @@ public class NearbyHandler {
 
         KeyboardButton locationBtn = new KeyboardButton("📍 Joylashuvni yuborish");
         locationBtn.setRequestLocation(true);
-        KeyboardRow row = new KeyboardRow();
-        row.add(locationBtn);
+        KeyboardRow row1 = new KeyboardRow();
+        row1.add(locationBtn);
+
+        KeyboardRow row2 = new KeyboardRow();
+        row2.add("🔙 Bosh menyu");
+
         ReplyKeyboardMarkup keyboard = new ReplyKeyboardMarkup();
-        keyboard.setKeyboard(List.of(row));
+        keyboard.setKeyboard(List.of(row1, row2));
         keyboard.setResizeKeyboard(true);
-        keyboard.setOneTimeKeyboard(true);
+        keyboard.setOneTimeKeyboard(false);
         msg.setReplyMarkup(keyboard);
 
         return msg;

@@ -81,6 +81,15 @@ public class StartHandler {
         return msg;
     }
 
+    public static SendMessage buildMainMenuMessage(Long chatId) {
+        SendMessage msg = new SendMessage();
+        msg.setChatId(chatId.toString());
+        msg.setText("👋 Nima qilmoqchisiz?");
+        msg.setParseMode("HTML");
+        msg.setReplyMarkup(buildMainMenuKeyboard());
+        return msg;
+    }
+
     public static ReplyKeyboardMarkup buildMainMenuKeyboard() {
         List<KeyboardRow> rows = new ArrayList<>();
 

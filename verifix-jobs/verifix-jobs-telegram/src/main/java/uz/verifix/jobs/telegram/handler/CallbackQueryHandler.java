@@ -102,9 +102,14 @@ public class CallbackQueryHandler {
                 return searchHandler.searchAll(chatId, page);
             }
 
-            // Back to category picker — just answer callback, main menu handles it
+            // Back to category picker
             if (data.equals("show_categories")) {
-                return answer(cq.getId(), "Kasbni tanlang", false);
+                return searchHandler.searchAndFormat(chatId, "", 0);
+            }
+
+            // Back to main menu
+            if (data.equals("show_main_menu")) {
+                return StartHandler.buildMainMenuMessage(chatId);
             }
 
             // Favorite toggle

@@ -177,6 +177,7 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         if (text.equals("/help")) return startHandler.sendMainMenu(message.getChatId(), null);
 
         // Reply keyboard menu buttons
+        if (text.contains("Bosh menyu")) return startHandler.sendMainMenu(message.getChatId(), null);
         if (text.contains("Ish qidirish")) return searchHandler.handle(message);
         if (text.contains("Yaqindagi ishlar")) return nearbyHandler.handle(message);
         if (text.contains("Arizalarim")) return applyHandler.handleMyApplications(message.getChatId(), message.getFrom().getId());
