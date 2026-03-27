@@ -6,6 +6,7 @@ import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { getBenefitIcon } from '../../shared/utils/benefit-icons';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-public-home',
@@ -17,8 +18,8 @@ import { getBenefitIcon } from '../../shared/utils/benefit-icons';
     <!-- HERO — big search, mobile-first -->
     <section class="bg-gradient-to-b from-gray-50 to-white pt-8 pb-6 md:pt-14 md:pb-10">
       <div class="max-w-3xl mx-auto px-4 text-center">
-        <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-2 leading-tight">Sizga yaqin ish toping</h1>
-        <p class="text-gray-400 text-sm md:text-base mb-6">Minglab vakansiyalar — tez va oson</p>
+        <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-2 leading-tight">{{ i18n.t('hero.title') }}</h1>
+        <p class="text-gray-400 text-sm md:text-base mb-6">{{ i18n.t('hero.subtitle') }}</p>
         <div class="flex flex-col sm:flex-row gap-2 max-w-xl mx-auto">
           <div class="relative flex-1">
             <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -28,7 +29,7 @@ import { getBenefitIcon } from '../../shared/utils/benefit-icons';
           </div>
           <a [routerLink]="['/jobs']" [queryParams]="{q: searchQuery}"
              class="h-12 px-8 bg-black text-white rounded-xl text-sm font-semibold flex items-center justify-center hover:bg-gray-800 transition whitespace-nowrap">
-            Topish
+            {{ i18n.t('hero.search') }}
           </a>
         </div>
       </div>
@@ -37,7 +38,7 @@ import { getBenefitIcon } from '../../shared/utils/benefit-icons';
     <!-- CATEGORIES — large icons, easy tap -->
     <section class="py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-lg font-bold text-gray-900 mb-4">Kasblar</h2>
+        <h2 class="text-lg font-bold text-gray-900 mb-4">{{ i18n.t('categories.title') }}</h2>
         <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
           @for (cat of categoryIcons; track cat.key) {
             <a [routerLink]="['/jobs']" [queryParams]="{category: cat.key}"
@@ -57,8 +58,8 @@ import { getBenefitIcon } from '../../shared/utils/benefit-icons';
     <section class="bg-gray-50 py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex items-center justify-between mb-5">
-          <h2 class="text-lg font-bold text-gray-900">Yangi vakansiyalar</h2>
-          <a routerLink="/jobs" class="text-sm text-gray-500 hover:text-black font-medium transition">Barchasi &rarr;</a>
+          <h2 class="text-lg font-bold text-gray-900">{{ i18n.t('vacancies.new') }}</h2>
+          <a routerLink="/jobs" class="text-sm text-gray-500 hover:text-black font-medium transition">{{ i18n.t('vacancies.view_all') }} &rarr;</a>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           @for (v of vacancies(); track v.id) {
@@ -119,9 +120,9 @@ import { getBenefitIcon } from '../../shared/utils/benefit-icons';
     <!-- STATS -->
     <section class="bg-black text-white py-10">
       <div class="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-4 text-center">
-        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().vacancies }}+</div><div class="text-xs text-gray-400 mt-1">Vakansiyalar</div></div>
-        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().employers }}+</div><div class="text-xs text-gray-400 mt-1">Kompaniyalar</div></div>
-        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().hired }}+</div><div class="text-xs text-gray-400 mt-1">Ishga olingan</div></div>
+        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().vacancies }}+</div><div class="text-xs text-gray-400 mt-1">{{ i18n.t('stats.vacancies') }}</div></div>
+        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().employers }}+</div><div class="text-xs text-gray-400 mt-1">{{ i18n.t('stats.employers') }}</div></div>
+        <div><div class="text-2xl md:text-3xl font-bold">{{ stats().hired }}+</div><div class="text-xs text-gray-400 mt-1">{{ i18n.t('stats.hired') }}</div></div>
       </div>
     </section>
 
@@ -129,12 +130,12 @@ import { getBenefitIcon } from '../../shared/utils/benefit-icons';
     <section class="py-10">
       <div class="max-w-xl mx-auto px-4 text-center">
         <div class="text-4xl mb-3">📱</div>
-        <h2 class="text-lg font-bold text-gray-900 mb-2">Telegramda ish qidiring</h2>
-        <p class="text-sm text-gray-400 mb-5">Bot har kuni yangi vakansiyalarni yuboradi</p>
+        <h2 class="text-lg font-bold text-gray-900 mb-2">{{ i18n.t('telegram.title') }}</h2>
+        <p class="text-sm text-gray-400 mb-5">{{ i18n.t('telegram.desc') }}</p>
         <a href="https://t.me/VerifixJobBot" target="_blank"
            class="inline-flex items-center gap-2 h-12 px-6 bg-[#2AABEE] text-white rounded-xl text-sm font-semibold hover:bg-[#229ED9] transition">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-2.01 9.47c-.15.68-.54.84-1.1.53l-3.03-2.24-1.46 1.41c-.16.16-.3.3-.61.3l.22-3.06 5.56-5.02c.24-.22-.05-.34-.38-.13L8.6 14.27l-2.98-.93c-.65-.2-.66-.65.14-.96l11.65-4.49c.54-.2 1.01.13.84.96l-.3 1.28z"/></svg>
-          Telegram Bot
+          {{ i18n.t('telegram.cta') }}
         </a>
       </div>
     </section>
@@ -167,7 +168,7 @@ export class PublicHomeComponent implements OnInit {
     {key:'PLUMBER',label:'Santexnik',icon:'🔧'},
   ];
 
-  constructor(private api: PublicApiService) {}
+  constructor(private api: PublicApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.api.getCategories().subscribe({
