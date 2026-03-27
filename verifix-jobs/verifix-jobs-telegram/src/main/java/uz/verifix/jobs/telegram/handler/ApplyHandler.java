@@ -2,9 +2,11 @@ package uz.verifix.jobs.telegram.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -30,6 +32,7 @@ public class ApplyHandler {
     private final CandidateRepository candidateRepository;
     private final VacancyRepository vacancyRepository;
 
+    @Transactional
     public EditMessageText handleApply(CallbackQuery callbackQuery, UUID vacancyId) {
         Long chatId = callbackQuery.getMessage().getChatId();
         Integer messageId = callbackQuery.getMessage().getMessageId();
@@ -46,12 +49,16 @@ public class ApplyHandler {
             return editMessage(chatId, messageId, "❌ Vakansiya topilmadi.");
         }
 
+        Vacancy vacancy = vacancyOpt.get();
+        // Initialize lazy employer within transaction
+        Hibernate.initialize(vacancy.getEmployer());
+
         if (applicationRepository.existsByVacancyIdAndCandidateId(vacancyId, candidate.getId())) {
             return editMessage(chatId, messageId, "⚠️ Siz bu vakansiyaga allaqachon ariza bergansiz.");
         }
 
         Application application = Application.builder()
-                .vacancy(vacancyOpt.get())
+                .vacancy(vacancy)
                 .candidate(candidate)
                 .status(ApplicationStatus.NEW)
                 .source(ApplicationSource.TELEGRAM)
@@ -59,15 +66,17 @@ public class ApplyHandler {
                 .build();
         applicationRepository.save(application);
 
+        String employerName = vacancy.getEmployer() != null ? vacancy.getEmployer().getName() : "";
         log.info("Candidate {} applied to vacancy {} via Telegram", candidate.getId(), vacancyId);
 
         return editMessage(chatId, messageId,
                 "✅ <b>Ariza yuborildi!</b>\n\n" +
-                "Vakansiya: " + vacancyOpt.get().getTitle() + "\n" +
-                "Kompaniya: " + vacancyOpt.get().getEmployer().getName() + "\n\n" +
+                "📋 " + vacancy.getTitle() + "\n" +
+                "🏢 " + employerName + "\n\n" +
                 "Ish beruvchi sizning arizangizni ko'rib chiqadi.");
     }
 
+    @Transactional(readOnly = true)
     public SendMessage handleMyApplications(Long chatId, Long telegramId) {
         Optional<Candidate> candidateOpt = candidateRepository.findByTelegramId(telegramId);
         if (candidateOpt.isEmpty()) {
@@ -86,6 +95,12 @@ public class ApplyHandler {
 
         int i = 1;
         for (Application app : applications.getContent()) {
+            // Initialize lazy relations within transaction
+            Hibernate.initialize(app.getVacancy());
+            if (app.getVacancy() != null && app.getVacancy().getEmployer() != null) {
+                Hibernate.initialize(app.getVacancy().getEmployer());
+            }
+
             String statusEmoji = switch (app.getStatus()) {
                 case NEW -> "🆕";
                 case VIEWED -> "👁";
@@ -97,9 +112,14 @@ public class ApplyHandler {
                 case REJECTED -> "❌";
                 case WITHDRAWN -> "🔙";
             };
+
+            String title = app.getVacancy() != null ? app.getVacancy().getTitle() : "—";
+            String employer = (app.getVacancy() != null && app.getVacancy().getEmployer() != null)
+                    ? app.getVacancy().getEmployer().getName() : "—";
+
             sb.append(i).append(". ").append(statusEmoji).append(" <b>")
-                    .append(app.getVacancy().getTitle()).append("</b>\n")
-                    .append("   🏢 ").append(app.getVacancy().getEmployer().getName())
+                    .append(title).append("</b>\n")
+                    .append("   🏢 ").append(employer)
                     .append(" — ").append(app.getStatus().name()).append("\n\n");
             i++;
         }
