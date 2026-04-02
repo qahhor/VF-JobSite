@@ -1,0 +1,17 @@
+=7777 : Имя "=7777" не распознано как имя командлета
+, функции, файла сценария или выполняемой программы.
+ Проверьте правильность написания имени, а также нал
+ичие и правильность пути, после чего повторите попыт
+ку.
+строка:1 знак:1
++ ='7777'; ..\mvnw.cmd spring-boot:run
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=777 
+   7:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundExcept 
+   ion
+ 
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/D:/DATA/VFX/VF-JobSite/verifix-jobs/.mvn/wrapper/apache-maven/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release

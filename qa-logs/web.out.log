@@ -1,0 +1,42 @@
+
+> verifix-jobs-web@0.2.0 start
+> ng serve
+
+[33m>[39m Building...
+[32m√[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                          [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-7YMIBWLW.js[39m  [2m | [22m[2m-[22m                              [2m | [22m[36m153.33 kB[39m[2m | [22m               [36m45.09 kB[39m
+[32mchunk-KTHTTVKX.js[39m  [2m | [22m[2m-[22m                              [2m | [22m [36m71.83 kB[39m[2m | [22m               [36m17.89 kB[39m
+[32mchunk-FZE47ISK.js[39m  [2m | [22m[2m-[22m                              [2m | [22m [36m64.01 kB[39m[2m | [22m               [36m17.37 kB[39m
+[32mchunk-CLMIKJDD.js[39m  [2m | [22m[2m-[22m                              [2m | [22m [36m56.62 kB[39m[2m | [22m                [36m8.49 kB[39m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m                         [2m | [22m [36m55.91 kB[39m[2m | [22m                [36m9.25 kB[39m
+[32mpolyfills.js[39m       [2m | [22m[2mpolyfills[22m                      [2m | [22m [36m34.58 kB[39m[2m | [22m               [36m11.32 kB[39m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                           [2m | [22m [36m20.41 kB[39m[2m | [22m                [36m5.75 kB[39m
+[32mchunk-D6EVTN77.js[39m  [2m | [22m[2m-[22m                              [2m | [22m [36m14.51 kB[39m[2m | [22m                [36m4.46 kB[39m
+[32mchunk-6E5UUQ55.js[39m  [2m | [22m[2m-[22m                              [2m | [22m  [36m1.78 kB[39m[2m | [22m              [36m696 bytes[39m
+[32mchunk-RCKOZPB6.js[39m  [2m | [22m[2m-[22m                              [2m | [22m [36m89 bytes[39m[2m | [22m               [36m89 bytes[39m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m                  [2m | [22m[1m473.07 kB[22m[2m | [22m              [1m120.40 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                          [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-5VYNAOJR.js[39m  [2m | [22m[2mvacancy-map-component[22m          [2m | [22m[36m156.77 kB[39m[2m | [22m               [36m40.26 kB[39m
+[32mchunk-LO5L2ADP.js[39m  [2m | [22m[2mbrowser[22m                        [2m | [22m [36m67.59 kB[39m[2m | [22m               [36m17.73 kB[39m
+[32mchunk-7TZ23T2Y.js[39m  [2m | [22m[2m-[22m                              [2m | [22m [36m43.49 kB[39m[2m | [22m                [36m8.64 kB[39m
+[32mchunk-TLRT4657.js[39m  [2m | [22m[2mpublic-vacancy-list-component[22m  [2m | [22m [36m29.06 kB[39m[2m | [22m                [36m7.25 kB[39m
+[32mchunk-DOZLIOQB.js[39m  [2m | [22m[2mpublic-vacancy-detail-component[22m[2m | [22m [36m27.50 kB[39m[2m | [22m                [36m7.30 kB[39m
+[32mchunk-J5QQLJPX.js[39m  [2m | [22m[2mvacancy-form-component[22m         [2m | [22m [36m15.96 kB[39m[2m | [22m                [36m4.41 kB[39m
+[32mchunk-M556AJEM.js[39m  [2m | [22m[2mpublic-company-detail-component[22m[2m | [22m [36m15.53 kB[39m[2m | [22m                [36m4.63 kB[39m
+[32mchunk-N2SGNV53.js[39m  [2m | [22m[2mpublic-home-component[22m          [2m | [22m [36m13.56 kB[39m[2m | [22m                [36m4.58 kB[39m
+[32mchunk-L6YSMNWF.js[39m  [2m | [22m[2msaved-searches-component[22m       [2m | [22m [36m13.42 kB[39m[2m | [22m                [36m3.89 kB[39m
+[32mchunk-MTBGVQQL.js[39m  [2m | [22m[2mdashboard-component[22m            [2m | [22m [36m13.40 kB[39m[2m | [22m                [36m3.91 kB[39m
+[32mchunk-D5SLOVWJ.js[39m  [2m | [22m[2mtalent-hub-component[22m           [2m | [22m [36m12.45 kB[39m[2m | [22m                [36m3.46 kB[39m
+[32mchunk-XAQ3DUSR.js[39m  [2m | [22m[2monboarding-component[22m           [2m | [22m [36m11.35 kB[39m[2m | [22m                [36m3.50 kB[39m
+[32mchunk-FE2FTYYI.js[39m  [2m | [22m[2mpipeline-component[22m             [2m | [22m [36m10.30 kB[39m[2m | [22m                [36m3.05 kB[39m
+[32mchunk-YZBDXBUH.js[39m  [2m | [22m[2mbilling-component[22m              [2m | [22m [36m10.03 kB[39m[2m | [22m                [36m3.11 kB[39m
+[32mchunk-BYS32GJT.js[39m  [2m | [22m[2m-[22m                              [2m | [22m  [36m9.94 kB[39m[2m | [22m                [36m2.94 kB[39m
+[2m...and 30 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+Application bundle generation complete. [3.191 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.

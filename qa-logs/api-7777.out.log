@@ -1,0 +1,548 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< uz.verifix:verifix-jobs-api >---------------------
+[INFO] Building Verifix Jobs API 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.5.12:run (default-cli) > test-compile @ verifix-jobs-api >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ verifix-jobs-api ---
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ verifix-jobs-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ verifix-jobs-api ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ verifix-jobs-api ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:3.5.12:run (default-cli) < test-compile @ verifix-jobs-api <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.5.12:run (default-cli) @ verifix-jobs-api ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.5.12)
+
+2026-04-02T23:51:48.564+05:00  INFO 15600 --- [verifix-jobs] [           main] u.v.jobs.api.VerifixJobsApplication      : Starting VerifixJobsApplication using Java 25.0.2 with PID 15600 (D:\DATA\VFX\VF-JobSite\verifix-jobs\verifix-jobs-api\target\classes started by abdukahhor in D:\DATA\VFX\VF-JobSite\verifix-jobs\verifix-jobs-api)
+2026-04-02T23:51:48.564+05:00 DEBUG 15600 --- [verifix-jobs] [           main] u.v.jobs.api.VerifixJobsApplication      : Running with Spring Boot v3.5.12, Spring v6.2.17
+2026-04-02T23:51:48.566+05:00  INFO 15600 --- [verifix-jobs] [           main] u.v.jobs.api.VerifixJobsApplication      : The following 1 profile is active: "dev"
+2026-04-02T23:51:49.098+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-02T23:51:49.105+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-02T23:51:49.222+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 112 ms. Found 51 JPA repository interfaces.
+2026-04-02T23:51:49.547+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-02T23:51:49.548+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Reactive Elasticsearch repositories in DEFAULT mode.
+2026-04-02T23:51:49.565+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 9 ms. Found 0 Reactive Elasticsearch repository interfaces.
+2026-04-02T23:51:49.573+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-04-02T23:51:49.574+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-04-02T23:51:49.582+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 3 ms. Found 0 Redis repository interfaces.
+2026-04-02T23:51:50.169+05:00  INFO 15600 --- [verifix-jobs] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-04-02T23:51:50.179+05:00  INFO 15600 --- [verifix-jobs] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-02T23:51:50.180+05:00  INFO 15600 --- [verifix-jobs] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-04-02T23:51:50.220+05:00  INFO 15600 --- [verifix-jobs] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-02T23:51:50.220+05:00  INFO 15600 --- [verifix-jobs] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1629 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::allocateMemory has been called by io.netty.util.internal.PlatformDependent0$2 (file:/C:/Users/abdukahhor/.m2/repository/io/netty/netty-common/4.1.131.Final/netty-common-4.1.131.Final.jar)
+WARNING: Please consider reporting this to the maintainers of class io.netty.util.internal.PlatformDependent0$2
+WARNING: sun.misc.Unsafe::allocateMemory will be removed in a future release
+2026-04-02T23:51:50.654+05:00 DEBUG 15600 --- [verifix-jobs] [           main] u.v.j.a.s.JwtAuthenticationFilter        : Filter 'jwtAuthenticationFilter' configured for use
+2026-04-02T23:51:50.655+05:00 DEBUG 15600 --- [verifix-jobs] [           main] u.v.jobs.api.security.RateLimitFilter    : Filter 'rateLimitFilter' configured for use
+2026-04-02T23:51:50.655+05:00 DEBUG 15600 --- [verifix-jobs] [           main] u.v.j.api.security.TenantContextFilter   : Filter 'tenantContextFilter' configured for use
+2026-04-02T23:51:50.742+05:00  INFO 15600 --- [verifix-jobs] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-02T23:51:50.823+05:00  INFO 15600 --- [verifix-jobs] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5c94d4b8
+2026-04-02T23:51:50.824+05:00  INFO 15600 --- [verifix-jobs] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-02T23:51:50.891+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.database                       : Set default schema name to public
+2026-04-02T23:51:51.101+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Creating database history table with name: public.databasechangelog
+2026-04-02T23:51:51.121+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Reading from public.databasechangelog
+2026-04-02T23:51:51.245+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.snapshot                       : Creating snapshot
+2026-04-02T23:51:51.361+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.lockservice                    : Successfully acquired change log lock
+2026-04-02T23:51:51.362+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.command                        : Using deploymentId: 5155910730
+2026-04-02T23:51:51.363+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Reading from public.databasechangelog
+2026-04-02T23:51:51.412+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-001-init.xml::001-enable-extensions::verifix
+2026-04-02T23:51:51.421+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.422+05:00  WARN 15600 --- [verifix-jobs] [           main] liquibase.executor                       : extension "postgis" already exists, skipping
+2026-04-02T23:51:51.423+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.424+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-001-init.xml::001-enable-extensions::verifix ran successfully in 11ms
+2026-04-02T23:51:51.429+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-002-core-tables.xml::002-01-employer::verifix
+2026-04-02T23:51:51.437+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table employer created
+2026-04-02T23:51:51.438+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-002-core-tables.xml::002-01-employer::verifix ran successfully in 9ms
+2026-04-02T23:51:51.441+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-002-core-tables.xml::002-02-manager::verifix
+2026-04-02T23:51:51.445+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table manager created
+2026-04-02T23:51:51.446+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-002-core-tables.xml::002-02-manager::verifix ran successfully in 5ms
+2026-04-02T23:51:51.449+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-002-core-tables.xml::002-03-candidate::verifix
+2026-04-02T23:51:51.452+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table candidate created
+2026-04-02T23:51:51.455+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-002-core-tables.xml::002-03-candidate::verifix ran successfully in 6ms
+2026-04-02T23:51:51.458+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-002-core-tables.xml::002-04-vacancy::verifix
+2026-04-02T23:51:51.461+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table vacancy created
+2026-04-02T23:51:51.463+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-002-core-tables.xml::002-04-vacancy::verifix ran successfully in 5ms
+2026-04-02T23:51:51.466+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-002-core-tables.xml::002-05-application::verifix
+2026-04-02T23:51:51.469+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table application created
+2026-04-02T23:51:51.470+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to application(vacancy_id, candidate_id)
+2026-04-02T23:51:51.471+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-002-core-tables.xml::002-05-application::verifix ran successfully in 5ms
+2026-04-02T23:51:51.475+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-003-support-tables.xml::003-01-referral::verifix
+2026-04-02T23:51:51.477+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table referral created
+2026-04-02T23:51:51.479+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-003-support-tables.xml::003-01-referral::verifix ran successfully in 4ms
+2026-04-02T23:51:51.482+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-003-support-tables.xml::003-02-notification::verifix
+2026-04-02T23:51:51.485+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table notification created
+2026-04-02T23:51:51.486+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-003-support-tables.xml::003-02-notification::verifix ran successfully in 4ms
+2026-04-02T23:51:51.489+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-003-support-tables.xml::003-03-sms-log::verifix
+2026-04-02T23:51:51.491+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table sms_log created
+2026-04-02T23:51:51.493+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-003-support-tables.xml::003-03-sms-log::verifix ran successfully in 4ms
+2026-04-02T23:51:51.496+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-003-support-tables.xml::003-04-verification-log::verifix
+2026-04-02T23:51:51.498+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table verification_log created
+2026-04-02T23:51:51.499+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-003-support-tables.xml::003-04-verification-log::verifix ran successfully in 3ms
+2026-04-02T23:51:51.502+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-003-support-tables.xml::003-05-moderation-queue::verifix
+2026-04-02T23:51:51.504+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table moderation_queue created
+2026-04-02T23:51:51.505+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-003-support-tables.xml::003-05-moderation-queue::verifix ran successfully in 3ms
+2026-04-02T23:51:51.508+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-003-support-tables.xml::003-06-work-history::verifix
+2026-04-02T23:51:51.511+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table work_history created
+2026-04-02T23:51:51.512+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-003-support-tables.xml::003-06-work-history::verifix ran successfully in 4ms
+2026-04-02T23:51:51.515+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-003-support-tables.xml::003-07-consent-log::verifix
+2026-04-02T23:51:51.517+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table consent_log created
+2026-04-02T23:51:51.518+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-003-support-tables.xml::003-07-consent-log::verifix ran successfully in 3ms
+2026-04-02T23:51:51.521+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-004-admin-tables.xml::004-01-admin-user::verifix
+2026-04-02T23:51:51.524+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table admin_user created
+2026-04-02T23:51:51.525+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-004-admin-tables.xml::004-01-admin-user::verifix ran successfully in 4ms
+2026-04-02T23:51:51.528+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-004-admin-tables.xml::004-02-admin-audit-log::verifix
+2026-04-02T23:51:51.530+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table admin_audit_log created
+2026-04-02T23:51:51.531+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-004-admin-tables.xml::004-02-admin-audit-log::verifix ran successfully in 3ms
+2026-04-02T23:51:51.534+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-004-admin-tables.xml::004-03-moderation-queue-fk::verifix
+2026-04-02T23:51:51.537+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Foreign key constraint added to moderation_queue (moderator_id)
+2026-04-02T23:51:51.538+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-004-admin-tables.xml::004-03-moderation-queue-fk::verifix ran successfully in 4ms
+2026-04-02T23:51:51.541+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-005-billing-tables.xml::005-01-pricing-plan::verifix
+2026-04-02T23:51:51.543+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table pricing_plan created
+2026-04-02T23:51:51.545+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-005-billing-tables.xml::005-01-pricing-plan::verifix ran successfully in 4ms
+2026-04-02T23:51:51.550+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-005-billing-tables.xml::005-02-payment::verifix
+2026-04-02T23:51:51.553+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table payment created
+2026-04-02T23:51:51.554+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-005-billing-tables.xml::005-02-payment::verifix ran successfully in 4ms
+2026-04-02T23:51:51.557+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-006-geo-tables.xml::006-01-geo-city::verifix
+2026-04-02T23:51:51.560+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_city created
+2026-04-02T23:51:51.561+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_city(name_uz_lat, country)
+2026-04-02T23:51:51.562+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-006-geo-tables.xml::006-01-geo-city::verifix ran successfully in 4ms
+2026-04-02T23:51:51.569+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-006-geo-tables.xml::006-02-ml-candidate-score::verifix
+2026-04-02T23:51:51.572+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table ml_candidate_score created
+2026-04-02T23:51:51.573+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to ml_candidate_score(candidate_id, vacancy_id, model_version)
+2026-04-02T23:51:51.574+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-006-geo-tables.xml::006-02-ml-candidate-score::verifix ran successfully in 5ms
+2026-04-02T23:51:51.577+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-006-geo-tables.xml::006-03-gov-sync-log::verifix
+2026-04-02T23:51:51.579+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table gov_sync_log created
+2026-04-02T23:51:51.581+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-006-geo-tables.xml::006-03-gov-sync-log::verifix ran successfully in 4ms
+2026-04-02T23:51:51.583+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-01-spatial-indexes::verifix
+2026-04-02T23:51:51.585+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.586+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.587+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.588+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.589+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-01-spatial-indexes::verifix ran successfully in 6ms
+2026-04-02T23:51:51.592+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-02-employer-indexes::verifix
+2026-04-02T23:51:51.594+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_employer_city_status created
+2026-04-02T23:51:51.595+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-02-employer-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.598+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-03-vacancy-indexes::verifix
+2026-04-02T23:51:51.599+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_vacancy_city_category_status created
+2026-04-02T23:51:51.600+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_vacancy_employer_status created
+2026-04-02T23:51:51.601+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-03-vacancy-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.604+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-04-candidate-indexes::verifix
+2026-04-02T23:51:51.605+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_candidate_city_categories created
+2026-04-02T23:51:51.607+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-04-candidate-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.610+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-05-application-indexes::verifix
+2026-04-02T23:51:51.611+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_application_vacancy_status created
+2026-04-02T23:51:51.612+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_application_candidate_status created
+2026-04-02T23:51:51.613+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_application_created_at created
+2026-04-02T23:51:51.614+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-05-application-indexes::verifix ran successfully in 4ms
+2026-04-02T23:51:51.617+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-06-moderation-indexes::verifix
+2026-04-02T23:51:51.618+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_moderation_entity_status created
+2026-04-02T23:51:51.620+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_moderation_moderator_status created
+2026-04-02T23:51:51.621+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-06-moderation-indexes::verifix ran successfully in 4ms
+2026-04-02T23:51:51.623+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-07-notification-indexes::verifix
+2026-04-02T23:51:51.625+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_notification_user created
+2026-04-02T23:51:51.626+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_notification_channel_sent created
+2026-04-02T23:51:51.628+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-07-notification-indexes::verifix ran successfully in 4ms
+2026-04-02T23:51:51.630+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-08-sms-log-indexes::verifix
+2026-04-02T23:51:51.631+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_sms_log_phone_created created
+2026-04-02T23:51:51.632+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_sms_log_status_sent created
+2026-04-02T23:51:51.633+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-08-sms-log-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.636+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-09-admin-indexes::verifix
+2026-04-02T23:51:51.637+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_audit_admin_created created
+2026-04-02T23:51:51.638+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_audit_entity created
+2026-04-02T23:51:51.639+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-09-admin-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.642+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-10-gov-sync-indexes::verifix
+2026-04-02T23:51:51.643+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_gov_sync_source_status created
+2026-04-02T23:51:51.644+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-10-gov-sync-indexes::verifix ran successfully in 2ms
+2026-04-02T23:51:51.647+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-11-payment-indexes::verifix
+2026-04-02T23:51:51.648+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_payment_employer_created created
+2026-04-02T23:51:51.649+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_payment_status_paid created
+2026-04-02T23:51:51.650+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-11-payment-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.653+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-12-verification-indexes::verifix
+2026-04-02T23:51:51.654+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_verification_entity created
+2026-04-02T23:51:51.656+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-12-verification-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.658+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-13-consent-indexes::verifix
+2026-04-02T23:51:51.659+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_consent_user created
+2026-04-02T23:51:51.661+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-13-consent-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.663+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-14-geo-city-indexes::verifix
+2026-04-02T23:51:51.664+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_city_region_country created
+2026-04-02T23:51:51.666+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-14-geo-city-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.668+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-007-indexes.xml::007-15-ml-score-indexes::verifix
+2026-04-02T23:51:51.670+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_ml_score_candidate_vacancy created
+2026-04-02T23:51:51.671+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-007-indexes.xml::007-15-ml-score-indexes::verifix ran successfully in 3ms
+2026-04-02T23:51:51.674+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-008-seed-data.xml::008-01-pricing-plans::verifix
+2026-04-02T23:51:51.676+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : New row inserted into pricing_plan
+2026-04-02T23:51:51.677+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : New row inserted into pricing_plan
+2026-04-02T23:51:51.678+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : New row inserted into pricing_plan
+2026-04-02T23:51:51.678+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : New row inserted into pricing_plan
+2026-04-02T23:51:51.680+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-008-seed-data.xml::008-01-pricing-plans::verifix ran successfully in 6ms
+2026-04-02T23:51:51.684+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-008-seed-data.xml::008-02-cities::verifix
+2026-04-02T23:51:51.698+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.699+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-008-seed-data.xml::008-02-cities::verifix ran successfully in 15ms
+2026-04-02T23:51:51.703+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-01-alter-employer-branding-fields::verifix
+2026-04-02T23:51:51.705+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns branding_tier(VARCHAR(20)),branding_expires_at(TIMESTAMP WITH TIME ZONE) added to employer
+2026-04-02T23:51:51.706+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-01-alter-employer-branding-fields::verifix ran successfully in 3ms
+2026-04-02T23:51:51.708+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-02-alter-vacancy-branded::verifix
+2026-04-02T23:51:51.710+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns is_branded(BOOLEAN) added to vacancy
+2026-04-02T23:51:51.712+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-02-alter-vacancy-branded::verifix ran successfully in 4ms
+2026-04-02T23:51:51.714+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-03-create-employer-branding::verifix
+2026-04-02T23:51:51.718+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table employer_branding created
+2026-04-02T23:51:51.719+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-03-create-employer-branding::verifix ran successfully in 4ms
+2026-04-02T23:51:51.722+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-04-create-branding-cover-image::verifix
+2026-04-02T23:51:51.725+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_cover_image created
+2026-04-02T23:51:51.726+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-04-create-branding-cover-image::verifix ran successfully in 4ms
+2026-04-02T23:51:51.729+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-05-create-branding-gallery::verifix
+2026-04-02T23:51:51.731+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_gallery created
+2026-04-02T23:51:51.733+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-05-create-branding-gallery::verifix ran successfully in 4ms
+2026-04-02T23:51:51.735+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-06-create-branding-gallery-image::verifix
+2026-04-02T23:51:51.738+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_gallery_image created
+2026-04-02T23:51:51.739+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-06-create-branding-gallery-image::verifix ran successfully in 4ms
+2026-04-02T23:51:51.742+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-07-create-branding-video::verifix
+2026-04-02T23:51:51.744+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_video created
+2026-04-02T23:51:51.745+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-07-create-branding-video::verifix ran successfully in 3ms
+2026-04-02T23:51:51.748+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-08-create-branding-benefit::verifix
+2026-04-02T23:51:51.750+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_benefit created
+2026-04-02T23:51:51.751+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-08-create-branding-benefit::verifix ran successfully in 3ms
+2026-04-02T23:51:51.754+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-09-create-branding-testimonial::verifix
+2026-04-02T23:51:51.756+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_testimonial created
+2026-04-02T23:51:51.758+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-09-create-branding-testimonial::verifix ran successfully in 4ms
+2026-04-02T23:51:51.760+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-10-create-branding-story::verifix
+2026-04-02T23:51:51.763+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_story created
+2026-04-02T23:51:51.764+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-10-create-branding-story::verifix ran successfully in 4ms
+2026-04-02T23:51:51.767+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-11-create-branding-faq::verifix
+2026-04-02T23:51:51.769+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_faq created
+2026-04-02T23:51:51.770+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-11-create-branding-faq::verifix ran successfully in 3ms
+2026-04-02T23:51:51.773+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-12-create-branding-office-location::verifix
+2026-04-02T23:51:51.775+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_office_location created
+2026-04-02T23:51:51.776+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-12-create-branding-office-location::verifix ran successfully in 3ms
+2026-04-02T23:51:51.778+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-13-create-branding-social-link::verifix
+2026-04-02T23:51:51.781+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_social_link created
+2026-04-02T23:51:51.782+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-13-create-branding-social-link::verifix ran successfully in 3ms
+2026-04-02T23:51:51.785+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-14-create-branding-stats-counter::verifix
+2026-04-02T23:51:51.787+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_stats_counter created
+2026-04-02T23:51:51.789+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-14-create-branding-stats-counter::verifix ran successfully in 4ms
+2026-04-02T23:51:51.792+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-15-create-branding-analytics::verifix
+2026-04-02T23:51:51.794+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_analytics created
+2026-04-02T23:51:51.795+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to branding_analytics(branding_id, date)
+2026-04-02T23:51:51.797+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-15-create-branding-analytics::verifix ran successfully in 5ms
+2026-04-02T23:51:51.799+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-16-create-branding-page-event::verifix
+2026-04-02T23:51:51.802+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table branding_page_event created
+2026-04-02T23:51:51.803+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-16-create-branding-page-event::verifix ran successfully in 3ms
+2026-04-02T23:51:51.806+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-009-branding-tables.xml::009-17-branding-indexes::verifix
+2026-04-02T23:51:51.807+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_branding_employer created
+2026-04-02T23:51:51.808+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.809+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_branding_event_date created
+2026-04-02T23:51:51.810+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_branding_analytics_date created
+2026-04-02T23:51:51.811+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.812+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-009-branding-tables.xml::009-17-branding-indexes::verifix ran successfully in 6ms
+2026-04-02T23:51:51.816+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-010-fraud-alert.xml::010-01-create-fraud-alert::verifix
+2026-04-02T23:51:51.818+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table fraud_alert created
+2026-04-02T23:51:51.819+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_fraud_alert_entity created
+2026-04-02T23:51:51.820+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_fraud_alert_reviewed created
+2026-04-02T23:51:51.822+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-010-fraud-alert.xml::010-01-create-fraud-alert::verifix ran successfully in 6ms
+2026-04-02T23:51:51.825+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-011-ab-testing.xml::011-01::claude
+2026-04-02T23:51:51.827+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table ab_experiment created
+2026-04-02T23:51:51.829+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-011-ab-testing.xml::011-01::claude ran successfully in 4ms
+2026-04-02T23:51:51.831+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-011-ab-testing.xml::011-02::claude
+2026-04-02T23:51:51.833+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table ab_conversion created
+2026-04-02T23:51:51.834+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_ab_conversion_experiment_user created
+2026-04-02T23:51:51.835+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-011-ab-testing.xml::011-02::claude ran successfully in 3ms
+2026-04-02T23:51:51.838+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-012-shedlock.xml::012-01-shedlock-table::verifix
+2026-04-02T23:51:51.840+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table shedlock created
+2026-04-02T23:51:51.841+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-012-shedlock.xml::012-01-shedlock-table::verifix ran successfully in 3ms
+2026-04-02T23:51:51.843+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-012-shedlock.xml::012-02-soft-delete-indexes::verifix
+2026-04-02T23:51:51.845+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.846+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.846+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.847+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:51.849+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-012-shedlock.xml::012-02-soft-delete-indexes::verifix ran successfully in 5ms
+2026-04-02T23:51:51.851+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-013-security-hardening.xml::013-01-admin-user-totp::codex
+2026-04-02T23:51:51.852+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns totp_secret(varchar(128)) added to admin_user
+2026-04-02T23:51:51.854+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-013-security-hardening.xml::013-01-admin-user-totp::codex ran successfully in 3ms
+2026-04-02T23:51:51.856+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-013-security-hardening.xml::013-02-candidate-push-subscription::codex
+2026-04-02T23:51:51.858+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns push_subscription_json(jsonb) added to candidate
+2026-04-02T23:51:51.859+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-013-security-hardening.xml::013-02-candidate-push-subscription::codex ran successfully in 2ms
+2026-04-02T23:51:51.862+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-014-hrm-integration.xml::014-01::verifix
+2026-04-02T23:51:51.864+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table hrm_sync_log created
+2026-04-02T23:51:51.865+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_hrm_sync_log_status created
+2026-04-02T23:51:51.866+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_hrm_sync_log_entity created
+2026-04-02T23:51:51.868+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-014-hrm-integration.xml::014-01::verifix ran successfully in 5ms
+2026-04-02T23:51:51.871+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-014-hrm-integration.xml::014-02::verifix
+2026-04-02T23:51:51.874+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table hrm_vacancy_mapping created
+2026-04-02T23:51:51.875+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to hrm_vacancy_mapping(hrm_company_id, hrm_vacancy_id)
+2026-04-02T23:51:51.876+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-014-hrm-integration.xml::014-02::verifix ran successfully in 5ms
+2026-04-02T23:51:51.879+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-014-hrm-integration.xml::014-03::verifix
+2026-04-02T23:51:51.881+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table hrm_candidate_mapping created
+2026-04-02T23:51:51.882+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to hrm_candidate_mapping(jobs_candidate_id, hrm_company_id)
+2026-04-02T23:51:51.883+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-014-hrm-integration.xml::014-03::verifix ran successfully in 4ms
+2026-04-02T23:51:51.886+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-014-hrm-integration.xml::014-04::verifix
+2026-04-02T23:51:51.889+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table hrm_sso_mapping created
+2026-04-02T23:51:51.891+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to hrm_sso_mapping(hrm_company_id, hrm_user_id)
+2026-04-02T23:51:51.892+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-014-hrm-integration.xml::014-04::verifix ran successfully in 5ms
+2026-04-02T23:51:51.894+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-014-hrm-integration.xml::014-05::verifix
+2026-04-02T23:51:51.896+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns hrm_company_id(VARCHAR(100)) added to employer
+2026-04-02T23:51:51.897+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns hrm_sync_enabled(BOOLEAN) added to employer
+2026-04-02T23:51:51.898+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-014-hrm-integration.xml::014-05::verifix ran successfully in 3ms
+2026-04-02T23:51:51.901+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-01::verifix
+2026-04-02T23:51:51.903+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns slug(VARCHAR(300)),view_count(INTEGER),apply_count(INTEGER) added to vacancy
+2026-04-02T23:51:51.904+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_vacancy_slug created
+2026-04-02T23:51:51.905+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-01::verifix ran successfully in 4ms
+2026-04-02T23:51:51.908+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-02::verifix
+2026-04-02T23:51:51.911+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns slug(VARCHAR(300)),description(TEXT),employee_count_range(VARCHAR(30)),founded_year(INTEGER),website_url(VARCHAR(500)) added to employer
+2026-04-02T23:51:51.913+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_employer_slug created
+2026-04-02T23:51:51.914+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-02::verifix ran successfully in 6ms
+2026-04-02T23:51:51.916+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-03::verifix
+2026-04-02T23:51:51.919+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table employer_task created
+2026-04-02T23:51:51.920+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_employer_task_employer_status created
+2026-04-02T23:51:51.921+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-03::verifix ran successfully in 4ms
+2026-04-02T23:51:51.924+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-04::verifix
+2026-04-02T23:51:51.926+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table activity_event created
+2026-04-02T23:51:51.927+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_activity_event_employer_created created
+2026-04-02T23:51:51.929+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-04::verifix ran successfully in 5ms
+2026-04-02T23:51:51.931+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-05::verifix
+2026-04-02T23:51:51.934+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table ai_agent_run created
+2026-04-02T23:51:51.935+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-05::verifix ran successfully in 3ms
+2026-04-02T23:51:51.937+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-06::verifix
+2026-04-02T23:51:51.939+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table ai_screening_result created
+2026-04-02T23:51:51.940+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to ai_screening_result(application_id)
+2026-04-02T23:51:51.941+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-06::verifix ran successfully in 4ms
+2026-04-02T23:51:51.944+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-07::verifix
+2026-04-02T23:51:51.946+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table vacancy_template created
+2026-04-02T23:51:51.947+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-07::verifix ran successfully in 3ms
+2026-04-02T23:51:51.950+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-08::verifix
+2026-04-02T23:51:51.952+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table saved_search created
+2026-04-02T23:51:51.953+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-08::verifix ran successfully in 3ms
+2026-04-02T23:51:51.955+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-015-public-marketplace.xml::015-09::verifix
+2026-04-02T23:51:51.957+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table favorite_vacancy created
+2026-04-02T23:51:51.957+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to favorite_vacancy(candidate_id, vacancy_id)
+2026-04-02T23:51:51.959+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-015-public-marketplace.xml::015-09::verifix ran successfully in 4ms
+2026-04-02T23:51:51.961+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-01::verifix
+2026-04-02T23:51:51.963+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table vacancy_health_snapshot created
+2026-04-02T23:51:51.964+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_vhs_vacancy_date created
+2026-04-02T23:51:51.965+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-01::verifix ran successfully in 4ms
+2026-04-02T23:51:51.968+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-02::verifix
+2026-04-02T23:51:51.970+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table civility_score_snapshot created
+2026-04-02T23:51:51.970+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_css_employer_date created
+2026-04-02T23:51:51.972+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-02::verifix ran successfully in 4ms
+2026-04-02T23:51:51.974+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-03::verifix
+2026-04-02T23:51:51.976+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table hiring_project created
+2026-04-02T23:51:51.978+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-03::verifix ran successfully in 3ms
+2026-04-02T23:51:51.980+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-04::verifix
+2026-04-02T23:51:51.982+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table hiring_project_vacancy created
+2026-04-02T23:51:51.983+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to hiring_project_vacancy(project_id, vacancy_id)
+2026-04-02T23:51:51.984+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-04::verifix ran successfully in 4ms
+2026-04-02T23:51:51.987+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-05::verifix
+2026-04-02T23:51:51.989+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table talent_list created
+2026-04-02T23:51:51.991+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-05::verifix ran successfully in 4ms
+2026-04-02T23:51:51.994+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-06::verifix
+2026-04-02T23:51:51.996+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table talent_list_candidate created
+2026-04-02T23:51:51.997+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to talent_list_candidate(talent_list_id, candidate_id)
+2026-04-02T23:51:51.998+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-06::verifix ran successfully in 4ms
+2026-04-02T23:51:52.001+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-07::verifix
+2026-04-02T23:51:52.003+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table organization_memory created
+2026-04-02T23:51:52.004+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-07::verifix ran successfully in 3ms
+2026-04-02T23:51:52.008+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-08::verifix
+2026-04-02T23:51:52.011+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table org_memory_fact created
+2026-04-02T23:51:52.012+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_omf_employer_type created
+2026-04-02T23:51:52.013+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-08::verifix ran successfully in 4ms
+2026-04-02T23:51:52.015+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-09::verifix
+2026-04-02T23:51:52.017+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table employer_entitlement created
+2026-04-02T23:51:52.018+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_ee_employer_type created
+2026-04-02T23:51:52.019+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-09::verifix ran successfully in 4ms
+2026-04-02T23:51:52.021+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-016-employer-operations.xml::016-10::verifix
+2026-04-02T23:51:52.024+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns branch_name(VARCHAR(200)),branch_address(VARCHAR(500)),district(VARCHAR(100)) added to vacancy
+2026-04-02T23:51:52.025+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-016-employer-operations.xml::016-10::verifix ran successfully in 3ms
+2026-04-02T23:51:52.027+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-seed-vacancies.xml::018-01::verifix
+2026-04-02T23:51:52.029+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:52.031+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-seed-vacancies.xml::018-01::verifix ran successfully in 4ms
+2026-04-02T23:51:52.033+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-seed-vacancies.xml::018-02::verifix
+2026-04-02T23:51:52.041+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:52.043+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-seed-vacancies.xml::018-02::verifix ran successfully in 9ms
+2026-04-02T23:51:52.045+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-017-automation-semantic.xml::017-01::verifix
+2026-04-02T23:51:52.047+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table automation_rule created
+2026-04-02T23:51:52.049+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-017-automation-semantic.xml::017-01::verifix ran successfully in 3ms
+2026-04-02T23:51:52.052+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-017-automation-semantic.xml::017-02::verifix
+2026-04-02T23:51:52.054+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table automation_execution_log created
+2026-04-02T23:51:52.055+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-017-automation-semantic.xml::017-02::verifix ran successfully in 3ms
+2026-04-02T23:51:52.058+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-01-geo-country-table::codex
+2026-04-02T23:51:52.060+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_country created
+2026-04-02T23:51:52.062+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_country(iso2)
+2026-04-02T23:51:52.063+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_country(iso3)
+2026-04-02T23:51:52.063+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_country(m49)
+2026-04-02T23:51:52.065+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_country_name_en created
+2026-04-02T23:51:52.066+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-01-geo-country-table::codex ran successfully in 8ms
+2026-04-02T23:51:52.069+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-02-geo-region-table::codex
+2026-04-02T23:51:52.071+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_region created
+2026-04-02T23:51:52.072+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_region(full_code)
+2026-04-02T23:51:52.073+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_region(country_id, code)
+2026-04-02T23:51:52.074+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_region_country_id created
+2026-04-02T23:51:52.075+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_region_name_en created
+2026-04-02T23:51:52.076+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-02-geo-region-table::codex ran successfully in 7ms
+2026-04-02T23:51:52.079+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-03-geo-district-table::codex
+2026-04-02T23:51:52.082+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_district created
+2026-04-02T23:51:52.083+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_district(full_code)
+2026-04-02T23:51:52.084+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Unique constraint added to geo_district(region_id, code)
+2026-04-02T23:51:52.085+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_district_country_id created
+2026-04-02T23:51:52.086+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_district_region_id created
+2026-04-02T23:51:52.087+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_district_name_en created
+2026-04-02T23:51:52.088+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-03-geo-district-table::codex ran successfully in 9ms
+2026-04-02T23:51:52.092+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-04-geo-city-normalization-columns::codex
+2026-04-02T23:51:52.096+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Columns district(varchar(150)),geoname_id(bigint),country_id(uuid),region_id(uuid),district_id(uuid) added to geo_city
+2026-04-02T23:51:52.097+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Foreign key constraint added to geo_city (country_id)
+2026-04-02T23:51:52.100+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Foreign key constraint added to geo_city (region_id)
+2026-04-02T23:51:52.101+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Foreign key constraint added to geo_city (district_id)
+2026-04-02T23:51:52.102+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_city_country_id created
+2026-04-02T23:51:52.103+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_city_region_id created
+2026-04-02T23:51:52.104+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_city_district_id created
+2026-04-02T23:51:52.105+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_geo_city_geoname_id created
+2026-04-02T23:51:52.106+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-04-geo-city-normalization-columns::codex ran successfully in 14ms
+2026-04-02T23:51:52.109+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-05-load-geo-country::codex
+2026-04-02T23:51:52.118+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Data loaded from 'db/changelog/data/geo/geo_country.csv' into table 'geo_country'
+2026-04-02T23:51:52.119+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-05-load-geo-country::codex ran successfully in 10ms
+2026-04-02T23:51:52.122+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-06-load-geo-region::codex
+2026-04-02T23:51:52.125+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_region_import created
+2026-04-02T23:51:52.135+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Data loaded from 'db/changelog/data/geo/geo_region.csv' into table 'geo_region_import'
+2026-04-02T23:51:52.137+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:52.138+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_region_import dropped
+2026-04-02T23:51:52.141+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-06-load-geo-region::codex ran successfully in 17ms
+2026-04-02T23:51:52.145+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-07-load-geo-district::codex
+2026-04-02T23:51:52.147+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_district_import created
+2026-04-02T23:51:52.214+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Data loaded from 'db/changelog/data/geo/geo_district.csv' into table 'geo_district_import'
+2026-04-02T23:51:52.223+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:52.224+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_district_import dropped
+2026-04-02T23:51:52.226+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-07-load-geo-district::codex ran successfully in 81ms
+2026-04-02T23:51:52.228+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-08-backfill-city-country-and-region-links::codex
+2026-04-02T23:51:52.231+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:52.233+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:52.234+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-08-backfill-city-country-and-region-links::codex ran successfully in 6ms
+2026-04-02T23:51:52.237+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-018-geo-reference-dictionaries.xml::018-09-seed-turkmenistan-cities::codex
+2026-04-02T23:51:52.239+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_city_import created
+2026-04-02T23:51:52.242+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Data loaded from 'db/changelog/data/geo/geo_city_tm_major.csv' into table 'geo_city_import'
+2026-04-02T23:51:52.244+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Custom SQL executed
+2026-04-02T23:51:52.244+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table geo_city_import dropped
+2026-04-02T23:51:52.246+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-018-geo-reference-dictionaries.xml::018-09-seed-turkmenistan-cities::codex ran successfully in 8ms
+2026-04-02T23:51:52.249+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-020-company-reviews.xml::020-company-reviews::claude
+2026-04-02T23:51:52.251+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table company_review created
+2026-04-02T23:51:52.252+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Foreign key constraint added to company_review (employer_id)
+2026-04-02T23:51:52.253+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_review_employer created
+2026-04-02T23:51:52.254+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-020-company-reviews.xml::020-company-reviews::claude ran successfully in 5ms
+2026-04-02T23:51:52.257+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Running Changeset: db/changelog/changelog-021-chat.xml::021-chat-messages::claude
+2026-04-02T23:51:52.259+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Table chat_message created
+2026-04-02T23:51:52.260+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_chat_employer_candidate created
+2026-04-02T23:51:52.261+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : Index idx_chat_created created
+2026-04-02T23:51:52.262+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.changelog                      : ChangeSet db/changelog/changelog-021-chat.xml::021-chat-messages::claude ran successfully in 5ms
+2026-04-02T23:51:52.269+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.util                           : UPDATE SUMMARY
+2026-04-02T23:51:52.269+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.util                           : Run:                        101
+2026-04-02T23:51:52.269+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.util                           : Previously run:               0
+2026-04-02T23:51:52.269+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.util                           : Filtered out:                 0
+2026-04-02T23:51:52.269+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.util                           : -------------------------------
+2026-04-02T23:51:52.269+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.util                           : Total change sets:          101
+2026-04-02T23:51:52.270+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.util                           : Update summary generated
+2026-04-02T23:51:52.271+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.command                        : Update command completed successfully.
+2026-04-02T23:51:52.271+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.ui                             : Liquibase: Update has been successful. Rows affected: 2126
+2026-04-02T23:51:52.274+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.lockservice                    : Successfully released change log lock
+2026-04-02T23:51:52.275+05:00  INFO 15600 --- [verifix-jobs] [           main] liquibase.command                        : Command execution complete
+2026-04-02T23:51:53.275+05:00  INFO 15600 --- [verifix-jobs] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-02T23:51:53.300+05:00  INFO 15600 --- [verifix-jobs] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-04-02T23:51:53.304+05:00  INFO 15600 --- [verifix-jobs] [           main] o.h.spatial.integration.SpatialService   : HHH80000001: hibernate-spatial integration enabled : true
+2026-04-02T23:51:53.319+05:00  INFO 15600 --- [verifix-jobs] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-04-02T23:51:53.402+05:00  INFO 15600 --- [verifix-jobs] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-02T23:51:53.407+05:00  INFO 15600 --- [verifix-jobs] [           main] org.hibernate.spatial                    : HHH80000003: hibernate-spatial adding type contributions from : org.hibernate.spatial.dialect.postgis.PostgisDialectContributor
+2026-04-02T23:51:53.509+05:00  INFO 15600 --- [verifix-jobs] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-02T23:51:53.521+05:00  INFO 15600 --- [verifix-jobs] [           main] org.hibernate.spatial                    : HHH80000003: hibernate-spatial adding type contributions from : org.hibernate.spatial.dialect.postgis.PostgisDialectContributor
+2026-04-02T23:51:53.835+05:00  INFO 15600 --- [verifix-jobs] [           main] org.hibernate.spatial                    : HHH80000004: hibernate-spatial adding function contributions from : org.hibernate.spatial.dialect.postgis.PostgisDialectContributor
+2026-04-02T23:51:54.422+05:00  INFO 15600 --- [verifix-jobs] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-02T23:51:54.461+05:00  INFO 15600 --- [verifix-jobs] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-02T23:51:54.782+05:00  INFO 15600 --- [verifix-jobs] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-02T23:51:56.384+05:00  WARN 15600 --- [verifix-jobs] [           main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'commerceController': Lookup method resolution failed
+2026-04-02T23:51:56.385+05:00  INFO 15600 --- [verifix-jobs] [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-02T23:51:56.388+05:00  INFO 15600 --- [verifix-jobs] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-02T23:51:56.389+05:00  INFO 15600 --- [verifix-jobs] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-02T23:51:56.397+05:00  INFO 15600 --- [verifix-jobs] [           main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2026-04-02T23:51:56.406+05:00  INFO 15600 --- [verifix-jobs] [           main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-02T23:51:56.418+05:00 ERROR 15600 --- [verifix-jobs] [           main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'commerceController': Lookup method resolution failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:498) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:368) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1334) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1229) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1228) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1194) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130) ~[spring-beans-6.2.17.jar:6.2.17]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628) ~[spring-context-6.2.17.jar:6.2.17]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.12.jar:3.5.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.12.jar:3.5.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.12.jar:3.5.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.12.jar:3.5.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.12.jar:3.5.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.12.jar:3.5.12]
+	at uz.verifix.jobs.api.VerifixJobsApplication.main(VerifixJobsApplication.java:22) ~[classes/:na]
+Caused by: java.lang.IllegalStateException: Failed to introspect Class [uz.verifix.jobs.api.controller.CommerceController] from ClassLoader [jdk.internal.loader.ClassLoaders$AppClassLoader@105be200]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483) ~[spring-core-6.2.17.jar:6.2.17]
+	at org.springframework.util.ReflectionUtils.doWithLocalMethods(ReflectionUtils.java:320) ~[spring-core-6.2.17.jar:6.2.17]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:476) ~[spring-beans-6.2.17.jar:6.2.17]
+	... 21 common frames omitted
+Caused by: java.lang.NoClassDefFoundError: uz/verifix/jobs/service/marketplace/SavedSearchService$SavedSearchPayload
+	at java.base/java.lang.Class.getDeclaredMethods0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3010) ~[na:na]
+	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2329) ~[na:na]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465) ~[spring-core-6.2.17.jar:6.2.17]
+	... 23 common frames omitted
+Caused by: java.lang.ClassNotFoundException: uz.verifix.jobs.service.marketplace.SavedSearchService$SavedSearchPayload
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:580) ~[na:na]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490) ~[na:na]
+	... 27 common frames omitted
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.154 s
+[INFO] Finished at: 2026-04-02T23:51:57+05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.5.12:run (default-cli) on project verifix-jobs-api: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

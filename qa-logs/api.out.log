@@ -1,0 +1,44 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Verifix Jobs                                                       [pom]
+[INFO] Verifix Jobs Common                                                [jar]
+[INFO] Verifix Jobs Domain                                                [jar]
+[INFO] Verifix Jobs Integration                                           [jar]
+[INFO] Verifix Jobs Service                                               [jar]
+[INFO] Verifix Jobs API                                                   [jar]
+[INFO] 
+[INFO] ----------------------< uz.verifix:verifix-jobs >-----------------------
+[INFO] Building Verifix Jobs 1.0.0-SNAPSHOT                               [1/6]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.5.12:run (default-cli) > test-compile @ verifix-jobs >>>
+[INFO] 
+[INFO] <<< spring-boot:3.5.12:run (default-cli) < test-compile @ verifix-jobs <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.5.12:run (default-cli) @ verifix-jobs ---
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for Verifix Jobs 1.0.0-SNAPSHOT:
+[INFO] 
+[INFO] Verifix Jobs ....................................... FAILURE [  0.323 s]
+[INFO] Verifix Jobs Common ................................ SKIPPED
+[INFO] Verifix Jobs Domain ................................ SKIPPED
+[INFO] Verifix Jobs Integration ........................... SKIPPED
+[INFO] Verifix Jobs Service ............................... SKIPPED
+[INFO] Verifix Jobs API ................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.822 s
+[INFO] Finished at: 2026-04-02T23:50:37+05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.5.12:run (default-cli) on project verifix-jobs: Unable to find a suitable main class, please add a 'mainClass' property -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

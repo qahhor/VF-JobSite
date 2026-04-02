@@ -1,0 +1,11 @@
+[1m[33mPrebundling has been configured but will not be used because scripts optimization is enabled.[39m[22m
+[1m[33mComponent HMR has been enabled, see https://angular.dev/hmr for more info.[39m[22m
+[1m[33m[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mModule 'leaflet' used by 'src/app/features/public/vacancy-map.component.ts' is not ESM[0m
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: [4mhttps://angular.dev/tools/cli/build#configuring-commonjs-dependencies[0m
+
+[39m[22m
+[1m[31mAn unhandled exception occurred: Port 4200 is already in use
+See "C:\Users\ABDUKA~1\AppData\Local\Temp\ng-9yiHBq\angular-errors.log" for further details.[39m[22m
+^C^C

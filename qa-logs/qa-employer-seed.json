@@ -1,0 +1,28 @@
+{
+    "email":  "qa.seed+1775156407@verifix.uz",
+    "password":  "Test1234",
+    "accessToken":  "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiRU1QTE9ZRVJfQURNSU4iLCJlbWFpbCI6InFhLnNlZWQrMTc3NTE1NjQwN0B2ZXJpZml4LnV6IiwiZW1wbG95ZXJfaWQiOiI3ZGM4Yzc0ZS1lOTNiLTQxYjctOGJjMi04YThkOGNmMzcwOGQiLCJ0eXBlIjoiQUNDRVNTIiwic3ViIjoiODcwMDI1YzctMWNmMS00OGFiLThiNTItZDBlN2RkMzBiMjk0IiwiaWF0IjoxNzc1MTU2NDA3LCJleHAiOjE3NzUxNTczMDd9.qzZpSJJn7oogTRPTNskn1rbTwUiMiYGHyeRvmD2VtJQ",
+    "refreshToken":  "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiRU1QTE9ZRVJfQURNSU4iLCJlbXBsb3llcl9pZCI6IjdkYzhjNzRlLWU5M2ItNDFiNy04YmMyLThhOGQ4Y2YzNzA4ZCIsInR5cGUiOiJSRUZSRVNIIiwic3ViIjoiODcwMDI1YzctMWNmMS00OGFiLThiNTItZDBlN2RkMzBiMjk0IiwiaWF0IjoxNzc1MTU2NDA3LCJleHAiOjE3NzU3NjEyMDd9.RYKFK-1J0YGDuKmw4fOPasRyn8EXMg7Cu-1OPx7ZL50",
+    "employerId":  "7dc8c74e-e93b-41b7-8bc2-8a8d8cf3708d",
+    "managerId":  "870025c7-1cf1-48ab-8b52-d0e7dd30b294",
+    "vacancies":  [
+                      {
+                          "id":  "24e023ba-8a1e-4172-aed3-a0fd6952180b",
+                          "slug":  null,
+                          "title":  "Warehouse Loader",
+                          "status":  "ACTIVE"
+                      },
+                      {
+                          "id":  "740548f2-10ec-4c7e-9050-9c3a5f778734",
+                          "slug":  null,
+                          "title":  "Courier Driver",
+                          "status":  "ACTIVE"
+                      },
+                      {
+                          "id":  "8dbe9abc-3db5-45ec-ae34-90cedb8a07a6",
+                          "slug":  null,
+                          "title":  "Night Shift Sorter",
+                          "status":  "ACTIVE"
+                      }
+                  ]
+}
