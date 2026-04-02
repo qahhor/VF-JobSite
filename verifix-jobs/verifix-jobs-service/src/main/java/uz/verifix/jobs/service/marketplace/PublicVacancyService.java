@@ -40,7 +40,7 @@ public class PublicVacancyService {
     public Page<Vacancy> listActiveVacancies(String city, String category, BigDecimal salaryMin,
                                              BigDecimal salaryMax, String employmentType, String shiftSchedule,
                                              List<String> benefits, boolean verifiedOnly,
-                                             String queryText, String sort, Pageable pageable) {
+                                             String queryText, String sort, String country, Pageable pageable) {
         Specification<Vacancy> specification = publiclyVisible()
                 .and(matchesCity(city))
                 .and(matchesCategory(category))
@@ -50,7 +50,8 @@ public class PublicVacancyService {
                 .and(matchesShiftSchedule(shiftSchedule))
                 .and(matchesBenefits(benefits))
                 .and(matchesEmployerVerification(verifiedOnly))
-                .and(matchesQuery(queryText));
+                .and(matchesQuery(queryText))
+                .and(matchesCountry(country));
 
         Page<Vacancy> page = vacancyRepository.findAll(specification, applySort(pageable, sort, queryText));
         page.getContent().forEach(this::initializePublicVacancy);
@@ -71,8 +72,15 @@ public class PublicVacancyService {
                 false,
                 queryText,
                 "date_desc",
+                null,
                 pageable
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<Vacancy> findAllActiveForSitemap() {
+        Specification<Vacancy> spec = publiclyVisible();
+        return vacancyRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
     @Transactional
@@ -290,6 +298,13 @@ public class PublicVacancyService {
                 .map(String::toLowerCase)
                 .filter(value -> !value.isBlank())
                 .toList();
+    }
+
+    private Specification<Vacancy> matchesCountry(String country) {
+        if (country == null || country.isBlank()) {
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get("country"), country.trim().toUpperCase());
     }
 
     private <T extends Enum<T>> T parseEnum(String rawValue, Class<T> enumType) {

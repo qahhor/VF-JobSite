@@ -49,7 +49,8 @@ public class VacancyService {
                           String city, String region, Double lat, Double lon,
                           BigDecimal salaryFrom, BigDecimal salaryTo, String currency,
                           String employmentType, String shiftSchedule, List<String> benefits,
-                          Boolean isMassHiring, Integer positionsCount, LocalDate expiresAt) {
+                          Boolean isMassHiring, Integer positionsCount, LocalDate expiresAt,
+                          String country) {
 
         // Check subscription limits
         subscriptionEnforcementService.enforceVacancyLimit(employerId);
@@ -73,6 +74,7 @@ public class VacancyService {
                 .salaryFrom(salaryFrom)
                 .salaryTo(salaryTo)
                 .currency(currency != null ? currency : "UZS")
+                .country(country != null ? country.toUpperCase() : "UZ")
                 .employmentType(employmentType != null ? EmploymentType.valueOf(employmentType) : null)
                 .shiftSchedule(shiftSchedule != null ? ShiftSchedule.valueOf(shiftSchedule) : null)
                 .benefits(benefits != null ? benefits.toArray(new String[0]) : null)
@@ -93,7 +95,8 @@ public class VacancyService {
                           String category, String city, String region, Double lat, Double lon,
                           BigDecimal salaryFrom, BigDecimal salaryTo, String currency,
                           String employmentType, String shiftSchedule, List<String> benefits,
-                          Boolean isMassHiring, Integer positionsCount, LocalDate expiresAt) {
+                          Boolean isMassHiring, Integer positionsCount, LocalDate expiresAt,
+                          String country) {
         Vacancy vacancy = getVacancyForEmployer(vacancyId, employerId);
 
         if (title != null) vacancy.setTitle(title);
@@ -113,6 +116,7 @@ public class VacancyService {
         if (isMassHiring != null) vacancy.setIsMassHiring(isMassHiring);
         if (positionsCount != null) vacancy.setPositionsCount(positionsCount);
         if (expiresAt != null) vacancy.setExpiresAt(resolveExpiresAt(expiresAt));
+        if (country != null) vacancy.setCountry(country.toUpperCase());
 
         vacancy = vacancyRepository.save(vacancy);
         initializeRelations(vacancy);

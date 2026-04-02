@@ -118,6 +118,17 @@ import { SeoService } from '../../core/services/seo.service';
         </div>
       </div>
 
+      <div class="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar">
+        @for (c of countryList; track c.code) {
+          <button
+            (click)="setCountry(c.code)"
+            class="shrink-0 h-9 px-4 rounded-full text-sm font-medium border transition"
+            [class]="country === c.code ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'">
+            {{ c.name }}
+          </button>
+        }
+      </div>
+
       <div class="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4 no-scrollbar">
         <button
           (click)="setCity('')"
@@ -173,7 +184,7 @@ import { SeoService } from '../../core/services/seo.service';
                 @if (v.salaryFrom) {
                   <div class="text-lg font-bold text-gray-900 mb-1">
                     {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' - ' + fmt(v.salaryTo) : '+' }}
-                    <span class="text-xs font-normal text-gray-400">UZS</span>
+                    <span class="text-xs font-normal text-gray-400">{{ v.currency || 'UZS' }}</span>
                   </div>
                 } @else {
                   <div class="text-sm font-medium text-gray-400 mb-1">{{ i18n.t('jobs.negotiable') }}</div>
@@ -249,7 +260,7 @@ import { SeoService } from '../../core/services/seo.service';
               <div class="text-xl font-bold text-gray-900">
                 @if (selected.salaryFrom) {
                   {{ fmt(selected.salaryFrom) }}{{ selected.salaryTo ? ' - ' + fmt(selected.salaryTo) : '+' }}
-                  <span class="text-xs font-normal text-gray-400">UZS</span>
+                  <span class="text-xs font-normal text-gray-400">{{ selected.currency || 'UZS' }}</span>
                 } @else {
                   {{ i18n.t('jobs.negotiable') }}
                 }
@@ -394,6 +405,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   verifiedOnly = false;
   selectedBenefits: string[] = [];
   page = 0;
+  country = '';
 
   vacancies = signal<any[]>([]);
   selectedVacancy = signal<any>(null);
@@ -408,7 +420,23 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   candidateId = signal<string | null>(null);
   pages = signal<number[]>([]);
 
-  cities = ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', 'Farg\'ona', 'Nukus', 'Navoiy', 'Qarshi'];
+  countryList = [
+    { code: '', name: "Barcha", flag: '' },
+    { code: 'UZ', name: "O'zbekiston", flag: '' },
+    { code: 'KZ', name: "Qozog'iston", flag: '' },
+    { code: 'KG', name: "Qirg'iziston", flag: '' },
+    { code: 'TJ', name: "Tojikiston", flag: '' },
+  ];
+  citiesByCountry: Record<string, string[]> = {
+    '': ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', "Farg'ona", 'Nukus', 'Navoiy', 'Qarshi'],
+    'UZ': ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', "Farg'ona", 'Nukus', 'Navoiy', 'Qarshi'],
+    'KZ': ['Almaty', 'Astana', 'Shymkent', 'Aktobe', 'Karaganda', 'Taraz', 'Atyrau'],
+    'KG': ['Bishkek', 'Osh', 'Jalal-Abad', 'Karakol', 'Tokmok'],
+    'TJ': ['Dushanbe', 'Khujand', 'Kulob', 'Bokhtar', 'Istaravshan'],
+  };
+  get cities(): string[] {
+    return this.citiesByCountry[this.country] || this.citiesByCountry[''];
+  }
   categoryList = [
     { key: 'COOK', label: 'Oshpaz' },
     { key: 'DRIVER', label: 'Haydovchi' },
@@ -480,6 +508,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     const routeParams = this.route.snapshot.params;
     this.query = params['q'] || '';
     this.city = this.displayCity(routeParams['city'] || params['city'] || '');
+    this.country = params['country'] || '';
     this.category = routeParams['category'] || params['category'] || '';
     this.salaryMin = params['salaryMin'] ? Number(params['salaryMin']) : null;
     this.salaryMax = params['salaryMax'] ? Number(params['salaryMax']) : null;
@@ -515,6 +544,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     this.api.getVacancies({
       q: this.query || undefined,
       city: this.city ? this.normalizeCity(this.city) : undefined,
+      country: this.country || undefined,
       category: this.category || undefined,
       salaryMin: this.salaryMin ?? undefined,
       salaryMax: this.salaryMax ?? undefined,
@@ -550,6 +580,13 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     this.updateUrl();
   }
 
+  setCountry(code: string) {
+    this.country = code;
+    this.city = '';
+    this.page = 0;
+    this.updateUrl();
+  }
+
   setCategory(category: string) {
     this.category = category;
     this.page = 0;
@@ -572,6 +609,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   updateUrl() {
     const queryParams: any = {};
     if (this.query) queryParams['q'] = this.query;
+    if (this.country) queryParams['country'] = this.country;
     if (this.city && !this.usesSeoRoute()) queryParams['city'] = this.city;
     if (this.category && !this.city) queryParams['category'] = this.category;
     if (this.salaryMin != null) queryParams['salaryMin'] = this.salaryMin;

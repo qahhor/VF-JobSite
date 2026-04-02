@@ -46,6 +46,7 @@ public class SavedSearchAlertScheduler {
                             search.verifiedOnly(),
                             emptyToNull(search.query()),
                             "date_desc",
+                            null,
                             PageRequest.of(0, 5)
                     )
                     .getContent()

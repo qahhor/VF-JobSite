@@ -58,13 +58,14 @@ export class SeoService {
     this.updateMeta('property', 'og:type', config.type || 'website');
     this.updateMeta('property', 'og:site_name', this.siteName);
     this.updateMeta('property', 'og:image', image);
-    this.updateMeta('property', 'og:locale', 'uz_UZ');
+    this.updateMeta('property', 'og:locale', this.currentLocale());
     this.updateMeta('name', 'twitter:card', 'summary_large_image');
     this.updateMeta('name', 'twitter:title', fullTitle);
     this.updateMeta('name', 'twitter:description', description);
     this.updateMeta('name', 'twitter:image', image);
     this.setCanonical(url);
     this.setSchemas(config.schema);
+    this.setHreflang(config.path || this.currentPath());
   }
 
   absoluteUrl(path: string): string {
@@ -157,6 +158,47 @@ export class SeoService {
         'query-input': 'required name=search_term_string'
       }
     };
+  }
+
+  setHreflang(path: string) {
+    // Remove existing hreflang links
+    this.document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+
+    const langMap: Record<string, string> = {
+      'uz': '',
+      'ru': '?lang=ru',
+      'en': '?lang=en',
+    };
+
+    for (const [lang, suffix] of Object.entries(langMap)) {
+      const link = this.document.createElement('link');
+      link.setAttribute('rel', 'alternate');
+      link.setAttribute('hreflang', lang);
+      link.setAttribute('href', this.absoluteUrl(path + suffix));
+      this.document.head.appendChild(link);
+    }
+
+    // x-default
+    const xdefault = this.document.createElement('link');
+    xdefault.setAttribute('rel', 'alternate');
+    xdefault.setAttribute('hreflang', 'x-default');
+    xdefault.setAttribute('href', this.absoluteUrl(path));
+    this.document.head.appendChild(xdefault);
+  }
+
+  private currentLocale(): string {
+    const lang = this.document?.documentElement?.lang || 'uz';
+    const map: Record<string, string> = {
+      'uz-Latn': 'uz_UZ',
+      'uz-Cyrl': 'uz_UZ',
+      'uz': 'uz_UZ',
+      'ru': 'ru_RU',
+      'en': 'en_US',
+      'kk': 'kk_KZ',
+      'tg': 'tg_TJ',
+      'ky': 'ky_KG',
+    };
+    return map[lang] || 'uz_UZ';
   }
 
   private setSchemas(schema?: SeoSchema | SeoSchema[]) {

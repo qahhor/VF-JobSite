@@ -68,6 +68,7 @@ public class PublicVacancyController {
             @Parameter(description = "Только верифицированные работодатели") @RequestParam(defaultValue = "false") boolean verifiedOnly,
             @Parameter(description = "Текстовый поиск по названию и описанию") @RequestParam(required = false) String q,
             @Parameter(description = "Сортировка: date_desc, date_asc, salary_desc, salary_asc, relevance") @RequestParam(defaultValue = "date_desc") String sort,
+            @Parameter(description = "Код страны: UZ, KZ, KG, TJ") @RequestParam(required = false) String country,
             @PageableDefault(size = 20) Pageable pageable) {
         return ResponseEntity.ok(PageResponse.of(
                 publicVacancyService.listActiveVacancies(
@@ -81,6 +82,7 @@ public class PublicVacancyController {
                         verifiedOnly,
                         q,
                         sort,
+                        country,
                         pageable
                 )));
     }

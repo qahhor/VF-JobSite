@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="023-01" author="claude">
+        <comment>Add country column to vacancy table for multi-country filtering</comment>
+        <addColumn tableName="vacancy">
+            <column name="country" type="varchar(2)" defaultValue="UZ">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="023-02" author="claude">
+        <comment>Backfill country from geo_city join</comment>
+        <sql>
+            UPDATE vacancy v
+            SET country = COALESCE(
+                (SELECT gc.country FROM geo_city gc WHERE LOWER(gc.name_en) = LOWER(v.city) LIMIT 1),
+                (SELECT gc.country FROM geo_city gc WHERE LOWER(gc.name_uz_lat) = LOWER(v.city) LIMIT 1),
+                (SELECT gc.country FROM geo_city gc WHERE LOWER(gc.name_ru) = LOWER(v.city) LIMIT 1),
+                'UZ'
+            )
+            WHERE v.country IS NULL OR v.country = 'UZ';
+        </sql>
+    </changeSet>
+
+    <changeSet id="023-03" author="claude">
+        <comment>Index on vacancy.country for efficient filtering</comment>
+        <createIndex indexName="idx_vacancy_country" tableName="vacancy">
+            <column name="country"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

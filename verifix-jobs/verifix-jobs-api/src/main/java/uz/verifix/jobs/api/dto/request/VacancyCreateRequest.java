@@ -25,6 +25,9 @@ public class VacancyCreateRequest {
     @Size(max = 100, message = "City must not exceed 100 characters")
     private String city;
     private String region;
+
+    @Size(max = 2, message = "Country code must be 2 characters")
+    private String country;
     private Double latitude;
     private Double longitude;
 

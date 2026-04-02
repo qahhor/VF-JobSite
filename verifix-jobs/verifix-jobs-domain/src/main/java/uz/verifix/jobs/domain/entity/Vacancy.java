@@ -140,6 +140,10 @@ public class Vacancy extends BaseEntity {
     @Column(name = "district", length = 100)
     private String district;
 
+    @Column(name = "country", length = 2)
+    @Builder.Default
+    private String country = "UZ";
+
     @OneToMany(mappedBy = "vacancy")
     @Builder.Default
     private List<Application> applications = new ArrayList<>();

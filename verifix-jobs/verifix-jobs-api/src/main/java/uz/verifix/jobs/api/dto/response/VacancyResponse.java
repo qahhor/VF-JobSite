@@ -24,6 +24,7 @@ public class VacancyResponse {
     private String category;
     private String city;
     private String region;
+    private String country;
     private Double latitude;
     private Double longitude;
     private BigDecimal salaryFrom;

@@ -10,4 +10,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://jobs.verifix.uz/sitemap.xml
+Sitemap: https://jobs.verifix.uz/api/v1/public/sitemap.xml

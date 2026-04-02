@@ -66,6 +66,7 @@ export interface QuickApplyRequest {
 export interface VacancySearchParams {
   q?: string;
   city?: string;
+  country?: string;
   category?: string;
   salaryMin?: number;
   salaryMax?: number;
@@ -88,6 +89,7 @@ export class PublicApiService {
     let httpParams = new HttpParams();
     if (params.q) httpParams = httpParams.set('q', params.q);
     if (params.city) httpParams = httpParams.set('city', params.city);
+    if (params.country) httpParams = httpParams.set('country', params.country);
     if (params.category) httpParams = httpParams.set('category', params.category);
     if (params.salaryMin) httpParams = httpParams.set('salaryMin', params.salaryMin);
     if (params.salaryMax) httpParams = httpParams.set('salaryMax', params.salaryMax);
@@ -132,6 +134,10 @@ export class PublicApiService {
 
   getCities(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/cities`);
+  }
+
+  getCountries(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/geo/countries`);
   }
 
   getCompanies(params: { q?: string; industry?: string; page?: number; size?: number } = {}): Observable<PageResponse<PublicCompany>> {
