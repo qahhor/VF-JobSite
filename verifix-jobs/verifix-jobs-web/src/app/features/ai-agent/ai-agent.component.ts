@@ -2,12 +2,13 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'vjw-ai-agent',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="space-y-6">
       <div>
@@ -170,8 +171,10 @@ export class AiAgentComponent implements OnInit {
     if (!this.aiInput.trim()) return;
     this.generating.set(true);
     this.generatedResult.set(null);
-    // Call AI intake endpoint or simulate
-    this.http.post<any>(`${environment.apiUrl}/ai/intake`, { text: this.aiInput }).subscribe({
+    this.http.post<any>(`${environment.apiUrl}/ai/intake/generate`, {
+      description: this.aiInput,
+      city: this.extractCity(this.aiInput)
+    }).subscribe({
       next: (r: any) => { this.generating.set(false); this.generatedResult.set(r); },
       error: () => {
         this.generating.set(false);
@@ -183,6 +186,12 @@ export class AiAgentComponent implements OnInit {
         });
       }
     });
+  }
+
+  private extractCity(text: string): string | null {
+    const cities = ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', 'Farg\'ona', 'Nukus', 'Navoiy', 'Qarshi', 'Jizzax', 'Termiz', 'Urganch'];
+    const matched = cities.find(city => text.toLowerCase().includes(city.toLowerCase()));
+    return matched || null;
   }
 
   actionIcon(action: string): string {

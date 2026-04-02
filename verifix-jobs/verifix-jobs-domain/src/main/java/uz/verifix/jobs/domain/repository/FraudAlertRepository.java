@@ -13,6 +13,8 @@ public interface FraudAlertRepository extends JpaRepository<FraudAlert, UUID> {
 
     Page<FraudAlert> findByReviewedFalseOrderByCreatedAtDesc(Pageable pageable);
 
+    Page<FraudAlert> findByReviewedTrueOrderByCreatedAtDesc(Pageable pageable);
+
     Page<FraudAlert> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     long countByReviewedFalse();

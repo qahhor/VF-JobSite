@@ -57,7 +57,7 @@ export class AdminApiService {
     });
   }
 
-  reviewFraudAlert(id: string, reviewedBy: string): Observable<any> {
-    return this.http.patch<any>(`${this.base}/fraud/alerts/${id}/review`, null, { params: { reviewedBy } });
+  reviewFraudAlert(id: string): Observable<any> {
+    return this.http.patch<any>(`${this.base}/fraud/${id}/review`, {});
   }
 }

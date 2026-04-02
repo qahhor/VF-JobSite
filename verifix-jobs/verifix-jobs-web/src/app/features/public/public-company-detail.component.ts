@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'vjw-public-company-detail',
@@ -37,37 +39,34 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
           </div>
         </div>
 
-        <!-- Branding cover -->
         @if (branding()?.coverImages?.length) {
           <div class="mb-6 rounded-xl overflow-hidden">
             <img [src]="branding().coverImages[0].imageUrl" alt="Cover" class="w-full h-48 md:h-64 object-cover">
           </div>
         }
 
-        @if (c.description) {
+        @if (companyDescription(c)) {
           <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-2">Kompaniya haqida</h2>
-            <p class="text-sm text-gray-600 leading-relaxed">{{ c.description }}</p>
+            <p class="text-sm text-gray-600 leading-relaxed">{{ companyDescription(c) }}</p>
           </div>
         }
 
-        <!-- Branding benefits -->
         @if (branding()?.benefits?.length) {
           <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3">Imtiyozlar</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
               @for (b of branding().benefits; track b.id) {
                 <div class="bg-emerald-50 rounded-xl p-4 text-center">
-                  <div class="text-2xl mb-1">{{ b.icon || '✅' }}</div>
-                  <div class="text-sm font-medium text-gray-800">{{ b.title }}</div>
-                  @if (b.description) { <div class="text-xs text-gray-500 mt-1">{{ b.description }}</div> }
+                  <div class="text-2xl mb-1">{{ b.icon || 'OK' }}</div>
+                  <div class="text-sm font-medium text-gray-800">{{ benefitTitle(b) }}</div>
+                  @if (benefitDescription(b)) { <div class="text-xs text-gray-500 mt-1">{{ benefitDescription(b) }}</div> }
                 </div>
               }
             </div>
           </div>
         }
 
-        <!-- Branding gallery -->
         @if (branding()?.galleries?.length) {
           <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3">Galereya</h2>
@@ -79,42 +78,39 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
           </div>
         }
 
-        <!-- Branding video -->
         @if (branding()?.videos?.length) {
           <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3">Video</h2>
             @for (v of branding().videos; track v.id) {
               <div class="rounded-xl overflow-hidden bg-black aspect-video">
-                <iframe [src]="v.videoUrl" class="w-full h-full" allowfullscreen></iframe>
+                <iframe [src]="safeVideoUrl(v.videoUrl)" class="w-full h-full" allowfullscreen></iframe>
               </div>
             }
           </div>
         }
 
-        <!-- Branding FAQ -->
         @if (branding()?.faqs?.length) {
           <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3">Ko'p so'raladigan savollar</h2>
             <div class="space-y-2">
               @for (faq of branding().faqs; track faq.id) {
                 <details class="bg-gray-50 rounded-xl p-4 group">
-                  <summary class="text-sm font-medium text-gray-800 cursor-pointer">{{ faq.question }}</summary>
-                  <p class="text-sm text-gray-600 mt-2">{{ faq.answer }}</p>
+                  <summary class="text-sm font-medium text-gray-800 cursor-pointer">{{ faqQuestion(faq) }}</summary>
+                  <p class="text-sm text-gray-600 mt-2">{{ faqAnswer(faq) }}</p>
                 </details>
               }
             </div>
           </div>
         }
 
-        <!-- Branding testimonials -->
         @if (branding()?.testimonials?.length) {
           <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3">Xodimlar fikrlari</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               @for (t of branding().testimonials; track t.id) {
                 <div class="bg-white border border-gray-100 rounded-xl p-4">
-                  <p class="text-sm text-gray-600 italic">"{{ t.quote }}"</p>
-                  <div class="text-xs text-gray-400 mt-2">— {{ t.authorName }}, {{ t.authorRole }}</div>
+                  <p class="text-sm text-gray-600 italic">"{{ testimonialQuote(t) }}"</p>
+                  <div class="text-xs text-gray-400 mt-2">- {{ testimonialAuthor(t) }}</div>
                 </div>
               }
             </div>
@@ -138,48 +134,51 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
           </div>
         </div>
 
-        <!-- Reviews section -->
         <div class="mb-8">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900">Sharhlar</h2>
             @if (reviewData().averageRating) {
               <div class="flex items-center gap-2">
-                <span class="text-yellow-500 text-lg">{{ '★'.repeat(Math.round(reviewData().averageRating)) }}{{ '☆'.repeat(5 - Math.round(reviewData().averageRating)) }}</span>
+                <span class="text-yellow-500 text-lg">{{ starRating(Math.round(reviewData().averageRating)) }}</span>
                 <span class="text-sm font-bold text-gray-700">{{ reviewData().averageRating }}</span>
                 <span class="text-xs text-gray-400">({{ reviewData().totalReviews }})</span>
               </div>
             }
           </div>
 
-          <!-- Review list -->
           @for (r of reviews(); track r.id) {
             <div class="border border-gray-100 rounded-lg p-4 mb-3">
               <div class="flex items-center gap-2 mb-2">
-                <span class="text-yellow-400 text-sm">{{ '★'.repeat(r.rating) }}{{ '☆'.repeat(5 - r.rating) }}</span>
+                <span class="text-yellow-400 text-sm">{{ starRating(r.rating) }}</span>
                 <span class="text-xs text-gray-500">{{ r.authorName }}</span>
               </div>
-              @if (r.pros) { <div class="text-xs text-green-600 mb-1">👍 {{ r.pros }}</div> }
-              @if (r.cons) { <div class="text-xs text-red-500 mb-1">👎 {{ r.cons }}</div> }
+              @if (r.pros) { <div class="text-xs text-green-600 mb-1">Pros: {{ r.pros }}</div> }
+              @if (r.cons) { <div class="text-xs text-red-500 mb-1">Cons: {{ r.cons }}</div> }
             </div>
           }
 
-          <!-- Add review form -->
           <div class="border border-gray-200 rounded-xl p-5 mt-4">
             <h3 class="text-sm font-semibold text-gray-800 mb-3">Sharh qoldiring</h3>
             <div class="space-y-3">
               <div class="flex gap-1">
                 @for (s of [1,2,3,4,5]; track s) {
-                  <button (click)="newReview.rating = s" class="text-2xl" [class]="s <= newReview.rating ? 'text-yellow-400' : 'text-gray-200'">★</button>
+                  <button type="button" (click)="newReview.rating = s" class="text-2xl" [class]="s <= newReview.rating ? 'text-yellow-400' : 'text-gray-200'">{{ starIcon(s <= newReview.rating) }}</button>
                 }
               </div>
               <input type="text" [(ngModel)]="newReview.authorName" placeholder="Ismingiz" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
-              <input type="text" [(ngModel)]="newReview.pros" placeholder="👍 Yaxshi tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
-              <input type="text" [(ngModel)]="newReview.cons" placeholder="👎 Yomon tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <input type="text" [(ngModel)]="newReview.pros" placeholder="Yaxshi tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <input type="text" [(ngModel)]="newReview.cons" placeholder="Yomon tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
               <button (click)="submitReview()" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Yuborish</button>
             </div>
           </div>
         </div>
-
+      } @else if (notFound()) {
+        <div class="text-center py-20">
+          <div class="text-4xl mb-3">404</div>
+          <div class="text-lg font-semibold text-gray-800">Kompaniya topilmadi</div>
+          <div class="text-sm text-gray-400 mt-2">Bu kompaniya sahifasi mavjud emas yoki o'chirilgan.</div>
+          <a routerLink="/companies" class="inline-flex mt-4 h-10 px-6 bg-black text-white rounded-lg text-sm font-medium items-center hover:bg-gray-800">Kompaniyalarga qaytish</a>
+        </div>
       } @else {
         <div class="text-center py-20 text-gray-400 text-sm">Yuklanmoqda...</div>
       }
@@ -193,20 +192,49 @@ export class PublicCompanyDetailComponent implements OnInit {
   vacancies = signal<any[]>([]);
   branding = signal<any>(null);
   reviews = signal<any[]>([]);
-  reviewData = signal<any>({averageRating: 0, totalReviews: 0});
+  reviewData = signal<any>({ averageRating: 0, totalReviews: 0 });
+  notFound = signal(false);
   newReview = { authorName: '', rating: 5, pros: '', cons: '' };
-  Math = Math;
 
   private slug = '';
 
-  constructor(private api: PublicApiService, private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(
+    private api: PublicApiService,
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private seo: SeoService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
     this.slug = this.route.snapshot.params['slug'];
-    this.api.getCompany(this.slug).subscribe({ next: (c: any) => this.company.set(c), error: () => {} });
-    this.api.getCompanyVacancies(this.slug).subscribe({ next: (r: any) => this.vacancies.set(r.content || []), error: () => {} });
-    this.http.get<any>(`${environment.apiUrl}/company/${this.slug}/branding`).subscribe({
-      next: (b: any) => this.branding.set(b),
+    this.api.getCompany(this.slug).subscribe({
+      next: (company: any) => {
+        this.company.set(company);
+        this.updateSeo();
+      },
+      error: () => {
+        this.notFound.set(true);
+        this.seo.setPage({
+          title: 'Company not found',
+          description: 'This company page is no longer available on Verifix Jobs.',
+          path: `/companies/${this.slug}`,
+          noindex: true
+        });
+      }
+    });
+    this.api.getCompanyVacancies(this.slug).subscribe({
+      next: (response: any) => {
+        this.vacancies.set(response.content || []);
+        this.updateSeo();
+      },
+      error: () => {}
+    });
+    this.http.get<any>(`${environment.apiUrl}/company/${this.slug}`).subscribe({
+      next: (branding: any) => {
+        this.branding.set(branding);
+        this.updateSeo();
+      },
       error: () => {}
     });
     this.loadReviews();
@@ -214,16 +242,19 @@ export class PublicCompanyDetailComponent implements OnInit {
 
   loadReviews() {
     this.http.get<any>(`${environment.apiUrl}/public/companies/${this.slug}/reviews`).subscribe({
-      next: (d: any) => {
-        this.reviews.set(d.reviews || []);
-        this.reviewData.set({ averageRating: d.averageRating || 0, totalReviews: d.totalReviews || 0 });
+      next: (data: any) => {
+        this.reviews.set(data.reviews || []);
+        this.reviewData.set({ averageRating: data.averageRating || 0, totalReviews: data.totalReviews || 0 });
+        this.updateSeo();
       },
       error: () => {}
     });
   }
 
   submitReview() {
-    if (!this.newReview.authorName) return;
+    if (!this.newReview.authorName) {
+      return;
+    }
     this.http.post<any>(`${environment.apiUrl}/public/companies/${this.slug}/reviews`, this.newReview).subscribe({
       next: () => {
         this.newReview = { authorName: '', rating: 5, pros: '', cons: '' };
@@ -233,5 +264,144 @@ export class PublicCompanyDetailComponent implements OnInit {
     });
   }
 
-  fmt(n: number): string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':''+n; }
+  fmt(n: number): string {
+    return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(0) + 'K' : '' + n;
+  }
+
+  companyDescription(company: any): string {
+    return company?.description || company?.about || '';
+  }
+
+  benefitTitle(item: any): string {
+    return item?.titleUz || item?.titleRu || item?.title || '';
+  }
+
+  benefitDescription(item: any): string {
+    return item?.descriptionUz || item?.descriptionRu || item?.description || '';
+  }
+
+  faqQuestion(item: any): string {
+    return item?.questionUz || item?.questionRu || item?.question || '';
+  }
+
+  faqAnswer(item: any): string {
+    return item?.answerUz || item?.answerRu || item?.answer || '';
+  }
+
+  testimonialQuote(item: any): string {
+    return item?.textUz || item?.textRu || item?.quote || '';
+  }
+
+  testimonialAuthor(item: any): string {
+    const parts = [item?.employeeName || item?.authorName, item?.employeePosition || item?.authorRole].filter(Boolean);
+    return parts.join(', ');
+  }
+
+  starIcon(active: boolean): string {
+    return active ? '\u2605' : '\u2606';
+  }
+
+  starRating(rating: number): string {
+    const safeRating = Math.max(0, Math.min(5, rating || 0));
+    return '\u2605'.repeat(safeRating) + '\u2606'.repeat(5 - safeRating);
+  }
+
+  safeVideoUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(this.toEmbedUrl(url));
+  }
+
+  private toEmbedUrl(url: string): string {
+    if (!url) {
+      return '';
+    }
+    if (url.includes('youtube.com/watch?v=')) {
+      return url.replace('watch?v=', 'embed/');
+    }
+    if (url.includes('youtu.be/')) {
+      const videoId = url.split('youtu.be/')[1]?.split(/[?&]/)[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+    }
+    if (url.includes('vimeo.com/') && !url.includes('player.vimeo.com/video/')) {
+      const videoId = url.split('vimeo.com/')[1]?.split(/[?&]/)[0];
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : url;
+    }
+    return url;
+  }
+
+  private updateSeo() {
+    const company = this.company();
+    if (!company) {
+      return;
+    }
+
+    const branding = this.branding();
+    const vacancies = this.vacancies();
+    const reviews = this.reviewData();
+    const companyPath = `/companies/${this.slug}`;
+    const title = branding?.metaTitle || `${company.name} jobs`;
+    const description = (
+      branding?.metaDescription ||
+      company.description ||
+      company.about ||
+      `${company.name} hiring in ${company.city || 'Uzbekistan'}. Explore employer reviews, open vacancies, and workplace benefits on Verifix Jobs.`
+    ).replace(/\s+/g, ' ').trim();
+
+    const organization: any = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: company.name,
+      url: this.seo.absoluteUrl(companyPath),
+      logo: company.logo ? this.seo.absoluteUrl(company.logo) : undefined,
+      description,
+      address: company.city ? {
+        '@type': 'PostalAddress',
+        addressLocality: company.city,
+        addressCountry: 'UZ'
+      } : undefined,
+      sameAs: company.website ? [company.website] : undefined
+    };
+
+    if (reviews?.totalReviews) {
+      organization.aggregateRating = {
+        '@type': 'AggregateRating',
+        ratingValue: reviews.averageRating,
+        reviewCount: reviews.totalReviews
+      };
+    }
+
+    const schemas: any[] = [
+      this.seo.buildBreadcrumbSchema([
+        { name: 'Home', path: '/' },
+        { name: 'Companies', path: '/companies' },
+        { name: company.name, path: companyPath }
+      ]),
+      organization
+    ];
+
+    const faqSchema = this.seo.buildFaqSchema((branding?.faqs || []).map((item: any) => ({
+      question: this.faqQuestion(item),
+      answer: this.faqAnswer(item)
+    })));
+    if (faqSchema) {
+      schemas.push(faqSchema);
+    }
+    if (vacancies.length) {
+      schemas.push(this.seo.buildItemListSchema(
+        `${company.name} open jobs`,
+        vacancies.slice(0, 10).map((vacancy: any) => ({
+          name: vacancy.title,
+          path: `/jobs/${vacancy.slug || vacancy.id}`,
+          description: [vacancy.city, vacancy.salaryFrom ? `${this.fmt(vacancy.salaryFrom)} UZS` : 'Salary negotiable'].join(' | ')
+        }))
+      ));
+    }
+
+    this.seo.setPage({
+      title,
+      description,
+      path: companyPath,
+      keywords: [company.name, company.industry, company.city, 'employer branding'].filter(Boolean),
+      schema: schemas
+    });
+  }
 }

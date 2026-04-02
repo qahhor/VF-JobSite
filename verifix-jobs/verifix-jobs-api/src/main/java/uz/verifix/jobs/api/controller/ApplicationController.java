@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uz.verifix.jobs.api.dto.request.BulkStatusRequest;
+import uz.verifix.jobs.api.dto.request.InviteCandidateRequest;
 import uz.verifix.jobs.api.dto.request.RecruiterNoteRequest;
 import uz.verifix.jobs.api.dto.request.RejectRequest;
 import uz.verifix.jobs.api.dto.response.ApplicationDetailResponse;
@@ -47,6 +48,17 @@ public class ApplicationController {
         return ResponseEntity.ok(PageResponse.of(page.map(applicationMapper::toResponse)));
     }
 
+    @GetMapping("/vacancy/all")
+    public ResponseEntity<PageResponse<ApplicationResponse>> getAllForEmployer(
+            @RequestParam(required = false) ApplicationStatus status,
+            @PageableDefault(size = 20) Pageable pageable,
+            Authentication auth) {
+
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        Page<Application> page = applicationService.getAllByEmployer(employerId, status, pageable);
+        return ResponseEntity.ok(PageResponse.of(page.map(applicationMapper::toResponse)));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationDetailResponse> getDetail(
             @PathVariable UUID id,
@@ -79,6 +91,20 @@ public class ApplicationController {
 
         UUID employerId = SecurityUtils.extractEmployerId(auth);
         Application application = applicationService.addNote(id, employerId, request.getNote());
+        return ResponseEntity.ok(applicationMapper.toResponse(application));
+    }
+
+    @PostMapping("/invite")
+    public ResponseEntity<ApplicationResponse> inviteCandidate(
+            @Valid @RequestBody InviteCandidateRequest request,
+            Authentication auth) {
+
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        Application application = applicationService.inviteCandidate(
+                request.getVacancyId(),
+                request.getCandidateId(),
+                employerId,
+                request.getNote());
         return ResponseEntity.ok(applicationMapper.toResponse(application));
     }
 

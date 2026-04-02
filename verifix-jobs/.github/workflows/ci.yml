@@ -109,6 +109,18 @@ jobs:
             -t ghcr.io/${{ env.IMAGE_PREFIX }}-ml:${{ github.sha }} \
             -t ghcr.io/${{ env.IMAGE_PREFIX }}-ml:latest verifix-jobs/verifix-jobs-ml
           docker push ghcr.io/${{ env.IMAGE_PREFIX }}-ml --all-tags
+      - name: Build & Push Public Web
+        run: |
+          docker build -f verifix-jobs/verifix-jobs-web/Dockerfile \
+            -t ghcr.io/${{ env.IMAGE_PREFIX }}-web:${{ github.sha }} \
+            -t ghcr.io/${{ env.IMAGE_PREFIX }}-web:latest verifix-jobs/verifix-jobs-web
+          docker push ghcr.io/${{ env.IMAGE_PREFIX }}-web --all-tags
+      - name: Build & Push Standalone Admin
+        run: |
+          docker build -f verifix-jobs/verifix-jobs-admin/Dockerfile \
+            -t ghcr.io/${{ env.IMAGE_PREFIX }}-admin:${{ github.sha }} \
+            -t ghcr.io/${{ env.IMAGE_PREFIX }}-admin:latest verifix-jobs/verifix-jobs-admin
+          docker push ghcr.io/${{ env.IMAGE_PREFIX }}-admin --all-tags
 
   deploy-staging:
     name: Deploy Staging
@@ -127,7 +139,8 @@ jobs:
             cd /opt/verifix/verifix-jobs
             git pull origin main
             bash ops/validate-env.sh .env
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml config -q
             docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --remove-orphans
             sleep 15
-            curl -sf http://localhost:8080/actuator/health && echo "OK" || echo "WARN: health check pending"
+            curl -skf https://jobs.verifix.uz && echo "OK" || echo "WARN: public health check pending"

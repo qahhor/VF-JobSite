@@ -11,7 +11,6 @@ import { environment } from '../../../environments/environment';
   template: `
     <h1 class="text-2xl font-bold mb-6">Davlat sinxronizatsiyasi</h1>
 
-    <!-- Stats cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
       @for (s of stats(); track s.source) {
         <div class="bg-gray-800 rounded-xl p-5 border border-gray-700">
@@ -30,7 +29,6 @@ import { environment } from '../../../environments/environment';
       }
     </div>
 
-    <!-- Sync history -->
     <div class="bg-gray-800 rounded-xl border border-gray-700">
       <div class="px-5 py-4 border-b border-gray-700 flex items-center justify-between">
         <h3 class="font-semibold text-white">Sinxronizatsiya tarixi</h3>
@@ -46,7 +44,7 @@ import { environment } from '../../../environments/environment';
             <div class="w-2 h-2 rounded-full shrink-0"
                  [class]="h.status === 'SUCCESS' ? 'bg-green-400' : h.status === 'FAILED' ? 'bg-red-400' : 'bg-yellow-400'"></div>
             <div class="flex-1 min-w-0">
-              <div class="text-xs text-gray-300">{{ h.direction || 'SYNC' }} · {{ h.recordCount || 0 }} ta yozuv</div>
+              <div class="text-xs text-gray-300">{{ formatHistorySummary(h) }}</div>
               @if (h.errorMessage) { <div class="text-xs text-red-400 truncate">{{ h.errorMessage }}</div> }
             </div>
             <div class="text-xs text-gray-500 shrink-0">{{ h.createdAt | date:'dd.MM HH:mm' }}</div>
@@ -68,16 +66,29 @@ export class AdminGovComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
+    this.loadStats();
+    this.loadHistory();
+  }
+
+  loadStats() {
     this.http.get<any>(`${this.base}/stats`).subscribe({
-      next: (d: any) => this.stats.set(d.sources || d || []),
+      next: (data: any) => {
+        const mapped = Object.entries(data?.bySource || {}).map(([source, stats]: [string, any]) => ({
+          source,
+          synced: stats?.synced || 0,
+          pending: stats?.pending || 0,
+          failed: stats?.failed || 0,
+          total: stats?.total || 0
+        }));
+        this.stats.set(mapped);
+      },
       error: () => {}
     });
-    this.loadHistory();
   }
 
   loadHistory() {
     this.http.get<any>(`${this.base}/sync-history`, { params: { source: this.selectedSource, size: '20' } }).subscribe({
-      next: (d: any) => this.history.set(d.content || d || []),
+      next: (data: any) => this.history.set(data.content || []),
       error: () => {}
     });
   }
@@ -91,8 +102,18 @@ export class AdminGovComponent implements OnInit {
 
   triggerImport(source: string) {
     this.http.post<any>(`${this.base}/sync/import`, null, { params: { source } }).subscribe({
-      next: () => this.loadHistory(),
+      next: () => {
+        this.loadStats();
+        this.loadHistory();
+      },
       error: () => {}
     });
+  }
+
+  formatHistorySummary(item: any): string {
+    const parts = [item?.direction || 'SYNC'];
+    if (item?.entityType) parts.push(item.entityType);
+    if (item?.entityId) parts.push(String(item.entityId).slice(0, 8));
+    return parts.join(' · ');
   }
 }

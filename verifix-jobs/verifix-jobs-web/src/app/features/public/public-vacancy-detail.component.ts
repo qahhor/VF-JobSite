@@ -1,11 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Title } from '@angular/platform-browser';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { PublicApplyModalComponent } from './public-apply-modal.component';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'vjw-public-vacancy-detail',
@@ -16,21 +16,18 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
 
     <div class="max-w-4xl mx-auto px-4 py-6 pb-28 md:pb-8">
       @if (vacancy(); as v) {
-        <!-- Back -->
         <a routerLink="/jobs" class="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-black mb-4">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
           Orqaga
         </a>
 
-        <!-- Salary — hero section -->
         @if (v.salaryFrom) {
           <div class="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
-            {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' – ' + fmt(v.salaryTo) : '+' }}
+            {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' - ' + fmt(v.salaryTo) : '+' }}
             <span class="text-base font-normal text-gray-400">UZS / oy</span>
           </div>
         }
 
-        <!-- Title & employer -->
         <h1 class="text-xl md:text-2xl font-bold text-gray-900 mt-2">{{ v.title }}</h1>
         <a [routerLink]="['/companies', v.employer?.slug || v.employerId]"
            class="text-sm text-gray-500 hover:text-black transition mt-1 inline-block">
@@ -38,7 +35,6 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
           @if (v.employerVerified) { <span class="text-green-500 ml-1">&#10003;</span> }
         </a>
 
-        <!-- Tags -->
         <div class="flex flex-wrap gap-2 mt-4">
           @if (v.city) {
             <span class="inline-flex items-center gap-1 h-8 px-3 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
@@ -66,13 +62,12 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
             <div class="text-xs text-emerald-700 mt-1">
               {{ marketPosition(v) }}
               @if (insight.sampleSize) {
-                <span>· {{ insight.sampleSize }} ta vakansiya asosida</span>
+                <span> | {{ insight.sampleSize }} ta vakansiya asosida</span>
               }
             </div>
           </div>
         }
 
-        <!-- Description -->
         @if (v.description) {
           <div class="mt-6">
             <h2 class="text-base font-semibold text-gray-900 mb-2">Tavsif</h2>
@@ -91,7 +86,6 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
           </div>
         }
 
-        <!-- Benefits -->
         @if (v.benefits?.length) {
           <div class="mt-6">
             <h2 class="text-base font-semibold text-gray-900 mb-2">Imtiyozlar</h2>
@@ -103,7 +97,6 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
           </div>
         }
 
-        <!-- Employer card with trust badges -->
         <a [routerLink]="['/companies', v.employer?.slug || v.employerId]"
            class="block mt-8 bg-gray-50 rounded-xl p-5 hover:bg-gray-100 transition">
           <div class="flex items-center gap-4">
@@ -115,13 +108,13 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
               @if (v.employerIndustry) { <div class="text-xs text-gray-400">{{ v.employerIndustry }}</div> }
               <div class="flex flex-wrap gap-1.5 mt-2">
                 @if (v.employerVerified || v.employer?.isVerified) {
-                  <span class="text-[10px] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">✅ Tasdiqlangan</span>
+                  <span class="text-[10px] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">Verified</span>
                 }
                 @if (v.applicationCount != null && v.applicationCount > 20) {
-                  <span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-medium">👥 {{ v.applicationCount }}+ ariza</span>
+                  <span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-medium">{{ v.applicationCount }}+ ariza</span>
                 }
                 @if (v.employer?.activeVacancies > 3) {
-                  <span class="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full font-medium">📋 {{ v.employer.activeVacancies }} vakansiya</span>
+                  <span class="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full font-medium">{{ v.employer.activeVacancies }} vakansiya</span>
                 }
               </div>
             </div>
@@ -154,9 +147,8 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
           </div>
         }
 
-        <!-- Fixed bottom apply bar (mobile) -->
-        <div class="fixed bottom-16 md:bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-3 md:p-4 z-40 safe-bottom">
-          <div class="max-w-4xl mx-auto flex gap-2">
+        <div class="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-100 p-3 z-40 safe-bottom md:static md:bg-transparent md:border-0 md:p-0 md:mt-8">
+          <div class="max-w-4xl mx-auto flex gap-2 md:max-w-none">
             <button (click)="showApplyModal.set(true)"
                     class="flex-1 h-12 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">
               Ariza topshirish
@@ -171,11 +163,10 @@ import { PublicApplyModalComponent } from './public-apply-modal.component';
             </a>
           </div>
         </div>
-
       } @else {
         @if (notFound()) {
           <div class="text-center py-20">
-            <div class="text-4xl mb-3">😔</div>
+            <div class="text-4xl mb-3">404</div>
             <div class="text-lg font-semibold text-gray-800">Vakansiya topilmadi</div>
             <div class="text-sm text-gray-400 mt-2">Bu vakansiya o'chirilgan yoki mavjud emas</div>
             <a routerLink="/jobs" class="inline-flex mt-4 h-10 px-6 bg-black text-white rounded-lg text-sm font-medium items-center hover:bg-gray-800">Vakansiyalarga qaytish</a>
@@ -203,16 +194,16 @@ export class PublicVacancyDetailComponent implements OnInit {
   similarVacancies = signal<any[]>([]);
   showApplyModal = signal(false);
   isFavorited = signal(false);
+  notFound = signal(false);
 
-  constructor(private api: PublicApiService, private route: ActivatedRoute, private title: Title) {}
+  constructor(private api: PublicApiService, private route: ActivatedRoute, private seo: SeoService) {}
 
   ngOnInit() {
     const slug = this.route.snapshot.params['slug'];
     this.api.getVacancy(slug).subscribe({
       next: (v: any) => {
         this.vacancy.set(v);
-        this.title.setTitle([v.title, v.city, 'Verifix Jobs'].filter(Boolean).join(' | '));
-        this.injectJsonLd(v);
+        this.updateSeo(v);
         this.checkFavorite(v.id);
         if (v.category) {
           this.api.getSalaryMarket(v.category, v.city).subscribe({
@@ -225,18 +216,26 @@ export class PublicVacancyDetailComponent implements OnInit {
           error: () => {}
         });
       },
-      error: () => { this.notFound.set(true); }
+      error: () => {
+        this.notFound.set(true);
+        this.seo.setPage({
+          title: 'Vacancy not found',
+          description: 'This vacancy is no longer available on Verifix Jobs.',
+          path: `/jobs/${slug}`,
+          noindex: true
+        });
+      }
     });
   }
 
-  notFound = signal(false);
-
   private checkFavorite(vacancyId: string) {
-    const cid = localStorage.getItem('vjw_candidate_id');
-    if (!cid) return;
-    this.api.getFavorites(cid).subscribe({
-      next: (r: any) => {
-        const ids = (r.content || []).map((v: any) => v.id);
+    const candidateId = localStorage.getItem('vjw_candidate_id');
+    if (!candidateId) {
+      return;
+    }
+    this.api.getFavorites(candidateId).subscribe({
+      next: (response: any) => {
+        const ids = (response.content || []).map((item: any) => item.id);
         this.isFavorited.set(ids.includes(vacancyId));
       },
       error: () => {}
@@ -244,22 +243,30 @@ export class PublicVacancyDetailComponent implements OnInit {
   }
 
   toggleFavorite() {
-    const cid = localStorage.getItem('vjw_candidate_id');
-    const v = this.vacancy();
-    if (!cid || !v) return;
+    const candidateId = localStorage.getItem('vjw_candidate_id');
+    const currentVacancy = this.vacancy();
+    if (!candidateId || !currentVacancy) {
+      return;
+    }
     if (this.isFavorited()) {
-      this.api.removeFavorite(cid, v.id).subscribe({ next: () => this.isFavorited.set(false), error: () => {} });
+      this.api.removeFavorite(candidateId, currentVacancy.id).subscribe({ next: () => this.isFavorited.set(false), error: () => {} });
     } else {
-      this.api.addFavorite(cid, v.id).subscribe({ next: () => this.isFavorited.set(true), error: () => {} });
+      this.api.addFavorite(candidateId, currentVacancy.id).subscribe({ next: () => this.isFavorited.set(true), error: () => {} });
     }
   }
 
   marketPosition(v: any): string {
     const insight = this.salaryInsight();
-    if (!v?.salaryFrom || !insight?.median) return '';
-    if (v.salaryFrom >= insight.p75) return "Bozordan yuqori ↑";
-    if (v.salaryFrom >= insight.median) return "Bozor darajasi";
-    return "Bozordan past";
+    if (!v?.salaryFrom || !insight?.median) {
+      return '';
+    }
+    if (v.salaryFrom >= insight.p75) {
+      return 'Bozordan yuqori';
+    }
+    if (v.salaryFrom >= insight.median) {
+      return 'Bozor darajasi';
+    }
+    return 'Bozordan past';
   }
 
   shiftLabel(value: string): string {
@@ -271,31 +278,85 @@ export class PublicVacancyDetailComponent implements OnInit {
     } as Record<string, string>)[value] || value;
   }
 
-  fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':''+n; }
-  empType(t:string):string { return ({FULL_TIME:"To'liq stavka",PART_TIME:'Yarim stavka',CONTRACT:'Shartnoma',TEMPORARY:'Vaqtinchalik'} as Record<string,string>)[t]||t; }
+  fmt(n: number): string {
+    return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : '' + n;
+  }
 
-  /** Inject JSON-LD JobPosting for SEO */
-  private injectJsonLd(v: any) {
-    const existing = document.getElementById('json-ld-job');
-    if (existing) existing.remove();
-    const ld: any = {
-      '@context': 'https://schema.org/',
+  empType(t: string): string {
+    return ({ FULL_TIME: "To'liq stavka", PART_TIME: 'Yarim stavka', CONTRACT: 'Shartnoma', TEMPORARY: 'Vaqtinchalik' } as Record<string, string>)[t] || t;
+  }
+
+  private updateSeo(v: any) {
+    const companyName = v.employer?.name || v.employerName || 'Employer';
+    const companyPath = `/companies/${v.employer?.slug || v.employerId}`;
+    const salary = v.salaryFrom
+      ? `${this.fmt(v.salaryFrom)}${v.salaryTo ? ' - ' + this.fmt(v.salaryTo) : '+'} ${v.currency || 'UZS'}`
+      : '';
+    const description = [
+      `${v.title}${v.city ? ` in ${v.city}` : ''}`,
+      companyName,
+      salary ? `Salary: ${salary}` : '',
+      v.description || ''
+    ].filter(Boolean).join('. ');
+    const vacancyPath = `/jobs/${v.slug || v.id}`;
+    const jobPosting: any = {
+      '@context': 'https://schema.org',
       '@type': 'JobPosting',
       title: v.title,
-      description: v.description || v.title,
+      description,
       datePosted: v.createdAt,
       validThrough: v.expiresAt,
       employmentType: v.employmentType,
-      jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', addressLocality: v.city, addressCountry: 'UZ' } },
-      hiringOrganization: { '@type': 'Organization', name: v.employer?.name || v.employerName, sameAs: 'https://job.verifix.uz/companies/' + (v.employer?.slug || v.employerId) },
+      jobLocation: {
+        '@type': 'Place',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: v.city,
+          streetAddress: v.branchAddress || undefined,
+          addressCountry: 'UZ'
+        }
+      },
+      hiringOrganization: {
+        '@type': 'Organization',
+        name: companyName,
+        url: this.seo.absoluteUrl(companyPath)
+      },
+      url: this.seo.absoluteUrl(vacancyPath)
     };
     if (v.salaryFrom) {
-      ld.baseSalary = { '@type': 'MonetaryAmount', currency: v.currency || 'UZS', value: { '@type': 'QuantitativeValue', minValue: v.salaryFrom, maxValue: v.salaryTo || v.salaryFrom, unitText: 'MONTH' } };
+      jobPosting.baseSalary = {
+        '@type': 'MonetaryAmount',
+        currency: v.currency || 'UZS',
+        value: {
+          '@type': 'QuantitativeValue',
+          minValue: v.salaryFrom,
+          maxValue: v.salaryTo || v.salaryFrom,
+          unitText: 'MONTH'
+        }
+      };
     }
-    const script = document.createElement('script');
-    script.id = 'json-ld-job';
-    script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(ld);
-    document.head.appendChild(script);
+
+    this.seo.setPage({
+      title: [v.title, v.city].filter(Boolean).join(' in '),
+      description,
+      path: vacancyPath,
+      type: 'article',
+      keywords: [v.title, v.category, v.city, companyName].filter(Boolean),
+      schema: [
+        this.seo.buildBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Jobs', path: '/jobs' },
+          ...(v.city ? [{ name: v.city, path: `/vacancies/${encodeURIComponent(v.city)}` }] : []),
+          { name: v.title, path: vacancyPath }
+        ]),
+        jobPosting,
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: companyName,
+          url: this.seo.absoluteUrl(companyPath)
+        }
+      ]
+    });
   }
 }

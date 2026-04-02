@@ -1,0 +1,6 @@
+node_modules
+dist
+.angular
+test-results
+e2e
+npm-debug.log*

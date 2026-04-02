@@ -22,12 +22,23 @@
             "styles": [
               "src/styles.css"
             ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "verifix-jobs-admin:build"
+            "buildTarget": "verifix-jobs-admin:build",
+            "proxyConfig": "proxy.conf.json"
           }
         }
       }

@@ -60,4 +60,11 @@ public class EmployerController {
         long activeVacancies = employerProfileService.getActiveVacancyCount(employerId);
         return ResponseEntity.ok(employerMapper.toResponse(employer, activeVacancies));
     }
+
+    @DeleteMapping("/profile")
+    public ResponseEntity<Void> deleteProfile(Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        employerProfileService.deleteAccount(employerId);
+        return ResponseEntity.noContent().build();
+    }
 }

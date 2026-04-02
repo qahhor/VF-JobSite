@@ -11,7 +11,6 @@ import { AdminApiService } from '../core/api.service';
     <div role="main" class="space-y-6">
       <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
 
-      <!-- KPI cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         @for (kpi of kpis(); track kpi.label) {
           <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
@@ -27,7 +26,6 @@ import { AdminApiService } from '../core/api.service';
         }
       </div>
 
-      <!-- System health + Quick links -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 class="font-semibold text-gray-800 mb-4">Tizim holati</h3>
@@ -56,7 +54,6 @@ import { AdminApiService } from '../core/api.service';
         </div>
       </div>
 
-      <!-- Recent activity -->
       <div class="bg-white rounded-xl shadow-sm border border-gray-100">
         <div class="p-5 border-b border-gray-100">
           <h3 class="font-semibold text-gray-800">So'nggi faoliyat</h3>
@@ -78,10 +75,10 @@ import { AdminApiService } from '../core/api.service';
 })
 export class AdminDashboardComponent implements OnInit {
   kpis = signal([
-    { icon: '👥', value: '0', label: 'Jami foydalanuvchilar', trend: 0 },
-    { icon: '📋', value: '0', label: 'Faol vakansiyalar', trend: 0 },
-    { icon: '📨', value: '0', label: 'Bugungi arizalar', trend: 0 },
-    { icon: '💰', value: '0', label: 'Oylik daromad', trend: 0 },
+    { icon: '\u{1F465}', value: '0', label: 'Jami foydalanuvchilar', trend: 0 },
+    { icon: '\u{1F4CB}', value: '0', label: 'Faol vakansiyalar', trend: 0 },
+    { icon: '\u{1F4E8}', value: '0', label: 'Bugungi arizalar', trend: 0 },
+    { icon: '\u{1F4B0}', value: '0', label: 'Oylik daromad', trend: 0 },
   ]);
 
   activity = signal<{ icon: string; text: string; time: string; color: string }[]>([]);
@@ -93,10 +90,10 @@ export class AdminDashboardComponent implements OnInit {
   ];
 
   quickLinks = [
-    { path: '/moderation', icon: '🛡️', label: 'Moderatsiya' },
-    { path: '/fraud', icon: '🚨', label: 'Fraud alertlar' },
-    { path: '/users', icon: '👥', label: 'Foydalanuvchilar' },
-    { path: '/ab-testing', icon: '🔬', label: 'A/B Testlar' },
+    { path: '/moderation', icon: '\u{1F6E1}\uFE0F', label: 'Moderatsiya' },
+    { path: '/fraud', icon: '\u{1F6A8}', label: 'Fraud alertlar' },
+    { path: '/users', icon: '\u{1F465}', label: 'Foydalanuvchilar' },
+    { path: '/ab-testing', icon: '\u{1F52C}', label: 'A/B Testlar' },
   ];
 
   constructor(private api: AdminApiService) {}
@@ -105,18 +102,18 @@ export class AdminDashboardComponent implements OnInit {
     this.api.getAnalytics().subscribe({
       next: (data: any) => {
         this.kpis.set([
-          { icon: '👥', value: data.totalUsers?.toString() || '0', label: 'Jami foydalanuvchilar', trend: 12 },
-          { icon: '📋', value: data.activeVacancies?.toString() || '0', label: 'Faol vakansiyalar', trend: 5 },
-          { icon: '📨', value: data.applicationsToday?.toString() || '0', label: 'Bugungi arizalar', trend: -3 },
-          { icon: '💰', value: this.formatAmount(data.monthlyRevenue || 0), label: 'Oylik daromad (UZS)', trend: 8 },
+          { icon: '\u{1F465}', value: data.totalUsers?.toString() || '0', label: 'Jami foydalanuvchilar', trend: 12 },
+          { icon: '\u{1F4CB}', value: data.activeVacancies?.toString() || '0', label: 'Faol vakansiyalar', trend: 5 },
+          { icon: '\u{1F4E8}', value: data.applicationsToday?.toString() || '0', label: 'Bugungi arizalar', trend: -3 },
+          { icon: '\u{1F4B0}', value: this.formatAmount(data.monthlyRevenue || 0), label: 'Oylik daromad (UZS)', trend: 8 },
         ]);
       }
     });
   }
 
   formatAmount(n: number): string {
-    if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
-    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
+    if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
     return n.toLocaleString();
   }
 }

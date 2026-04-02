@@ -12,7 +12,7 @@ import { AdminApiService } from '../../core/services/admin-api.service';
     <div class="min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div class="w-full max-w-sm">
         <div class="text-center mb-8">
-          <div class="text-3xl font-bold text-white mb-1">Admin Panel</div>
+          <h1 class="text-3xl font-bold text-white mb-1">Admin Panel</h1>
           <p class="text-gray-500 text-sm">Verifix Jobs boshqaruv paneli</p>
         </div>
 

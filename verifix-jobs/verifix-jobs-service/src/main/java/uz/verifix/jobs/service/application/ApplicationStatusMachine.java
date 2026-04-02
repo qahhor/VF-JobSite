@@ -11,8 +11,8 @@ import java.util.Set;
 public final class ApplicationStatusMachine {
 
     private static final Map<ApplicationStatus, Set<ApplicationStatus>> TRANSITIONS = Map.of(
-            ApplicationStatus.NEW, Set.of(ApplicationStatus.VIEWED, ApplicationStatus.REJECTED),
-            ApplicationStatus.VIEWED, Set.of(ApplicationStatus.SHORTLIST, ApplicationStatus.REJECTED),
+            ApplicationStatus.NEW, Set.of(ApplicationStatus.VIEWED, ApplicationStatus.INVITED, ApplicationStatus.REJECTED),
+            ApplicationStatus.VIEWED, Set.of(ApplicationStatus.SHORTLIST, ApplicationStatus.INVITED, ApplicationStatus.REJECTED),
             ApplicationStatus.SHORTLIST, Set.of(ApplicationStatus.INVITED, ApplicationStatus.REJECTED),
             ApplicationStatus.INVITED, Set.of(ApplicationStatus.INTERVIEW, ApplicationStatus.REJECTED, ApplicationStatus.WITHDRAWN),
             ApplicationStatus.INTERVIEW, Set.of(ApplicationStatus.OFFER, ApplicationStatus.REJECTED),

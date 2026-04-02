@@ -8,7 +8,6 @@ import { AuthService } from '../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   template: `
-    <!-- Sidebar (Desktop) -->
     <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 fixed h-full z-30"
            [class.w-20]="collapsed" [class.w-64]="!collapsed">
       <div class="p-4 border-b border-gray-100 flex items-center gap-3">
@@ -32,29 +31,25 @@ import { AuthService } from '../core/services/auth.service';
       </div>
     </aside>
 
-    <!-- Main content -->
     <div class="lg:transition-all" [class.lg:ml-64]="!collapsed" [class.lg:ml-20]="collapsed">
-      <!-- Top bar -->
       <header class="sticky top-0 z-20 bg-white border-b border-gray-200 px-4 lg:px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <button class="lg:hidden text-xl text-gray-600" (click)="mobileMenuOpen = !mobileMenuOpen">☰</button>
-          <h2 class="text-lg font-semibold text-gray-800">{{ pageTitle }}</h2>
+        <div class="flex items-center gap-4 min-w-0">
+          <button class="lg:hidden text-2xl text-gray-600" (click)="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">&#9776;</button>
+          <h2 class="text-lg font-semibold text-gray-800 truncate">{{ pageTitle }}</h2>
         </div>
         <div class="flex items-center gap-4">
-          <span class="text-sm text-gray-500">{{ user()?.email }}</span>
+          <span class="hidden sm:block text-sm text-gray-500 max-w-[240px] truncate">{{ user()?.email }}</span>
           <button (click)="auth.logout()"
                   class="text-sm text-gray-500 hover:text-red-500 transition-colors">Chiqish</button>
         </div>
       </header>
 
-      <!-- Page content -->
       <main class="p-4 lg:p-6 min-h-[calc(100vh-4rem)]">
         <router-outlet />
       </main>
     </div>
 
-    <!-- Mobile bottom nav -->
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30 flex justify-around py-2">
+    <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30 flex justify-around py-2 safe-bottom">
       @for (item of mobileNavItems; track item.path) {
         <a [routerLink]="item.path" routerLinkActive="text-black"
            class="flex flex-col items-center gap-0.5 text-gray-400 text-xs">
@@ -64,14 +59,13 @@ import { AuthService } from '../core/services/auth.service';
       }
     </nav>
 
-    <!-- Mobile menu overlay -->
     @if (mobileMenuOpen) {
       <div class="lg:hidden fixed inset-0 z-40 flex">
         <div class="absolute inset-0 bg-black/30" (click)="mobileMenuOpen = false"></div>
         <aside class="relative w-72 bg-white h-full shadow-xl">
           <div class="p-4 border-b">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold">V</div>
+              <div class="w-10 h-10 flex items-center"><img src="assets/logo-icon.svg" alt="Verifix" class="h-8"></div>
               <span class="font-semibold text-gray-800">Verifix Jobs</span>
             </div>
           </div>
@@ -89,6 +83,9 @@ import { AuthService } from '../core/services/auth.service';
       </div>
     }
   `,
+  styles: [`
+    .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  `]
 })
 export class LayoutComponent {
   collapsed = false;
@@ -96,22 +93,23 @@ export class LayoutComponent {
   pageTitle = 'Dashboard';
 
   constructor(public auth: AuthService) {}
+
   user = this.auth.user;
 
   navItems = [
-    { path: '/employer/dashboard', icon: '📊', label: 'Dashboard' },
-    { path: '/employer/vacancies', icon: '📋', label: 'Vakansiyalar' },
-    { path: '/employer/pipeline', icon: '🔄', label: 'ATS Pipeline' },
-    { path: '/employer/candidates', icon: '👥', label: 'Nomzodlar' },
-    { path: '/employer/talent-hub', icon: '🎯', label: 'Talent Hub' },
-    { path: '/employer/hiring-projects', icon: '🚀', label: 'Loyihalar' },
-    { path: '/employer/analytics', icon: '📈', label: 'Analitika' },
-    { path: '/employer/chat', icon: '💬', label: 'Xabarlar' },
-    { path: '/employer/billing', icon: '💳', label: 'Billing' },
-    { path: '/employer/ai-agent', icon: '🤖', label: 'AI Agent' },
-    { path: '/employer/org-memory', icon: '🧠', label: 'Xotira' },
-    { path: '/employer/integrations', icon: '🔗', label: 'Integratsiya' },
-    { path: '/employer/settings', icon: '⚙️', label: 'Sozlamalar' },
+    { path: '/employer/dashboard', icon: '\u{1F4CA}', label: 'Dashboard' },
+    { path: '/employer/vacancies', icon: '\u{1F4CB}', label: 'Vakansiyalar' },
+    { path: '/employer/pipeline', icon: '\u{1F504}', label: 'ATS Pipeline' },
+    { path: '/employer/candidates', icon: '\u{1F465}', label: 'Nomzodlar' },
+    { path: '/employer/talent-hub', icon: '\u{1F3AF}', label: 'Talent Hub' },
+    { path: '/employer/hiring-projects', icon: '\u{1F680}', label: 'Loyihalar' },
+    { path: '/employer/analytics', icon: '\u{1F4C8}', label: 'Analitika' },
+    { path: '/employer/chat', icon: '\u{1F4AC}', label: 'Xabarlar' },
+    { path: '/employer/billing', icon: '\u{1F4B3}', label: 'Billing' },
+    { path: '/employer/ai-agent', icon: '\u{1F916}', label: 'AI Agent' },
+    { path: '/employer/org-memory', icon: '\u{1F9E0}', label: 'Xotira' },
+    { path: '/employer/integrations', icon: '\u{1F517}', label: 'Integratsiya' },
+    { path: '/employer/settings', icon: '\u2699\uFE0F', label: 'Sozlamalar' },
   ];
 
   mobileNavItems = this.navItems.slice(0, 5);

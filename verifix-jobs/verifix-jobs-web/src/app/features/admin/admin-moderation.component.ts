@@ -15,9 +15,9 @@ import { AdminApiService } from '../../core/services/admin-api.service';
         <div class="bg-gray-800 border border-gray-700 rounded-xl p-5">
           <div class="flex items-start justify-between gap-4">
             <div class="min-w-0 flex-1">
-              <div class="text-sm font-semibold">{{ item.contentType }}: {{ item.title || item.contentId }}</div>
-              @if (item.employerName) { <div class="text-xs text-gray-500 mt-0.5">{{ item.employerName }}</div> }
-              @if (item.description) { <p class="text-xs text-gray-400 mt-2 line-clamp-3">{{ item.description }}</p> }
+              <div class="text-sm font-semibold">{{ item.entityType || 'CONTENT' }}: {{ item.entityId || item.id }}</div>
+              <div class="text-xs text-gray-500 mt-0.5">Status: {{ item.status || 'PENDING' }}</div>
+              @if (item.reason) { <p class="text-xs text-gray-400 mt-2 line-clamp-3">{{ item.reason }}</p> }
               <div class="text-xs text-gray-600 mt-2">{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</div>
             </div>
 

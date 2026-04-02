@@ -53,8 +53,7 @@ export class AdminFraudComponent implements OnInit {
   }
 
   review(id: string) {
-    const adminId = '00000000-0000-0000-0000-000000000001'; // TODO: get from auth
-    this.api.reviewFraudAlert(id, adminId).subscribe({ next: () => this.load(), error: () => {} });
+    this.api.reviewFraudAlert(id).subscribe({ next: () => this.load(), error: () => {} });
   }
 
   severityCls(s: string): string {

@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, DoCheck, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { I18nService } from '../../core/services/i18n.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'vjw-public-vacancy-list',
@@ -16,6 +16,11 @@ import { I18nService } from '../../core/services/i18n.service';
     <vjw-public-header />
 
     <div class="max-w-7xl mx-auto px-4 pt-4 pb-20 md:pb-8">
+      <div class="mb-4">
+        <h1 class="text-2xl font-bold text-gray-900">{{ pageTitle() }}</h1>
+        <p class="text-sm text-gray-500 mt-1">{{ pageSubtitle() }}</p>
+      </div>
+
       <div class="flex flex-col sm:flex-row gap-2 mb-4">
         <div class="relative flex-1">
           <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,10 +161,12 @@ import { I18nService } from '../../core/services/i18n.service';
 
           <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2 gap-3">
             @for (v of vacancies(); track v.id) {
-              <a
-                [routerLink]="['/jobs', v.slug || v.id]"
-                (click)="handleVacancyClick($event, v)"
-                class="rounded-xl border p-4 transition group"
+              <article
+                (click)="openVacancy(v)"
+                (keydown.enter)="openVacancy(v)"
+                tabindex="0"
+                role="button"
+                class="rounded-xl border p-4 transition group cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10"
                 [ngClass]="selectedVacancySlug() === (v.slug || v.id)
                   ? 'bg-emerald-50 border-emerald-200 shadow-sm'
                   : 'bg-white border-gray-100 hover:shadow-md'">
@@ -194,7 +201,25 @@ import { I18nService } from '../../core/services/i18n.service';
                     <span class="px-2 py-0.5 bg-green-50 text-green-600 rounded-full">{{ v.positionsCount }} {{ i18n.t('jobs.positions') }}</span>
                   }
                 </div>
-              </a>
+
+                <div class="mt-4 flex items-center justify-between gap-3">
+                  <div class="text-[11px] text-gray-400 truncate">
+                    @if (selectedVacancySlug() === (v.slug || v.id)) {
+                      {{ i18n.t('jobs.selected') }}
+                    } @else if (v.employerVerified) {
+                      Verified employer
+                    } @else {
+                      Open preview
+                    }
+                  </div>
+                  <a
+                    [routerLink]="['/jobs', v.slug || v.id]"
+                    (click)="$event.stopPropagation()"
+                    class="h-9 px-3 rounded-lg border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition inline-flex items-center justify-center shrink-0">
+                    {{ i18n.t('jobs.detail') }}
+                  </a>
+                </div>
+              </article>
             } @empty {
               <div class="col-span-full text-center py-16 text-gray-400 text-sm">
                 @if (loading()) { {{ i18n.t('jobs.loading') }} } @else { {{ i18n.t('jobs.not_found') }} }
@@ -411,9 +436,29 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     private api: PublicApiService,
     private route: ActivatedRoute,
     private router: Router,
-    private title: Title,
+    private seo: SeoService,
     public i18n: I18nService
   ) {}
+
+  pageTitle(): string {
+    if (this.category && this.city) {
+      return `${this.i18n.t('category.' + this.category)} - ${this.city}`;
+    }
+    if (this.category) {
+      return this.i18n.t('category.' + this.category);
+    }
+    if (this.city) {
+      return `${this.city} bo'yicha vakansiyalar`;
+    }
+    return 'Vakansiyalar';
+  }
+
+  pageSubtitle(): string {
+    if (this.query) {
+      return `"${this.query}" bo'yicha mos ishlarni toping.`;
+    }
+    return "Filtrlar orqali ishlarni tez solishtiring va to'g'ri variantni tanlang.";
+  }
 
   ngOnInit() {
     this.candidateId.set(localStorage.getItem('vjw_candidate_id'));
@@ -434,7 +479,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   applyRouteState(params: any) {
     const routeParams = this.route.snapshot.params;
     this.query = params['q'] || '';
-    this.city = routeParams['city'] || params['city'] || '';
+    this.city = this.displayCity(routeParams['city'] || params['city'] || '');
     this.category = routeParams['category'] || params['category'] || '';
     this.salaryMin = params['salaryMin'] ? Number(params['salaryMin']) : null;
     this.salaryMax = params['salaryMax'] ? Number(params['salaryMax']) : null;
@@ -445,7 +490,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     this.selectedBenefits = params['benefits'] ? String(params['benefits']).split(',').filter(Boolean) : [];
     this.selectedVacancySlug.set(params['selected'] || '');
     this.page = Number(params['page'] || 0);
-    this.updateTitle();
+    this.updateSeo();
     this.loadVacancies();
   }
 
@@ -469,7 +514,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     this.loading.set(true);
     this.api.getVacancies({
       q: this.query || undefined,
-      city: this.city || undefined,
+      city: this.city ? this.normalizeCity(this.city) : undefined,
       category: this.category || undefined,
       salaryMin: this.salaryMin ?? undefined,
       salaryMax: this.salaryMax ?? undefined,
@@ -487,6 +532,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
         this.total.set(response.totalElements || 0);
         this.totalPages.set(response.totalPages || 0);
         this.syncSelectedVacancy(content);
+        this.updateSeo();
         this.loading.set(false);
       },
       error: () => this.loading.set(false)
@@ -541,12 +587,11 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     this.router.navigate(this.routeCommands(), { queryParams });
   }
 
-  handleVacancyClick(event: MouseEvent, vacancy: any) {
+  openVacancy(vacancy: any) {
     if (window.innerWidth < 1280) {
+      this.router.navigate(['/jobs', vacancy.slug || vacancy.id]);
       return;
     }
-    event.preventDefault();
-    event.stopPropagation();
     this.setSelectedVacancy(vacancy.slug || vacancy.id);
   }
 
@@ -672,6 +717,9 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     if (this.city && this.category) {
       return ['/vacancies', this.city, this.category];
     }
+    if (this.category) {
+      return ['/vacancies/category', this.category];
+    }
     if (this.city) {
       return ['/vacancies', this.city];
     }
@@ -679,12 +727,123 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   }
 
   private usesSeoRoute(): boolean {
-    return Boolean(this.city);
+    return Boolean(this.city || this.category);
   }
 
-  private updateTitle() {
+  private updateSeo() {
     const categoryLabel = this.category ? this.i18n.t('category.' + this.category) : '';
-    const parts = [categoryLabel, this.city, 'Verifix Jobs'].filter(Boolean);
-    this.title.setTitle(parts.join(' | '));
+    const titleCore = [categoryLabel, this.city, 'Jobs'].filter(Boolean).join(' ');
+    const description = this.buildSeoDescription(categoryLabel);
+    const vacancies = this.vacancies().slice(0, 10).map(vacancy => ({
+      name: vacancy.title,
+      path: `/jobs/${vacancy.slug || vacancy.id}`,
+      description: [vacancy.city, vacancy.employer?.name || vacancy.employerName].filter(Boolean).join(' | ')
+    }));
+    const breadcrumbItems = [
+      { name: 'Home', path: '/' },
+      { name: 'Jobs', path: '/jobs' }
+    ];
+    if (this.city) {
+      breadcrumbItems.push({ name: this.city, path: `/vacancies/${this.segment(this.city)}` });
+    }
+    if (this.category) {
+      breadcrumbItems.push({
+        name: categoryLabel || this.category,
+        path: this.city
+          ? `/vacancies/${this.segment(this.city)}/${this.segment(this.category)}`
+          : `/vacancies/category/${this.segment(this.category)}`
+      });
+    }
+
+    this.seo.setPage({
+      title: titleCore || 'Jobs',
+      description,
+      path: this.buildCanonicalPath(),
+      keywords: ['vacancies', this.city, categoryLabel, 'jobs in uzbekistan'].filter(Boolean) as string[],
+      noindex: this.shouldNoIndex(),
+      schema: [
+        this.seo.buildCollectionPageSchema(titleCore || 'Jobs', description, this.buildCanonicalPath()),
+        this.seo.buildBreadcrumbSchema(breadcrumbItems),
+        this.seo.buildItemListSchema(titleCore || 'Jobs', vacancies)
+      ]
+    });
+  }
+
+  private buildCanonicalPath(): string {
+    if (this.city && this.category) {
+      return `/vacancies/${this.segment(this.city)}/${this.segment(this.category)}`;
+    }
+    if (this.category) {
+      return `/vacancies/category/${this.segment(this.category)}`;
+    }
+    if (this.city) {
+      return `/vacancies/${this.segment(this.city)}`;
+    }
+    return '/jobs';
+  }
+
+  private buildSeoDescription(categoryLabel: string): string {
+    const context = [categoryLabel, this.city].filter(Boolean).join(' in ');
+    const totalLabel = this.total() ? `${this.total()} active vacancies` : 'Browse active vacancies';
+    const filters = [
+      this.employmentType ? this.empType(this.employmentType) : '',
+      this.shiftSchedule ? this.shiftLabel(this.shiftSchedule) : '',
+      this.verifiedOnly ? 'verified employers' : ''
+    ].filter(Boolean);
+    return [totalLabel, context || 'across Uzbekistan', filters.join(', ')].filter(Boolean).join('. ');
+  }
+
+  private shouldNoIndex(): boolean {
+    return Boolean(
+      this.query ||
+      this.salaryMin != null ||
+      this.salaryMax != null ||
+      this.employmentType ||
+      this.shiftSchedule ||
+      this.selectedBenefits.length ||
+      this.verifiedOnly ||
+      this.selectedVacancySlug() ||
+      this.page > 0 ||
+      (this.sort && this.sort !== 'date_desc')
+    );
+  }
+
+  private segment(value: string): string {
+    return encodeURIComponent(value);
+  }
+
+  private normalizeCity(value: string): string {
+    const mapping: Record<string, string> = {
+      toshkent: 'Tashkent',
+      tashkent: 'Tashkent',
+      samarqand: 'Samarkand',
+      samarkand: 'Samarkand',
+      buxoro: 'Bukhara',
+      bukhara: 'Bukhara',
+      andijon: 'Andijan',
+      andijan: 'Andijan',
+      namangan: 'Namangan',
+      "farg'ona": 'Fergana',
+      fergana: 'Fergana',
+      nukus: 'Nukus',
+      navoiy: 'Navoi',
+      navoi: 'Navoi',
+      qarshi: 'Karshi',
+      karshi: 'Karshi'
+    };
+    return mapping[value?.trim().toLowerCase()] || value;
+  }
+
+  private displayCity(value: string): string {
+    const mapping: Record<string, string> = {
+      tashkent: 'Toshkent',
+      samarkand: 'Samarqand',
+      bukhara: 'Buxoro',
+      andijan: 'Andijon',
+      fergana: "Farg'ona",
+      navoi: 'Navoiy',
+      karshi: 'Qarshi'
+    };
+    return mapping[value?.trim().toLowerCase()] || value;
   }
 }

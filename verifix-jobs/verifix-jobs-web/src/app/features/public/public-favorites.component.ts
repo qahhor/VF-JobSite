@@ -5,6 +5,7 @@ import { PublicHeaderComponent } from '../../shared/components/public-header.com
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { I18nService } from '../../core/services/i18n.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'vjw-public-favorites',
@@ -30,7 +31,7 @@ import { I18nService } from '../../core/services/i18n.service';
               <a [routerLink]="['/jobs', v.slug || v.id]">
                 @if (v.salaryFrom) {
                   <div class="text-lg font-bold text-gray-900 mb-1">
-                    {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' – ' + fmt(v.salaryTo) : '+' }}
+                    {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' - ' + fmt(v.salaryTo) : '+' }}
                     <span class="text-xs font-normal text-gray-400">UZS</span>
                   </div>
                 }
@@ -56,29 +57,43 @@ export class PublicFavoritesComponent implements OnInit {
   vacancies = signal<any[]>([]);
   candidateId: string | null = null;
 
-  constructor(private api: PublicApiService, public i18n: I18nService) {}
+  constructor(private api: PublicApiService, private seo: SeoService, public i18n: I18nService) {}
 
   ngOnInit() {
+    this.seo.setPage({
+      title: 'Saved vacancies',
+      description: 'Private saved vacancies for the current candidate profile on Verifix Jobs.',
+      path: '/favorites',
+      noindex: true
+    });
     this.candidateId = localStorage.getItem('vjw_candidate_id');
-    if (!this.candidateId) return;
+    if (!this.candidateId) {
+      return;
+    }
     this.loadFavorites();
   }
 
   loadFavorites() {
-    if (!this.candidateId) return;
+    if (!this.candidateId) {
+      return;
+    }
     this.api.getFavorites(this.candidateId).subscribe({
-      next: (r: any) => this.vacancies.set(r.content || []),
+      next: (response: any) => this.vacancies.set(response.content || []),
       error: () => {}
     });
   }
 
   removeFavorite(vacancyId: string) {
-    if (!this.candidateId) return;
+    if (!this.candidateId) {
+      return;
+    }
     this.api.removeFavorite(this.candidateId, vacancyId).subscribe({
       next: () => this.vacancies.update(list => list.filter(v => v.id !== vacancyId)),
       error: () => {}
     });
   }
 
-  fmt(n: number): string { return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : '' + n; }
+  fmt(n: number): string {
+    return n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${Math.round(n / 1e3)}K` : `${n}`;
+  }
 }

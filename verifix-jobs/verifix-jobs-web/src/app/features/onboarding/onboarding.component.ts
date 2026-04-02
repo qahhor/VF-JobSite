@@ -122,6 +122,11 @@ import { ApiService } from '../../core/services/api.service';
 
         <!-- Navigation -->
         @if (step() < 3) {
+          @if (stepError()) {
+            <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {{ stepError() }}
+            </div>
+          }
           <div class="flex justify-between mt-6">
             <button (click)="prev()" [disabled]="step() === 0"
                     class="h-11 px-6 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition disabled:opacity-30">
@@ -140,6 +145,7 @@ import { ApiService } from '../../core/services/api.service';
 export class OnboardingComponent implements OnInit {
   step = signal(0);
   saving = signal(false);
+  stepError = signal('');
 
   steps = [
     { key: 'profile', label: 'Profil' },
@@ -183,12 +189,16 @@ export class OnboardingComponent implements OnInit {
 
   next() {
     const s = this.step();
+    this.stepError.set('');
     if (s === 0) {
       // Save profile
       this.saving.set(true);
       this.api.updateProfile(this.profile as any).subscribe({
         next: () => { this.saving.set(false); this.step.set(1); },
-        error: () => { this.saving.set(false); this.step.set(1); }
+        error: () => {
+          this.saving.set(false);
+          this.stepError.set('Profil saqlanmadi. Maydonlarni tekshirib, qayta urinib ko‘ring.');
+        }
       });
     } else if (s === 1) {
       // Create vacancy
@@ -203,7 +213,10 @@ export class OnboardingComponent implements OnInit {
           employmentType: 'FULL_TIME',
         } as any).subscribe({
           next: () => { this.saving.set(false); this.step.set(2); },
-          error: () => { this.saving.set(false); this.step.set(2); }
+          error: () => {
+            this.saving.set(false);
+            this.stepError.set('Vakansiya yaratilmadi. Majburiy maydonlarni tekshirib, qayta urinib ko‘ring.');
+          }
         });
       } else {
         this.step.set(2);

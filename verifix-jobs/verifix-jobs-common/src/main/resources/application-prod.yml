@@ -98,4 +98,4 @@ app:
   jwt:
     secret: ${JWT_SECRET}
   cors:
-    allowed-origins: ${CORS_ORIGINS:https://job.verifix.uz}
+    allowed-origins: ${CORS_ORIGINS:https://jobs.verifix.uz,https://admin.jobs.verifix.uz}

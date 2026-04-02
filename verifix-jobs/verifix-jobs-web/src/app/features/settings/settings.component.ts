@@ -98,6 +98,9 @@ import { EmployerProfile } from '../../core/models';
               <button (click)="deleteAccount()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">Ha, o'chirish</button>
               <button (click)="confirmDelete.set(false)" class="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition">Bekor qilish</button>
             </div>
+            @if (deleteMsg()) {
+              <div class="text-sm text-red-600 mt-3">{{ deleteMsg() }}</div>
+            }
           </div>
         }
       </div>
@@ -109,6 +112,7 @@ export class SettingsComponent implements OnInit {
   saving = signal(false);
   saveMsg = signal('');
   confirmDelete = signal(false);
+  deleteMsg = signal('');
 
   notifications: {key: string; label: string; description: string; enabled: boolean}[] = [];
 
@@ -157,11 +161,13 @@ export class SettingsComponent implements OnInit {
   }
 
   deleteAccount() {
-    // Request account deletion via API, then logout
+    this.deleteMsg.set('');
     this.http.delete(`${environment.apiUrl}/employer/profile`).subscribe({
-      next: () => this.auth.logout(),
-      error: () => this.auth.logout()  // Logout regardless
+      next: () => {
+        this.auth.logout();
+        this.router.navigate(['/']);
+      },
+      error: () => this.deleteMsg.set('Akkauntni o‘chirib bo‘lmadi. Keyinroq urinib ko‘ring.')
     });
-    this.router.navigate(['/']);
   }
 }

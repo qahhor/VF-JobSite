@@ -1,6 +1,7 @@
 package uz.verifix.jobs.service.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,11 +36,15 @@ public class AdminAuditService {
 
     @Transactional(readOnly = true)
     public Page<AdminAuditLog> getByAdmin(UUID adminId, Pageable pageable) {
-        return auditLogRepository.findByAdminIdOrderByCreatedAtDesc(adminId, pageable);
+        Page<AdminAuditLog> page = auditLogRepository.findByAdminIdOrderByCreatedAtDesc(adminId, pageable);
+        page.getContent().forEach(entry -> Hibernate.initialize(entry.getAdmin()));
+        return page;
     }
 
     @Transactional(readOnly = true)
     public Page<AdminAuditLog> getAll(Pageable pageable) {
-        return auditLogRepository.findAll(pageable);
+        Page<AdminAuditLog> page = auditLogRepository.findAll(pageable);
+        page.getContent().forEach(entry -> Hibernate.initialize(entry.getAdmin()));
+        return page;
     }
 }

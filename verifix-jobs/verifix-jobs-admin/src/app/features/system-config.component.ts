@@ -75,8 +75,11 @@ import { FormsModule } from '@angular/forms';
       </div>
 
       <div class="flex justify-end">
-        <button class="px-6 py-2.5 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Saqlash</button>
+        <button (click)="save()" class="px-6 py-2.5 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Saqlash</button>
       </div>
+      @if (saveMessage) {
+        <div class="text-sm text-green-600">{{ saveMessage }}</div>
+      }
     </div>
   `,
 })
@@ -91,4 +94,16 @@ export class SystemConfigComponent {
 
   rateLimits = { general: 100, employer: 30 };
   moderation = { minimumWage: 1155000, bannedWords: 'mlm, piramida, depozit, lotereya' };
+  saveMessage = '';
+
+  save() {
+    const payload = {
+      featureToggles: this.featureToggles,
+      rateLimits: this.rateLimits,
+      moderation: this.moderation
+    };
+    localStorage.setItem('vja_system_config', JSON.stringify(payload));
+    this.saveMessage = 'Sozlamalar saqlandi';
+    setTimeout(() => this.saveMessage = '', 3000);
+  }
 }

@@ -1,12 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { getBenefitIcon } from '../../shared/utils/benefit-icons';
 import { I18nService } from '../../core/services/i18n.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'vjw-public-home',
@@ -15,7 +16,6 @@ import { I18nService } from '../../core/services/i18n.service';
   template: `
     <vjw-public-header />
 
-    <!-- HERO — big search, mobile-first -->
     <section class="bg-gradient-to-b from-gray-50 to-white pt-8 pb-6 md:pt-14 md:pb-10">
       <div class="max-w-3xl mx-auto px-4 text-center">
         <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-2 leading-tight">{{ i18n.t('hero.title') }}</h1>
@@ -35,13 +35,12 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
     </section>
 
-    <!-- CATEGORIES — large icons, easy tap -->
     <section class="py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
         <h2 class="text-lg font-bold text-gray-900 mb-4">{{ i18n.t('categories.title') }}</h2>
         <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
           @for (cat of categoryIcons; track cat.key) {
-            <a [routerLink]="['/jobs']" [queryParams]="{category: cat.key}"
+            <a [routerLink]="['/vacancies/category', cat.key]"
                class="flex flex-col items-center gap-2 py-4 px-2 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-sm transition bg-white group">
               <span class="text-3xl">{{ cat.icon }}</span>
               <span class="text-xs font-medium text-gray-600 group-hover:text-black text-center leading-tight">{{ i18n.t('category.' + cat.key) }}</span>
@@ -54,7 +53,6 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
     </section>
 
-    <!-- VACANCIES — card style, salary prominent -->
     <section class="bg-gray-50 py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex items-center justify-between mb-5">
@@ -65,16 +63,14 @@ import { I18nService } from '../../core/services/i18n.service';
           @for (v of vacancies(); track v.id) {
             <a [routerLink]="['/jobs', v.slug || v.id]"
                class="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition group">
-              <!-- Salary — most important for blue collar -->
               @if (v.salaryFrom) {
                 <div class="text-lg font-bold text-gray-900 mb-1">
-                  {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' – ' + fmt(v.salaryTo) : '+' }}
+                  {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' - ' + fmt(v.salaryTo) : '+' }}
                   <span class="text-xs font-normal text-gray-400">UZS</span>
                 </div>
               }
               <h3 class="text-sm font-semibold text-gray-800 group-hover:text-black truncate">{{ v.title }}</h3>
               <div class="text-xs text-gray-400 mt-1 truncate">{{ v.employer?.name || v.employerName }}</div>
-              <!-- Benefits icons -->
               @if (v.benefits?.length) {
                 <div class="flex gap-1 mt-2">
                   @for (b of v.benefits.slice(0, 4); track b) {
@@ -91,7 +87,7 @@ import { I18nService } from '../../core/services/i18n.service';
                   <span class="px-2 py-0.5 bg-gray-100 rounded-full">{{ empType(v.employmentType) }}</span>
                 }
                 @if (v.isBranded || v.promoted) {
-                  <span class="px-2 py-0.5 bg-orange-50 text-orange-600 rounded-full font-medium">TOP ⭐</span>
+                  <span class="px-2 py-0.5 bg-orange-50 text-orange-600 rounded-full font-medium">TOP</span>
                 }
               </div>
             </a>
@@ -102,7 +98,6 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
     </section>
 
-    <!-- POPULAR CITIES — quick access -->
     <section class="py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
         <h2 class="text-lg font-bold text-gray-900 mb-4">Shaharlar bo'yicha</h2>
@@ -117,7 +112,6 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
     </section>
 
-    <!-- STATS -->
     <section class="bg-black text-white py-10">
       <div class="max-w-4xl mx-auto px-4 grid grid-cols-3 gap-4 text-center">
         <div><div class="text-2xl md:text-3xl font-bold">{{ stats().vacancies }}+</div><div class="text-xs text-gray-400 mt-1">{{ i18n.t('stats.vacancies') }}</div></div>
@@ -126,10 +120,9 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
     </section>
 
-    <!-- TELEGRAM CTA -->
     <section class="py-10">
       <div class="max-w-xl mx-auto px-4 text-center">
-        <div class="text-4xl mb-3">📱</div>
+        <div class="text-4xl mb-3">&#128241;</div>
         <h2 class="text-lg font-bold text-gray-900 mb-2">{{ i18n.t('telegram.title') }}</h2>
         <p class="text-sm text-gray-400 mb-5">{{ i18n.t('telegram.desc') }}</p>
         <a href="https://t.me/VerifixJobBot" target="_blank"
@@ -140,7 +133,7 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
     </section>
 
-    <div class="mb-16 md:mb-0"></div><!-- space for mobile bottom nav -->
+    <div class="mb-16 md:mb-0"></div>
     <vjw-public-footer />
   `,
 })
@@ -148,54 +141,108 @@ export class PublicHomeComponent implements OnInit {
   searchQuery = '';
   categories = signal<any[]>([]);
   vacancies = signal<any[]>([]);
-  stats = signal({vacancies:0,employers:0,hired:0});
-  cities = ['Toshkent','Samarqand','Buxoro','Andijon','Namangan','Farg\'ona','Nukus','Navoiy','Qarshi','Jizzax','Termiz','Urganch','Guliston'];
+  stats = signal({ vacancies: 0, employers: 0, hired: 0 });
+  cities = ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', 'Farg\'ona', 'Nukus', 'Navoiy', 'Qarshi', 'Jizzax', 'Termiz', 'Urganch', 'Guliston'];
 
   categoryIcons = [
-    {key:'COOK',label:'Oshpaz',icon:'👨‍🍳'},
-    {key:'DRIVER',label:'Haydovchi',icon:'🚗'},
-    {key:'SALES',label:'Sotuvchi',icon:'🛒'},
-    {key:'BUILDER',label:'Qurilishchi',icon:'🏗️'},
-    {key:'WAITER',label:'Ofitsiant',icon:'🍽️'},
-    {key:'SECURITY',label:'Qo\'riqchi',icon:'🛡️'},
-    {key:'WAREHOUSE',label:'Omborchi',icon:'📦'},
-    {key:'CLEANER',label:'Tozalovchi',icon:'🧹'},
-    {key:'ELECTRICIAN',label:'Elektrik',icon:'⚡'},
-    {key:'TAILOR',label:'Tikuvchi',icon:'🧵'},
-    {key:'COURIER',label:'Kuryer',icon:'🏍️'},
-    {key:'CASHIER',label:'Kassir',icon:'💰'},
-    {key:'LOADER',label:'Yukchi',icon:'💪'},
-    {key:'PLUMBER',label:'Santexnik',icon:'🔧'},
+    { key: 'COOK', label: 'Oshpaz', icon: '\u{1F468}\u200D\u{1F373}' },
+    { key: 'DRIVER', label: 'Haydovchi', icon: '\u{1F697}' },
+    { key: 'SALES', label: 'Sotuvchi', icon: '\u{1F6D2}' },
+    { key: 'BUILDER', label: 'Qurilishchi', icon: '\u{1F3D7}\uFE0F' },
+    { key: 'WAITER', label: 'Ofitsiant', icon: '\u{1F37D}\uFE0F' },
+    { key: 'SECURITY', label: 'Qo\'riqchi', icon: '\u{1F6E1}\uFE0F' },
+    { key: 'WAREHOUSE', label: 'Omborchi', icon: '\u{1F4E6}' },
+    { key: 'CLEANER', label: 'Tozalovchi', icon: '\u{1F9F9}' },
+    { key: 'ELECTRICIAN', label: 'Elektrik', icon: '\u26A1' },
+    { key: 'TAILOR', label: 'Tikuvchi', icon: '\u{1F9F5}' },
+    { key: 'COURIER', label: 'Kuryer', icon: '\u{1F3CD}\uFE0F' },
+    { key: 'CASHIER', label: 'Kassir', icon: '\u{1F4B0}' },
+    { key: 'LOADER', label: 'Yukchi', icon: '\u{1F4AA}' },
+    { key: 'PLUMBER', label: 'Santexnik', icon: '\u{1F527}' },
   ];
 
-  constructor(private api: PublicApiService, public i18n: I18nService) {}
+  constructor(
+    private api: PublicApiService,
+    private router: Router,
+    private seo: SeoService,
+    public i18n: I18nService
+  ) {}
 
   ngOnInit() {
+    this.updateSeo();
     this.api.getCategories().subscribe({
-      next: (cats:any[]) => {
+      next: (cats: any[]) => {
         this.categories.set(cats);
-        const total = cats.reduce((a:number,c:any) => a+(c.vacancyCount||0), 0);
-        this.stats.set({vacancies: total, employers: cats.length, hired: Math.round(total*0.05)});
+        this.updateSeo();
       },
       error: () => {}
     });
-    this.api.getVacancies({page:0,size:9,sort:'date_desc'}).subscribe({
-      next: (r:any) => this.vacancies.set(r.content||[]),
+    this.api.getVacancies({ page: 0, size: 9, sort: 'date_desc' }).subscribe({
+      next: (r: any) => {
+        this.vacancies.set(r.content || []);
+        this.updateSeo();
+      },
+      error: () => {}
+    });
+    this.api.getStats().subscribe({
+      next: (stats: any) => this.stats.set({
+        vacancies: stats.totalVacancies || 0,
+        employers: stats.totalEmployers || 0,
+        hired: stats.totalHired || 0
+      }),
       error: () => {}
     });
   }
 
-  getCatCount(key:string): number {
-    const c = this.categories().find((x:any) => x.category === key);
-    return c?.vacancyCount || 0;
+  getCatCount(key: string): number {
+    const category = this.categories().find((item: any) => item.category === key);
+    return category?.vacancyCount || 0;
   }
 
-  doSearch() {}
+  doSearch() {
+    this.router.navigate(['/jobs'], {
+      queryParams: { q: this.searchQuery || null }
+    });
+  }
 
-  fmt(n:number):string { return n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':''+n; }
+  private updateSeo() {
+    const latestJobs = this.vacancies().slice(0, 8).map(vacancy => ({
+      name: vacancy.title,
+      path: `/jobs/${vacancy.slug || vacancy.id}`,
+      description: [vacancy.city, vacancy.employer?.name || vacancy.employerName].filter(Boolean).join(' | ')
+    }));
+    const categoryItems = (this.categories().length ? this.categories() : this.categoryIcons)
+      .slice(0, 8)
+      .map((category: any) => ({
+        name: category.category || category.label || category.key,
+        path: `/vacancies/category/${category.category || category.key}`,
+        description: category.vacancyCount ? `${category.vacancyCount} active jobs` : undefined
+      }));
 
-  empType(t:string):string {
-    return ({FULL_TIME:"To'liq",PART_TIME:'Yarim',CONTRACT:'Shartnoma',TEMPORARY:'Vaqtinchalik'} as Record<string,string>)[t]||t;
+    this.seo.setPage({
+      title: 'Find jobs in Uzbekistan',
+      description: 'Browse blue-collar jobs across Uzbekistan, compare salary ranges, explore verified employers, and apply in minutes on Verifix Jobs.',
+      path: '/',
+      keywords: ['jobs in uzbekistan', 'vacancies', 'blue collar jobs', 'verifix jobs', 'mass hiring'],
+      schema: [
+        this.seo.buildWebSiteSchema(),
+        this.seo.buildCollectionPageSchema(
+          'Verifix Jobs home',
+          'Homepage for public job search, salary insights, and employer discovery in Uzbekistan.',
+          '/'
+        ),
+        this.seo.buildItemListSchema('Popular job categories', categoryItems),
+        this.seo.buildItemListSchema('Latest vacancies', latestJobs)
+      ]
+    });
+  }
+
+  fmt(n: number): string {
+    return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : '' + n;
+  }
+
+  empType(t: string): string {
+    return ({ FULL_TIME: "To'liq", PART_TIME: 'Yarim', CONTRACT: 'Shartnoma', TEMPORARY: 'Vaqtinchalik' } as Record<string, string>)[t] || t;
   }
 
   getBenefitIcon = getBenefitIcon;

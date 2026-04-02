@@ -11,7 +11,7 @@ import java.util.Set;
 public final class VacancyStatusMachine {
 
     private static final Map<VacancyStatus, Set<VacancyStatus>> TRANSITIONS = Map.of(
-            VacancyStatus.DRAFT, Set.of(VacancyStatus.PENDING_MODERATION),
+            VacancyStatus.DRAFT, Set.of(VacancyStatus.PENDING_MODERATION, VacancyStatus.ACTIVE),
             VacancyStatus.PENDING_MODERATION, Set.of(VacancyStatus.ACTIVE, VacancyStatus.DRAFT),
             VacancyStatus.ACTIVE, Set.of(VacancyStatus.PAUSED, VacancyStatus.CLOSED),
             VacancyStatus.PAUSED, Set.of(VacancyStatus.ACTIVE, VacancyStatus.CLOSED),

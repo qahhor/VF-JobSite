@@ -53,7 +53,8 @@ public class VacancyController {
                 request.getShiftSchedule(),
                 request.getBenefits(),
                 request.getIsMassHiring(),
-                request.getPositionsCount()
+                request.getPositionsCount(),
+                request.getExpiresAt()
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(vacancyMapper.toResponse(vacancy));
@@ -107,7 +108,10 @@ public class VacancyController {
         Vacancy vacancy = vacancyService.update(id, employerId,
                 request.getTitle(), request.getDescription(),
                 request.getCategory(), request.getCity(),
-                request.getSalaryFrom(), request.getSalaryTo());
+                request.getRegion(), request.getLatitude(), request.getLongitude(),
+                request.getSalaryFrom(), request.getSalaryTo(), request.getCurrency(),
+                request.getEmploymentType(), request.getShiftSchedule(), request.getBenefits(),
+                request.getIsMassHiring(), request.getPositionsCount(), request.getExpiresAt());
         return ResponseEntity.ok(vacancyMapper.toResponse(vacancy));
     }
 

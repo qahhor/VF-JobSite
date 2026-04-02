@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Title } from '@angular/platform-browser';
 import { PublicApiService } from '../../core/services/public-api.service';
+import { SeoService } from '../../core/services/seo.service';
 
 type SavedSearchDraft = {
   name: string;
@@ -215,10 +215,15 @@ export class SavedSearchesComponent implements OnInit {
     { key: 'oqitish', label: "O'qitish" },
   ];
 
-  constructor(private publicApi: PublicApiService, private title: Title) {}
+  constructor(private publicApi: PublicApiService, private seo: SeoService) {}
 
   ngOnInit() {
-    this.title.setTitle('Saqlangan qidiruvlar | Verifix Jobs');
+    this.seo.setPage({
+      title: 'Saved searches',
+      description: 'Private saved searches and alerts for the current candidate profile on Verifix Jobs.',
+      path: '/saved-searches',
+      noindex: true
+    });
     this.candidateId.set(localStorage.getItem('vjw_candidate_id'));
     this.load();
   }

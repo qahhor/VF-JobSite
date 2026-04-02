@@ -99,6 +99,9 @@ import { Candidate } from '../../core/models';
                 <label class="block text-sm font-medium text-gray-700 mb-1">Xabar</label>
                 <textarea [(ngModel)]="inviteMessage" rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm" placeholder="Qo'shimcha xabar..."></textarea>
               </div>
+              @if (inviteError()) {
+                <div class="text-sm text-red-600">{{ inviteError() }}</div>
+              }
               <div class="flex gap-2 justify-end">
                 <button (click)="inviteCandidate.set(null)" class="h-10 px-4 border border-gray-200 rounded-lg text-sm">Bekor</button>
                 <button (click)="sendInvite()" [disabled]="!inviteVacancyId" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium disabled:opacity-50">Yuborish</button>
@@ -115,6 +118,7 @@ export class CandidatesComponent implements OnInit {
   candidates = signal<Candidate[]>([]);
   searched = signal(false);
   inviteCandidate = signal<Candidate | null>(null);
+  inviteError = signal('');
   inviteVacancyId = '';
   inviteMessage = '';
   vacancyOptions = signal<any[]>([]);
@@ -139,6 +143,7 @@ export class CandidatesComponent implements OnInit {
 
   invite(c: Candidate) {
     this.inviteCandidate.set(c);
+    this.inviteError.set('');
     this.inviteVacancyId = '';
     this.inviteMessage = '';
   }
@@ -146,15 +151,14 @@ export class CandidatesComponent implements OnInit {
   sendInvite() {
     const c = this.inviteCandidate();
     if (!c || !this.inviteVacancyId) return;
-    // POST to create an application with INVITED status
-    this.http.post<any>(`${environment.apiUrl}/candidates/apply`, {
+    this.inviteError.set('');
+    this.http.post<any>(`${environment.apiUrl}/applications/invite`, {
       candidateId: c.id,
       vacancyId: this.inviteVacancyId,
-      status: 'INVITED',
       note: this.inviteMessage
     }).subscribe({
       next: () => { this.inviteCandidate.set(null); },
-      error: () => { this.inviteCandidate.set(null); }
+      error: () => { this.inviteError.set('Taklif yuborilmadi. Vakansiya va nomzod maʼlumotlarini tekshiring.'); }
     });
   }
 

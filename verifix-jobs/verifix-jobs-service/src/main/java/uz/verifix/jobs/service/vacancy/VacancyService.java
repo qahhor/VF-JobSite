@@ -2,6 +2,7 @@ package uz.verifix.jobs.service.vacancy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -26,6 +27,9 @@ import uz.verifix.jobs.service.billing.SubscriptionEnforcementService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +49,7 @@ public class VacancyService {
                           String city, String region, Double lat, Double lon,
                           BigDecimal salaryFrom, BigDecimal salaryTo, String currency,
                           String employmentType, String shiftSchedule, List<String> benefits,
-                          Boolean isMassHiring, Integer positionsCount) {
+                          Boolean isMassHiring, Integer positionsCount, LocalDate expiresAt) {
 
         // Check subscription limits
         subscriptionEnforcementService.enforceVacancyLimit(employerId);
@@ -75,27 +79,44 @@ public class VacancyService {
                 .isMassHiring(isMassHiring != null ? isMassHiring : false)
                 .positionsCount(positionsCount != null ? positionsCount : 1)
                 .status(VacancyStatus.DRAFT)
-                .expiresAt(Instant.now().plus(30, ChronoUnit.DAYS))
+                .expiresAt(resolveExpiresAt(expiresAt))
                 .build();
 
         vacancy = vacancyRepository.save(vacancy);
+        initializeRelations(vacancy);
         log.info("Vacancy created: {} for employer {}", vacancy.getId(), employerId);
         return vacancy;
     }
 
     @Transactional
     public Vacancy update(UUID vacancyId, UUID employerId, String title, String description,
-                          String category, String city, BigDecimal salaryFrom, BigDecimal salaryTo) {
+                          String category, String city, String region, Double lat, Double lon,
+                          BigDecimal salaryFrom, BigDecimal salaryTo, String currency,
+                          String employmentType, String shiftSchedule, List<String> benefits,
+                          Boolean isMassHiring, Integer positionsCount, LocalDate expiresAt) {
         Vacancy vacancy = getVacancyForEmployer(vacancyId, employerId);
 
         if (title != null) vacancy.setTitle(title);
         if (description != null) vacancy.setDescription(description);
         if (category != null) vacancy.setCategory(category);
         if (city != null) vacancy.setCity(city);
+        if (region != null) vacancy.setRegion(region);
+        if (lat != null && lon != null) {
+            vacancy.setLocation(GEOMETRY_FACTORY.createPoint(new Coordinate(lon, lat)));
+        }
         if (salaryFrom != null) vacancy.setSalaryFrom(salaryFrom);
         if (salaryTo != null) vacancy.setSalaryTo(salaryTo);
+        if (currency != null) vacancy.setCurrency(currency);
+        if (employmentType != null) vacancy.setEmploymentType(EmploymentType.valueOf(employmentType));
+        if (shiftSchedule != null) vacancy.setShiftSchedule(ShiftSchedule.valueOf(shiftSchedule));
+        if (benefits != null) vacancy.setBenefits(benefits.toArray(new String[0]));
+        if (isMassHiring != null) vacancy.setIsMassHiring(isMassHiring);
+        if (positionsCount != null) vacancy.setPositionsCount(positionsCount);
+        if (expiresAt != null) vacancy.setExpiresAt(resolveExpiresAt(expiresAt));
 
-        return vacancyRepository.save(vacancy);
+        vacancy = vacancyRepository.save(vacancy);
+        initializeRelations(vacancy);
+        return vacancy;
     }
 
     @Transactional
@@ -107,9 +128,14 @@ public class VacancyService {
         if (newStatus == VacancyStatus.PENDING_MODERATION) {
             vacancy.setModerationStatus(ModerationStatus.PENDING);
         }
+        if (newStatus == VacancyStatus.ACTIVE) {
+            vacancy.setModerationStatus(ModerationStatus.APPROVED);
+        }
 
         log.info("Vacancy {} status changed to {}", vacancyId, newStatus);
-        return vacancyRepository.save(vacancy);
+        vacancy = vacancyRepository.save(vacancy);
+        initializeRelations(vacancy);
+        return vacancy;
     }
 
     @Transactional(readOnly = true)
@@ -166,5 +192,20 @@ public class VacancyService {
             throw new ForbiddenException("You don't have access to this vacancy");
         }
         return vacancy;
+    }
+
+    private Instant resolveExpiresAt(LocalDate expiresAt) {
+        if (expiresAt == null) {
+            return Instant.now().plus(30, ChronoUnit.DAYS);
+        }
+        return expiresAt.atTime(LocalTime.MAX)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
+    }
+
+    private void initializeRelations(Vacancy vacancy) {
+        if (vacancy.getEmployer() != null) {
+            Hibernate.initialize(vacancy.getEmployer());
+        }
     }
 }

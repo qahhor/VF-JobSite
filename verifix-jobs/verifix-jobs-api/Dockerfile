@@ -10,6 +10,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Security: run as non-root user
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 RUN groupadd -r appuser && useradd -r -g appuser -d /app appuser
 RUN chown -R appuser:appuser /app
 

@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { Candidate, Vacancy } from '../../core/models';
 
 @Component({
   selector: 'vjw-talent-hub',
@@ -11,128 +12,382 @@ import { ApiService } from '../../core/services/api.service';
     <div class="space-y-6">
       <div>
         <h1 class="text-2xl font-bold text-gray-800">Talent Hub</h1>
-        <p class="text-sm text-gray-400 mt-1">Qayta foydalanish uchun nomzodlar bazasi — barcha vakansiyalar bo'ylab</p>
+        <p class="mt-1 text-sm text-gray-500">Reusable candidate pool across all employer vacancies.</p>
       </div>
 
-      <!-- Search -->
+      @if (error()) {
+        <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {{ error() }}
+        </div>
+      }
+
       <div class="flex gap-2">
-        <input type="text" [(ngModel)]="query" placeholder="Nomzod qidirish (ism, kasb, shahar)..."
-               class="flex-1 h-11 px-4 border border-gray-200 rounded-xl text-sm focus:border-black outline-none"
-               (keyup.enter)="search()">
-        <button (click)="search()" class="h-11 px-6 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">Qidirish</button>
+        <input
+          type="text"
+          [(ngModel)]="query"
+          placeholder="Search candidates by category, city, or skill"
+          class="h-11 flex-1 rounded-xl border border-gray-200 px-4 text-sm outline-none focus:border-black"
+          (keyup.enter)="search()"
+        />
+        <button
+          (click)="search()"
+          class="h-11 rounded-xl bg-black px-6 text-sm font-semibold text-white transition hover:bg-gray-800"
+        >
+          Search
+        </button>
       </div>
 
-      <!-- Talent lists -->
       <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-        <button (click)="activeList.set('all')" class="shrink-0 h-9 px-4 rounded-full text-sm font-medium border transition"
-                [class]="activeList() === 'all' ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200'">
-          Barchasi ({{ candidates().length }})
+        <button
+          (click)="setActiveList('all')"
+          class="h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition"
+          [class]="activeList() === 'all' ? 'border-black bg-black text-white' : 'border-gray-200 bg-white text-gray-600'"
+        >
+          All ({{ candidates().length }})
         </button>
-        <button (click)="activeList.set('shortlisted')" class="shrink-0 h-9 px-4 rounded-full text-sm font-medium border transition"
-                [class]="activeList() === 'shortlisted' ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200'">
-          ⭐ Tanlangan ({{ shortlisted().length }})
+        <button
+          (click)="setActiveList('shortlisted')"
+          class="h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition"
+          [class]="activeList() === 'shortlisted' ? 'border-black bg-black text-white' : 'border-gray-200 bg-white text-gray-600'"
+        >
+          Shortlist ({{ shortlisted().length }})
         </button>
-        <button (click)="activeList.set('hired')" class="shrink-0 h-9 px-4 rounded-full text-sm font-medium border transition"
-                [class]="activeList() === 'hired' ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200'">
-          ✅ Yollangan ({{ hired().length }})
+        <button
+          (click)="setActiveList('hired')"
+          class="h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition"
+          [class]="activeList() === 'hired' ? 'border-black bg-black text-white' : 'border-gray-200 bg-white text-gray-600'"
+        >
+          Hired ({{ hired().length }})
         </button>
       </div>
 
-      <!-- Candidate cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        @for (c of filteredCandidates(); track c.id) {
-          <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-bold">
-                {{ (c.firstName || '?').charAt(0) }}
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="text-sm font-semibold text-gray-800 truncate">{{ c.firstName }} {{ c.lastName }}</div>
-                <div class="text-xs text-gray-400">{{ c.city || '' }} @if (c.phone) { · {{ c.phone }} }</div>
-              </div>
-              @if (c.matchScore) {
-                <div class="text-sm font-bold" [class]="c.matchScore >= 70 ? 'text-green-600' : c.matchScore >= 40 ? 'text-yellow-600' : 'text-gray-400'">
-                  {{ c.matchScore }}%
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        @if (loading()) {
+          <div class="col-span-full rounded-xl border border-gray-100 bg-white p-10 text-center text-sm text-gray-400">
+            Loading candidates...
+          </div>
+        } @else {
+          @for (candidate of filteredCandidates(); track candidate.id) {
+            <div class="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+              <div class="mb-3 flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-sm font-bold text-gray-600">
+                  {{ initials(candidate) }}
                 </div>
-              }
-            </div>
-
-            <!-- Badges -->
-            <div class="flex flex-wrap gap-1 mb-3">
-              @if (c.myidStatus === 'VERIFIED') { <span class="text-[10px] px-2 py-0.5 bg-green-50 text-green-600 rounded-full">✅ MyID</span> }
-              @if (c.skills?.length) {
-                @for (s of c.skills.slice(0, 3); track s) {
-                  <span class="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full">{{ s }}</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-sm font-semibold text-gray-800">{{ fullName(candidate) }}</div>
+                  <div class="truncate text-xs text-gray-400">{{ candidate.city || 'City not set' }}<span *ngIf="candidate.phone"> | {{ candidate.phone }}</span></div>
+                </div>
+                @if (candidate.matchScore) {
+                  <div
+                    class="text-sm font-bold"
+                    [class]="candidate.matchScore >= 70 ? 'text-green-600' : candidate.matchScore >= 40 ? 'text-yellow-600' : 'text-gray-400'"
+                  >
+                    {{ candidate.matchScore }}%
+                  </div>
                 }
-              }
-            </div>
+              </div>
 
-            <div class="flex gap-2 pt-3 border-t border-gray-100">
-              <button (click)="toggleShortlist(c)" class="flex-1 h-8 text-xs font-medium rounded-lg border transition"
-                      [class]="isShortlisted(c.id) ? 'bg-yellow-50 text-yellow-600 border-yellow-200' : 'text-gray-600 border-gray-200 hover:bg-gray-50'">
-                {{ isShortlisted(c.id) ? '⭐ Tanlangan' : '☆ Tanlash' }}
-              </button>
-              <button (click)="inviteToVacancy(c)" class="flex-1 h-8 text-xs font-medium bg-black text-white rounded-lg hover:bg-gray-800 transition">
-                📨 Taklif
-              </button>
+              <div class="mb-3 flex flex-wrap gap-1">
+                @if (candidate.myidStatus === 'VERIFIED') {
+                  <span class="rounded-full bg-green-50 px-2 py-0.5 text-[10px] text-green-700">MyID</span>
+                }
+                @for (skill of (candidate.skills || []).slice(0, 3); track skill) {
+                  <span class="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-600">{{ skill }}</span>
+                }
+              </div>
+
+              <div class="flex gap-2 border-t border-gray-100 pt-3">
+                <button
+                  (click)="toggleShortlist(candidate)"
+                  class="h-8 flex-1 rounded-lg border text-xs font-medium transition"
+                  [disabled]="busy()"
+                  [class]="isShortlisted(candidate.id) ? 'border-yellow-200 bg-yellow-50 text-yellow-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
+                >
+                  {{ isShortlisted(candidate.id) ? 'In shortlist' : 'Add to shortlist' }}
+                </button>
+                <button
+                  (click)="openInvite(candidate)"
+                  class="h-8 flex-1 rounded-lg bg-black text-xs font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+                  [disabled]="!vacancies().length"
+                >
+                  Invite
+                </button>
+              </div>
             </div>
-          </div>
-        } @empty {
-          <div class="col-span-full text-center py-12 text-gray-400 text-sm">
-            @if (searched()) { Nomzodlar topilmadi } @else { Qidiruv so'rovini kiriting }
-          </div>
+          } @empty {
+            <div class="col-span-full rounded-xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-400">
+              {{ emptyStateMessage() }}
+            </div>
+          }
         }
       </div>
     </div>
+
+    @if (inviteTarget(); as candidate) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+          <div class="mb-5">
+            <h2 class="text-lg font-semibold text-gray-800">Invite candidate</h2>
+            <p class="mt-1 text-sm text-gray-500">{{ fullName(candidate) }}</p>
+          </div>
+
+          @if (inviteError()) {
+            <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {{ inviteError() }}
+            </div>
+          }
+
+          <div class="space-y-4">
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Vacancy</label>
+              <select
+                [(ngModel)]="inviteVacancyId"
+                class="h-11 w-full rounded-xl border border-gray-200 px-3 text-sm outline-none focus:border-black"
+              >
+                <option value="">Select vacancy</option>
+                @for (vacancy of vacancies(); track vacancy.id) {
+                  <option [value]="vacancy.id">{{ vacancy.title }}</option>
+                }
+              </select>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm font-medium text-gray-700">Recruiter note</label>
+              <textarea
+                [(ngModel)]="inviteNote"
+                rows="4"
+                class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-black"
+                placeholder="Optional context for the candidate"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-end gap-2">
+            <button
+              (click)="closeInvite()"
+              class="h-10 rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              (click)="submitInvite()"
+              class="h-10 rounded-xl bg-black px-4 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+              [disabled]="inviteBusy()"
+            >
+              {{ inviteBusy() ? 'Sending...' : 'Send invite' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
   `,
-  styles: [`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`]
+  styles: [
+    `.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`
+  ]
 })
 export class TalentHubComponent implements OnInit {
-  candidates = signal<any[]>([]);
-  shortlisted = signal<any[]>([]);
-  hired = signal<any[]>([]);
-  activeList = signal('all');
-  query = '';
+  candidates = signal<Candidate[]>([]);
+  shortlisted = signal<Candidate[]>([]);
+  hired = signal<Candidate[]>([]);
+  vacancies = signal<Vacancy[]>([]);
+  activeList = signal<'all' | 'shortlisted' | 'hired'>('all');
   searched = signal(false);
-  private shortlistIds = new Set<string>();
+  loading = signal(false);
+  busy = signal(false);
+  error = signal('');
+
+  inviteTarget = signal<Candidate | null>(null);
+  inviteBusy = signal(false);
+  inviteError = signal('');
+
+  query = '';
+  inviteVacancyId = '';
+  inviteNote = '';
+  private shortlistListId: string | null = null;
 
   constructor(private api: ApiService) {}
 
   ngOnInit() {
-    const saved = localStorage.getItem('vjw_talent_shortlist');
-    if (saved) { this.shortlistIds = new Set(JSON.parse(saved)); }
+    this.loadVacancies();
+    this.ensureShortlist();
+    this.loadHired();
+  }
+
+  setActiveList(list: 'all' | 'shortlisted' | 'hired') {
+    this.activeList.set(list);
+    this.error.set('');
+    if (list === 'shortlisted' && this.shortlistListId) {
+      this.loadShortlisted();
+    }
+    if (list === 'hired') {
+      this.loadHired();
+    }
   }
 
   search() {
-    if (!this.query.trim()) return;
+    const query = this.query.trim();
+    if (!query) {
+      this.searched.set(false);
+      this.candidates.set([]);
+      this.activeList.set('all');
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set('');
+    this.activeList.set('all');
     this.searched.set(true);
-    this.api.searchCandidates(this.query).subscribe({
-      next: (r: any) => {
-        const all = r.content || [];
-        this.candidates.set(all);
-        this.shortlisted.set(all.filter((c: any) => this.shortlistIds.has(c.id)));
+
+    this.api.searchCandidates(query).subscribe({
+      next: (response) => {
+        this.candidates.set(response.content || []);
+        this.loading.set(false);
       },
-      error: () => {}
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(this.extractMessage(err, 'Candidate search failed.'));
+      }
     });
   }
 
-  filteredCandidates(): any[] {
-    const list = this.activeList();
-    if (list === 'shortlisted') return this.candidates().filter(c => this.shortlistIds.has(c.id));
-    if (list === 'hired') return []; // TODO: from applications with HIRED status
+  filteredCandidates(): Candidate[] {
+    if (this.activeList() === 'shortlisted') {
+      return this.shortlisted();
+    }
+    if (this.activeList() === 'hired') {
+      return this.hired();
+    }
     return this.candidates();
   }
 
-  isShortlisted(id: string): boolean { return this.shortlistIds.has(id); }
-
-  toggleShortlist(c: any) {
-    if (this.shortlistIds.has(c.id)) { this.shortlistIds.delete(c.id); }
-    else { this.shortlistIds.add(c.id); }
-    localStorage.setItem('vjw_talent_shortlist', JSON.stringify([...this.shortlistIds]));
-    this.shortlisted.set(this.candidates().filter(x => this.shortlistIds.has(x.id)));
+  isShortlisted(candidateId: string): boolean {
+    return this.shortlisted().some(candidate => candidate.id === candidateId);
   }
 
-  inviteToVacancy(c: any) {
-    // TODO: open invite modal with vacancy selection
+  toggleShortlist(candidate: Candidate) {
+    if (!this.shortlistListId) {
+      this.error.set('Shortlist is not ready yet. Try again in a moment.');
+      return;
+    }
+
+    this.busy.set(true);
+    this.error.set('');
+
+    const request = this.isShortlisted(candidate.id)
+      ? this.api.removeTalentListCandidate(this.shortlistListId, candidate.id)
+      : this.api.addTalentListCandidate(this.shortlistListId, candidate.id);
+
+    request.subscribe({
+      next: () => {
+        this.busy.set(false);
+        this.loadShortlisted();
+      },
+      error: (err) => {
+        this.busy.set(false);
+        this.error.set(this.extractMessage(err, 'Shortlist update failed.'));
+      }
+    });
+  }
+
+  openInvite(candidate: Candidate) {
+    this.inviteTarget.set(candidate);
+    this.inviteError.set('');
+    this.inviteNote = '';
+    this.inviteVacancyId = this.vacancies()[0]?.id ?? '';
+  }
+
+  closeInvite() {
+    this.inviteTarget.set(null);
+    this.inviteBusy.set(false);
+    this.inviteError.set('');
+    this.inviteVacancyId = '';
+    this.inviteNote = '';
+  }
+
+  submitInvite() {
+    const candidate = this.inviteTarget();
+    if (!candidate) {
+      return;
+    }
+    if (!this.inviteVacancyId) {
+      this.inviteError.set('Select a vacancy first.');
+      return;
+    }
+
+    this.inviteBusy.set(true);
+    this.inviteError.set('');
+
+    this.api.inviteCandidate(this.inviteVacancyId, candidate.id, this.inviteNote.trim() || undefined).subscribe({
+      next: () => this.closeInvite(),
+      error: (err) => {
+        this.inviteBusy.set(false);
+        this.inviteError.set(this.extractMessage(err, 'Invite could not be sent.'));
+      }
+    });
+  }
+
+  emptyStateMessage(): string {
+    if (this.activeList() === 'shortlisted') {
+      return 'Shortlist is empty.';
+    }
+    if (this.activeList() === 'hired') {
+      return 'No hired candidates yet.';
+    }
+    return this.searched() ? 'No candidates matched this query.' : 'Enter a search query to start.';
+  }
+
+  fullName(candidate: Candidate): string {
+    return [candidate.firstName, candidate.lastName].filter(Boolean).join(' ') || 'Candidate';
+  }
+
+  initials(candidate: Candidate): string {
+    const name = this.fullName(candidate);
+    return name.charAt(0).toUpperCase() || '?';
+  }
+
+  private ensureShortlist() {
+    this.api.createTalentList('Shortlist', 'Reusable candidates').subscribe({
+      next: (list) => {
+        this.shortlistListId = list.id;
+        this.loadShortlisted();
+      },
+      error: (err) => {
+        this.error.set(this.extractMessage(err, 'Shortlist could not be initialized.'));
+      }
+    });
+  }
+
+  private loadShortlisted() {
+    if (!this.shortlistListId) {
+      return;
+    }
+    this.api.getTalentListCandidates(this.shortlistListId).subscribe({
+      next: (candidates) => this.shortlisted.set(candidates || []),
+      error: (err) => {
+        this.error.set(this.extractMessage(err, 'Shortlist could not be loaded.'));
+      }
+    });
+  }
+
+  private loadHired() {
+    this.api.getTalentHubHired().subscribe({
+      next: (candidates) => this.hired.set(candidates || []),
+      error: (err) => {
+        this.error.set(this.extractMessage(err, 'Hired candidates could not be loaded.'));
+      }
+    });
+  }
+
+  private loadVacancies() {
+    this.api.getVacancies(0, 100, 'ACTIVE').subscribe({
+      next: (response) => this.vacancies.set(response.content || []),
+      error: (err) => {
+        this.error.set(this.extractMessage(err, 'Active vacancies could not be loaded.'));
+      }
+    });
+  }
+
+  private extractMessage(err: any, fallback: string): string {
+    return err?.error?.message || err?.error?.error || fallback;
   }
 }

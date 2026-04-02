@@ -1,10 +1,10 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'vjw-public-categories',
@@ -24,7 +24,7 @@ import { PublicFooterComponent } from '../../shared/components/public-footer.com
         <div>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             @for (item of categories(); track item.category) {
-              <a [routerLink]="['/jobs']" [queryParams]="{ category: item.category }"
+              <a [routerLink]="['/vacancies/category', item.category]"
                  class="rounded-2xl border border-gray-100 bg-white p-4 hover:shadow-md transition">
                 <div class="text-3xl">{{ item.icon || '📋' }}</div>
                 <div class="text-sm font-semibold text-gray-900 mt-3">{{ item.category }}</div>
@@ -61,21 +61,63 @@ export class PublicCategoriesComponent implements OnInit {
   categories = signal<any[]>([]);
   cities = signal<any[]>([]);
 
-  constructor(private api: PublicApiService, private title: Title) {}
+  constructor(private api: PublicApiService, private seo: SeoService) {}
 
   ngOnInit() {
-    this.title.setTitle("Kasblar va shaharlar | Verifix Jobs");
+    this.updateSeo();
     this.api.getCategories().subscribe({
-      next: (data: any[]) => this.categories.set(data || []),
+      next: (data: any[]) => {
+        this.categories.set(data || []);
+        this.updateSeo();
+      },
       error: () => {}
     });
     this.api.getCities().subscribe({
-      next: (data: any[]) => this.cities.set((data || []).slice(0, 12)),
+      next: (data: any[]) => {
+        this.cities.set((data || []).slice(0, 12));
+        this.updateSeo();
+      },
       error: () => {}
     });
   }
 
   fmt(n: number): string {
     return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'K' : '' + n;
+  }
+
+  private updateSeo() {
+    this.seo.setPage({
+      title: 'Job categories and city hubs',
+      description: 'Explore job category landing pages and city hiring hubs across Uzbekistan on Verifix Jobs.',
+      path: '/categories',
+      keywords: ['job categories', 'city jobs', 'vacancy hubs', 'uzbekistan jobs'],
+      schema: [
+        this.seo.buildCollectionPageSchema(
+          'Job categories and city hubs',
+          'Browse category and city landing pages for public vacancy discovery.',
+          '/categories'
+        ),
+        this.seo.buildBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Categories', path: '/categories' }
+        ]),
+        this.seo.buildItemListSchema(
+          'Popular job categories',
+          this.categories().slice(0, 12).map((item: any) => ({
+            name: item.category,
+            path: `/vacancies/category/${encodeURIComponent(item.category)}`,
+            description: item.vacancyCount ? `${item.vacancyCount} jobs` : undefined
+          }))
+        ),
+        this.seo.buildItemListSchema(
+          'City job hubs',
+          this.cities().slice(0, 12).map((item: any) => ({
+            name: item.city,
+            path: `/vacancies/${encodeURIComponent(item.city)}`,
+            description: item.vacancyCount ? `${item.vacancyCount} jobs` : undefined
+          }))
+        )
+      ]
+    });
   }
 }

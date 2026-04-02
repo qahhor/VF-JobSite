@@ -18,7 +18,10 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              "src/robots.txt",
+              "src/llms.txt",
+              "src/sitemap.xml"
             ],
             "styles": [
               "src/styles.css",
@@ -28,12 +31,23 @@
               "zone.js"
             ],
             "serviceWorker": "ngsw-config.json"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
+            }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "verifix-jobs-web:build"
+            "buildTarget": "verifix-jobs-web:build",
+            "proxyConfig": "proxy.conf.json"
           }
         },
         "test": {

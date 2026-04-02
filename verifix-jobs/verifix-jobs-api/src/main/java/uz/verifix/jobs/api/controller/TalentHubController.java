@@ -31,18 +31,32 @@ public class TalentHubController {
     }
 
     @PostMapping("/lists/{listId}/candidates")
-    public ResponseEntity<Void> addCandidate(@PathVariable UUID listId, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<Void> addCandidate(@PathVariable UUID listId, @RequestBody Map<String, Object> body, Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
         UUID candidateId = UUID.fromString((String) body.get("candidateId"));
         String notes = (String) body.get("notes");
         @SuppressWarnings("unchecked")
         List<String> tags = (List<String>) body.get("tags");
-        talentHub.addCandidate(listId, candidateId, notes, tags);
+        talentHub.addCandidate(employerId, listId, candidateId, notes, tags);
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/lists/{listId}/candidates")
+    public ResponseEntity<List<Map<String, Object>>> getListCandidates(@PathVariable UUID listId, Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        return ResponseEntity.ok(talentHub.getListCandidates(employerId, listId));
+    }
+
     @DeleteMapping("/lists/{listId}/candidates/{candidateId}")
-    public ResponseEntity<Void> removeCandidate(@PathVariable UUID listId, @PathVariable UUID candidateId) {
-        talentHub.removeCandidate(listId, candidateId);
+    public ResponseEntity<Void> removeCandidate(@PathVariable UUID listId, @PathVariable UUID candidateId, Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        talentHub.removeCandidate(employerId, listId, candidateId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/hired")
+    public ResponseEntity<List<Map<String, Object>>> getHired(Authentication auth) {
+        UUID employerId = SecurityUtils.extractEmployerId(auth);
+        return ResponseEntity.ok(talentHub.getHiredCandidates(employerId));
     }
 }

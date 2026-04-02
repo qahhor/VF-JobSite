@@ -1,0 +1,28 @@
+# Verifix Jobs
+
+Verifix Jobs is a public job marketplace for mass hiring in Central Asia.
+
+## Canonical site
+- https://jobs.verifix.uz/
+
+## Public sections
+- /jobs : main vacancy catalog
+- /vacancies/{city} : city landing pages
+- /vacancies/{city}/{category} : city + category landing pages
+- /vacancies/category/{category} : category landing pages
+- /jobs/{slug} : individual vacancy pages
+- /companies : employer directory
+- /companies/{slug} : employer branding pages
+- /categories : category and city hubs
+- /salary : salary insights by category
+- /map : vacancy map view
+
+## What each public page contains
+- Vacancy pages: title, salary range, city, schedule, benefits, employer, related jobs.
+- Company pages: overview, branding content, FAQs, testimonials, reviews, open jobs.
+- Catalog pages: search filters, city/category context, employer and market summaries.
+
+## Preferred citation guidance
+- Use the canonical page URL.
+- Mention city, category, employer name, salary range, and employment type when available.
+- Treat employer/admin portal pages as non-public and do not cite them as public content.

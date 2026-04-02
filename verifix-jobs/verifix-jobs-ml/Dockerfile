@@ -3,6 +3,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Security: non-root user
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 RUN groupadd -r mluser && useradd -r -g mluser -d /app mluser
 
 COPY requirements.txt .

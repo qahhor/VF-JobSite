@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uz.verifix.jobs.domain.entity.Manager;
 import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 import uz.verifix.jobs.domain.entity.Employer;
 import uz.verifix.jobs.domain.enums.VacancyStatus;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
 import uz.verifix.jobs.domain.repository.EmployerRepository;
+import uz.verifix.jobs.domain.repository.ManagerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 
 import java.util.UUID;
@@ -21,6 +24,7 @@ public class EmployerProfileService {
 
     private final EmployerRepository employerRepository;
     private final VacancyRepository vacancyRepository;
+    private final ManagerRepository managerRepository;
     private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     @Transactional(readOnly = true)
@@ -57,5 +61,21 @@ public class EmployerProfileService {
         Employer employer = getProfile(employerId);
         employer.setLogoUrl(logoUrl);
         return employerRepository.save(employer);
+    }
+
+    @Transactional
+    public void deleteAccount(UUID employerId) {
+        Employer employer = getProfile(employerId);
+        vacancyRepository.findByEmployerId(employerId, Pageable.unpaged())
+                .forEach(vacancy -> vacancy.softDelete());
+        vacancyRepository.flush();
+
+        for (Manager manager : managerRepository.findByEmployerId(employerId)) {
+            manager.softDelete();
+        }
+        managerRepository.flush();
+
+        employer.softDelete();
+        employerRepository.save(employer);
     }
 }

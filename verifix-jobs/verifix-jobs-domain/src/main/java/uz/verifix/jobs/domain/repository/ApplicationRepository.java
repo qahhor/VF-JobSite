@@ -21,6 +21,10 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     Page<Application> findByVacancyId(UUID vacancyId, Pageable pageable);
 
+    Page<Application> findByVacancy_EmployerId(UUID employerId, Pageable pageable);
+
+    Page<Application> findByVacancy_EmployerIdAndStatus(UUID employerId, ApplicationStatus status, Pageable pageable);
+
     Page<Application> findByCandidateId(UUID candidateId, Pageable pageable);
 
     long countByVacancyIdAndStatus(UUID vacancyId, ApplicationStatus status);

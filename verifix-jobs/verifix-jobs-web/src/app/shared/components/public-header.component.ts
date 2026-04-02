@@ -16,12 +16,11 @@ import { I18nService } from '../../core/services/i18n.service';
           <span class="font-bold text-lg tracking-tight hidden sm:inline">Verifix Jobs</span>
         </a>
 
-        <!-- Desktop nav -->
         <nav class="hidden md:flex items-center gap-6 text-sm">
           <a routerLink="/jobs" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">{{ i18n.t('nav.vacancies') }}</a>
           <a routerLink="/companies" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">{{ i18n.t('nav.companies') }}</a>
-          <a routerLink="/map" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">📍 {{ i18n.t('nav.map') }}</a>
-          <a routerLink="/salary" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">💰 {{ i18n.t('nav.salary') }}</a>
+          <a routerLink="/map" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">{{ i18n.t('nav.map') }}</a>
+          <a routerLink="/salary" routerLinkActive="text-black font-semibold" class="text-gray-500 hover:text-black transition">{{ i18n.t('nav.salary') }}</a>
         </nav>
 
         <div class="flex items-center gap-2">
@@ -32,7 +31,6 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
     </header>
 
-    <!-- Mobile bottom nav — thumb-friendly for blue-collar users -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-50 safe-bottom">
       <div class="grid grid-cols-4 h-16">
         <a routerLink="/" routerLinkActive="text-black" [routerLinkActiveOptions]="{exact:true}"

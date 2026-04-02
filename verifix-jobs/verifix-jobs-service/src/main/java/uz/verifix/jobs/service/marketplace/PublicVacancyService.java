@@ -252,25 +252,30 @@ public class PublicVacancyService {
 
     private Pageable applySort(Pageable pageable, String sort, String queryText) {
         String sortKey = sort == null || sort.isBlank() ? "date_desc" : sort.trim().toLowerCase();
-        Sort resolved = switch (sortKey) {
-            case "salary_asc" -> Sort.by(
-                    Sort.Order.asc("salaryFrom"),
-                    Sort.Order.desc("createdAt")
-            );
-            case "salary_desc" -> Sort.by(
-                    Sort.Order.desc("salaryFrom"),
-                    Sort.Order.desc("createdAt")
-            );
-            case "date_asc" -> Sort.by(Sort.Order.asc("createdAt"));
-            case "relevance" -> queryText != null && !queryText.isBlank()
-                    ? Sort.by(
-                    Sort.Order.desc("applyCount"),
-                    Sort.Order.desc("viewCount"),
-                    Sort.Order.desc("createdAt")
-            )
-                    : Sort.by(Sort.Order.desc("createdAt"));
-            default -> Sort.by(Sort.Order.desc("createdAt"));
-        };
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(Sort.Order.desc("isBranded"));
+
+        switch (sortKey) {
+            case "salary_asc" -> {
+                orders.add(Sort.Order.asc("salaryFrom"));
+                orders.add(Sort.Order.desc("createdAt"));
+            }
+            case "salary_desc" -> {
+                orders.add(Sort.Order.desc("salaryFrom"));
+                orders.add(Sort.Order.desc("createdAt"));
+            }
+            case "date_asc" -> orders.add(Sort.Order.asc("createdAt"));
+            case "relevance" -> {
+                if (queryText != null && !queryText.isBlank()) {
+                    orders.add(Sort.Order.desc("applyCount"));
+                    orders.add(Sort.Order.desc("viewCount"));
+                }
+                orders.add(Sort.Order.desc("createdAt"));
+            }
+            default -> orders.add(Sort.Order.desc("createdAt"));
+        }
+
+        Sort resolved = Sort.by(orders);
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), resolved);
     }
 

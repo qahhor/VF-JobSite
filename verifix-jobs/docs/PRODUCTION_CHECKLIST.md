@@ -1,53 +1,47 @@
-# Production Launch Checklist — Verifix Jobs
+# Production Checklist
 
-## Текущий статус: В ПРОДАКШЕНЕ (job.verifix.uz)
+## Public entrypoints
 
-### CRITICAL — Безопасность и инфраструктура
+- [ ] `https://jobs.verifix.uz` resolves to the production server
+- [ ] `https://admin.jobs.verifix.uz` resolves to the production server
+- [ ] TLS certificates exist in `ops/nginx/ssl/fullchain.pem` and `ops/nginx/ssl/privkey.pem`
 
-- [x] SSL-сертификат (Let's Encrypt) установлен и работает
-- [x] JWT_SECRET — уникальный, 64+ символов
-- [x] POSTGRES_PASSWORD — установлен
-- [x] REDIS_PASSWORD — установлен
-- [x] .env файл НЕ в git-репозитории
-- [x] Actuator endpoints закрыты от внешнего доступа (Nginx)
-- [x] CORS настроен на production домен (job.verifix.uz)
-- [x] Бэкап БД настроен (ежедневно 02:00)
-- [x] Liquibase миграции (22) применены без ошибок
-- [x] Health check endpoints отвечают 200
-- [x] Docker контейнеры работают (6 контейнеров)
-- [ ] Swagger UI закрыт в production
-- [ ] Docker контейнеры от non-root пользователя
+## Secrets and environment
 
-### HIGH — Мониторинг и интеграции
+- [ ] `.env` exists on the server and is not committed to git
+- [ ] `SPRING_PROFILES_ACTIVE=prod`
+- [ ] `APP_BASE_URL=https://jobs.verifix.uz`
+- [ ] `CORS_ORIGINS=https://jobs.verifix.uz,https://admin.jobs.verifix.uz`
+- [ ] `POSTGRES_PASSWORD`, `REDIS_PASSWORD`, `JWT_SECRET`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `ELASTIC_PASSWORD`, and `GRAFANA_ADMIN_PASSWORD` are strong non-default values
 
-- [x] Prometheus + Grafana настроены
-- [x] DNS A-запись указывает на сервер (CloudFlare)
-- [x] Telegram Bot работает (@VerifixJobBot)
-- [x] Elasticsearch индексация работает
-- [x] PWA Service Worker корректно работает
-- [x] i18n — 7 языков настроены
-- [ ] Alerting правила добавлены в Prometheus
-- [ ] Log rotation настроен для контейнеров
-- [ ] Resource limits (CPU/RAM) для контейнеров
-- [ ] Nginx rate limiting включён
-- [ ] SMS-шлюз протестирован в production
-- [ ] Payment webhooks настроены (Click.uz, Payme.uz)
-- [ ] Firewall настроен (только 80/443 открыты)
+## Runtime hardening
 
-### MEDIUM — После запуска
+- [ ] Only `80/443` are exposed publicly
+- [ ] Internal services are not published directly from Docker Compose
+- [ ] Swagger and `/v3/api-docs` are blocked in production
+- [ ] `/actuator/*` is blocked at Nginx
+- [ ] Nginx rate limiting is enabled for auth and API routes
 
-- [ ] Load testing (минимум 100 concurrent users)
-- [ ] Disaster recovery план протестирован
-- [ ] Бэкап восстановление протестировано
-- [ ] CI/CD pipeline для автодеплоя
-- [ ] Security scan проведён
-- [ ] Performance baseline зафиксирован
+## Application health
 
-### Известные проблемы
+- [ ] `docker compose -f docker-compose.yml -f docker-compose.prod.yml ps` shows healthy containers
+- [ ] `https://jobs.verifix.uz` serves the public app
+- [ ] `https://admin.jobs.verifix.uz` serves the standalone admin app
+- [ ] `https://jobs.verifix.uz/api/v1/public/vacancies?size=1` returns `200`
+- [ ] Liquibase migrations complete successfully
+- [ ] Telegram bot starts successfully with the production token
 
-1. Swagger UI доступен в production (нужно закрыть через Nginx)
-2. Нет automated CI/CD — деплой ручной через SSH
-3. Нет rate limiting на Nginx
-4. SMS и Payment интеграции не протестированы в prod
-5. Нет unit/integration тестов
-6. ML сервис — только скелет, не подключён
+## Observability
+
+- [ ] Prometheus and Grafana are running
+- [ ] Monitoring access is limited to VPN, bastion, or SSH tunnel
+- [ ] Log rotation is enabled for long-running containers
+- [ ] Backups run before deploy and are restorable
+
+## Post-deploy validation
+
+- [ ] Browser smoke on desktop
+- [ ] Browser smoke on mobile viewport
+- [ ] Employer auth flow
+- [ ] Candidate/public vacancy apply flow
+- [ ] Admin moderation and GOV dashboards

@@ -43,6 +43,31 @@ export class ApiService {
       minSalary: null, maxSalary: null, educationLevel: null, gender: null, myidVerified: null
     });
   }
+  inviteCandidate(vacancyId: string, candidateId: string, note?: string): Observable<Application> {
+    return this.http.post<Application>(`${this.base}/applications/invite`, { vacancyId, candidateId, note });
+  }
+
+  // === Talent Hub ===
+  getTalentLists(): Observable<Array<{ id: string; name: string; description: string; candidateCount: number; createdAt: string }>> {
+    return this.http.get<Array<{ id: string; name: string; description: string; candidateCount: number; createdAt: string }>>(
+      `${this.base}/talent-hub/lists`
+    );
+  }
+  createTalentList(name: string, description = ''): Observable<{ id: string; name: string; description: string }> {
+    return this.http.post<{ id: string; name: string; description: string }>(`${this.base}/talent-hub/lists`, { name, description });
+  }
+  getTalentListCandidates(listId: string): Observable<Candidate[]> {
+    return this.http.get<Candidate[]>(`${this.base}/talent-hub/lists/${listId}/candidates`);
+  }
+  addTalentListCandidate(listId: string, candidateId: string, notes?: string, tags?: string[]): Observable<void> {
+    return this.http.post<void>(`${this.base}/talent-hub/lists/${listId}/candidates`, { candidateId, notes, tags });
+  }
+  removeTalentListCandidate(listId: string, candidateId: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/talent-hub/lists/${listId}/candidates/${candidateId}`);
+  }
+  getTalentHubHired(): Observable<Candidate[]> {
+    return this.http.get<Candidate[]>(`${this.base}/talent-hub/hired`);
+  }
 
   // === Analytics & Dashboard ===
   getDashboard(): Observable<any> { return this.http.get<any>(`${this.base}/analytics/overview`); }

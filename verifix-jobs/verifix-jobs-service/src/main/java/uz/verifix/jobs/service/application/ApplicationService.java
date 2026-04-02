@@ -12,9 +12,12 @@ import uz.verifix.jobs.common.exception.ErrorCode;
 import uz.verifix.jobs.common.exception.ForbiddenException;
 import uz.verifix.jobs.common.exception.ResourceNotFoundException;
 import uz.verifix.jobs.domain.entity.Application;
+import uz.verifix.jobs.domain.entity.Candidate;
 import uz.verifix.jobs.domain.entity.Vacancy;
+import uz.verifix.jobs.domain.enums.ApplicationSource;
 import uz.verifix.jobs.domain.enums.ApplicationStatus;
 import uz.verifix.jobs.domain.repository.ApplicationRepository;
+import uz.verifix.jobs.domain.repository.CandidateRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.notification.DomainEvent;
 import uz.verifix.jobs.service.notification.EventPublisher;
@@ -32,6 +35,7 @@ public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
     private final VacancyRepository vacancyRepository;
+    private final CandidateRepository candidateRepository;
     private final EventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
@@ -42,6 +46,14 @@ public class ApplicationService {
             return applicationRepository.findByVacancyIdAndStatus(vacancyId, status, pageable);
         }
         return applicationRepository.findByVacancyId(vacancyId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Application> getAllByEmployer(UUID employerId, ApplicationStatus status, Pageable pageable) {
+        if (status != null) {
+            return applicationRepository.findByVacancy_EmployerIdAndStatus(employerId, status, pageable);
+        }
+        return applicationRepository.findByVacancy_EmployerId(employerId, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -74,6 +86,42 @@ public class ApplicationService {
         String existing = application.getRecruiterNotes();
         application.setRecruiterNotes(existing != null ? existing + "\n---\n" + note : note);
         return applicationRepository.save(application);
+    }
+
+    @Transactional
+    public Application inviteCandidate(UUID vacancyId, UUID candidateId, UUID employerId, String note) {
+        Vacancy vacancy = getVacancyForEmployer(vacancyId, employerId);
+        Candidate candidate = candidateRepository.findById(candidateId)
+                .orElseThrow(() -> new ResourceNotFoundException("Candidate", candidateId.toString()));
+
+        Application application = applicationRepository.findByVacancyIdAndCandidateId(vacancyId, candidateId)
+                .orElseGet(() -> Application.builder()
+                        .vacancy(vacancy)
+                        .candidate(candidate)
+                        .status(ApplicationStatus.NEW)
+                        .source(ApplicationSource.EMPLOYER)
+                        .appliedAt(Instant.now())
+                        .build());
+
+        if (application.getStatus() != ApplicationStatus.INVITED) {
+            ApplicationStatusMachine.validateTransition(application.getStatus(), ApplicationStatus.INVITED);
+            application.setStatus(ApplicationStatus.INVITED);
+        }
+        application.setSource(ApplicationSource.EMPLOYER);
+        application.setInvitedAt(Instant.now());
+        if (application.getAppliedAt() == null) {
+            application.setAppliedAt(Instant.now());
+        }
+        if (note != null && !note.isBlank()) {
+            String existing = application.getRecruiterNotes();
+            application.setRecruiterNotes(existing != null && !existing.isBlank()
+                    ? existing + "\n---\n" + note
+                    : note);
+        }
+
+        Application saved = applicationRepository.save(application);
+        publishStatusEvent(saved, ApplicationStatus.INVITED);
+        return saved;
     }
 
     @Transactional
@@ -150,11 +198,16 @@ public class ApplicationService {
     }
 
     private void validateVacancyOwnership(UUID vacancyId, UUID employerId) {
+        getVacancyForEmployer(vacancyId, employerId);
+    }
+
+    private Vacancy getVacancyForEmployer(UUID vacancyId, UUID employerId) {
         Vacancy vacancy = vacancyRepository.findById(vacancyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vacancy", vacancyId.toString()));
         if (!vacancy.getEmployer().getId().equals(employerId)) {
             throw new ForbiddenException("You do not have access to this vacancy");
         }
+        return vacancy;
     }
 
     private void validateApplicationOwnership(Application application, UUID employerId) {
