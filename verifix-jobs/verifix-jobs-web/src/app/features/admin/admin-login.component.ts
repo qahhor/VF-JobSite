@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminApiService } from '../../core/services/admin-api.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-admin-login',
@@ -12,8 +13,8 @@ import { AdminApiService } from '../../core/services/admin-api.service';
     <div class="min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div class="w-full max-w-sm">
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-white mb-1">Admin Panel</h1>
-          <p class="text-gray-500 text-sm">Verifix Jobs boshqaruv paneli</p>
+          <h1 class="text-3xl font-bold text-white mb-1">{{ i18n.t('admin.panel') }}</h1>
+          <p class="text-gray-500 text-sm">{{ i18n.t('admin.subtitle') }}</p>
         </div>
 
         <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
@@ -23,20 +24,20 @@ import { AdminApiService } from '../../core/services/admin-api.service';
 
           <form (ngSubmit)="onLogin()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
+              <label class="block text-sm font-medium text-gray-400 mb-1">{{ i18n.t('admin.email') }}</label>
               <input type="email" [(ngModel)]="email" name="email" required autocomplete="email"
                      class="w-full h-11 px-4 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white placeholder-gray-500 focus:border-white focus:ring-1 focus:ring-white outline-none"
                      placeholder="admin&#64;verifix.uz">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-400 mb-1">Parol</label>
+              <label class="block text-sm font-medium text-gray-400 mb-1">{{ i18n.t('admin.password') }}</label>
               <input type="password" [(ngModel)]="password" name="password" required autocomplete="current-password"
                      class="w-full h-11 px-4 bg-gray-700 border border-gray-600 rounded-lg text-sm text-white placeholder-gray-500 focus:border-white focus:ring-1 focus:ring-white outline-none"
                      placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;">
             </div>
             <button type="submit" [disabled]="loading()"
                     class="w-full h-11 bg-white text-gray-900 rounded-lg text-sm font-semibold hover:bg-gray-100 transition disabled:opacity-50">
-              {{ loading() ? 'Kirish...' : 'Kirish' }}
+              {{ loading() ? i18n.t('admin.logging_in') : i18n.t('auth.login') }}
             </button>
           </form>
         </div>
@@ -50,7 +51,7 @@ export class AdminLoginComponent {
   loading = signal(false);
   error = signal('');
 
-  constructor(private adminApi: AdminApiService, private router: Router) {}
+  constructor(private adminApi: AdminApiService, private router: Router, public i18n: I18nService) {}
 
   onLogin() {
     this.loading.set(true);
@@ -63,7 +64,7 @@ export class AdminLoginComponent {
       },
       error: (err: any) => {
         this.loading.set(false);
-        this.error.set(err.error?.message || 'Email yoki parol noto\'g\'ri');
+        this.error.set(err.error?.message || this.i18n.t('admin.login_error'));
       }
     });
   }

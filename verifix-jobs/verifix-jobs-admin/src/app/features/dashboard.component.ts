@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminApiService } from '../core/api.service';
+import { I18nService } from '../core/i18n.service';
 
 @Component({
   selector: 'vja-dashboard',
@@ -9,7 +10,7 @@ import { AdminApiService } from '../core/api.service';
   imports: [CommonModule, RouterLink],
   template: `
     <div role="main" class="space-y-6">
-      <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+      <h1 class="text-xl font-bold text-gray-800">{{ i18n.t('admin.dashboard') }}</h1>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         @for (kpi of kpis(); track kpi.label) {
@@ -28,14 +29,14 @@ import { AdminApiService } from '../core/api.service';
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Tizim holati</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('admin.system_status') }}</h3>
           <div role="main" class="space-y-3">
             @for (s of services; track s.name) {
               <div class="flex items-center justify-between">
                 <span class="text-sm text-gray-600">{{ s.name }}</span>
                 <span class="flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full" [class]="s.healthy ? 'bg-green-400' : 'bg-red-400'"></span>
-                  <span class="text-xs" [class]="s.healthy ? 'text-green-600' : 'text-red-600'">{{ s.healthy ? 'Ishlayapti' : 'Xato' }}</span>
+                  <span class="text-xs" [class]="s.healthy ? 'text-green-600' : 'text-red-600'">{{ s.healthy ? i18n.t('admin.running') : i18n.t('admin.error') }}</span>
                 </span>
               </div>
             }
@@ -43,7 +44,7 @@ import { AdminApiService } from '../core/api.service';
         </div>
 
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Tezkor havolalar</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('admin.quick_links') }}</h3>
           <div class="grid grid-cols-2 gap-3">
             @for (link of quickLinks; track link.path) {
               <a [routerLink]="link.path" class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-black transition text-sm">
@@ -56,7 +57,7 @@ import { AdminApiService } from '../core/api.service';
 
       <div class="bg-white rounded-xl shadow-sm border border-gray-100">
         <div class="p-5 border-b border-gray-100">
-          <h3 class="font-semibold text-gray-800">So'nggi faoliyat</h3>
+          <h3 class="font-semibold text-gray-800">{{ i18n.t('admin.activity') }}</h3>
         </div>
         <div class="divide-y divide-gray-50">
           @for (a of activity(); track $index) {
@@ -96,16 +97,16 @@ export class AdminDashboardComponent implements OnInit {
     { path: '/ab-testing', icon: '\u{1F52C}', label: 'A/B Testlar' },
   ];
 
-  constructor(private api: AdminApiService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.api.getAnalytics().subscribe({
       next: (data: any) => {
         this.kpis.set([
-          { icon: '\u{1F465}', value: data.totalUsers?.toString() || '0', label: 'Jami foydalanuvchilar', trend: 12 },
-          { icon: '\u{1F4CB}', value: data.activeVacancies?.toString() || '0', label: 'Faol vakansiyalar', trend: 5 },
-          { icon: '\u{1F4E8}', value: data.applicationsToday?.toString() || '0', label: 'Bugungi arizalar', trend: -3 },
-          { icon: '\u{1F4B0}', value: this.formatAmount(data.monthlyRevenue || 0), label: 'Oylik daromad (UZS)', trend: 8 },
+          { icon: '\u{1F465}', value: data.totalUsers?.toString() || '0', label: this.i18n.t('admin.total_users'), trend: 12 },
+          { icon: '\u{1F4CB}', value: data.activeVacancies?.toString() || '0', label: this.i18n.t('admin.active_vacancies'), trend: 5 },
+          { icon: '\u{1F4E8}', value: data.applicationsToday?.toString() || '0', label: this.i18n.t('admin.applications_today'), trend: -3 },
+          { icon: '\u{1F4B0}', value: this.formatAmount(data.monthlyRevenue || 0), label: `${this.i18n.t('admin.monthly_revenue')} (UZS)`, trend: 8 },
         ]);
       }
     });

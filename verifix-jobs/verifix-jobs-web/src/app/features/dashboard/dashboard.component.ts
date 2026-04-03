@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-dashboard',
@@ -10,12 +11,12 @@ import { ApiService } from '../../core/services/api.service';
     <div class="space-y-6">
       <div class="flex items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-          <div class="text-sm text-gray-400 mt-1">Hiring oqimi, task inbox va employer trust ko'rsatkichlari.</div>
+          <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('dashboard.title') }}</h1>
+          <div class="text-sm text-gray-400 mt-1">{{ i18n.t('dashboard.subtitle') }}</div>
         </div>
         @if (taskCounts().urgent) {
           <div class="px-3 py-2 rounded-xl bg-red-50 text-red-600 text-sm font-medium">
-            {{ taskCounts().urgent }} ta urgent task
+            {{ taskCounts().urgent }} {{ i18n.t('dashboard.urgent_tasks') }}
           </div>
         }
       </div>
@@ -35,8 +36,8 @@ import { ApiService } from '../../core/services/api.service';
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-gray-800">Task inbox</h3>
-            <div class="text-xs text-gray-400">{{ taskCounts().open }} open / {{ taskCounts().urgent }} urgent</div>
+            <h3 class="font-semibold text-gray-800">{{ i18n.t('dashboard.task_inbox') }}</h3>
+            <div class="text-xs text-gray-400">{{ taskCounts().open }} / {{ taskCounts().urgent }} {{ i18n.t('dashboard.open_urgent') }}</div>
           </div>
 
           @if (tasks().length) {
@@ -58,26 +59,26 @@ import { ApiService } from '../../core/services/api.service';
                       <div class="text-sm font-semibold text-gray-900">{{ task.title }}</div>
                       <div class="text-xs text-gray-500 mt-1">{{ task.description }}</div>
                       @if (task.dueAt) {
-                        <div class="text-[11px] text-gray-400 mt-2">Deadline: {{ task.dueAt | date:'dd.MM HH:mm' }}</div>
+                        <div class="text-[11px] text-gray-400 mt-2">{{ i18n.t('dashboard.deadline') }}: {{ task.dueAt | date:'dd.MM HH:mm' }}</div>
                       }
                     </div>
                     <button
                       (click)="markTaskDone(task.id)"
                       class="shrink-0 h-9 px-3 rounded-lg border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-50 transition">
-                      Bajarildi
+                      {{ i18n.t('dashboard.completed') }}
                     </button>
                   </div>
                 </div>
               }
             </div>
           } @else {
-            <div class="text-sm text-gray-400 py-4">Ochiq tasklar yo'q</div>
+            <div class="text-sm text-gray-400 py-4">{{ i18n.t('dashboard.no_tasks') }}</div>
           }
         </div>
 
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-gray-800">Civility score</h3>
+            <h3 class="font-semibold text-gray-800">{{ i18n.t('dashboard.civility') }}</h3>
             @if (civility(); as score) {
               <div class="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold"
                    [class]="score.grade === 'A' ? 'bg-green-50 text-green-600' :
@@ -92,29 +93,29 @@ import { ApiService } from '../../core/services/api.service';
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <div class="text-3xl font-bold text-gray-900">{{ score.overallScore }}</div>
-                <div class="text-xs text-gray-400 mt-1">Umumiy ball</div>
+                <div class="text-xs text-gray-400 mt-1">{{ i18n.t('dashboard.overall_score') }}</div>
               </div>
               <div>
                 <div class="text-3xl font-bold text-gray-900">{{ score.responseRate }}%</div>
-                <div class="text-xs text-gray-400 mt-1">Response rate</div>
+                <div class="text-xs text-gray-400 mt-1">{{ i18n.t('dashboard.response_rate') }}</div>
               </div>
               <div>
                 <div class="text-2xl font-bold text-gray-900">{{ score.ignoredCandidatesPct }}%</div>
-                <div class="text-xs text-gray-400 mt-1">Ignored</div>
+                <div class="text-xs text-gray-400 mt-1">{{ i18n.t('dashboard.ignored') }}</div>
               </div>
               <div>
                 <div class="text-2xl font-bold text-gray-900">{{ score.cleanClosureRate }}%</div>
-                <div class="text-xs text-gray-400 mt-1">Closed cleanly</div>
+                <div class="text-xs text-gray-400 mt-1">{{ i18n.t('dashboard.closed_cleanly') }}</div>
               </div>
             </div>
             <div class="mt-4 rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">{{ score.summary }}</div>
           } @else {
-            <div class="text-sm text-gray-400 py-4">Yuklanmoqda...</div>
+            <div class="text-sm text-gray-400 py-4">{{ i18n.t('dashboard.loading') }}</div>
           }
         </div>
 
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Vakansiya salomatligi</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('dashboard.vacancy_health') }}</h3>
           @if (healthItems().length) {
             <div class="space-y-3">
               @for (item of healthItems(); track item.vacancyId) {
@@ -127,7 +128,7 @@ import { ApiService } from '../../core/services/api.service';
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="text-sm font-medium text-gray-800 truncate">{{ item.title }}</div>
-                    <div class="text-xs text-gray-400">{{ item.applies }} ariza / {{ item.healthScore }} ball</div>
+                    <div class="text-xs text-gray-400">{{ item.applies }} {{ i18n.t('dashboard.applications') }} / {{ item.healthScore }} {{ i18n.t('dashboard.score') }}</div>
                   </div>
                   @if (item.recommendations?.length) {
                     <div class="text-xs text-orange-500 max-w-[160px] truncate" title="{{ item.recommendations[0] }}">
@@ -138,17 +139,17 @@ import { ApiService } from '../../core/services/api.service';
               }
             </div>
           } @else {
-            <div class="text-sm text-gray-400 py-4">Hozircha vakansiyalar yo'q</div>
+            <div class="text-sm text-gray-400 py-4">{{ i18n.t('dashboard.no_vacancies') }}</div>
           }
         </div>
 
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Bozor maoshlari</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('dashboard.market_salaries') }}</h3>
           @if (salaryData().length) {
             <div class="space-y-3">
               @for (salary of salaryData(); track salary.category) {
                 <div class="flex items-center justify-between">
-                  <div class="text-sm text-gray-700">{{ salary.category }}</div>
+                  <div class="text-sm text-gray-700">{{ categoryLabel(salary.category) }}</div>
                   <div class="flex items-center gap-2 text-xs">
                     <span class="text-gray-400">{{ fmt(salary.p25) }}</span>
                     <span class="font-bold text-gray-900 bg-gray-50 px-2 py-0.5 rounded">{{ fmt(salary.median) }}</span>
@@ -159,25 +160,25 @@ import { ApiService } from '../../core/services/api.service';
               }
             </div>
           } @else {
-            <div class="text-sm text-gray-400 py-4">Ma'lumot yuklanmoqda...</div>
+            <div class="text-sm text-gray-400 py-4">{{ i18n.t('dashboard.loading') }}</div>
           }
         </div>
 
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Qiymat hisoboti</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('dashboard.value_report') }}</h3>
           @if (valueReport(); as report) {
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <div class="text-2xl font-bold text-gray-900">{{ report.totalHires }}</div>
-                <div class="text-xs text-gray-400">Jami yollangan</div>
+                <div class="text-xs text-gray-400">{{ i18n.t('dashboard.total_hires') }}</div>
               </div>
               <div>
                 <div class="text-2xl font-bold text-gray-900">{{ report.totalApplications }}</div>
-                <div class="text-xs text-gray-400">Jami arizalar</div>
+                <div class="text-xs text-gray-400">{{ i18n.t('dashboard.total_applications') }}</div>
               </div>
               <div>
                 <div class="text-2xl font-bold text-green-600">{{ report.estimatedTimeSavedHours | number:'1.0-0' }} soat</div>
-                <div class="text-xs text-gray-400">Tejangan vaqt</div>
+                <div class="text-xs text-gray-400">{{ i18n.t('dashboard.time_saved') }}</div>
               </div>
               <div>
                 <div class="text-sm font-semibold px-2 py-1 rounded-full inline-block"
@@ -186,16 +187,16 @@ import { ApiService } from '../../core/services/api.service';
                               report.maturityLevel === 'GETTING_STARTED' ? 'bg-yellow-50 text-yellow-600' : 'bg-gray-50 text-gray-500'">
                   {{ maturityLabel(report.maturityLevel) }}
                 </div>
-                <div class="text-xs text-gray-400 mt-1">Daraja</div>
+                <div class="text-xs text-gray-400 mt-1">{{ i18n.t('dashboard.level') }}</div>
               </div>
             </div>
           } @else {
-            <div class="text-sm text-gray-400 py-4">Yuklanmoqda...</div>
+            <div class="text-sm text-gray-400 py-4">{{ i18n.t('dashboard.loading') }}</div>
           }
         </div>
 
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Faoliyat lentasi</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('dashboard.activity_feed') }}</h3>
           @if (activities().length) {
             <div class="space-y-3">
               @for (activity of activities(); track activity.id) {
@@ -215,13 +216,13 @@ import { ApiService } from '../../core/services/api.service';
               }
             </div>
           } @else {
-            <div class="text-sm text-gray-400 py-4">Hozircha faoliyat yo'q</div>
+            <div class="text-sm text-gray-400 py-4">{{ i18n.t('dashboard.no_activity') }}</div>
           }
         </div>
       </div>
 
       <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-800 mb-4">Yollash voronkasi</h3>
+        <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('dashboard.hiring_funnel') }}</h3>
         @if (funnelData().length) {
           <div class="flex items-end gap-2 h-32">
             @for (item of funnelData(); track item.label) {
@@ -233,7 +234,7 @@ import { ApiService } from '../../core/services/api.service';
             }
           </div>
         } @else {
-          <div class="text-sm text-gray-400 py-4">Ma'lumot yo'q</div>
+          <div class="text-sm text-gray-400 py-4">{{ i18n.t('dashboard.no_data') }}</div>
         }
       </div>
     </div>
@@ -252,7 +253,7 @@ export class DashboardComponent implements OnInit {
   activities = signal<any[]>([]);
   funnelData = signal<{ label: string; count: number; percent: number; color: string }[]>([]);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.loading.set(true);
@@ -282,12 +283,16 @@ export class DashboardComponent implements OnInit {
     return value >= 1e6 ? `${(value / 1e6).toFixed(1)}M` : value >= 1e3 ? `${Math.round(value / 1e3)}K` : `${value}`;
   }
 
+  categoryLabel(category: string): string {
+    return this.i18n.t(`category.${category}`);
+  }
+
   maturityLabel(level: string): string {
     return ({
-      ADVANCED: 'Ilg\'or',
-      GROWING: 'O\'sish',
-      GETTING_STARTED: 'Boshlang\'ich',
-      NEW: 'Yangi'
+      ADVANCED: this.i18n.t('dashboard.maturity.advanced'),
+      GROWING: this.i18n.t('dashboard.maturity.growing'),
+      GETTING_STARTED: this.i18n.t('dashboard.maturity.starting'),
+      NEW: this.i18n.t('dashboard.maturity.new')
     } as Record<string, string>)[level] || level;
   }
 
@@ -306,10 +311,10 @@ export class DashboardComponent implements OnInit {
     this.api.getDashboard().subscribe({
       next: (data: any) => {
         this.kpis.set([
-          { value: data.activeVacancies || 0, label: 'Faol vakansiyalar' },
-          { value: data.totalApplications || 0, label: 'Jami arizalar' },
-          { value: data.hiredCount || 0, label: 'Ishga olingan' },
-          { value: data.newApplications || 0, label: 'Yangi arizalar', hint: 'So\'nggi davr' },
+          { value: data.activeVacancies || 0, label: this.i18n.t('stats.vacancies') },
+          { value: data.totalApplications || 0, label: this.i18n.t('dashboard.total_applications') },
+          { value: data.hiredCount || 0, label: this.i18n.t('status.hired') },
+          { value: data.newApplications || 0, label: this.i18n.t('ai.stats.new_apps'), hint: this.i18n.t('dashboard.period_hint') },
         ]);
       },
       error: () => {}
@@ -386,14 +391,14 @@ export class DashboardComponent implements OnInit {
         const order = ['NEW', 'VIEWED', 'SHORTLIST', 'INVITED', 'INTERVIEW', 'OFFER', 'HIRED', 'REJECTED'];
         const colors = ['bg-blue-400', 'bg-gray-400', 'bg-yellow-400', 'bg-purple-400', 'bg-indigo-400', 'bg-orange-400', 'bg-green-500', 'bg-red-400'];
         const labels: Record<string, string> = {
-          NEW: 'Yangi',
-          VIEWED: "Ko'rildi",
-          SHORTLIST: 'Tanlandi',
-          INVITED: 'Taklif',
-          INTERVIEW: 'Suhbat',
-          OFFER: 'Offer',
-          HIRED: 'Yollandi',
-          REJECTED: 'Rad'
+          NEW: this.i18n.t('status.new'),
+          VIEWED: this.i18n.t('status.viewed'),
+          SHORTLIST: this.i18n.t('status.shortlist'),
+          INVITED: this.i18n.t('status.invited'),
+          INTERVIEW: this.i18n.t('status.interview'),
+          OFFER: this.i18n.t('status.offer'),
+          HIRED: this.i18n.t('status.hired'),
+          REJECTED: this.i18n.t('status.rejected')
         };
 
         const entries = order.map((status, index) => ({

@@ -58,7 +58,7 @@ import { I18nService } from '../../core/services/i18n.service';
                 </div>
                 <button type="submit" [disabled]="loading()"
                         class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50">
-                  {{ loading() ? (i18n.t('auth.login') + '...') : i18n.t('auth.login') }}
+                  {{ loading() ? i18n.t('auth.logging_in') : i18n.t('auth.login') }}
                 </button>
               </form>
             }
@@ -67,13 +67,13 @@ import { I18nService } from '../../core/services/i18n.service';
             @if (mode() === 'register') {
               <form (ngSubmit)="onRegister()" class="space-y-3">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Kompaniya nomi</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.company_name') }}</label>
                   <input type="text" [(ngModel)]="regName" name="regName" required
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
-                         placeholder="Kompaniya nomi">
+                         [placeholder]="i18n.t('auth.company_name')">
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">INN (STIR)</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.inn') }}</label>
                   <input type="text" [(ngModel)]="regInn" name="regInn" required maxlength="9"
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="123456789">
@@ -85,7 +85,7 @@ import { I18nService } from '../../core/services/i18n.service';
                          placeholder="admin&#64;company.uz">
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Telefon</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.phone') }}</label>
                   <input type="tel" [(ngModel)]="regPhone" name="regPhone" required
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                          placeholder="+998 90 123 45 67">
@@ -94,19 +94,19 @@ import { I18nService } from '../../core/services/i18n.service';
                   <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.password') }}</label>
                   <input type="password" [(ngModel)]="regPassword" name="regPassword" required
                          class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
-                         placeholder="Kamida 8 ta belgi (A-z, 0-9)">
-                  <p class="text-xs text-gray-400 mt-1">Katta va kichik harf hamda raqam bo'lishi kerak</p>
+                         [placeholder]="i18n.t('auth.password_hint')">
+                  <p class="text-xs text-gray-400 mt-1">{{ i18n.t('auth.password_requirements') }}</p>
                 </div>
                 <button type="submit" [disabled]="loading()"
                         class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition disabled:opacity-50">
-                  {{ loading() ? 'Yuborilmoqda...' : "Ro'yxatdan o'tish" }}
+                  {{ loading() ? i18n.t('auth.registering') : i18n.t('auth.register') }}
                 </button>
               </form>
             }
           </div>
 
           <p class="text-center text-xs text-gray-400 mt-6">
-            <a routerLink="/" class="hover:text-black">Bosh sahifaga qaytish</a>
+            <a routerLink="/" class="hover:text-black">{{ i18n.t('auth.home_link') }}</a>
           </p>
         </div>
       </div>
@@ -140,14 +140,14 @@ export class LoginComponent {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err.error?.message || 'Email yoki parol noto\'g\'ri');
+        this.error.set(err.error?.message || this.i18n.t('auth.invalid_credentials'));
       }
     });
   }
 
   onRegister() {
     if (this.regPassword.length < 8 || !/[A-Z]/.test(this.regPassword) || !/[a-z]/.test(this.regPassword) || !/\d/.test(this.regPassword)) {
-      this.error.set('Parol kamida 8 ta belgi, katta harf, kichik harf va raqam bo\'lishi kerak');
+      this.error.set(this.i18n.t('auth.password_requirements'));
       return;
     }
     this.loading.set(true);
@@ -162,14 +162,14 @@ export class LoginComponent {
     }).subscribe({
       next: () => {
         this.loading.set(false);
-        this.success.set('Ro\'yxatdan muvaffaqiyatli o\'tdingiz! Endi tizimga kirishingiz mumkin.');
+        this.success.set(this.i18n.t('auth.registration_success'));
         this.mode.set('login');
         this.email = this.regEmail;
         this.password = '';
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(err.error?.message || 'Ro\'yxatdan o\'tishda xatolik yuz berdi');
+        this.error.set(err.error?.message || this.i18n.t('auth.registration_error'));
       }
     });
   }

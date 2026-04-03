@@ -6,6 +6,7 @@ import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { SeoService } from '../../core/services/seo.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-public-company-list',
@@ -15,16 +16,16 @@ import { SeoService } from '../../core/services/seo.service';
     <vjw-public-header />
 
     <div class="max-w-6xl mx-auto px-4 pt-4 pb-20 md:pb-8">
-      <h1 class="text-xl font-bold text-gray-900 mb-4">Kompaniyalar</h1>
+      <h1 class="text-xl font-bold text-gray-900 mb-4">{{ i18n.t('public.companies.title') }}</h1>
 
       <div class="flex flex-col sm:flex-row gap-2 mb-6">
         <div class="relative flex-1">
           <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          <input type="text" [(ngModel)]="query" placeholder="Kompaniya nomi..."
+          <input type="text" [(ngModel)]="query" [placeholder]="i18n.t('public.companies.search_placeholder')"
                  class="w-full h-12 pl-10 pr-4 border border-gray-200 rounded-xl text-sm focus:border-black focus:ring-1 focus:ring-black outline-none"
                  (keyup.enter)="search()">
         </div>
-        <button (click)="search()" class="h-12 px-6 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">Topish</button>
+        <button (click)="search()" class="h-12 px-6 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">{{ i18n.t('common.search') }}</button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -46,13 +47,17 @@ import { SeoService } from '../../core/services/seo.service';
                   {{ c.city }}
                 </span>
               }
-              @if (c.isVerified) { <span class="text-green-600 font-medium">&#10003; Tasdiqlangan</span> }
-              @if (c.vacancyCount) { <span>{{ c.vacancyCount }} vakansiya</span> }
+              @if (c.isVerified) { <span class="text-green-600 font-medium">&#10003; {{ i18n.t('public.companies.verified') }}</span> }
+              @if (c.vacancyCount) { <span>{{ c.vacancyCount }} {{ i18n.t('public.companies.vacancies') }}</span> }
             </div>
           </a>
         } @empty {
           <div class="col-span-full text-center py-16 text-gray-400 text-sm">
-            @if (loading()) { Yuklanmoqda... } @else { Kompaniya topilmadi }
+            @if (loading()) {
+              <span>{{ i18n.t('common.loading') }}</span>
+            } @else {
+              <span>{{ i18n.t('public.companies.not_found') }}</span>
+            }
           </div>
         }
       </div>
@@ -66,7 +71,7 @@ export class PublicCompanyListComponent implements OnInit {
   loading = signal(true);
   query = '';
 
-  constructor(private api: PublicApiService, private seo: SeoService) {}
+  constructor(private api: PublicApiService, private seo: SeoService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.updateSeo();
@@ -93,9 +98,9 @@ export class PublicCompanyListComponent implements OnInit {
     }));
 
     this.seo.setPage({
-      title: 'Companies hiring now',
+      title: this.i18n.t('public.companies.title'),
       description: this.query
-        ? `Search employer pages and open vacancies for "${this.query}" on Verifix Jobs.`
+        ? `${this.i18n.t('common.search')} "${this.query}" on Verifix Jobs.`
         : 'Explore verified employers, employer branding pages, and open vacancies on Verifix Jobs.',
       path: '/companies',
       keywords: ['companies', 'employers', 'jobs', 'verifix jobs'],

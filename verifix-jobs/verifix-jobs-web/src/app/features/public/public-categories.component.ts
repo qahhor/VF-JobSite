@@ -5,6 +5,7 @@ import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { SeoService } from '../../core/services/seo.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-public-categories',
@@ -16,8 +17,8 @@ import { SeoService } from '../../core/services/seo.service';
     <div class="max-w-6xl mx-auto px-4 py-6 pb-20 md:pb-8">
       <div class="mb-8">
         <div class="text-xs uppercase tracking-wide text-gray-400 mb-2">Category Hubs</div>
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Kasblar va shaharlar bo'yicha ishlar</h1>
-        <p class="text-sm text-gray-500 mt-2">SEO va tezkor navigatsiya uchun public hub sahifalar.</p>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">{{ i18n.t('categories.title') }}</h1>
+        <p class="text-sm text-gray-500 mt-2">{{ i18n.t('footer.categories') }}</p>
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px] gap-6">
@@ -27,10 +28,10 @@ import { SeoService } from '../../core/services/seo.service';
               <a [routerLink]="['/vacancies/category', item.category]"
                  class="rounded-2xl border border-gray-100 bg-white p-4 hover:shadow-md transition">
                 <div class="text-3xl">{{ item.icon || '📋' }}</div>
-                <div class="text-sm font-semibold text-gray-900 mt-3">{{ item.category }}</div>
-                <div class="text-xs text-gray-500 mt-1">{{ item.vacancyCount }} ta vakansiya</div>
+                <div class="text-sm font-semibold text-gray-900 mt-3">{{ i18n.t('category.' + item.category) }}</div>
+                <div class="text-xs text-gray-500 mt-1">{{ item.vacancyCount }} {{ i18n.t('public.companies.vacancies') }}</div>
                 @if (item.avgSalary) {
-                  <div class="text-xs text-gray-400 mt-2">O'rtacha {{ fmt(item.avgSalary) }} UZS</div>
+                  <div class="text-xs text-gray-400 mt-2">{{ i18n.t('public.salary.average') }} {{ fmt(item.avgSalary) }} UZS</div>
                 }
               </a>
             }
@@ -39,7 +40,7 @@ import { SeoService } from '../../core/services/seo.service';
 
         <aside class="space-y-4">
           <div class="rounded-2xl border border-gray-100 bg-white p-5">
-            <div class="text-sm font-semibold text-gray-900 mb-3">Shahar landing pages</div>
+            <div class="text-sm font-semibold text-gray-900 mb-3">{{ i18n.t('public.salary.compare_cities') }}</div>
             <div class="space-y-2">
               @for (city of cities(); track city.city) {
                 <a [routerLink]="['/vacancies', city.city]"
@@ -61,7 +62,7 @@ export class PublicCategoriesComponent implements OnInit {
   categories = signal<any[]>([]);
   cities = signal<any[]>([]);
 
-  constructor(private api: PublicApiService, private seo: SeoService) {}
+  constructor(private api: PublicApiService, private seo: SeoService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.updateSeo();

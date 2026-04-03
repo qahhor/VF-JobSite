@@ -85,7 +85,7 @@ import { SeoService } from '../../core/services/seo.service';
           </label>
         </div>
 
-        <div class="flex gap-2 overflow-x-auto pt-3 no-scrollbar">
+        <div class="flex flex-nowrap gap-2 overflow-x-auto pt-3 no-scrollbar md:flex-wrap md:overflow-visible">
           @for (benefit of benefitList; track benefit.key) {
             <button
               (click)="toggleBenefit(benefit.key)"
@@ -118,7 +118,7 @@ import { SeoService } from '../../core/services/seo.service';
         </div>
       </div>
 
-      <div class="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar">
+      <div class="flex flex-nowrap gap-2 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
         @for (c of countryList; track c.code) {
           <button
             (click)="setCountry(c.code)"
@@ -129,7 +129,7 @@ import { SeoService } from '../../core/services/seo.service';
         }
       </div>
 
-      <div class="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4 no-scrollbar">
+      <div class="flex flex-nowrap gap-2 overflow-x-auto pb-3 -mx-4 px-4 no-scrollbar md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
         <button
           (click)="setCity('')"
           class="shrink-0 h-9 px-4 rounded-full text-sm font-medium border transition"
@@ -146,7 +146,7 @@ import { SeoService } from '../../core/services/seo.service';
         }
       </div>
 
-      <div class="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 no-scrollbar">
+      <div class="flex flex-nowrap gap-2 overflow-x-auto pb-4 -mx-4 px-4 no-scrollbar md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
         <button
           (click)="setCategory('')"
           class="shrink-0 h-8 px-3 rounded-full text-xs font-medium border transition"

@@ -9,6 +9,7 @@ import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { SeoService } from '../../core/services/seo.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-public-company-detail',
@@ -20,8 +21,8 @@ import { SeoService } from '../../core/services/seo.service';
     <div class="max-w-4xl mx-auto px-4 py-8">
       @if (company(); as c) {
         <nav class="text-xs text-gray-400 mb-4">
-          <a routerLink="/" class="hover:text-black">Bosh sahifa</a> /
-          <a routerLink="/companies" class="hover:text-black">Kompaniyalar</a> /
+          <a routerLink="/" class="hover:text-black">{{ i18n.t('public.company.home') }}</a> /
+          <a routerLink="/companies" class="hover:text-black">{{ i18n.t('public.company.companies') }}</a> /
           <span class="text-gray-600">{{ c.name }}</span>
         </nav>
 
@@ -34,7 +35,7 @@ import { SeoService } from '../../core/services/seo.service';
             <div class="flex items-center gap-3 text-sm text-gray-500 mt-1">
               @if (c.industry) { <span>{{ c.industry }}</span> }
               @if (c.city) { <span>{{ c.city }}</span> }
-              @if (c.isVerified) { <span class="text-green-600">&#10003; Tasdiqlangan</span> }
+              @if (c.isVerified) { <span class="text-green-600">&#10003; {{ i18n.t('public.companies.verified') }}</span> }
             </div>
           </div>
         </div>
@@ -47,14 +48,14 @@ import { SeoService } from '../../core/services/seo.service';
 
         @if (companyDescription(c)) {
           <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-2">Kompaniya haqida</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ i18n.t('public.company.about') }}</h2>
             <p class="text-sm text-gray-600 leading-relaxed">{{ companyDescription(c) }}</p>
           </div>
         }
 
         @if (branding()?.benefits?.length) {
           <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-3">Imtiyozlar</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ i18n.t('public.company.benefits') }}</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
               @for (b of branding().benefits; track b.id) {
                 <div class="bg-emerald-50 rounded-xl p-4 text-center">
@@ -69,7 +70,7 @@ import { SeoService } from '../../core/services/seo.service';
 
         @if (branding()?.galleries?.length) {
           <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-3">Galereya</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ i18n.t('public.company.gallery') }}</h2>
             <div class="grid grid-cols-3 gap-2">
               @for (g of branding().galleries[0]?.images || []; track g.id) {
                 <img [src]="g.imageUrl" [alt]="g.caption || 'Photo'" class="rounded-lg w-full h-32 object-cover">
@@ -80,7 +81,7 @@ import { SeoService } from '../../core/services/seo.service';
 
         @if (branding()?.videos?.length) {
           <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-3">Video</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ i18n.t('public.company.video') }}</h2>
             @for (v of branding().videos; track v.id) {
               <div class="rounded-xl overflow-hidden bg-black aspect-video">
                 <iframe [src]="safeVideoUrl(v.videoUrl)" class="w-full h-full" allowfullscreen></iframe>
@@ -91,7 +92,7 @@ import { SeoService } from '../../core/services/seo.service';
 
         @if (branding()?.faqs?.length) {
           <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-3">Ko'p so'raladigan savollar</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ i18n.t('public.company.faq') }}</h2>
             <div class="space-y-2">
               @for (faq of branding().faqs; track faq.id) {
                 <details class="bg-gray-50 rounded-xl p-4 group">
@@ -105,7 +106,7 @@ import { SeoService } from '../../core/services/seo.service';
 
         @if (branding()?.testimonials?.length) {
           <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-3">Xodimlar fikrlari</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ i18n.t('public.company.testimonials') }}</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               @for (t of branding().testimonials; track t.id) {
                 <div class="bg-white border border-gray-100 rounded-xl p-4">
@@ -118,7 +119,7 @@ import { SeoService } from '../../core/services/seo.service';
         }
 
         <div class="mb-8">
-          <h2 class="text-lg font-semibold text-gray-900 mb-4">Ochiq vakansiyalar</h2>
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">{{ i18n.t('public.company.open_jobs') }}</h2>
           <div class="space-y-3">
             @for (v of vacancies(); track v.id) {
               <a [routerLink]="['/jobs', v.slug || v.id]" class="block bg-white border border-gray-100 rounded-lg p-4 hover:shadow-md transition group">
@@ -129,14 +130,14 @@ import { SeoService } from '../../core/services/seo.service';
                 </div>
               </a>
             } @empty {
-              <p class="text-sm text-gray-400 py-4">Hozircha ochiq vakansiya yo'q</p>
+              <p class="text-sm text-gray-400 py-4">{{ i18n.t('public.company.no_open_jobs') }}</p>
             }
           </div>
         </div>
 
         <div class="mb-8">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Sharhlar</h2>
+            <h2 class="text-lg font-semibold text-gray-900">{{ i18n.t('public.company.reviews') }}</h2>
             @if (reviewData().averageRating) {
               <div class="flex items-center gap-2">
                 <span class="text-yellow-500 text-lg">{{ starRating(Math.round(reviewData().averageRating)) }}</span>
@@ -152,35 +153,35 @@ import { SeoService } from '../../core/services/seo.service';
                 <span class="text-yellow-400 text-sm">{{ starRating(r.rating) }}</span>
                 <span class="text-xs text-gray-500">{{ r.authorName }}</span>
               </div>
-              @if (r.pros) { <div class="text-xs text-green-600 mb-1">Pros: {{ r.pros }}</div> }
-              @if (r.cons) { <div class="text-xs text-red-500 mb-1">Cons: {{ r.cons }}</div> }
+              @if (r.pros) { <div class="text-xs text-green-600 mb-1">{{ i18n.t('public.company.pros_label') }}: {{ r.pros }}</div> }
+              @if (r.cons) { <div class="text-xs text-red-500 mb-1">{{ i18n.t('public.company.cons_label') }}: {{ r.cons }}</div> }
             </div>
           }
 
           <div class="border border-gray-200 rounded-xl p-5 mt-4">
-            <h3 class="text-sm font-semibold text-gray-800 mb-3">Sharh qoldiring</h3>
+            <h3 class="text-sm font-semibold text-gray-800 mb-3">{{ i18n.t('public.company.leave_review') }}</h3>
             <div class="space-y-3">
               <div class="flex gap-1">
                 @for (s of [1,2,3,4,5]; track s) {
                   <button type="button" (click)="newReview.rating = s" class="text-2xl" [class]="s <= newReview.rating ? 'text-yellow-400' : 'text-gray-200'">{{ starIcon(s <= newReview.rating) }}</button>
                 }
               </div>
-              <input type="text" [(ngModel)]="newReview.authorName" placeholder="Ismingiz" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
-              <input type="text" [(ngModel)]="newReview.pros" placeholder="Yaxshi tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
-              <input type="text" [(ngModel)]="newReview.cons" placeholder="Yomon tomonlari" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
-              <button (click)="submitReview()" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">Yuborish</button>
+              <input type="text" [(ngModel)]="newReview.authorName" [placeholder]="i18n.t('public.company.your_name')" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <input type="text" [(ngModel)]="newReview.pros" [placeholder]="i18n.t('public.company.pros')" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <input type="text" [(ngModel)]="newReview.cons" [placeholder]="i18n.t('public.company.cons')" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm">
+              <button (click)="submitReview()" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">{{ i18n.t('public.company.submit_review') }}</button>
             </div>
           </div>
         </div>
       } @else if (notFound()) {
         <div class="text-center py-20">
           <div class="text-4xl mb-3">404</div>
-          <div class="text-lg font-semibold text-gray-800">Kompaniya topilmadi</div>
-          <div class="text-sm text-gray-400 mt-2">Bu kompaniya sahifasi mavjud emas yoki o'chirilgan.</div>
-          <a routerLink="/companies" class="inline-flex mt-4 h-10 px-6 bg-black text-white rounded-lg text-sm font-medium items-center hover:bg-gray-800">Kompaniyalarga qaytish</a>
+          <div class="text-lg font-semibold text-gray-800">{{ i18n.t('public.company.not_found') }}</div>
+          <div class="text-sm text-gray-400 mt-2">{{ i18n.t('public.company.not_found_desc') }}</div>
+          <a routerLink="/companies" class="inline-flex mt-4 h-10 px-6 bg-black text-white rounded-lg text-sm font-medium items-center hover:bg-gray-800">{{ i18n.t('public.company.back_to_companies') }}</a>
         </div>
       } @else {
-        <div class="text-center py-20 text-gray-400 text-sm">Yuklanmoqda...</div>
+        <div class="text-center py-20 text-gray-400 text-sm">{{ i18n.t('common.loading') }}</div>
       }
     </div>
 
@@ -203,7 +204,8 @@ export class PublicCompanyDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private seo: SeoService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public i18n: I18nService
   ) {}
 
   ngOnInit() {

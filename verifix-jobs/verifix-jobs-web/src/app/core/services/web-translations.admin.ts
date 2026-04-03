@@ -1,0 +1,26 @@
+import { TranslationCatalog } from './web-translations.util';
+
+export const WEB_ADMIN_TRANSLATIONS: TranslationCatalog = {
+  'admin.panel': { uz_lat: 'Admin panel', ru: 'Админ-панель', en: 'Admin panel' },
+  'admin.subtitle': { uz_lat: 'Verifix Jobs boshqaruv paneli', ru: 'Панель управления Verifix Jobs', en: 'Verifix Jobs administration panel' },
+  'admin.email': { uz_lat: 'Email', ru: 'Email', en: 'Email' },
+  'admin.password': { uz_lat: 'Parol', ru: 'Пароль', en: 'Password' },
+  'admin.logging_in': { uz_lat: 'Kirish...', ru: 'Входим...', en: 'Signing in...' },
+  'admin.login_error': { uz_lat: "Email yoki parol noto'g'ri", ru: 'Неверный email или пароль', en: 'Invalid email or password' },
+  'admin.dashboard': { uz_lat: 'Dashboard', ru: 'Панель', en: 'Dashboard' },
+  'admin.companies': { uz_lat: 'Kompaniyalar', ru: 'Компании', en: 'Companies' },
+  'admin.moderation': { uz_lat: 'Moderatsiya', ru: 'Модерация', en: 'Moderation' },
+  'admin.fraud': { uz_lat: 'Fraud nazorati', ru: 'Fraud-контроль', en: 'Fraud monitoring' },
+  'admin.gov': { uz_lat: 'Davlat sinx.', ru: 'Гос. синхронизация', en: 'Gov sync' },
+  'admin.logout': { uz_lat: 'Chiqish', ru: 'Выйти', en: 'Log out' },
+  'admin.quick_actions': { uz_lat: 'Tezkor amallar', ru: 'Быстрые действия', en: 'Quick actions' },
+  'admin.approve_manage': { uz_lat: 'Tasdiqlash va boshqarish', ru: 'Подтверждение и управление', en: 'Approve and manage' },
+  'admin.awaiting': { uz_lat: 'kutilmoqda', ru: 'ожидает', en: 'awaiting' },
+  'admin.suspicious_activity': { uz_lat: 'Shubhali faoliyatlar', ru: 'Подозрительная активность', en: 'Suspicious activity' },
+  'admin.system_status': { uz_lat: 'Tizim holati', ru: 'Состояние системы', en: 'System status' },
+  'admin.running': { uz_lat: 'Ishlayapti', ru: 'Работает', en: 'Running' },
+  'admin.error': { uz_lat: 'Xato', ru: 'Ошибка', en: 'Error' },
+  'admin.links': { uz_lat: 'Tezkor havolalar', ru: 'Быстрые ссылки', en: 'Quick links' },
+  'admin.activity': { uz_lat: "So'nggi faoliyat", ru: 'Последняя активность', en: 'Recent activity' },
+  'admin.pending': { uz_lat: 'Kutilmoqda', ru: 'Ожидает', en: 'Pending' },
+};

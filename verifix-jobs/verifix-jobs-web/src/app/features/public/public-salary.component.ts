@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { SeoService } from '../../core/services/seo.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-public-salary',
@@ -15,46 +16,46 @@ import { SeoService } from '../../core/services/seo.service';
     <vjw-public-header />
 
     <div class="max-w-4xl mx-auto px-4 py-6 pb-20 md:pb-8">
-      <h1 class="text-xl font-bold text-gray-900 mb-2">&#128176; Maosh kalkulyatori</h1>
-      <p class="text-sm text-gray-400 mb-6">Bozordagi real maosh ma'lumotlari</p>
+      <h1 class="text-xl font-bold text-gray-900 mb-2">&#128176; {{ i18n.t('public.salary.title') }}</h1>
+      <p class="text-sm text-gray-400 mb-6">{{ i18n.t('public.salary.subtitle') }}</p>
 
       <div class="flex flex-wrap gap-2 mb-6">
         @for (cat of categories; track cat.key) {
           <button (click)="selectCategory(cat.key)"
                   class="h-10 px-4 rounded-full text-sm font-medium border transition"
                   [class]="selectedCategory === cat.key ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'">
-            {{ cat.icon }} {{ cat.label }}
+            {{ cat.icon }} {{ categoryLabel(cat.key) }}
           </button>
         }
       </div>
 
       @if (salary()) {
         <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <div class="text-sm text-gray-500 mb-4">{{ selectedLabel() }} uchun bozor maoshi</div>
+          <div class="text-sm text-gray-500 mb-4">{{ selectedLabel() }} {{ i18n.t('public.salary.market_salary_for') }}</div>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
             <div>
-              <div class="text-xs text-gray-400 mb-1">Minimal</div>
+              <div class="text-xs text-gray-400 mb-1">{{ i18n.t('public.salary.minimum') }}</div>
               <div class="text-xl font-bold text-gray-700">{{ fmt(salary()!.p25) }}</div>
               <div class="text-xs text-gray-300">UZS</div>
             </div>
             <div class="bg-black rounded-xl p-4 text-white">
-              <div class="text-xs text-gray-300 mb-1">O'rtacha</div>
+              <div class="text-xs text-gray-300 mb-1">{{ i18n.t('public.salary.average') }}</div>
               <div class="text-2xl font-bold">{{ fmt(salary()!.median) }}</div>
               <div class="text-xs text-gray-400">UZS / oy</div>
             </div>
             <div>
-              <div class="text-xs text-gray-400 mb-1">Maksimal</div>
+              <div class="text-xs text-gray-400 mb-1">{{ i18n.t('public.salary.maximum') }}</div>
               <div class="text-xl font-bold text-gray-700">{{ fmt(salary()!.p75) }}</div>
               <div class="text-xs text-gray-300">UZS</div>
             </div>
           </div>
-          <div class="text-xs text-gray-400 text-center mt-4">{{ salary()!.sampleSize }} ta vakansiya asosida</div>
+          <div class="text-xs text-gray-400 text-center mt-4">{{ salary()!.sampleSize }} {{ i18n.t('public.salary.based_on') }}</div>
         </div>
       }
 
       @if (cities().length) {
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 class="font-semibold text-gray-800 mb-4">&#128205; Shaharlar bo'yicha taqqoslash</h2>
+          <h2 class="font-semibold text-gray-800 mb-4">&#128205; {{ i18n.t('public.salary.compare_cities') }}</h2>
           <div class="space-y-3">
             @for (c of cities(); track c.city) {
               <div class="flex items-center gap-3">
@@ -65,7 +66,7 @@ import { SeoService } from '../../core/services/seo.service';
                     <span class="text-[10px] text-white font-medium">{{ fmt(c.avgSalary) }}</span>
                   </div>
                 </div>
-                <div class="text-xs text-gray-400 w-16 text-right">{{ c.vacancyCount }} ish</div>
+                <div class="text-xs text-gray-400 w-16 text-right">{{ c.vacancyCount }} {{ i18n.t('public.salary.jobs_count') }}</div>
               </div>
             }
           </div>
@@ -93,7 +94,7 @@ export class PublicSalaryComponent implements OnInit {
     { key: 'ELECTRICIAN', label: 'Elektrik', icon: '\u26A1' },
   ];
 
-  constructor(private http: HttpClient, private seo: SeoService) {}
+  constructor(private http: HttpClient, private seo: SeoService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.updateSeo();
@@ -101,7 +102,11 @@ export class PublicSalaryComponent implements OnInit {
   }
 
   selectedLabel(): string {
-    return this.categories.find(c => c.key === this.selectedCategory)?.label || '';
+    return this.categoryLabel(this.selectedCategory);
+  }
+
+  categoryLabel(category: string): string {
+    return this.i18n.t(`category.${category}`);
   }
 
   selectCategory(key: string) {
@@ -140,7 +145,7 @@ export class PublicSalaryComponent implements OnInit {
       : `Compare market salary ranges for ${label} jobs across Uzbekistan on Verifix Jobs.`;
 
     this.seo.setPage({
-      title: `${label} salary guide`,
+      title: `${label} ${this.i18n.t('public.salary.title')}`,
       description,
       path: '/salary',
       keywords: ['salary guide', label, 'job salary', 'uzbekistan salary'],

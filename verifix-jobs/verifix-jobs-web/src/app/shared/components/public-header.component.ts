@@ -10,7 +10,7 @@ import { I18nService } from '../../core/services/i18n.service';
   imports: [CommonModule, RouterLink, RouterLinkActive, LangSwitcherComponent],
   template: `
     <header class="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur">
-      <div class="mx-auto grid max-w-7xl grid-cols-[auto_1fr] items-center gap-4 px-4 py-3 md:grid-cols-[minmax(220px,1fr)_auto_minmax(220px,1fr)]">
+      <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:grid md:grid-cols-[auto_1fr_auto] md:gap-4">
         <a routerLink="/" class="flex min-w-0 items-center gap-3">
           <img src="assets/logo-icon.svg" alt="Verifix" class="h-8 shrink-0">
           <span class="hidden truncate text-xl font-bold tracking-tight text-gray-950 sm:inline">Verifix Jobs</span>
@@ -32,12 +32,12 @@ import { I18nService } from '../../core/services/i18n.service';
           <vjw-lang-switcher />
           <a
             routerLink="/login"
-            class="hidden h-10 items-center whitespace-nowrap rounded-xl border border-gray-200 px-5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 sm:inline-flex">
+            class="hidden h-10 items-center whitespace-nowrap rounded-xl border border-gray-200 px-5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 xl:inline-flex">
             {{ i18n.t('nav.login') }}
           </a>
           <a
             routerLink="/login"
-            class="inline-flex h-10 items-center whitespace-nowrap rounded-xl bg-black px-5 text-sm font-semibold text-white transition hover:bg-gray-800">
+            class="inline-flex h-10 items-center whitespace-nowrap rounded-xl bg-black px-4 text-sm font-semibold text-white transition hover:bg-gray-800 sm:px-5">
             {{ i18n.t('auth.employer') }}
           </a>
         </div>

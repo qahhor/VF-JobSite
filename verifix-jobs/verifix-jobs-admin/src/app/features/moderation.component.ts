@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from '../core/api.service';
+import { I18nService } from '../core/i18n.service';
 
 @Component({
   selector: 'vja-moderation',
@@ -9,37 +10,70 @@ import { AdminApiService } from '../core/api.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div role="main" class="space-y-4">
-      <div class="flex items-center justify-between">
-        <h1 class="text-xl font-bold text-gray-800">Moderatsiya navbati</h1>
-        <div class="flex gap-2">
-          @for (s of statuses; track s.value) {
-            <button (click)="statusFilter = s.value; load()"
-                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition"
-                    [class]="statusFilter === s.value ? 'bg-black text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'">
-              {{ s.label }}
+      <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <h1 class="text-xl font-bold text-gray-800">{{ i18n.t('admin.queue') }}</h1>
+        <div class="grid grid-cols-3 gap-2 md:flex">
+          @for (status of statuses; track status.value) {
+            <button
+              (click)="statusFilter = status.value; load()"
+              class="rounded-lg px-3 py-2 text-xs font-medium transition"
+              [class]="statusFilter === status.value ? 'bg-black text-white' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'">
+              {{ status.label }}
             </button>
           }
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table class="w-full">
-          <thead class="bg-gray-50 border-b border-gray-100">
+      @if (statusFilter !== 'PENDING') {
+        <div class="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          {{ i18n.t('admin.pending') }}: tarix ko'rinishi hali ulanmagan.
+        </div>
+      }
+
+      <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+        <div class="divide-y divide-gray-100 md:hidden">
+          @for (item of items(); track item.id) {
+            <div class="space-y-3 p-4">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-black">{{ item.entityType }}</div>
+                  <div class="mt-2 text-sm font-medium text-gray-700">{{ item.entityId?.substring(0, 8) }}...</div>
+                  <div class="mt-1 text-xs text-gray-400">{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</div>
+                </div>
+                <span class="rounded-full px-2 py-1 text-xs"
+                      [class]="item.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600' : item.status === 'APPROVED' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'">
+                  {{ item.status }}
+                </span>
+              </div>
+              @if (item.status === 'PENDING') {
+                <div class="grid grid-cols-2 gap-2">
+                  <button (click)="approve(item)" class="h-10 rounded-lg bg-green-600 px-4 text-sm font-medium text-white">{{ i18n.t('common.approve') }}</button>
+                  <button (click)="openReject(item)" class="h-10 rounded-lg border border-red-200 px-4 text-sm font-medium text-red-600">{{ i18n.t('common.reject') }}</button>
+                </div>
+              }
+            </div>
+          } @empty {
+            <div class="px-5 py-12 text-center text-sm text-gray-400">{{ i18n.t('admin.no_items') }}</div>
+          }
+        </div>
+
+        <table class="hidden w-full md:table">
+          <thead class="border-b border-gray-100 bg-gray-50">
             <tr>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Turi</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Element</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Status</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Sana</th>
-              <th class="text-right text-xs font-medium text-gray-500 uppercase px-5 py-3">Amallar</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Turi</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Element</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Sana</th>
+              <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500">Amallar</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
             @for (item of items(); track item.id) {
               <tr class="hover:bg-gray-50">
-                <td class="px-5 py-3"><span class="text-xs px-2 py-0.5 bg-gray-100 text-black rounded-full">{{ item.entityType }}</span></td>
+                <td class="px-5 py-3"><span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-black">{{ item.entityType }}</span></td>
                 <td class="px-5 py-3 text-sm text-gray-700">{{ item.entityId?.substring(0, 8) }}...</td>
                 <td class="px-5 py-3">
-                  <span class="text-xs px-2 py-0.5 rounded-full"
+                  <span class="rounded-full px-2 py-0.5 text-xs"
                         [class]="item.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600' : item.status === 'APPROVED' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'">
                     {{ item.status }}
                   </span>
@@ -47,27 +81,26 @@ import { AdminApiService } from '../core/api.service';
                 <td class="px-5 py-3 text-xs text-gray-400">{{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}</td>
                 <td class="px-5 py-3 text-right">
                   @if (item.status === 'PENDING') {
-                    <button (click)="approve(item)" class="text-xs text-green-600 hover:underline mr-3">Tasdiqlash</button>
-                    <button (click)="openReject(item)" class="text-xs text-red-600 hover:underline" aria-label="Rad etish">Rad etish</button>
+                    <button (click)="approve(item)" class="mr-3 text-xs text-green-600 hover:underline">{{ i18n.t('common.approve') }}</button>
+                    <button (click)="openReject(item)" class="text-xs text-red-600 hover:underline" [attr.aria-label]="i18n.t('common.reject')">{{ i18n.t('common.reject') }}</button>
                   }
                 </td>
               </tr>
             } @empty {
-              <tr><td colspan="5" class="px-5 py-12 text-center text-gray-400 text-sm">Navbatda element yo'q</td></tr>
+              <tr><td colspan="5" class="px-5 py-12 text-center text-sm text-gray-400">{{ i18n.t('admin.no_items') }}</td></tr>
             }
           </tbody>
         </table>
       </div>
 
-      <!-- Reject dialog -->
       @if (rejectItem()) {
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-            <h3 class="font-semibold text-gray-800 mb-4">Rad etish sababi</h3>
-            <textarea [(ngModel)]="rejectReason" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-4" placeholder="Sababni kiriting..."></textarea>
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+          <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+            <h3 class="mb-4 font-semibold text-gray-800">{{ i18n.t('common.reject') }}</h3>
+            <textarea [(ngModel)]="rejectReason" rows="3" class="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" placeholder="Sababni kiriting..."></textarea>
             <div class="flex justify-end gap-2">
-              <button (click)="rejectItem.set(null)" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">Bekor qilish</button>
-              <button (click)="reject()" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm">Rad etish</button>
+              <button (click)="rejectItem.set(null)" class="rounded-lg border border-gray-300 px-4 py-2 text-sm">{{ i18n.t('common.cancel') }}</button>
+              <button (click)="reject()" class="rounded-lg bg-red-500 px-4 py-2 text-sm text-white">{{ i18n.t('common.reject') }}</button>
             </div>
           </div>
         </div>
@@ -87,12 +120,14 @@ export class ModerationComponent implements OnInit {
     { value: 'REJECTED', label: 'Rad etilgan' },
   ];
 
-  constructor(private api: AdminApiService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
+
   ngOnInit() { this.load(); }
 
   load() {
     this.api.getModerationQueue(this.statusFilter).subscribe({
       next: (res: any) => this.items.set(res.content || res || []),
+      error: () => this.items.set([])
     });
   }
 
@@ -107,7 +142,9 @@ export class ModerationComponent implements OnInit {
 
   reject() {
     const item = this.rejectItem();
-    if (!item) return;
+    if (!item) {
+      return;
+    }
     this.api.rejectModeration(item.id, this.rejectReason).subscribe(() => {
       this.rejectItem.set(null);
       this.load();
