@@ -1,72 +1,66 @@
-# Деплой Verifix Jobs на Hetzner Cloud
+# Verifix Jobs on Hetzner
 
-## Рекомендуемый сервер
+## Recommended server
 
-| Параметр | Рекомендация |
-|----------|-------------|
-| **Тариф** | CPX31 (4 vCPU, 8GB RAM, 160GB SSD) |
-| **Цена** | ~€12.49/мес |
-| **ОС** | Ubuntu 24.04 |
-| **Локация** | Helsinki (hel1) — ближе к Узбекистану |
+| Parameter | Recommendation |
+|----------|----------------|
+| Plan | CPX31 |
+| CPU / RAM | 4 vCPU / 8 GB |
+| Disk | 160 GB SSD |
+| OS | Ubuntu 24.04 |
+| Region | Helsinki (`hel1`) |
 
-## Шаг 1: Создать сервер в Hetzner
+## Step 1: Create the server
 
-1. Войдите в https://console.hetzner.cloud
-2. Create Server → Ubuntu 24.04 → CPX31
-3. Добавьте SSH ключ
-4. Запомните IP адрес
+1. Open [https://console.hetzner.cloud](https://console.hetzner.cloud)
+2. Create a new server with Ubuntu 24.04
+3. Attach your SSH key
+4. Save the public IP address
 
-## Шаг 2: Настроить DNS
+## Step 2: Configure DNS
 
-Добавьте A-запись:
+Create an `A` record:
+
+```text
+jobs.verifix.uz -> SERVER_IP
 ```
-jobs.verifix.uz → IP_СЕРВЕРА
-```
 
-## Шаг 3: Запустить деплой
+## Step 3: Run the bootstrap deploy
 
 ```bash
 HETZNER_IP=65.108.x.x DOMAIN=jobs.verifix.uz bash ops/hetzner/deploy-hetzner.sh
 ```
 
-## Шаг 4: Настроить credentials
+## Step 4: Fill production secrets
 
-SSH на сервер и отредактируйте `.env`:
 ```bash
 ssh root@65.108.x.x
 nano /opt/verifix/verifix-jobs/.env
 ```
 
-Заполните:
-- `TELEGRAM_BOT_TOKEN` — от @BotFather
-- `ESKIZ_EMAIL` / `ESKIZ_PASSWORD` — от eskiz.uz
-- Другие интеграции по необходимости
+Set the required values, then restart the stack:
 
-Перезапустите:
 ```bash
 cd /opt/verifix/verifix-jobs
 docker compose -f docker-compose.yml -f docker-compose.prod.yml restart
 ```
 
-## Мониторинг
+## Endpoints
 
-| Сервис | URL |
+| Service | URL |
 |--------|-----|
-| Сайт | https://jobs.verifix.uz |
-| API | https://jobs.verifix.uz/api/v1/public/vacancies |
-| Grafana | http://IP:3000 |
-| Health | https://jobs.verifix.uz/actuator/health |
+| Public site | [https://jobs.verifix.uz](https://jobs.verifix.uz) |
+| Admin login | [https://jobs.verifix.uz/admin/login](https://jobs.verifix.uz/admin/login) |
+| API | [https://jobs.verifix.uz/api/v1/public/vacancies](https://jobs.verifix.uz/api/v1/public/vacancies) |
+| Health | [https://jobs.verifix.uz/actuator/health](https://jobs.verifix.uz/actuator/health) |
 
-## Бэкапы
+## Backup
 
-Автоматически: ежедневно в 02:00 (PostgreSQL).
-
-Ручной бэкап:
 ```bash
 bash /opt/verifix/verifix-jobs/ops/backup/backup-db.sh
 ```
 
-## Обновление
+## Update
 
 ```bash
 ssh root@65.108.x.x

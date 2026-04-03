@@ -3,7 +3,7 @@
 ## Public entrypoints
 
 - [ ] `https://jobs.verifix.uz` resolves to the production server
-- [ ] `https://admin.jobs.verifix.uz` resolves to the production server
+- [ ] `https://jobs.verifix.uz/admin/login` resolves to the production server
 - [ ] TLS certificates exist in `ops/nginx/ssl/fullchain.pem` and `ops/nginx/ssl/privkey.pem`
 
 ## Secrets and environment
@@ -11,7 +11,7 @@
 - [ ] `.env` exists on the server and is not committed to git
 - [ ] `SPRING_PROFILES_ACTIVE=prod`
 - [ ] `APP_BASE_URL=https://jobs.verifix.uz`
-- [ ] `CORS_ORIGINS=https://jobs.verifix.uz,https://admin.jobs.verifix.uz`
+- [ ] `CORS_ORIGINS=https://jobs.verifix.uz`
 - [ ] `POSTGRES_PASSWORD`, `REDIS_PASSWORD`, `JWT_SECRET`, `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `ELASTIC_PASSWORD`, and `GRAFANA_ADMIN_PASSWORD` are strong non-default values
 
 ## Runtime hardening
@@ -26,7 +26,7 @@
 
 - [ ] `docker compose -f docker-compose.yml -f docker-compose.prod.yml ps` shows healthy containers
 - [ ] `https://jobs.verifix.uz` serves the public app
-- [ ] `https://admin.jobs.verifix.uz` serves the standalone admin app
+- [ ] `https://jobs.verifix.uz/admin/login` serves the embedded admin login
 - [ ] `https://jobs.verifix.uz/api/v1/public/vacancies?size=1` returns `200`
 - [ ] Liquibase migrations complete successfully
 - [ ] Telegram bot starts successfully with the production token

@@ -42,7 +42,7 @@ if [ "$SERVER_IP" = "YOUR_SERVER_IP" ]; then
     echo "================================================================"
     echo ""
     echo "Использование:"
-    echo "  HETZNER_IP=65.108.x.x DOMAIN=jobs.verifix.uz bash ops/hetzner/deploy-hetzner.sh"
+echo "  HETZNER_IP=65.108.x.x DOMAIN=jobs.verifix.uz bash ops/hetzner/deploy-hetzner.sh"
     echo ""
     echo "Или отредактируйте переменные в начале скрипта."
     echo ""

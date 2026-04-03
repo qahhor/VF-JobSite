@@ -212,7 +212,7 @@ app:
     default-expiration-days: ${VACANCY_EXPIRATION_DAYS:30}
 
   cors:
-    allowed-origins: ${CORS_ORIGINS:http://localhost:4200,http://localhost:4201,https://job.verifix.uz}
+    allowed-origins: ${CORS_ORIGINS:http://localhost:4200,http://localhost:4201,https://jobs.verifix.uz}
 
   kafka:
     enabled: ${KAFKA_ENABLED:false}

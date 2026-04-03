@@ -101,7 +101,7 @@ services:
     ports: !reset []
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      CORS_ORIGINS: ${CORS_ORIGINS:-https://jobs.verifix.uz,https://admin.jobs.verifix.uz}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://jobs.verifix.uz}
     restart: always
 
   telegram:
@@ -179,8 +179,6 @@ services:
       api:
         condition: service_started
       web:
-        condition: service_healthy
-      admin-web:
         condition: service_healthy
     restart: always
     healthcheck:

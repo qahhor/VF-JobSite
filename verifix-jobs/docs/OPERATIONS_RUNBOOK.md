@@ -5,7 +5,7 @@
 | Service | Container | Public access |
 |---|---|---|
 | Public frontend | `verifix-jobs-web` | via `https://jobs.verifix.uz` |
-| Standalone admin | `verifix-jobs-admin` | via `https://admin.jobs.verifix.uz` |
+| Embedded admin | `verifix-jobs-web` | via `https://jobs.verifix.uz/admin` |
 | API | `verifix-jobs-api` | proxied through Nginx only |
 | Telegram bot | `verifix-jobs-telegram` | internal |
 | ML service | `verifix-jobs-ml` | internal |
@@ -30,7 +30,7 @@ bash ops/deploy.sh --deploy
 docker compose -f docker-compose.yml -f docker-compose.prod.yml ps
 docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' verifix-jobs-nginx
 curl -I https://jobs.verifix.uz
-curl -I https://admin.jobs.verifix.uz
+curl -I https://jobs.verifix.uz/admin/login
 curl https://jobs.verifix.uz/api/v1/public/vacancies?size=1
 ```
 

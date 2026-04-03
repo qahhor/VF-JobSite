@@ -143,4 +143,4 @@ jobs:
             docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --remove-orphans
             sleep 15
-            curl -skf https://jobs.verifix.uz && echo "OK" || echo "WARN: public health check pending"
+          curl -skf https://jobs.verifix.uz && echo "OK" || echo "WARN: public health check pending"
