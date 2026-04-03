@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api.service';
 import { DashboardData } from '../../core/models';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-analytics',
@@ -10,13 +11,13 @@ import { DashboardData } from '../../core/models';
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-800">Analitika</h1>
-        <button (click)="exportCsv()" aria-label="CSV yuklash" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">CSV yuklab olish</button>
+        <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('analytics.title') }}</h1>
+        <button (click)="exportCsv()" [attr.aria-label]="i18n.t('analytics.export_csv')" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">{{ i18n.t('analytics.export_csv') }}</button>
       </div>
 
       <!-- Funnel -->
       <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-800 mb-4">Ariza voronkasi</h3>
+        <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.funnel') }}</h3>
         <div class="space-y-3">
           @for (stage of funnel(); track stage.label) {
             <div class="flex items-center gap-4">
@@ -37,7 +38,7 @@ import { DashboardData } from '../../core/models';
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Applications over time -->
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Kunlik arizalar</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.daily_applications') }}</h3>
           <div class="h-48 flex items-end gap-0.5">
             @for (bar of dailyBars(); track $index) {
               <div class="flex-1 rounded-t-sm transition-all hover:opacity-80 cursor-pointer relative group"
@@ -52,7 +53,7 @@ import { DashboardData } from '../../core/models';
 
         <!-- Sources breakdown -->
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Manba taqsimoti</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.sources') }}</h3>
           <div class="space-y-4">
             @for (src of sources(); track src.source) {
               <div>
@@ -71,19 +72,19 @@ import { DashboardData } from '../../core/models';
 
       <!-- Time-to-hire -->
       <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-800 mb-4">Yollash vaqti metrikasi</h3>
+        <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.time_to_hire') }}</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div class="text-center">
             <div class="text-3xl font-bold text-black">{{ avgTimeToHire() }}</div>
-            <div class="text-sm text-gray-500 mt-1">O'rtacha kun</div>
+            <div class="text-sm text-gray-500 mt-1">{{ i18n.t('analytics.avg_days') }}</div>
           </div>
           <div class="text-center">
             <div class="text-3xl font-bold text-secondary">{{ data()?.hiredThisMonth || 0 }}</div>
-            <div class="text-sm text-gray-500 mt-1">Bu oy yollangan</div>
+            <div class="text-sm text-gray-500 mt-1">{{ i18n.t('analytics.hired_this_month') }}</div>
           </div>
           <div class="text-center">
             <div class="text-3xl font-bold text-accent">{{ data()?.totalApplications || 0 }}</div>
-            <div class="text-sm text-gray-500 mt-1">Jami arizalar</div>
+            <div class="text-sm text-gray-500 mt-1">{{ i18n.t('analytics.total_applications_label') }}</div>
           </div>
         </div>
       </div>
@@ -97,7 +98,7 @@ export class AnalyticsComponent implements OnInit {
   sources = signal<{ source: string; count: number; percent: number; color: string }[]>([]);
   avgTimeToHire = signal(0);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.api.getDashboard().subscribe((d: any) => {
@@ -105,9 +106,9 @@ export class AnalyticsComponent implements OnInit {
       this.avgTimeToHire.set(0);
       const total = d.totalApplications || 1;
       this.funnel.set([
-        { label: 'Arizalar', count: total, percent: 100, color: 'bg-blue-400' },
-        { label: 'Yangi', count: d.newApplications || 0, percent: ((d.newApplications||0) / total) * 100, color: 'bg-indigo-400' },
-        { label: 'Yollangan', count: d.hiredCount || 0, percent: ((d.hiredCount||0) / total) * 100, color: 'bg-green-400' },
+        { label: this.i18n.t('analytics.stage.applications'), count: total, percent: 100, color: 'bg-blue-400' },
+        { label: this.i18n.t('analytics.stage.new'), count: d.newApplications || 0, percent: ((d.newApplications||0) / total) * 100, color: 'bg-indigo-400' },
+        { label: this.i18n.t('analytics.stage.hired'), count: d.hiredCount || 0, percent: ((d.hiredCount||0) / total) * 100, color: 'bg-green-400' },
       ]);
     });
 
@@ -124,8 +125,7 @@ export class AnalyticsComponent implements OnInit {
   }
 
   getSourceLabel(s: string): string {
-    const m: Record<string, string> = { 'TELEGRAM': 'Telegram', 'WEB': 'Veb-sayt', 'SMS': 'SMS', 'REFERRAL': 'Referal', 'EMPLOYER': 'Ish beruvchi' };
-    return m[s] || s;
+    return this.i18n.t(`analytics.source.${s}`) || s;
   }
 
   exportCsv() {

@@ -22,7 +22,7 @@ import { I18nService } from '../core/i18n.service';
               </span>
             </div>
             <div class="text-2xl font-bold text-gray-800">{{ kpi.value }}</div>
-            <div class="text-xs text-gray-500 mt-1">{{ kpi.label }}</div>
+            <div class="text-xs text-gray-500 mt-1">{{ i18n.t(kpi.label) }}</div>
           </div>
         }
       </div>
@@ -48,7 +48,7 @@ import { I18nService } from '../core/i18n.service';
           <div class="grid grid-cols-2 gap-3">
             @for (link of quickLinks; track link.path) {
               <a [routerLink]="link.path" class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 hover:text-black transition text-sm">
-                <span>{{ link.icon }}</span>{{ link.label }}
+                <span>{{ link.icon }}</span>{{ i18n.t(link.label) }}
               </a>
             }
           </div>
@@ -76,10 +76,10 @@ import { I18nService } from '../core/i18n.service';
 })
 export class AdminDashboardComponent implements OnInit {
   kpis = signal([
-    { icon: '\u{1F465}', value: '0', label: 'Jami foydalanuvchilar', trend: 0 },
-    { icon: '\u{1F4CB}', value: '0', label: 'Faol vakansiyalar', trend: 0 },
-    { icon: '\u{1F4E8}', value: '0', label: 'Bugungi arizalar', trend: 0 },
-    { icon: '\u{1F4B0}', value: '0', label: 'Oylik daromad', trend: 0 },
+    { icon: '\u{1F465}', value: '0', label: 'admin.total_users', trend: 0 },
+    { icon: '\u{1F4CB}', value: '0', label: 'admin.active_vacancies', trend: 0 },
+    { icon: '\u{1F4E8}', value: '0', label: 'admin.applications_today', trend: 0 },
+    { icon: '\u{1F4B0}', value: '0', label: 'admin.monthly_revenue', trend: 0 },
   ]);
 
   activity = signal<{ icon: string; text: string; time: string; color: string }[]>([]);
@@ -91,10 +91,10 @@ export class AdminDashboardComponent implements OnInit {
   ];
 
   quickLinks = [
-    { path: '/moderation', icon: '\u{1F6E1}\uFE0F', label: 'Moderatsiya' },
-    { path: '/fraud', icon: '\u{1F6A8}', label: 'Fraud alertlar' },
-    { path: '/users', icon: '\u{1F465}', label: 'Foydalanuvchilar' },
-    { path: '/ab-testing', icon: '\u{1F52C}', label: 'A/B Testlar' },
+    { path: '/moderation', icon: '\u{1F6E1}\uFE0F', label: 'quick.moderation' },
+    { path: '/fraud', icon: '\u{1F6A8}', label: 'quick.fraud' },
+    { path: '/users', icon: '\u{1F465}', label: 'quick.users' },
+    { path: '/ab-testing', icon: '\u{1F52C}', label: 'quick.ab' },
   ];
 
   constructor(private api: AdminApiService, public i18n: I18nService) {}

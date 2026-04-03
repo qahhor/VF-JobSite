@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-org-memory',
@@ -11,19 +12,19 @@ import { environment } from '../../../environments/environment';
   template: `
     <div class="space-y-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-800">Organization Memory</h1>
-        <p class="text-sm text-gray-400 mt-1">AI kompaniya haqida bilgan ma'lumotlar — yollash sifatini oshiradi</p>
+        <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('org.title') }}</h1>
+        <p class="text-sm text-gray-400 mt-1">{{ i18n.t('org.subtitle') }}</p>
       </div>
 
       <!-- Auto-generated facts -->
       <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-800 mb-4">📋 Kompaniya profili</h3>
+        <h3 class="font-semibold text-gray-800 mb-4">📋 {{ i18n.t('org.company_profile') }}</h3>
         @if (profile()) {
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-            <div><span class="text-gray-400">Nomi:</span> <span class="font-medium text-gray-800">{{ profile().name }}</span></div>
-            <div><span class="text-gray-400">Soha:</span> <span class="font-medium text-gray-800">{{ profile().industry || '—' }}</span></div>
-            <div><span class="text-gray-400">Shahar:</span> <span class="font-medium text-gray-800">{{ profile().city || '—' }}</span></div>
-            <div><span class="text-gray-400">Status:</span> <span class="font-medium text-gray-800">{{ profile().status }}</span></div>
+            <div><span class="text-gray-400">{{ i18n.t('common.name') }}:</span> <span class="font-medium text-gray-800">{{ profile().name }}</span></div>
+            <div><span class="text-gray-400">{{ i18n.t('common.industry') }}:</span> <span class="font-medium text-gray-800">{{ profile().industry || i18n.t('common.not_set') }}</span></div>
+            <div><span class="text-gray-400">{{ i18n.t('common.city') }}:</span> <span class="font-medium text-gray-800">{{ profile().city || i18n.t('common.not_set') }}</span></div>
+            <div><span class="text-gray-400">{{ i18n.t('settings.status') }}:</span> <span class="font-medium text-gray-800">{{ profile().status }}</span></div>
           </div>
         }
       </div>
@@ -31,8 +32,8 @@ import { environment } from '../../../environments/environment';
       <!-- Memory facts (manual + AI) -->
       <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold text-gray-800">🧠 Xotira faktlari</h3>
-          <button (click)="showAdd.set(true)" class="text-sm text-black hover:underline">+ Fakt qo'shish</button>
+          <h3 class="font-semibold text-gray-800">🧠 {{ i18n.t('org.memory_facts') }}</h3>
+          <button (click)="showAdd.set(true)" class="text-sm text-black hover:underline">+ {{ i18n.t('org.add_fact') }}</button>
         </div>
 
         <div class="space-y-2">
@@ -41,25 +42,25 @@ import { environment } from '../../../environments/environment';
               <span class="text-lg mt-0.5">{{ factIcon(fact.category) }}</span>
               <div class="flex-1 min-w-0">
                 <div class="text-sm text-gray-800">{{ fact.content }}</div>
-                <div class="text-xs text-gray-400 mt-0.5">{{ fact.category }} · {{ fact.source || 'Manual' }}</div>
+                <div class="text-xs text-gray-400 mt-0.5">{{ factCategoryLabel(fact.category) }} · {{ fact.source || i18n.t('org.source.manual') }}</div>
               </div>
               <button (click)="removeFact(fact.id)" class="text-gray-300 hover:text-red-500 text-sm shrink-0">✕</button>
             </div>
           } @empty {
-            <div class="text-sm text-gray-400 py-4">Hali faktlar yo'q. Kompaniya haqida ma'lumot qo'shing — AI yollashda ishlatadi.</div>
+            <div class="text-sm text-gray-400 py-4">{{ i18n.t('org.no_facts') }}</div>
           }
         </div>
       </div>
 
       <!-- Preset categories -->
       <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-800 mb-4">📊 Yollash naqshlari</h3>
+        <h3 class="font-semibold text-gray-800 mb-4">📊 {{ i18n.t('org.patterns') }}</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           @for (p of presets; track p.key) {
             <button (click)="addPreset(p)" class="text-left p-4 rounded-xl border border-gray-100 hover:border-gray-300 transition">
               <div class="text-lg mb-1">{{ p.icon }}</div>
-              <div class="text-sm font-medium text-gray-800">{{ p.label }}</div>
-              <div class="text-xs text-gray-400 mt-1">{{ p.hint }}</div>
+              <div class="text-sm font-medium text-gray-800">{{ i18n.t(p.labelKey) }}</div>
+              <div class="text-xs text-gray-400 mt-1">{{ i18n.t(p.hintKey) }}</div>
             </button>
           }
         </div>
@@ -70,19 +71,19 @@ import { environment } from '../../../environments/environment';
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div class="absolute inset-0 bg-black/50" (click)="showAdd.set(false)"></div>
           <div class="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-            <h3 class="text-lg font-bold text-gray-900 mb-4">Fakt qo'shish</h3>
+            <h3 class="text-lg font-bold text-gray-900 mb-4">{{ i18n.t('org.add_fact') }}</h3>
             <div class="space-y-3">
               <select [(ngModel)]="newFact.category" class="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm bg-white">
-                <option value="HIRING_PATTERN">Yollash naqshi</option>
-                <option value="EVP">Ishga olinish qiymati (EVP)</option>
-                <option value="PREFERENCE">Afzallik</option>
-                <option value="POLICY">Siyosat</option>
-                <option value="NOTE">Izoh</option>
+                <option value="HIRING_PATTERN">{{ i18n.t('org.category.hiring_pattern') }}</option>
+                <option value="EVP">{{ i18n.t('org.category.evp_full') }}</option>
+                <option value="PREFERENCE">{{ i18n.t('org.category.preference') }}</option>
+                <option value="POLICY">{{ i18n.t('org.category.policy') }}</option>
+                <option value="NOTE">{{ i18n.t('org.category.note') }}</option>
               </select>
-              <textarea [(ngModel)]="newFact.content" rows="3" placeholder="Masalan: Biz tajribasiz xodimlarni ham qabul qilamiz, 2 hafta stajdan o'tadi" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"></textarea>
+              <textarea [(ngModel)]="newFact.content" rows="3" [placeholder]="i18n.t('org.fact_placeholder')" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"></textarea>
               <div class="flex gap-2 justify-end">
-                <button (click)="showAdd.set(false)" class="h-10 px-4 border border-gray-200 rounded-lg text-sm">Bekor</button>
-                <button (click)="addFact()" [disabled]="!newFact.content" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium disabled:opacity-50">Qo'shish</button>
+                <button (click)="showAdd.set(false)" class="h-10 px-4 border border-gray-200 rounded-lg text-sm">{{ i18n.t('common.cancel') }}</button>
+                <button (click)="addFact()" [disabled]="!newFact.content" class="h-10 px-6 bg-black text-white rounded-lg text-sm font-medium disabled:opacity-50">{{ i18n.t('org.add_fact') }}</button>
               </div>
             </div>
           </div>
@@ -98,12 +99,12 @@ export class OrgMemoryComponent implements OnInit {
   newFact = { category: 'HIRING_PATTERN', content: '' };
 
   presets = [
-    { key: 'evp', icon: '💎', label: 'EVP — nima uchun bizda ishlash yaxshi', hint: 'Kompaniya afzalliklari' },
-    { key: 'ideal', icon: '👤', label: 'Ideal nomzod profili', hint: 'Qanday odam kerak' },
-    { key: 'process', icon: '📋', label: 'Yollash jarayoni', hint: 'Qadamlar va muddatlar' },
+    { key: 'evp', icon: '💎', labelKey: 'org.preset.evp', hintKey: 'org.preset.evp_hint' },
+    { key: 'ideal', icon: '👤', labelKey: 'org.preset.ideal', hintKey: 'org.preset.ideal_hint' },
+    { key: 'process', icon: '📋', labelKey: 'org.preset.process', hintKey: 'org.preset.process_hint' },
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public i18n: I18nService) {}
 
   ngOnInit() {
     this.http.get<any>(`${environment.apiUrl}/employer/profile`).subscribe({
@@ -141,5 +142,15 @@ export class OrgMemoryComponent implements OnInit {
 
   factIcon(cat: string): string {
     return ({ HIRING_PATTERN: '📊', EVP: '💎', PREFERENCE: '👤', POLICY: '📋', NOTE: '📝' } as Record<string, string>)[cat] || '📌';
+  }
+
+  factCategoryLabel(cat: string): string {
+    return ({
+      HIRING_PATTERN: this.i18n.t('org.category.hiring_pattern'),
+      EVP: this.i18n.t('org.category.evp'),
+      PREFERENCE: this.i18n.t('org.category.preference'),
+      POLICY: this.i18n.t('org.category.policy'),
+      NOTE: this.i18n.t('org.category.note'),
+    } as Record<string, string>)[cat] || cat;
   }
 }

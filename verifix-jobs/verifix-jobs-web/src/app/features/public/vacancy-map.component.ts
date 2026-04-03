@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
+import { I18nService } from '../../core/services/i18n.service';
 import { SeoService } from '../../core/services/seo.service';
 import * as L from 'leaflet';
 
@@ -17,13 +18,13 @@ import * as L from 'leaflet';
 
     <div class="max-w-7xl mx-auto px-4 pt-4 pb-20 md:pb-8">
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-        <h1 class="text-xl font-bold text-gray-900">&#128205; Yaqindagi ishlar</h1>
+        <h1 class="text-xl font-bold text-gray-900">&#128205; {{ i18n.t('public.map.title') }}</h1>
         <div class="flex flex-wrap items-center gap-2">
           <a routerLink="/jobs" class="h-9 px-4 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition flex items-center">
-            &#128203; Ro'yxat
+            &#128203; {{ i18n.t('public.map.list') }}
           </a>
           <button (click)="locateMe()" class="h-9 px-4 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition flex items-center gap-1">
-            &#128205; Meni top
+            &#128205; {{ i18n.t('public.map.locate') }}
           </button>
         </div>
       </div>
@@ -36,7 +37,7 @@ import * as L from 'leaflet';
 
       @if (nearbyVacancies().length) {
         <div class="mt-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ nearbyVacancies().length }} ta vakansiya yaqinda</h2>
+          <h2 class="text-lg font-semibold text-gray-900 mb-3">{{ nearbyVacancies().length }} {{ i18n.t('public.map.nearby_count') }}</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             @for (v of nearbyVacancies(); track v.id) {
               <a [routerLink]="['/jobs', v.slug || v.id]" class="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition">
@@ -68,7 +69,7 @@ export class VacancyMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private userLat = 41.311;
   private userLon = 69.279;
 
-  constructor(private http: HttpClient, private seo: SeoService) {}
+  constructor(private http: HttpClient, private seo: SeoService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.updateSeo();
@@ -102,7 +103,7 @@ export class VacancyMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   locateMe() {
     if (!navigator.geolocation) {
-      this.error.set('Geolokatsiya qo\'llab-quvvatlanmaydi');
+      this.error.set(this.i18n.t('public.map.geo_not_supported'));
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -117,11 +118,11 @@ export class VacancyMapComponent implements OnInit, AfterViewInit, OnDestroy {
           fillOpacity: 0.8,
           color: '#fff',
           weight: 2
-        }).addTo(this.map).bindPopup('You are here');
+        }).addTo(this.map).bindPopup(this.i18n.t('public.map.you_are_here'));
 
         this.loadNearby();
       },
-      () => this.error.set('Joylashuvni aniqlab bo\'lmadi. Ruxsat bering.')
+      () => this.error.set(this.i18n.t('public.map.geo_failed'))
     );
   }
 
@@ -158,13 +159,13 @@ export class VacancyMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
       const salary = vacancy.salaryFrom
         ? `${this.fmt(vacancy.salaryFrom)}${vacancy.salaryTo ? ` - ${this.fmt(vacancy.salaryTo)}` : '+'} UZS`
-        : 'Kelishiladi';
+        : this.i18n.t('public.map.negotiable');
       const popup = `
         <div style="min-width:180px">
           <div style="font-weight:700;font-size:14px">${vacancy.title}</div>
           <div style="color:#666;font-size:12px;margin-top:2px">${vacancy.employerName || vacancy.employer?.name || ''}</div>
           <div style="font-weight:700;color:#16a34a;margin-top:4px">${salary}</div>
-          <a href="/jobs/${vacancy.slug || vacancy.id}" style="display:inline-block;margin-top:8px;padding:4px 12px;background:#000;color:#fff;border-radius:6px;font-size:12px;text-decoration:none">Batafsil</a>
+          <a href="/jobs/${vacancy.slug || vacancy.id}" style="display:inline-block;margin-top:8px;padding:4px 12px;background:#000;color:#fff;border-radius:6px;font-size:12px;text-decoration:none">${this.i18n.t('common.details')}</a>
         </div>
       `;
 
@@ -184,7 +185,7 @@ export class VacancyMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private updateSeo(vacancies: any[] = this.nearbyVacancies()) {
     this.seo.setPage({
-      title: 'Vacancy map',
+      title: this.i18n.t('public.map.title'),
       description: 'Find jobs near you on the Verifix Jobs map, compare nearby salaries, and open vacancy pages by location.',
       path: '/map',
       keywords: ['job map', 'nearby jobs', 'vacancy map', 'uzbekistan jobs'],

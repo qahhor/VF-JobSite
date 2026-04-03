@@ -18,7 +18,7 @@ import { I18nService } from '../core/i18n.service';
               (click)="statusFilter = status.value; load()"
               class="rounded-lg px-3 py-2 text-xs font-medium transition"
               [class]="statusFilter === status.value ? 'bg-black text-white' : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'">
-              {{ status.label }}
+              {{ i18n.t(status.label) }}
             </button>
           }
         </div>
@@ -26,7 +26,7 @@ import { I18nService } from '../core/i18n.service';
 
       @if (statusFilter !== 'PENDING') {
         <div class="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-          {{ i18n.t('admin.pending') }}: tarix ko'rinishi hali ulanmagan.
+          {{ i18n.t('admin.pending') }}: {{ i18n.t('admin.history_unavailable') }}.
         </div>
       }
 
@@ -60,11 +60,11 @@ import { I18nService } from '../core/i18n.service';
         <table class="hidden w-full md:table">
           <thead class="border-b border-gray-100 bg-gray-50">
             <tr>
-              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Turi</th>
-              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Element</th>
-              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
-              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">Sana</th>
-              <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500">Amallar</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('admin.type') }}</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('admin.item') }}</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('admin.status') }}</th>
+              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('admin.date') }}</th>
+              <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500">{{ i18n.t('admin.actions') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
@@ -97,7 +97,7 @@ import { I18nService } from '../core/i18n.service';
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
           <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <h3 class="mb-4 font-semibold text-gray-800">{{ i18n.t('common.reject') }}</h3>
-            <textarea [(ngModel)]="rejectReason" rows="3" class="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" placeholder="Sababni kiriting..."></textarea>
+            <textarea [(ngModel)]="rejectReason" rows="3" class="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" [placeholder]="i18n.t('admin.reason_placeholder')"></textarea>
             <div class="flex justify-end gap-2">
               <button (click)="rejectItem.set(null)" class="rounded-lg border border-gray-300 px-4 py-2 text-sm">{{ i18n.t('common.cancel') }}</button>
               <button (click)="reject()" class="rounded-lg bg-red-500 px-4 py-2 text-sm text-white">{{ i18n.t('common.reject') }}</button>
@@ -115,9 +115,9 @@ export class ModerationComponent implements OnInit {
   rejectReason = '';
 
   statuses = [
-    { value: 'PENDING', label: 'Kutilmoqda' },
-    { value: 'APPROVED', label: 'Tasdiqlangan' },
-    { value: 'REJECTED', label: 'Rad etilgan' },
+    { value: 'PENDING', label: 'status.pending' },
+    { value: 'APPROVED', label: 'status.approved' },
+    { value: 'REJECTED', label: 'status.rejected' },
   ];
 
   constructor(private api: AdminApiService, public i18n: I18nService) {}

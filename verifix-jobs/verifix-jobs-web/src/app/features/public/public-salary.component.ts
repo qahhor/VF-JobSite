@@ -41,7 +41,7 @@ import { I18nService } from '../../core/services/i18n.service';
             <div class="bg-black rounded-xl p-4 text-white">
               <div class="text-xs text-gray-300 mb-1">{{ i18n.t('public.salary.average') }}</div>
               <div class="text-2xl font-bold">{{ fmt(salary()!.median) }}</div>
-              <div class="text-xs text-gray-400">UZS / oy</div>
+              <div class="text-xs text-gray-400">UZS {{ i18n.t('billing.per_month') }}</div>
             </div>
             <div>
               <div class="text-xs text-gray-400 mb-1">{{ i18n.t('public.salary.maximum') }}</div>
@@ -84,14 +84,14 @@ export class PublicSalaryComponent implements OnInit {
   selectedCategory = 'COOK';
 
   categories = [
-    { key: 'COOK', label: 'Oshpaz', icon: '\u{1F468}\u200D\u{1F373}' },
-    { key: 'DRIVER', label: 'Haydovchi', icon: '\u{1F697}' },
-    { key: 'SALES', label: 'Sotuvchi', icon: '\u{1F6D2}' },
-    { key: 'BUILDER', label: 'Qurilishchi', icon: '\u{1F3D7}\uFE0F' },
-    { key: 'SECURITY', label: "Qo'riqchi", icon: '\u{1F6E1}\uFE0F' },
-    { key: 'WAITER', label: 'Ofitsiant', icon: '\u{1F37D}\uFE0F' },
-    { key: 'CASHIER', label: 'Kassir', icon: '\u{1F4B0}' },
-    { key: 'ELECTRICIAN', label: 'Elektrik', icon: '\u26A1' },
+    { key: 'COOK', icon: '\u{1F468}\u200D\u{1F373}' },
+    { key: 'DRIVER', icon: '\u{1F697}' },
+    { key: 'SALES', icon: '\u{1F6D2}' },
+    { key: 'BUILDER', icon: '\u{1F3D7}\uFE0F' },
+    { key: 'SECURITY', icon: '\u{1F6E1}\uFE0F' },
+    { key: 'WAITER', icon: '\u{1F37D}\uFE0F' },
+    { key: 'CASHIER', icon: '\u{1F4B0}' },
+    { key: 'ELECTRICIAN', icon: '\u26A1' },
   ];
 
   constructor(private http: HttpClient, private seo: SeoService, public i18n: I18nService) {}
@@ -138,11 +138,11 @@ export class PublicSalaryComponent implements OnInit {
   }
 
   private updateSeo() {
-    const label = this.selectedLabel() || 'Salary';
+    const label = this.selectedLabel() || this.i18n.t('public.salary.seo.title');
     const salary = this.salary();
     const description = salary
-      ? `Salary guide for ${label}: median ${this.fmt(salary.median)} ${salary.currency || 'UZS'} based on ${salary.sampleSize || 0} vacancies.`
-      : `Compare market salary ranges for ${label} jobs across Uzbekistan on Verifix Jobs.`;
+      ? `${this.i18n.t('public.salary.seo.title')}: ${label}, ${this.fmt(salary.median)} ${salary.currency || 'UZS'}, ${salary.sampleSize || 0} ${this.i18n.t('public.salary.based_on')}.`
+      : `${this.i18n.t('public.salary.subtitle')}: ${label}.`;
 
     this.seo.setPage({
       title: `${label} ${this.i18n.t('public.salary.title')}`,
@@ -150,13 +150,13 @@ export class PublicSalaryComponent implements OnInit {
       path: '/salary',
       keywords: ['salary guide', label, 'job salary', 'uzbekistan salary'],
       schema: [
-        this.seo.buildCollectionPageSchema('Salary guide', description, '/salary'),
+        this.seo.buildCollectionPageSchema(this.i18n.t('public.salary.seo.collection'), description, '/salary'),
         this.seo.buildBreadcrumbSchema([
-          { name: 'Home', path: '/' },
-          { name: 'Salary', path: '/salary' }
+          { name: this.i18n.t('nav.home'), path: '/' },
+          { name: this.i18n.t('public.salary.title'), path: '/salary' }
         ]),
         this.seo.buildItemListSchema(
-          `${label} salaries by city`,
+          `${label} ${this.i18n.t('public.salary.seo.by_city')}`,
           this.cities().slice(0, 10).map((city: any) => ({
             name: city.city,
             path: `/vacancies/${encodeURIComponent(city.city)}/${encodeURIComponent(this.selectedCategory)}`,

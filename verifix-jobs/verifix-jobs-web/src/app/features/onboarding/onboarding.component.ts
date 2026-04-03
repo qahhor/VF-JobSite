@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-onboarding',
@@ -13,7 +14,7 @@ import { ApiService } from '../../core/services/api.service';
       <header class="bg-white border-b border-gray-100 h-14 flex items-center px-6">
         <img src="assets/logo-icon.svg" class="h-7 mr-2" />
         <span class="font-bold text-lg">Verifix Jobs</span>
-        <span class="ml-auto text-sm text-gray-400">Boshlang'ich sozlash</span>
+        <span class="ml-auto text-sm text-gray-400">{{ i18n.t('onboarding.setup') }}</span>
       </header>
 
       <div class="max-w-2xl mx-auto px-4 py-8">
@@ -23,7 +24,7 @@ import { ApiService } from '../../core/services/api.service';
             <div class="flex items-center gap-2 flex-1">
               <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition"
                    [class]="step() >= i ? 'bg-black text-white' : 'bg-gray-200 text-gray-400'">{{ i + 1 }}</div>
-              <div class="text-xs font-medium hidden sm:block" [class]="step() >= i ? 'text-gray-900' : 'text-gray-400'">{{ s.label }}</div>
+              <div class="text-xs font-medium hidden sm:block" [class]="step() >= i ? 'text-gray-900' : 'text-gray-400'">{{ i18n.t(s.labelKey) }}</div>
               @if (i < steps.length - 1) { <div class="flex-1 h-0.5 rounded" [class]="step() > i ? 'bg-black' : 'bg-gray-200'"></div> }
             </div>
           }
@@ -32,26 +33,26 @@ import { ApiService } from '../../core/services/api.service';
         <!-- Step 1: Company Profile -->
         @if (step() === 0) {
           <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h2 class="text-lg font-bold text-gray-900 mb-1">🏢 Kompaniya profili</h2>
-            <p class="text-sm text-gray-400 mb-6">Kompaniya haqida asosiy ma'lumotlarni kiriting</p>
+            <h2 class="text-lg font-bold text-gray-900 mb-1">🏢 {{ i18n.t('onboarding.profile_title') }}</h2>
+            <p class="text-sm text-gray-400 mb-6">{{ i18n.t('onboarding.profile_desc') }}</p>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Kompaniya nomi</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('auth.company_name') }}</label>
                 <input type="text" [(ngModel)]="profile.name" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black outline-none">
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Shahar</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.city') }}</label>
                   <select [(ngModel)]="profile.city" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm bg-white">
-                    <option value="">Tanlang</option>
+                    <option value="">{{ i18n.t('common.choose') }}</option>
                     @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Soha</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.industry') }}</label>
                   <select [(ngModel)]="profile.industry" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm bg-white">
-                    <option value="">Tanlang</option>
-                    @for (ind of industries; track ind) { <option [value]="ind">{{ ind }}</option> }
+                    <option value="">{{ i18n.t('common.choose') }}</option>
+                    @for (ind of industries; track ind) { <option [value]="ind">{{ industryLabel(ind) }}</option> }
                   </select>
                 </div>
               </div>
@@ -62,28 +63,28 @@ import { ApiService } from '../../core/services/api.service';
         <!-- Step 2: First Vacancy -->
         @if (step() === 1) {
           <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h2 class="text-lg font-bold text-gray-900 mb-1">📋 Birinchi vakansiya</h2>
-            <p class="text-sm text-gray-400 mb-6">Birinchi vakansiyangizni yarating — keyinroq o'zgartirish mumkin</p>
+            <h2 class="text-lg font-bold text-gray-900 mb-1">📋 {{ i18n.t('onboarding.first_vacancy_title') }}</h2>
+            <p class="text-sm text-gray-400 mb-6">{{ i18n.t('onboarding.first_vacancy_desc') }}</p>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Vakansiya nomi</label>
-                <input type="text" [(ngModel)]="vacancy.title" placeholder="Masalan: Oshpaz" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black outline-none">
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.vacancy') }}</label>
+                <input type="text" [(ngModel)]="vacancy.title" [placeholder]="i18n.t('onboarding.vacancy_name_placeholder')" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black outline-none">
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Kategoriya</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.category') }}</label>
                   <select [(ngModel)]="vacancy.category" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm bg-white">
-                    @for (cat of categories; track cat.key) { <option [value]="cat.key">{{ cat.icon }} {{ cat.label }}</option> }
+                    @for (cat of categories; track cat.key) { <option [value]="cat.key">{{ cat.icon }} {{ i18n.t('category.' + cat.key) }}</option> }
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Maosh (UZS)</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.salary') }} (UZS)</label>
                   <input type="number" [(ngModel)]="vacancy.salaryFrom" placeholder="3000000" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm focus:border-black outline-none">
                 </div>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tavsif</label>
-                <textarea [(ngModel)]="vacancy.description" rows="3" placeholder="Ish haqida qisqacha..." class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-black outline-none"></textarea>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.description') }}</label>
+                <textarea [(ngModel)]="vacancy.description" rows="3" [placeholder]="i18n.t('vacancy_form.description_placeholder')" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-black outline-none"></textarea>
               </div>
             </div>
           </div>
@@ -92,14 +93,14 @@ import { ApiService } from '../../core/services/api.service';
         <!-- Step 3: Notifications -->
         @if (step() === 2) {
           <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <h2 class="text-lg font-bold text-gray-900 mb-1">🔔 Bildirishnomalar</h2>
-            <p class="text-sm text-gray-400 mb-6">Qanday xabarnomalarni olishni xohlaysiz?</p>
+            <h2 class="text-lg font-bold text-gray-900 mb-1">🔔 {{ i18n.t('common.notifications') }}</h2>
+            <p class="text-sm text-gray-400 mb-6">{{ i18n.t('onboarding.notifications_desc') }}</p>
             <div class="space-y-4">
               @for (n of notifications; track n.key) {
                 <label class="flex items-center justify-between py-3 border-b border-gray-50 cursor-pointer">
                   <div>
-                    <div class="text-sm font-medium text-gray-700">{{ n.label }}</div>
-                    <div class="text-xs text-gray-400">{{ n.desc }}</div>
+                    <div class="text-sm font-medium text-gray-700">{{ i18n.t(n.labelKey) }}</div>
+                    <div class="text-xs text-gray-400">{{ i18n.t(n.descKey) }}</div>
                   </div>
                   <input type="checkbox" [(ngModel)]="n.enabled" class="w-5 h-5 rounded border-gray-300 text-black focus:ring-black">
                 </label>
@@ -112,10 +113,10 @@ import { ApiService } from '../../core/services/api.service';
         @if (step() === 3) {
           <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center">
             <div class="text-5xl mb-4">🎉</div>
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Tabriklaymiz!</h2>
-            <p class="text-sm text-gray-500 mb-6">Kompaniyangiz tayyor. Endi vakansiyalarni boshqarishingiz mumkin.</p>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">{{ i18n.t('onboarding.done_title') }}</h2>
+            <p class="text-sm text-gray-500 mb-6">{{ i18n.t('onboarding.done_desc') }}</p>
             <a routerLink="/employer/dashboard" class="inline-flex h-12 px-8 bg-black text-white rounded-xl text-sm font-semibold items-center hover:bg-gray-800 transition">
-              Dashboard ga o'tish
+              {{ i18n.t('onboarding.go_dashboard') }}
             </a>
           </div>
         }
@@ -130,11 +131,11 @@ import { ApiService } from '../../core/services/api.service';
           <div class="flex justify-between mt-6">
             <button (click)="prev()" [disabled]="step() === 0"
                     class="h-11 px-6 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition disabled:opacity-30">
-              Orqaga
+              {{ i18n.t('common.back') }}
             </button>
             <button (click)="next()" [disabled]="saving()"
                     class="h-11 px-8 bg-black text-white rounded-lg text-sm font-semibold hover:bg-gray-800 transition disabled:opacity-50">
-              {{ step() === 2 ? 'Tugatish' : 'Keyingi' }}
+              {{ step() === 2 ? i18n.t('onboarding.finish') : i18n.t('common.next') }}
             </button>
           </div>
         }
@@ -148,31 +149,35 @@ export class OnboardingComponent implements OnInit {
   stepError = signal('');
 
   steps = [
-    { key: 'profile', label: 'Profil' },
-    { key: 'vacancy', label: 'Vakansiya' },
-    { key: 'notifications', label: 'Xabarnoma' },
-    { key: 'done', label: 'Tayyor' },
+    { key: 'profile', labelKey: 'onboarding.step.profile' },
+    { key: 'vacancy', labelKey: 'onboarding.step.vacancy' },
+    { key: 'notifications', labelKey: 'onboarding.step.notifications' },
+    { key: 'done', labelKey: 'onboarding.step.done' },
   ];
 
   profile = { name: '', city: '', industry: '' };
   vacancy = { title: '', category: 'COOK', salaryFrom: null as number | null, description: '' };
   notifications = [
-    { key: 'new_app', label: 'Yangi arizalar', desc: 'Yangi ariza kelganda xabar', enabled: true },
-    { key: 'hired', label: 'Ishga olish', desc: 'Nomzod yollanganda xabar', enabled: true },
-    { key: 'expiry', label: 'Vakansiya muddati', desc: 'Muddat tugaganda eslatma', enabled: true },
-    { key: 'digest', label: 'Haftalik hisobot', desc: 'Haftalik analitika', enabled: false },
+    { key: 'new_app', labelKey: 'settings.notification.new_application', descKey: 'settings.notification.new_application_desc', enabled: true },
+    { key: 'hired', labelKey: 'settings.notification.hired', descKey: 'settings.notification.hired_desc', enabled: true },
+    { key: 'expiry', labelKey: 'settings.notification.expired', descKey: 'settings.notification.expired_desc', enabled: true },
+    { key: 'digest', labelKey: 'settings.notification.digest', descKey: 'settings.notification.digest_desc', enabled: false },
   ];
 
   cities = ['Toshkent','Samarqand','Buxoro','Andijon','Namangan','Farg\'ona','Nukus','Navoiy','Qarshi','Jizzax','Termiz','Urganch'];
-  industries = ['Oziq-ovqat','Transport','Qurilish','Savdo','Xizmat ko\'rsatish','Ishlab chiqarish','IT','Ta\'lim','Sog\'liqni saqlash'];
+  industries = ['FOOD', 'TRANSPORT', 'CONSTRUCTION', 'RETAIL', 'SERVICES', 'MANUFACTURING', 'IT', 'EDUCATION', 'HEALTHCARE'];
   categories = [
-    {key:'COOK',label:'Oshpaz',icon:'👨‍🍳'},{key:'DRIVER',label:'Haydovchi',icon:'🚗'},
-    {key:'SALES',label:'Sotuvchi',icon:'🛒'},{key:'BUILDER',label:'Qurilishchi',icon:'🏗️'},
-    {key:'WAITER',label:'Ofitsiant',icon:'🍽️'},{key:'SECURITY',label:'Qo\'riqchi',icon:'🛡️'},
-    {key:'WAREHOUSE',label:'Omborchi',icon:'📦'},{key:'CASHIER',label:'Kassir',icon:'💰'},
+    {key:'COOK',icon:'👨‍🍳'},{key:'DRIVER',icon:'🚗'},
+    {key:'SALES',icon:'🛒'},{key:'BUILDER',icon:'🏗️'},
+    {key:'WAITER',icon:'🍽️'},{key:'SECURITY',icon:'🛡️'},
+    {key:'WAREHOUSE',icon:'📦'},{key:'CASHIER',icon:'💰'},
   ];
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private api: ApiService, private router: Router, public i18n: I18nService) {}
+
+  industryLabel(industry: string): string {
+    return this.i18n.t(`industry.${industry}`) || industry;
+  }
 
   ngOnInit() {
     this.api.getProfile().subscribe({
@@ -197,7 +202,7 @@ export class OnboardingComponent implements OnInit {
         next: () => { this.saving.set(false); this.step.set(1); },
         error: () => {
           this.saving.set(false);
-          this.stepError.set('Profil saqlanmadi. Maydonlarni tekshirib, qayta urinib ko‘ring.');
+          this.stepError.set(this.i18n.t('onboarding.profile_error'));
         }
       });
     } else if (s === 1) {
@@ -215,7 +220,7 @@ export class OnboardingComponent implements OnInit {
           next: () => { this.saving.set(false); this.step.set(2); },
           error: () => {
             this.saving.set(false);
-            this.stepError.set('Vakansiya yaratilmadi. Majburiy maydonlarni tekshirib, qayta urinib ko‘ring.');
+            this.stepError.set(this.i18n.t('onboarding.vacancy_error'));
           }
         });
       } else {

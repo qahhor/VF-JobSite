@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-chat',
@@ -13,8 +14,8 @@ import { environment } from '../../../environments/environment';
       <!-- Conversations list -->
       <div class="w-80 border-r border-gray-100 flex flex-col shrink-0" [class.hidden]="selectedCandidate() && isMobile" [class.sm:flex]="true">
         <div class="px-4 py-3 border-b border-gray-100">
-          <h2 class="font-semibold text-gray-800">Xabarlar</h2>
-          @if (unreadCount()) { <span class="text-xs text-red-500 ml-1">{{ unreadCount() }} yangi</span> }
+          <h2 class="font-semibold text-gray-800">{{ i18n.t('chat.title') }}</h2>
+          @if (unreadCount()) { <span class="text-xs text-red-500 ml-1">{{ unreadCount() }} {{ i18n.t('chat.new') }}</span> }
         </div>
         <div class="flex-1 overflow-y-auto">
           @for (c of conversations(); track c.candidateId) {
@@ -30,7 +31,7 @@ import { environment } from '../../../environments/environment';
               </div>
             </button>
           } @empty {
-            <div class="px-4 py-12 text-center text-gray-400 text-sm">Hali xabarlar yo'q</div>
+            <div class="px-4 py-12 text-center text-gray-400 text-sm">{{ i18n.t('chat.empty') }}</div>
           }
         </div>
       </div>
@@ -64,7 +65,7 @@ import { environment } from '../../../environments/environment';
 
           <!-- Input -->
           <div class="px-4 py-3 border-t border-gray-100 flex gap-2">
-            <input type="text" [(ngModel)]="newMessage" placeholder="Xabar yozing..."
+            <input type="text" [(ngModel)]="newMessage" [placeholder]="i18n.t('chat.placeholder')"
                    class="flex-1 h-10 px-4 border border-gray-200 rounded-full text-sm focus:border-black outline-none"
                    (keyup.enter)="send()">
             <button (click)="send()" [disabled]="!newMessage.trim()"
@@ -76,7 +77,7 @@ import { environment } from '../../../environments/environment';
           <div class="flex-1 flex items-center justify-center text-gray-400 text-sm">
             <div class="text-center">
               <div class="text-4xl mb-3">💬</div>
-              <div>Suhbatni tanlang</div>
+              <div>{{ i18n.t('chat.select') }}</div>
             </div>
           </div>
         }
@@ -99,7 +100,7 @@ export class ChatComponent implements OnInit {
 
   private base = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public i18n: I18nService) {}
 
   ngOnInit() { this.loadConversations(); }
 

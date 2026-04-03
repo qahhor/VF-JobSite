@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastService } from '../services/toast.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-toast-container',
@@ -14,7 +15,7 @@ import { ToastService } from '../services/toast.service';
           <span class="text-lg shrink-0" aria-hidden="true">{{ getIcon(toast.type) }}</span>
           <p class="text-sm flex-1">{{ toast.message }}</p>
           <button (click)="toastService.dismiss(toast.id)" class="text-current opacity-50 hover:opacity-100 shrink-0"
-                  aria-label="Yopish">&times;</button>
+                  [attr.aria-label]="i18n.t('common.close')">&times;</button>
         </div>
       }
     </div>
@@ -25,7 +26,7 @@ import { ToastService } from '../services/toast.service';
   `]
 })
 export class ToastContainerComponent {
-  constructor(public toastService: ToastService) {}
+  constructor(public toastService: ToastService, public i18n: I18nService) {}
 
   getClass(type: string): string {
     return {

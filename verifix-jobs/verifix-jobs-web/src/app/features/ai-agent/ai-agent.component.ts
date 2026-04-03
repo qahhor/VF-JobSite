@@ -198,8 +198,8 @@ export class AiAgentComponent implements OnInit {
       error: () => {
         this.generating.set(false);
         this.generatedResult.set({
-          title: this.aiInput.split(',')[0]?.trim() || 'Vakansiya',
-          note: "AI xizmati hozircha ishlamayapti. Vakansiyani qo'lda yarating.",
+          title: this.aiInput.split(',')[0]?.trim() || this.i18n.t('ai.fallback_title'),
+          note: this.i18n.t('ai.fallback_note'),
           status: 'FALLBACK'
         });
       }

@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-churn-alerts',
@@ -10,8 +11,8 @@ import { environment } from '../../../environments/environment';
   template: `
     <div class="space-y-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-800">⚠️ Churn Alerts</h1>
-        <p class="text-sm text-gray-400 mt-1">Ketib qolish xavfi bo'lgan nomzodlar — qayta jalb qilish kerak</p>
+        <h1 class="text-2xl font-bold text-gray-800">⚠️ {{ i18n.t('churn.title') }}</h1>
+        <p class="text-sm text-gray-400 mt-1">{{ i18n.t('churn.subtitle') }}</p>
       </div>
 
       @if (alerts().length) {
@@ -22,17 +23,17 @@ import { environment } from '../../../environments/environment';
               <div class="flex items-center justify-between">
                 <div>
                   <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-gray-800">{{ a.candidateName || 'Nomzod' }}</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ a.candidateName || i18n.t('common.candidate') }}</span>
                     <span class="text-[10px] px-2 py-0.5 rounded-full font-medium"
                           [class]="a.riskLevel === 'HIGH' ? 'bg-red-50 text-red-600' : 'bg-yellow-50 text-yellow-600'">
                       {{ a.riskLevel }}
                     </span>
                   </div>
                   <div class="text-xs text-gray-500 mt-1">{{ a.reason }}</div>
-                  <div class="text-xs text-gray-400 mt-1">Oxirgi faollik: {{ a.lastActive || 'Noma\'lum' }}</div>
+                  <div class="text-xs text-gray-400 mt-1">{{ i18n.t('churn.last_active') }}: {{ a.lastActive || i18n.t('common.not_set') }}</div>
                 </div>
                 <button class="h-9 px-4 bg-black text-white rounded-lg text-xs font-medium hover:bg-gray-800 transition">
-                  📨 Qayta jalb
+                  📨 {{ i18n.t('churn.reengage') }}
                 </button>
               </div>
             </div>
@@ -41,7 +42,7 @@ import { environment } from '../../../environments/environment';
       } @else {
         <div class="bg-white rounded-xl p-12 shadow-sm border border-gray-100 text-center">
           <div class="text-4xl mb-3">✅</div>
-          <div class="text-sm text-gray-500">Churn xavfi bo'lgan nomzodlar yo'q</div>
+          <div class="text-sm text-gray-500">{{ i18n.t('churn.empty') }}</div>
         </div>
       }
     </div>
@@ -50,7 +51,7 @@ import { environment } from '../../../environments/environment';
 export class ChurnAlertsComponent implements OnInit {
   alerts = signal<any[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public i18n: I18nService) {}
 
   ngOnInit() {
     // Try to load from churn prediction service

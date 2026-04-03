@@ -19,8 +19,8 @@ import { SeoService } from '../../core/services/seo.service';
       @if (!candidateId) {
         <div class="text-center py-16 text-gray-400">
           <div class="text-4xl mb-3">&#9825;</div>
-          <p class="text-sm mb-2">Saqlangan vakansiyalarni ko'rish uchun avval ariza topshiring</p>
-          <p class="text-xs text-gray-400 mb-4">Ariza topshirganingizda profilingiz avtomatik yaratiladi</p>
+          <p class="text-sm mb-2">{{ i18n.t('public.favorites.require_profile') }}</p>
+          <p class="text-xs text-gray-400 mb-4">{{ i18n.t('public.favorites.auto_profile') }}</p>
           <a routerLink="/jobs" class="text-sm text-black hover:underline">{{ i18n.t('vacancies.view_all') }} &rarr;</a>
         </div>
       } @else if (vacancies().length) {
@@ -61,8 +61,8 @@ export class PublicFavoritesComponent implements OnInit {
 
   ngOnInit() {
     this.seo.setPage({
-      title: 'Saved vacancies',
-      description: 'Private saved vacancies for the current candidate profile on Verifix Jobs.',
+      title: this.i18n.t('favorites.title'),
+      description: this.i18n.t('public.favorites.seo_desc'),
       path: '/favorites',
       noindex: true
     });

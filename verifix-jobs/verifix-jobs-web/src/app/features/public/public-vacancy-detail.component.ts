@@ -5,6 +5,7 @@ import { PublicApiService } from '../../core/services/public-api.service';
 import { PublicHeaderComponent } from '../../shared/components/public-header.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer.component';
 import { PublicApplyModalComponent } from './public-apply-modal.component';
+import { I18nService } from '../../core/services/i18n.service';
 import { SeoService } from '../../core/services/seo.service';
 
 @Component({
@@ -18,13 +19,13 @@ import { SeoService } from '../../core/services/seo.service';
       @if (vacancy(); as v) {
         <a routerLink="/jobs" class="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-black mb-4">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-          Orqaga
+          {{ i18n.t('public.vacancy.back') }}
         </a>
 
         @if (v.salaryFrom) {
           <div class="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
             {{ fmt(v.salaryFrom) }}{{ v.salaryTo ? ' - ' + fmt(v.salaryTo) : '+' }}
-            <span class="text-base font-normal text-gray-400">UZS / oy</span>
+            <span class="text-base font-normal text-gray-400">UZS{{ i18n.t('billing.per_month') }}</span>
           </div>
         }
 
@@ -49,20 +50,20 @@ import { SeoService } from '../../core/services/seo.service';
             <span class="h-8 px-3 bg-amber-50 text-amber-700 rounded-full text-xs font-medium flex items-center">{{ shiftLabel(v.shiftSchedule) }}</span>
           }
           @if (v.positionsCount > 1) {
-            <span class="h-8 px-3 bg-green-50 text-green-700 rounded-full text-xs font-medium flex items-center">{{ v.positionsCount }} o'rin ochiq</span>
+            <span class="h-8 px-3 bg-green-50 text-green-700 rounded-full text-xs font-medium flex items-center">{{ v.positionsCount }} {{ i18n.t('public.vacancy.positions_open') }}</span>
           }
         </div>
 
         @if (salaryInsight(); as insight) {
           <div class="mt-6 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-            <div class="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">Salary Intelligence</div>
+            <div class="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">{{ i18n.t('public.vacancy.salary_intelligence') }}</div>
             <div class="text-sm text-emerald-900 font-medium">
-              Bozor o'rtachasi: {{ fmt(insight.p25 || 0) }} - {{ fmt(insight.p75 || 0) }} {{ insight.currency }}
+              {{ i18n.t('public.vacancy.market_average') }}: {{ fmt(insight.p25 || 0) }} - {{ fmt(insight.p75 || 0) }} {{ insight.currency }}
             </div>
             <div class="text-xs text-emerald-700 mt-1">
               {{ marketPosition(v) }}
               @if (insight.sampleSize) {
-                <span> | {{ insight.sampleSize }} ta vakansiya asosida</span>
+                <span> | {{ insight.sampleSize }} {{ i18n.t('public.vacancy.based_on') }}</span>
               }
             </div>
           </div>
@@ -70,25 +71,25 @@ import { SeoService } from '../../core/services/seo.service';
 
         @if (v.description) {
           <div class="mt-6">
-            <h2 class="text-base font-semibold text-gray-900 mb-2">Tavsif</h2>
+            <h2 class="text-base font-semibold text-gray-900 mb-2">{{ i18n.t('jobs.description') }}</h2>
             <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{{ v.description }}</div>
           </div>
         }
 
         @if (v.branchName || v.branchAddress || v.district) {
           <div class="mt-6">
-            <h2 class="text-base font-semibold text-gray-900 mb-2">Filial va manzil</h2>
+            <h2 class="text-base font-semibold text-gray-900 mb-2">{{ i18n.t('public.vacancy.branch_location') }}</h2>
             <div class="rounded-2xl border border-gray-100 bg-white p-4 text-sm text-gray-600 space-y-1">
-              @if (v.branchName) { <div><span class="font-medium text-gray-900">Filial:</span> {{ v.branchName }}</div> }
-              @if (v.branchAddress) { <div><span class="font-medium text-gray-900">Manzil:</span> {{ v.branchAddress }}</div> }
-              @if (v.district) { <div><span class="font-medium text-gray-900">Tuman:</span> {{ v.district }}</div> }
+              @if (v.branchName) { <div><span class="font-medium text-gray-900">{{ i18n.t('public.vacancy.branch') }}:</span> {{ v.branchName }}</div> }
+              @if (v.branchAddress) { <div><span class="font-medium text-gray-900">{{ i18n.t('public.vacancy.address') }}:</span> {{ v.branchAddress }}</div> }
+              @if (v.district) { <div><span class="font-medium text-gray-900">{{ i18n.t('public.vacancy.district') }}:</span> {{ v.district }}</div> }
             </div>
           </div>
         }
 
         @if (v.benefits?.length) {
           <div class="mt-6">
-            <h2 class="text-base font-semibold text-gray-900 mb-2">Imtiyozlar</h2>
+            <h2 class="text-base font-semibold text-gray-900 mb-2">{{ i18n.t('jobs.benefits') }}</h2>
             <div class="flex flex-wrap gap-2">
               @for (b of v.benefits; track b) {
                 <span class="h-8 px-3 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium flex items-center">&#10003; {{ b }}</span>
@@ -108,13 +109,13 @@ import { SeoService } from '../../core/services/seo.service';
               @if (v.employerIndustry) { <div class="text-xs text-gray-400">{{ v.employerIndustry }}</div> }
               <div class="flex flex-wrap gap-1.5 mt-2">
                 @if (v.employerVerified || v.employer?.isVerified) {
-                  <span class="text-[10px] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">Verified</span>
+                  <span class="text-[10px] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">{{ i18n.t('public.vacancy.verified') }}</span>
                 }
                 @if (v.applicationCount != null && v.applicationCount > 20) {
-                  <span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-medium">{{ v.applicationCount }}+ ariza</span>
+                  <span class="text-[10px] px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full font-medium">{{ v.applicationCount }}+ {{ i18n.t('public.vacancy.applications_count') }}</span>
                 }
                 @if (v.employer?.activeVacancies > 3) {
-                  <span class="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full font-medium">{{ v.employer.activeVacancies }} vakansiya</span>
+                  <span class="text-[10px] px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full font-medium">{{ v.employer.activeVacancies }} {{ i18n.t('common.vacancies') }}</span>
                 }
               </div>
             </div>
@@ -125,8 +126,8 @@ import { SeoService } from '../../core/services/seo.service';
         @if (similarVacancies().length) {
           <div class="mt-8">
             <div class="flex items-center justify-between mb-3">
-              <h2 class="text-base font-semibold text-gray-900">O'xshash vakansiyalar</h2>
-              <a routerLink="/jobs" class="text-xs text-gray-500 hover:text-black">Barchasini ko'rish</a>
+              <h2 class="text-base font-semibold text-gray-900">{{ i18n.t('public.vacancy.similar') }}</h2>
+              <a routerLink="/jobs" class="text-xs text-gray-500 hover:text-black">{{ i18n.t('jobs.view_all') }}</a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               @for (item of similarVacancies(); track item.id) {
@@ -151,7 +152,7 @@ import { SeoService } from '../../core/services/seo.service';
           <div class="max-w-4xl mx-auto flex gap-2 md:max-w-none">
             <button (click)="showApplyModal.set(true)"
                     class="flex-1 h-12 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition">
-              Ariza topshirish
+              {{ i18n.t('public.vacancy.apply') }}
             </button>
             <button (click)="toggleFavorite()" class="h-12 w-12 border border-gray-200 rounded-xl flex items-center justify-center hover:bg-gray-50 transition shrink-0"
                     [class.text-red-500]="isFavorited()" [class.text-gray-300]="!isFavorited()">
@@ -167,12 +168,12 @@ import { SeoService } from '../../core/services/seo.service';
         @if (notFound()) {
           <div class="text-center py-20">
             <div class="text-4xl mb-3">404</div>
-            <div class="text-lg font-semibold text-gray-800">Vakansiya topilmadi</div>
-            <div class="text-sm text-gray-400 mt-2">Bu vakansiya o'chirilgan yoki mavjud emas</div>
-            <a routerLink="/jobs" class="inline-flex mt-4 h-10 px-6 bg-black text-white rounded-lg text-sm font-medium items-center hover:bg-gray-800">Vakansiyalarga qaytish</a>
+            <div class="text-lg font-semibold text-gray-800">{{ i18n.t('public.vacancy.not_found') }}</div>
+            <div class="text-sm text-gray-400 mt-2">{{ i18n.t('public.vacancy.not_found_desc') }}</div>
+            <a routerLink="/jobs" class="inline-flex mt-4 h-10 px-6 bg-black text-white rounded-lg text-sm font-medium items-center hover:bg-gray-800">{{ i18n.t('public.vacancy.back_to_jobs') }}</a>
           </div>
         } @else {
-          <div class="text-center py-20 text-gray-400 text-sm">Yuklanmoqda...</div>
+          <div class="text-center py-20 text-gray-400 text-sm">{{ i18n.t('common.loading') }}</div>
         }
       }
     </div>
@@ -196,7 +197,7 @@ export class PublicVacancyDetailComponent implements OnInit {
   isFavorited = signal(false);
   notFound = signal(false);
 
-  constructor(private api: PublicApiService, private route: ActivatedRoute, private seo: SeoService) {}
+  constructor(private api: PublicApiService, private route: ActivatedRoute, private seo: SeoService, public i18n: I18nService) {}
 
   ngOnInit() {
     const slug = this.route.snapshot.params['slug'];
@@ -219,8 +220,8 @@ export class PublicVacancyDetailComponent implements OnInit {
       error: () => {
         this.notFound.set(true);
         this.seo.setPage({
-          title: 'Vacancy not found',
-          description: 'This vacancy is no longer available on Verifix Jobs.',
+          title: this.i18n.t('public.vacancy.not_found'),
+          description: this.i18n.t('public.vacancy.not_found_desc'),
           path: `/jobs/${slug}`,
           noindex: true
         });
@@ -261,20 +262,20 @@ export class PublicVacancyDetailComponent implements OnInit {
       return '';
     }
     if (v.salaryFrom >= insight.p75) {
-      return 'Bozordan yuqori';
+      return this.i18n.t('public.vacancy.market_above');
     }
     if (v.salaryFrom >= insight.median) {
-      return 'Bozor darajasi';
+      return this.i18n.t('public.vacancy.market_mid');
     }
-    return 'Bozordan past';
+    return this.i18n.t('public.vacancy.market_below');
   }
 
   shiftLabel(value: string): string {
     return ({
-      MORNING: 'Ertalabgi smena',
-      EVENING: 'Kechki smena',
-      NIGHT: 'Tungi smena',
-      FLEXIBLE: 'Moslashuvchan'
+      MORNING: this.i18n.t('shift.morning_full'),
+      EVENING: this.i18n.t('shift.evening_full'),
+      NIGHT: this.i18n.t('shift.night_full'),
+      FLEXIBLE: this.i18n.t('shift.flexible_full')
     } as Record<string, string>)[value] || value;
   }
 
@@ -283,7 +284,12 @@ export class PublicVacancyDetailComponent implements OnInit {
   }
 
   empType(t: string): string {
-    return ({ FULL_TIME: "To'liq stavka", PART_TIME: 'Yarim stavka', CONTRACT: 'Shartnoma', TEMPORARY: 'Vaqtinchalik' } as Record<string, string>)[t] || t;
+    return ({
+      FULL_TIME: this.i18n.t('employment.full_time'),
+      PART_TIME: this.i18n.t('employment.part_time'),
+      CONTRACT: this.i18n.t('employment.contract'),
+      TEMPORARY: this.i18n.t('employment.temporary')
+    } as Record<string, string>)[t] || t;
   }
 
   private updateSeo(v: any) {

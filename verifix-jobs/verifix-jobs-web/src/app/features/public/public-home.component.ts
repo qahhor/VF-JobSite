@@ -81,7 +81,7 @@ import { SeoService } from '../../core/services/seo.service';
               <div class="flex items-center gap-2 mt-2 text-xs text-gray-400">
                 <span class="flex items-center gap-1">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                  {{ v.city || 'Toshkent' }}
+                  {{ v.city || cities[0] }}
                 </span>
                 @if (v.employmentType) {
                   <span class="px-2 py-0.5 bg-gray-100 rounded-full">{{ empType(v.employmentType) }}</span>
@@ -92,7 +92,7 @@ import { SeoService } from '../../core/services/seo.service';
               </div>
             </a>
           } @empty {
-            <div class="col-span-full text-center py-12 text-gray-400 text-sm">Yuklanmoqda...</div>
+            <div class="col-span-full text-center py-12 text-gray-400 text-sm">{{ i18n.t('common.loading') }}</div>
           }
         </div>
       </div>
@@ -100,7 +100,7 @@ import { SeoService } from '../../core/services/seo.service';
 
     <section class="py-8 md:py-10">
       <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-lg font-bold text-gray-900 mb-4">Shaharlar bo'yicha</h2>
+        <h2 class="text-lg font-bold text-gray-900 mb-4">{{ i18n.t('home.by_city') }}</h2>
         <div class="flex flex-wrap gap-2">
           @for (city of cities; track city) {
             <a [routerLink]="['/vacancies', city]"
@@ -145,20 +145,20 @@ export class PublicHomeComponent implements OnInit {
   cities = ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', 'Farg\'ona', 'Nukus', 'Navoiy', 'Qarshi', 'Jizzax', 'Termiz', 'Urganch', 'Guliston'];
 
   categoryIcons = [
-    { key: 'COOK', label: 'Oshpaz', icon: '\u{1F468}\u200D\u{1F373}' },
-    { key: 'DRIVER', label: 'Haydovchi', icon: '\u{1F697}' },
-    { key: 'SALES', label: 'Sotuvchi', icon: '\u{1F6D2}' },
-    { key: 'BUILDER', label: 'Qurilishchi', icon: '\u{1F3D7}\uFE0F' },
-    { key: 'WAITER', label: 'Ofitsiant', icon: '\u{1F37D}\uFE0F' },
-    { key: 'SECURITY', label: 'Qo\'riqchi', icon: '\u{1F6E1}\uFE0F' },
-    { key: 'WAREHOUSE', label: 'Omborchi', icon: '\u{1F4E6}' },
-    { key: 'CLEANER', label: 'Tozalovchi', icon: '\u{1F9F9}' },
-    { key: 'ELECTRICIAN', label: 'Elektrik', icon: '\u26A1' },
-    { key: 'TAILOR', label: 'Tikuvchi', icon: '\u{1F9F5}' },
-    { key: 'COURIER', label: 'Kuryer', icon: '\u{1F3CD}\uFE0F' },
-    { key: 'CASHIER', label: 'Kassir', icon: '\u{1F4B0}' },
-    { key: 'LOADER', label: 'Yukchi', icon: '\u{1F4AA}' },
-    { key: 'PLUMBER', label: 'Santexnik', icon: '\u{1F527}' },
+    { key: 'COOK', icon: '\u{1F468}\u200D\u{1F373}' },
+    { key: 'DRIVER', icon: '\u{1F697}' },
+    { key: 'SALES', icon: '\u{1F6D2}' },
+    { key: 'BUILDER', icon: '\u{1F3D7}\uFE0F' },
+    { key: 'WAITER', icon: '\u{1F37D}\uFE0F' },
+    { key: 'SECURITY', icon: '\u{1F6E1}\uFE0F' },
+    { key: 'WAREHOUSE', icon: '\u{1F4E6}' },
+    { key: 'CLEANER', icon: '\u{1F9F9}' },
+    { key: 'ELECTRICIAN', icon: '\u26A1' },
+    { key: 'TAILOR', icon: '\u{1F9F5}' },
+    { key: 'COURIER', icon: '\u{1F3CD}\uFE0F' },
+    { key: 'CASHIER', icon: '\u{1F4B0}' },
+    { key: 'LOADER', icon: '\u{1F4AA}' },
+    { key: 'PLUMBER', icon: '\u{1F527}' },
   ];
 
   constructor(
@@ -214,25 +214,25 @@ export class PublicHomeComponent implements OnInit {
     const categoryItems = (this.categories().length ? this.categories() : this.categoryIcons)
       .slice(0, 8)
       .map((category: any) => ({
-        name: category.category || category.label || category.key,
+        name: this.i18n.t(`category.${category.category || category.key}`),
         path: `/vacancies/category/${category.category || category.key}`,
-        description: category.vacancyCount ? `${category.vacancyCount} active jobs` : undefined
+        description: category.vacancyCount ? `${category.vacancyCount} ${this.i18n.t('common.vacancies').toLowerCase()}` : undefined
       }));
 
     this.seo.setPage({
-      title: 'Find jobs in Uzbekistan',
-      description: 'Browse blue-collar jobs across Uzbekistan, compare salary ranges, explore verified employers, and apply in minutes on Verifix Jobs.',
+      title: this.i18n.t('public.home.seo.title'),
+      description: this.i18n.t('public.home.seo.description'),
       path: '/',
       keywords: ['jobs in uzbekistan', 'vacancies', 'blue collar jobs', 'verifix jobs', 'mass hiring'],
       schema: [
         this.seo.buildWebSiteSchema(),
         this.seo.buildCollectionPageSchema(
-          'Verifix Jobs home',
-          'Homepage for public job search, salary insights, and employer discovery in Uzbekistan.',
+          this.i18n.t('public.home.seo.collection_title'),
+          this.i18n.t('public.home.seo.collection_desc'),
           '/'
         ),
-        this.seo.buildItemListSchema('Popular job categories', categoryItems),
-        this.seo.buildItemListSchema('Latest vacancies', latestJobs)
+        this.seo.buildItemListSchema(this.i18n.t('public.home.seo.categories'), categoryItems),
+        this.seo.buildItemListSchema(this.i18n.t('public.home.seo.latest'), latestJobs)
       ]
     });
   }
@@ -242,7 +242,12 @@ export class PublicHomeComponent implements OnInit {
   }
 
   empType(t: string): string {
-    return ({ FULL_TIME: "To'liq", PART_TIME: 'Yarim', CONTRACT: 'Shartnoma', TEMPORARY: 'Vaqtinchalik' } as Record<string, string>)[t] || t;
+    return ({
+      FULL_TIME: this.i18n.t('employment.full_time'),
+      PART_TIME: this.i18n.t('employment.part_time'),
+      CONTRACT: this.i18n.t('employment.contract'),
+      TEMPORARY: this.i18n.t('employment.temporary')
+    } as Record<string, string>)[t] || t;
   }
 
   getBenefitIcon = getBenefitIcon;

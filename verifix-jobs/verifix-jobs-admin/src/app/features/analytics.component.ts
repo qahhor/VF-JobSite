@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminApiService } from '../core/api.service';
+import { I18nService } from '../core/i18n.service';
 
 @Component({
   selector: 'vja-analytics',
@@ -8,7 +9,7 @@ import { AdminApiService } from '../core/api.service';
   imports: [CommonModule],
   template: `
     <div role="main" class="space-y-6">
-      <h1 class="text-xl font-bold text-gray-800">Platforma analitikasi</h1>
+      <h1 class="text-xl font-bold text-gray-800">{{ i18n.t('analytics.title') }}</h1>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         @for (m of metrics(); track m.label) {
@@ -22,17 +23,17 @@ import { AdminApiService } from '../core/api.service';
       <!-- Growth chart placeholder -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Foydalanuvchi o'sishi</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.user_growth') }}</h3>
           <div class="h-48 flex items-end gap-1">
             @for (bar of growthBars(); track $index) {
               <div class="flex-1 bg-black/60 rounded-t-sm hover:bg-black transition" [style.height.%]="bar"></div>
             }
           </div>
-          <div class="flex justify-between mt-2 text-xs text-gray-400"><span>12 oy oldin</span><span>Bugun</span></div>
+          <div class="flex justify-between mt-2 text-xs text-gray-400"><span>{{ i18n.t('analytics.months_ago') }}</span><span>{{ i18n.t('analytics.today') }}</span></div>
         </div>
 
         <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">Top shaharlar</h3>
+          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.top_cities') }}</h3>
           <div role="main" class="space-y-3">
             @for (city of topCities(); track city.name) {
               <div>
@@ -57,16 +58,16 @@ export class AdminAnalyticsComponent implements OnInit {
     { name: 'Fergana', count: 210, percent: 16.8 },
   ]);
 
-  constructor(private api: AdminApiService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.api.getAnalytics().subscribe({
       next: (d: any) => {
         this.metrics.set([
-          { label: 'Jami nomzodlar', value: d.totalCandidates?.toLocaleString() || '0' },
-          { label: 'Jami ish beruvchilar', value: d.totalEmployers?.toLocaleString() || '0' },
-          { label: 'Jami vakansiyalar', value: d.totalVacancies?.toLocaleString() || '0' },
-          { label: 'Oylik daromad', value: (d.monthlyRevenue || 0).toLocaleString() + ' UZS' },
+          { label: this.i18n.t('analytics.total_candidates'), value: d.totalCandidates?.toLocaleString() || '0' },
+          { label: this.i18n.t('analytics.total_employers'), value: d.totalEmployers?.toLocaleString() || '0' },
+          { label: this.i18n.t('analytics.total_vacancies'), value: d.totalVacancies?.toLocaleString() || '0' },
+          { label: this.i18n.t('analytics.monthly_revenue'), value: (d.monthlyRevenue || 0).toLocaleString() + ' UZS' },
         ]);
       }
     });

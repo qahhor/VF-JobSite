@@ -124,7 +124,7 @@ import { SeoService } from '../../core/services/seo.service';
             (click)="setCountry(c.code)"
             class="shrink-0 h-9 px-4 rounded-full text-sm font-medium border transition"
             [class]="country === c.code ? 'bg-black text-white border-black' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'">
-            {{ c.name }}
+            {{ i18n.t(c.nameKey) }}
           </button>
         }
       </div>
@@ -203,7 +203,7 @@ import { SeoService } from '../../core/services/seo.service';
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    {{ v.city || 'Toshkent' }}
+                      {{ v.city || popularCities[0] }}
                   </span>
                   @if (v.employmentType) {
                     <span class="px-2 py-0.5 bg-gray-100 rounded-full">{{ empType(v.employmentType) }}</span>
@@ -218,9 +218,9 @@ import { SeoService } from '../../core/services/seo.service';
                     @if (selectedVacancySlug() === (v.slug || v.id)) {
                       {{ i18n.t('jobs.selected') }}
                     } @else if (v.employerVerified) {
-                      Verified employer
+                          {{ i18n.t('jobs.verified_employer') }}
                     } @else {
-                      Open preview
+                      {{ i18n.t('jobs.open_preview') }}
                     }
                   </div>
                   <a
@@ -255,7 +255,7 @@ import { SeoService } from '../../core/services/seo.service';
         <aside class="hidden xl:block sticky top-20">
           <div class="rounded-2xl border border-gray-100 bg-white p-5">
             @if (selectedVacancy(); as selected) {
-              <div class="text-[10px] uppercase tracking-wide text-gray-400 mb-2">Split View</div>
+              <div class="text-[10px] uppercase tracking-wide text-gray-400 mb-2">{{ i18n.t('jobs.split_view') }}</div>
 
               <div class="text-xl font-bold text-gray-900">
                 @if (selected.salaryFrom) {
@@ -340,15 +340,15 @@ import { SeoService } from '../../core/services/seo.service';
               <div class="grid grid-cols-3 gap-3 text-center">
                 <div>
                   <div class="text-xl font-bold">{{ stats().vacancies }}</div>
-                  <div class="text-[10px] text-gray-400 mt-1">Vakansiya</div>
+                  <div class="text-[10px] text-gray-400 mt-1">{{ i18n.t('common.vacancy') }}</div>
                 </div>
                 <div>
                   <div class="text-xl font-bold">{{ stats().employers }}</div>
-                  <div class="text-[10px] text-gray-400 mt-1">Kompaniya</div>
+                  <div class="text-[10px] text-gray-400 mt-1">{{ i18n.t('stats.companies') }}</div>
                 </div>
                 <div>
                   <div class="text-xl font-bold">{{ stats().hired }}</div>
-                  <div class="text-[10px] text-gray-400 mt-1">Hired</div>
+                  <div class="text-[10px] text-gray-400 mt-1">{{ i18n.t('stats.hired') }}</div>
                 </div>
               </div>
             </div>
@@ -425,11 +425,11 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   pages = signal<number[]>([]);
 
   countryList = [
-    { code: '', name: "Barcha", flag: '' },
-    { code: 'UZ', name: "O'zbekiston", flag: '' },
-    { code: 'KZ', name: "Qozog'iston", flag: '' },
-    { code: 'KG', name: "Qirg'iziston", flag: '' },
-    { code: 'TJ', name: "Tojikiston", flag: '' },
+    { code: '', nameKey: 'country.all', flag: '' },
+    { code: 'UZ', nameKey: 'country.UZ', flag: '' },
+    { code: 'KZ', nameKey: 'country.KZ', flag: '' },
+    { code: 'KG', nameKey: 'country.KG', flag: '' },
+    { code: 'TJ', nameKey: 'country.TJ', flag: '' },
   ];
   citiesByCountry: Record<string, string[]> = {
     '': ['Toshkent', 'Samarqand', 'Buxoro', 'Andijon', 'Namangan', "Farg'ona", 'Nukus', 'Navoiy', 'Qarshi'],
@@ -442,26 +442,26 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     return this.citiesByCountry[this.country] || this.citiesByCountry[''];
   }
   categoryList = [
-    { key: 'COOK', label: 'Oshpaz' },
-    { key: 'DRIVER', label: 'Haydovchi' },
-    { key: 'SALES', label: 'Sotuvchi' },
-    { key: 'BUILDER', label: 'Qurilishchi' },
-    { key: 'WAITER', label: 'Ofitsiant' },
-    { key: 'SECURITY', label: 'Qo\'riqchi' },
-    { key: 'WAREHOUSE', label: 'Omborchi' },
-    { key: 'COURIER', label: 'Kuryer' },
-    { key: 'ELECTRICIAN', label: 'Elektrik' },
-    { key: 'TAILOR', label: 'Tikuvchi' },
-    { key: 'CASHIER', label: 'Kassir' },
-    { key: 'LOADER', label: 'Yukchi' },
+    { key: 'COOK' },
+    { key: 'DRIVER' },
+    { key: 'SALES' },
+    { key: 'BUILDER' },
+    { key: 'WAITER' },
+    { key: 'SECURITY' },
+    { key: 'WAREHOUSE' },
+    { key: 'COURIER' },
+    { key: 'ELECTRICIAN' },
+    { key: 'TAILOR' },
+    { key: 'CASHIER' },
+    { key: 'LOADER' },
   ];
   benefitList = [
-    { key: 'ovqat', label: 'Ovqat' },
-    { key: 'transport', label: 'Transport' },
-    { key: 'turar-joy', label: 'Turar joy' },
-    { key: 'forma', label: 'Forma' },
-    { key: 'bonus', label: 'Bonus' },
-    { key: 'oqitish', label: "O'qitish" },
+    { key: 'ovqat' },
+    { key: 'transport' },
+    { key: 'turar-joy' },
+    { key: 'forma' },
+    { key: 'bonus' },
+    { key: 'oqitish' },
   ];
 
   constructor(
@@ -480,16 +480,16 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
       return this.i18n.t('category.' + this.category);
     }
     if (this.city) {
-      return `${this.city} bo'yicha vakansiyalar`;
+      return this.localizedCityTitle(this.city);
     }
-    return 'Vakansiyalar';
+    return this.i18n.t('common.vacancies');
   }
 
   pageSubtitle(): string {
     if (this.query) {
-      return `"${this.query}" bo'yicha mos ishlarni toping.`;
+      return this.localizedQuerySubtitle(this.query);
     }
-    return "Filtrlar orqali ishlarni tez solishtiring va to'g'ri variantni tanlang.";
+    return this.localizedDefaultSubtitle();
   }
 
   ngOnInit() {
@@ -714,9 +714,9 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
       return parts.join(' / ');
     }
     if (this.salaryMin != null) {
-      return `Maosh ${this.salaryMin}+`;
+      return `${this.i18n.t('common.salary')} ${this.salaryMin}+`;
     }
-    return 'Saqlangan qidiruv';
+    return this.i18n.t('public.saved.default_name');
   }
 
   marketRange(): string {
@@ -774,7 +774,7 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
 
   private updateSeo() {
     const categoryLabel = this.category ? this.i18n.t('category.' + this.category) : '';
-    const titleCore = [categoryLabel, this.city, 'Jobs'].filter(Boolean).join(' ');
+    const titleCore = this.localizedSeoTitle(categoryLabel);
     const description = this.buildSeoDescription(categoryLabel);
     const vacancies = this.vacancies().slice(0, 10).map(vacancy => ({
       name: vacancy.title,
@@ -782,8 +782,8 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
       description: [vacancy.city, vacancy.employer?.name || vacancy.employerName].filter(Boolean).join(' | ')
     }));
     const breadcrumbItems = [
-      { name: 'Home', path: '/' },
-      { name: 'Jobs', path: '/jobs' }
+      { name: this.i18n.t('nav.home'), path: '/' },
+      { name: this.i18n.t('nav.jobs'), path: '/jobs' }
     ];
     if (this.city) {
       breadcrumbItems.push({ name: this.city, path: `/vacancies/${this.segment(this.city)}` });
@@ -798,15 +798,15 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
     }
 
     this.seo.setPage({
-      title: titleCore || 'Jobs',
+      title: titleCore || this.i18n.t('nav.jobs'),
       description,
       path: this.buildCanonicalPath(),
-      keywords: ['vacancies', this.city, categoryLabel, 'jobs in uzbekistan'].filter(Boolean) as string[],
+      keywords: [this.i18n.t('common.vacancies'), this.city, categoryLabel, this.i18n.t('nav.jobs')].filter(Boolean) as string[],
       noindex: this.shouldNoIndex(),
       schema: [
-        this.seo.buildCollectionPageSchema(titleCore || 'Jobs', description, this.buildCanonicalPath()),
+        this.seo.buildCollectionPageSchema(titleCore || this.i18n.t('nav.jobs'), description, this.buildCanonicalPath()),
         this.seo.buildBreadcrumbSchema(breadcrumbItems),
-        this.seo.buildItemListSchema(titleCore || 'Jobs', vacancies)
+        this.seo.buildItemListSchema(titleCore || this.i18n.t('nav.jobs'), vacancies)
       ]
     });
   }
@@ -825,14 +825,18 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   }
 
   private buildSeoDescription(categoryLabel: string): string {
-    const context = [categoryLabel, this.city].filter(Boolean).join(' in ');
-    const totalLabel = this.total() ? `${this.total()} active vacancies` : 'Browse active vacancies';
+    const lang = this.i18n.lang();
+    const context = [categoryLabel, this.city].filter(Boolean).join(lang === 'ru' ? ' в ' : ' in ');
+    const totalLabel = this.total()
+      ? (lang === 'ru' ? `${this.total()} активных вакансий` : lang === 'en' ? `${this.total()} active vacancies` : `${this.total()} faol vakansiya`)
+      : (lang === 'ru' ? 'Просматривайте активные вакансии' : lang === 'en' ? 'Browse active vacancies' : 'Faol vakansiyalarni ko‘ring');
     const filters = [
       this.employmentType ? this.empType(this.employmentType) : '',
       this.shiftSchedule ? this.shiftLabel(this.shiftSchedule) : '',
-      this.verifiedOnly ? 'verified employers' : ''
+      this.verifiedOnly ? this.i18n.t('jobs.verified_employer') : ''
     ].filter(Boolean);
-    return [totalLabel, context || 'across Uzbekistan', filters.join(', ')].filter(Boolean).join('. ');
+    const scope = context || (lang === 'ru' ? 'по Узбекистану' : lang === 'en' ? 'across Uzbekistan' : "O'zbekiston bo'ylab");
+    return [totalLabel, scope, filters.join(', ')].filter(Boolean).join('. ');
   }
 
   private shouldNoIndex(): boolean {
@@ -887,5 +891,42 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
       karshi: 'Qarshi'
     };
     return mapping[value?.trim().toLowerCase()] || value;
+  }
+
+  private localizedCityTitle(city: string): string {
+    const lang = this.i18n.lang();
+    if (lang === 'ru') return `Вакансии в ${city}`;
+    if (lang === 'en') return `Jobs in ${city}`;
+    return `${city} bo'yicha vakansiyalar`;
+  }
+
+  private localizedQuerySubtitle(query: string): string {
+    const lang = this.i18n.lang();
+    if (lang === 'ru') return `Найдите подходящую работу по запросу "${query}".`;
+    if (lang === 'en') return `Find matching jobs for "${query}".`;
+    return `"${query}" bo'yicha mos ishlarni toping.`;
+  }
+
+  private localizedDefaultSubtitle(): string {
+    const lang = this.i18n.lang();
+    if (lang === 'ru') return 'Сравнивайте вакансии по фильтрам и быстрее находите подходящий вариант.';
+    if (lang === 'en') return 'Compare jobs with filters and find the right fit faster.';
+    return "Filtrlar orqali ishlarni tez solishtiring va to'g'ri variantni tanlang.";
+  }
+
+  private localizedSeoTitle(categoryLabel: string): string {
+    const lang = this.i18n.lang();
+    if (categoryLabel && this.city) {
+      if (lang === 'ru') return `${categoryLabel} в ${this.city}`;
+      if (lang === 'en') return `${categoryLabel} jobs in ${this.city}`;
+      return `${categoryLabel} - ${this.city}`;
+    }
+    if (categoryLabel) {
+      return categoryLabel;
+    }
+    if (this.city) {
+      return this.localizedCityTitle(this.city);
+    }
+    return this.i18n.t('common.vacancies');
   }
 }

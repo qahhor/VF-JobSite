@@ -3,27 +3,28 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { I18nService } from '../../core/services/i18n.service';
 
 @Component({
   selector: 'vjw-admin-gov',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <h1 class="text-2xl font-bold mb-6">Davlat sinxronizatsiyasi</h1>
+    <h1 class="text-2xl font-bold mb-6">{{ i18n.t('admin.gov.title') }}</h1>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
       @for (s of stats(); track s.source) {
         <div class="bg-gray-800 rounded-xl p-5 border border-gray-700">
           <div class="text-sm font-semibold text-white mb-3">{{ s.source }}</div>
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div><span class="text-green-400 font-bold">{{ s.synced }}</span> <span class="text-gray-500">sinxron</span></div>
-            <div><span class="text-yellow-400 font-bold">{{ s.pending }}</span> <span class="text-gray-500">kutilmoqda</span></div>
-            <div><span class="text-red-400 font-bold">{{ s.failed }}</span> <span class="text-gray-500">xato</span></div>
-            <div><span class="text-gray-300 font-bold">{{ s.total }}</span> <span class="text-gray-500">jami</span></div>
+            <div><span class="text-green-400 font-bold">{{ s.synced }}</span> <span class="text-gray-500">{{ i18n.t('admin.gov.synced') }}</span></div>
+            <div><span class="text-yellow-400 font-bold">{{ s.pending }}</span> <span class="text-gray-500">{{ i18n.t('admin.pending') }}</span></div>
+            <div><span class="text-red-400 font-bold">{{ s.failed }}</span> <span class="text-gray-500">{{ i18n.t('admin.gov.failed') }}</span></div>
+            <div><span class="text-gray-300 font-bold">{{ s.total }}</span> <span class="text-gray-500">{{ i18n.t('admin.gov.total') }}</span></div>
           </div>
           <div class="flex gap-2 mt-3">
-            <button (click)="triggerExport(s.source)" class="h-7 px-3 bg-gray-700 text-gray-300 rounded text-xs hover:bg-gray-600 transition">Export</button>
-            <button (click)="triggerImport(s.source)" class="h-7 px-3 bg-blue-700 text-white rounded text-xs hover:bg-blue-600 transition">Import</button>
+            <button (click)="triggerExport(s.source)" class="h-7 px-3 bg-gray-700 text-gray-300 rounded text-xs hover:bg-gray-600 transition">{{ i18n.t('admin.gov.export') }}</button>
+            <button (click)="triggerImport(s.source)" class="h-7 px-3 bg-blue-700 text-white rounded text-xs hover:bg-blue-600 transition">{{ i18n.t('admin.gov.import') }}</button>
           </div>
         </div>
       }
@@ -31,7 +32,7 @@ import { environment } from '../../../environments/environment';
 
     <div class="bg-gray-800 rounded-xl border border-gray-700">
       <div class="px-5 py-4 border-b border-gray-700 flex items-center justify-between">
-        <h3 class="font-semibold text-white">Sinxronizatsiya tarixi</h3>
+        <h3 class="font-semibold text-white">{{ i18n.t('admin.gov.history') }}</h3>
         <select [(ngModel)]="selectedSource" (ngModelChange)="loadHistory()" class="h-8 px-3 bg-gray-700 border border-gray-600 rounded text-xs text-white">
           <option value="ARGOS">ARGOS</option>
           <option value="ENST">ENST</option>
@@ -50,7 +51,7 @@ import { environment } from '../../../environments/environment';
             <div class="text-xs text-gray-500 shrink-0">{{ h.createdAt | date:'dd.MM HH:mm' }}</div>
           </div>
         } @empty {
-          <div class="px-5 py-8 text-center text-gray-500 text-sm">Tarix yo'q</div>
+          <div class="px-5 py-8 text-center text-gray-500 text-sm">{{ i18n.t('admin.gov.no_history') }}</div>
         }
       </div>
     </div>
@@ -63,7 +64,7 @@ export class AdminGovComponent implements OnInit {
 
   private base = `${environment.apiUrl}/admin/gov`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, public i18n: I18nService) {}
 
   ngOnInit() {
     this.loadStats();

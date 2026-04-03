@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminApiService } from '../core/api.service';
+import { I18nService } from '../core/i18n.service';
 
 @Component({
   selector: 'vja-fraud',
@@ -9,12 +10,12 @@ import { AdminApiService } from '../core/api.service';
   template: `
     <div role="main" class="space-y-4">
       <div class="flex items-center justify-between">
-        <h1 class="text-xl font-bold text-gray-800">Fraud alertlar</h1>
+        <h1 class="text-xl font-bold text-gray-800">{{ i18n.t('fraud.title') }}</h1>
         <div class="flex gap-2">
           <button (click)="showReviewed = false; load()" class="px-3 py-1.5 rounded-lg text-xs font-medium"
-                  [class]="!showReviewed ? 'bg-red-500 text-white' : 'bg-white text-gray-600 border border-gray-200'">Yangi</button>
+                  [class]="!showReviewed ? 'bg-red-500 text-white' : 'bg-white text-gray-600 border border-gray-200'">{{ i18n.t('fraud.new') }}</button>
           <button (click)="showReviewed = true; load()" class="px-3 py-1.5 rounded-lg text-xs font-medium"
-                  [class]="showReviewed ? 'bg-gray-500 text-white' : 'bg-white text-gray-600 border border-gray-200'">Ko'rilgan</button>
+                  [class]="showReviewed ? 'bg-gray-500 text-white' : 'bg-white text-gray-600 border border-gray-200'">{{ i18n.t('fraud.reviewed') }}</button>
         </div>
       </div>
 
@@ -28,7 +29,7 @@ import { AdminApiService } from '../core/api.service';
                   {{ alert.score >= 0.7 ? '🔴' : alert.score >= 0.4 ? '🟠' : '🟡' }}
                 </div>
                 <div>
-                  <div class="text-sm font-medium text-gray-800">{{ alert.entityType }} — {{ alert.fraudType || 'Shubhali faoliyat' }}</div>
+                  <div class="text-sm font-medium text-gray-800">{{ alert.entityType }} — {{ alert.fraudType || i18n.t('fraud.suspicious') }}</div>
                   <div class="text-xs text-gray-400">ID: {{ alert.entityId?.substring(0, 12) }}...</div>
                 </div>
               </div>
@@ -36,7 +37,7 @@ import { AdminApiService } from '../core/api.service';
                 <div class="text-lg font-bold" [class]="alert.score >= 0.7 ? 'text-red-600' : 'text-orange-500'">
                   {{ (alert.score * 100).toFixed(0) }}%
                 </div>
-                <div class="text-xs text-gray-400">fraud score</div>
+                <div class="text-xs text-gray-400">{{ i18n.t('fraud.score') }}</div>
               </div>
             </div>
 
@@ -51,15 +52,15 @@ import { AdminApiService } from '../core/api.service';
               <span class="text-xs text-gray-400">{{ alert.createdAt | date:'dd.MM.yyyy HH:mm' }}</span>
               @if (!alert.reviewed) {
                 <div class="flex gap-2">
-                  <button (click)="review(alert)" class="text-xs px-3 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100">Ko'rildi</button>
+                  <button (click)="review(alert)" class="text-xs px-3 py-1 bg-green-50 text-green-600 rounded hover:bg-green-100">{{ i18n.t('fraud.mark_reviewed') }}</button>
                 </div>
               } @else {
-                <span class="text-xs text-gray-400">Ko'rilgan</span>
+                <span class="text-xs text-gray-400">{{ i18n.t('fraud.reviewed') }}</span>
               }
             </div>
           </div>
         } @empty {
-          <div class="py-16 text-center text-gray-400 text-sm">Fraud alertlar yo'q</div>
+          <div class="py-16 text-center text-gray-400 text-sm">{{ i18n.t('fraud.empty') }}</div>
         }
       </div>
     </div>
@@ -69,7 +70,7 @@ export class FraudComponent implements OnInit {
   alerts = signal<any[]>([]);
   showReviewed = false;
 
-  constructor(private api: AdminApiService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
   ngOnInit() { this.load(); }
 
   load() {

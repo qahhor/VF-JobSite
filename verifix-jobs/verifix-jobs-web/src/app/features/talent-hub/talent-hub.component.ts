@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { I18nService } from '../../core/services/i18n.service';
 import { Candidate, Vacancy } from '../../core/models';
 
 @Component({
@@ -11,8 +12,8 @@ import { Candidate, Vacancy } from '../../core/models';
   template: `
     <div class="space-y-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-800">Talent Hub</h1>
-        <p class="mt-1 text-sm text-gray-500">Reusable candidate pool across all employer vacancies.</p>
+        <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('talent.title') }}</h1>
+        <p class="mt-1 text-sm text-gray-500">{{ i18n.t('talent.subtitle') }}</p>
       </div>
 
       @if (error()) {
@@ -25,7 +26,7 @@ import { Candidate, Vacancy } from '../../core/models';
         <input
           type="text"
           [(ngModel)]="query"
-          placeholder="Search candidates by category, city, or skill"
+          [placeholder]="i18n.t('talent.search_placeholder')"
           class="h-11 flex-1 rounded-xl border border-gray-200 px-4 text-sm outline-none focus:border-black"
           (keyup.enter)="search()"
         />
@@ -33,7 +34,7 @@ import { Candidate, Vacancy } from '../../core/models';
           (click)="search()"
           class="h-11 rounded-xl bg-black px-6 text-sm font-semibold text-white transition hover:bg-gray-800"
         >
-          Search
+          {{ i18n.t('common.search') }}
         </button>
       </div>
 
@@ -43,28 +44,28 @@ import { Candidate, Vacancy } from '../../core/models';
           class="h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition"
           [class]="activeList() === 'all' ? 'border-black bg-black text-white' : 'border-gray-200 bg-white text-gray-600'"
         >
-          All ({{ candidates().length }})
+          {{ i18n.t('talent.all') }} ({{ candidates().length }})
         </button>
         <button
           (click)="setActiveList('shortlisted')"
           class="h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition"
           [class]="activeList() === 'shortlisted' ? 'border-black bg-black text-white' : 'border-gray-200 bg-white text-gray-600'"
         >
-          Shortlist ({{ shortlisted().length }})
+          {{ i18n.t('talent.shortlist') }} ({{ shortlisted().length }})
         </button>
         <button
           (click)="setActiveList('hired')"
           class="h-9 shrink-0 rounded-full border px-4 text-sm font-medium transition"
           [class]="activeList() === 'hired' ? 'border-black bg-black text-white' : 'border-gray-200 bg-white text-gray-600'"
         >
-          Hired ({{ hired().length }})
+          {{ i18n.t('talent.hired') }} ({{ hired().length }})
         </button>
       </div>
 
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         @if (loading()) {
           <div class="col-span-full rounded-xl border border-gray-100 bg-white p-10 text-center text-sm text-gray-400">
-            Loading candidates...
+            {{ i18n.t('talent.loading') }}
           </div>
         } @else {
           @for (candidate of filteredCandidates(); track candidate.id) {
@@ -75,7 +76,7 @@ import { Candidate, Vacancy } from '../../core/models';
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="truncate text-sm font-semibold text-gray-800">{{ fullName(candidate) }}</div>
-                  <div class="truncate text-xs text-gray-400">{{ candidate.city || 'City not set' }}<span *ngIf="candidate.phone"> | {{ candidate.phone }}</span></div>
+                  <div class="truncate text-xs text-gray-400">{{ candidate.city || i18n.t('talent.city_not_set') }}<span *ngIf="candidate.phone"> | {{ candidate.phone }}</span></div>
                 </div>
                 @if (candidate.matchScore) {
                   <div
@@ -103,14 +104,14 @@ import { Candidate, Vacancy } from '../../core/models';
                   [disabled]="busy()"
                   [class]="isShortlisted(candidate.id) ? 'border-yellow-200 bg-yellow-50 text-yellow-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'"
                 >
-                  {{ isShortlisted(candidate.id) ? 'In shortlist' : 'Add to shortlist' }}
+                  {{ isShortlisted(candidate.id) ? i18n.t('talent.in_shortlist') : i18n.t('talent.add_to_shortlist') }}
                 </button>
                 <button
                   (click)="openInvite(candidate)"
                   class="h-8 flex-1 rounded-lg bg-black text-xs font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
                   [disabled]="!vacancies().length"
                 >
-                  Invite
+                  {{ i18n.t('talent.invite') }}
                 </button>
               </div>
             </div>
@@ -127,7 +128,7 @@ import { Candidate, Vacancy } from '../../core/models';
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
         <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
           <div class="mb-5">
-            <h2 class="text-lg font-semibold text-gray-800">Invite candidate</h2>
+            <h2 class="text-lg font-semibold text-gray-800">{{ i18n.t('talent.invite_title') }}</h2>
             <p class="mt-1 text-sm text-gray-500">{{ fullName(candidate) }}</p>
           </div>
 
@@ -139,12 +140,12 @@ import { Candidate, Vacancy } from '../../core/models';
 
           <div class="space-y-4">
             <div>
-              <label class="mb-1 block text-sm font-medium text-gray-700">Vacancy</label>
+              <label class="mb-1 block text-sm font-medium text-gray-700">{{ i18n.t('common.vacancy') }}</label>
               <select
                 [(ngModel)]="inviteVacancyId"
                 class="h-11 w-full rounded-xl border border-gray-200 px-3 text-sm outline-none focus:border-black"
               >
-                <option value="">Select vacancy</option>
+                <option value="">{{ i18n.t('common.select_vacancy') }}</option>
                 @for (vacancy of vacancies(); track vacancy.id) {
                   <option [value]="vacancy.id">{{ vacancy.title }}</option>
                 }
@@ -152,12 +153,12 @@ import { Candidate, Vacancy } from '../../core/models';
             </div>
 
             <div>
-              <label class="mb-1 block text-sm font-medium text-gray-700">Recruiter note</label>
+              <label class="mb-1 block text-sm font-medium text-gray-700">{{ i18n.t('common.note') }}</label>
               <textarea
                 [(ngModel)]="inviteNote"
                 rows="4"
                 class="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-black"
-                placeholder="Optional context for the candidate"
+                [placeholder]="i18n.t('talent.note_placeholder')"
               ></textarea>
             </div>
           </div>
@@ -167,14 +168,14 @@ import { Candidate, Vacancy } from '../../core/models';
               (click)="closeInvite()"
               class="h-10 rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
             >
-              Cancel
+              {{ i18n.t('common.cancel') }}
             </button>
             <button
               (click)="submitInvite()"
               class="h-10 rounded-xl bg-black px-4 text-sm font-semibold text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
               [disabled]="inviteBusy()"
             >
-              {{ inviteBusy() ? 'Sending...' : 'Send invite' }}
+              {{ inviteBusy() ? i18n.t('talent.sending') : i18n.t('talent.invite') }}
             </button>
           </div>
         </div>
@@ -205,7 +206,7 @@ export class TalentHubComponent implements OnInit {
   inviteNote = '';
   private shortlistListId: string | null = null;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.loadVacancies();
@@ -245,7 +246,7 @@ export class TalentHubComponent implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this.error.set(this.extractMessage(err, 'Candidate search failed.'));
+        this.error.set(this.extractMessage(err, this.i18n.t('talent.search_failed')));
       }
     });
   }
@@ -266,7 +267,7 @@ export class TalentHubComponent implements OnInit {
 
   toggleShortlist(candidate: Candidate) {
     if (!this.shortlistListId) {
-      this.error.set('Shortlist is not ready yet. Try again in a moment.');
+      this.error.set(this.i18n.t('talent.shortlist_not_ready'));
       return;
     }
 
@@ -310,7 +311,7 @@ export class TalentHubComponent implements OnInit {
       return;
     }
     if (!this.inviteVacancyId) {
-      this.inviteError.set('Select a vacancy first.');
+      this.inviteError.set(this.i18n.t('talent.select_vacancy_first'));
       return;
     }
 
@@ -321,23 +322,23 @@ export class TalentHubComponent implements OnInit {
       next: () => this.closeInvite(),
       error: (err) => {
         this.inviteBusy.set(false);
-        this.inviteError.set(this.extractMessage(err, 'Invite could not be sent.'));
+        this.inviteError.set(this.extractMessage(err, this.i18n.t('candidates.invite_failed')));
       }
     });
   }
 
   emptyStateMessage(): string {
     if (this.activeList() === 'shortlisted') {
-      return 'Shortlist is empty.';
+      return this.i18n.t('talent.empty_shortlist');
     }
     if (this.activeList() === 'hired') {
-      return 'No hired candidates yet.';
+      return this.i18n.t('talent.empty_hired');
     }
-    return this.searched() ? 'No candidates matched this query.' : 'Enter a search query to start.';
+    return this.searched() ? this.i18n.t('talent.empty_search') : this.i18n.t('talent.enter_query');
   }
 
   fullName(candidate: Candidate): string {
-    return [candidate.firstName, candidate.lastName].filter(Boolean).join(' ') || 'Candidate';
+    return [candidate.firstName, candidate.lastName].filter(Boolean).join(' ') || this.i18n.t('talent.fallback_candidate');
   }
 
   initials(candidate: Candidate): string {
@@ -352,7 +353,7 @@ export class TalentHubComponent implements OnInit {
         this.loadShortlisted();
       },
       error: (err) => {
-        this.error.set(this.extractMessage(err, 'Shortlist could not be initialized.'));
+        this.error.set(this.extractMessage(err, this.i18n.t('talent.init_failed')));
       }
     });
   }
@@ -364,7 +365,7 @@ export class TalentHubComponent implements OnInit {
     this.api.getTalentListCandidates(this.shortlistListId).subscribe({
       next: (candidates) => this.shortlisted.set(candidates || []),
       error: (err) => {
-        this.error.set(this.extractMessage(err, 'Shortlist could not be loaded.'));
+        this.error.set(this.extractMessage(err, this.i18n.t('talent.load_shortlist_failed')));
       }
     });
   }
@@ -373,7 +374,7 @@ export class TalentHubComponent implements OnInit {
     this.api.getTalentHubHired().subscribe({
       next: (candidates) => this.hired.set(candidates || []),
       error: (err) => {
-        this.error.set(this.extractMessage(err, 'Hired candidates could not be loaded.'));
+        this.error.set(this.extractMessage(err, this.i18n.t('talent.load_hired_failed')));
       }
     });
   }
@@ -382,7 +383,7 @@ export class TalentHubComponent implements OnInit {
     this.api.getVacancies(0, 100, 'ACTIVE').subscribe({
       next: (response) => this.vacancies.set(response.content || []),
       error: (err) => {
-        this.error.set(this.extractMessage(err, 'Active vacancies could not be loaded.'));
+        this.error.set(this.extractMessage(err, this.i18n.t('talent.load_vacancies_failed')));
       }
     });
   }

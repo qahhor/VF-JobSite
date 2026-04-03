@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminApiService } from '../core/api.service';
+import { I18nService } from '../core/i18n.service';
 
 @Component({
   selector: 'vja-audit',
@@ -9,7 +10,7 @@ import { AdminApiService } from '../core/api.service';
   template: `
     <div role="main" class="space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h1 class="text-xl font-bold text-gray-800">Audit log</h1>
+        <h1 class="text-xl font-bold text-gray-800">{{ i18n.t('audit.title') }}</h1>
         <button (click)="exportCsv()" class="h-10 px-4 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 self-start sm:self-auto">CSV</button>
       </div>
 
@@ -24,21 +25,21 @@ import { AdminApiService } from '../core/api.service';
               <button
                 (click)="selectedLog.set(selectedLog() === log ? null : log)"
                 class="h-8 px-3 rounded-lg border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-50 shrink-0">
-                {{ selectedLog() === log ? 'Yopish' : 'Batafsil' }}
+                {{ selectedLog() === log ? i18n.t('audit.close') : i18n.t('audit.details') }}
               </button>
             </div>
 
             <div class="grid grid-cols-1 gap-2 text-xs">
               <div>
-                <div class="text-gray-400">Admin</div>
+                <div class="text-gray-400">{{ i18n.t('audit.admin') }}</div>
                 <div class="text-gray-700 mt-1 break-all">{{ log.adminEmail || log.adminId?.substring(0, 8) }}</div>
               </div>
               <div>
-                <div class="text-gray-400">Element</div>
+                <div class="text-gray-400">{{ i18n.t('audit.item') }}</div>
                 <div class="text-gray-700 mt-1">{{ log.entityType }} / {{ log.entityId?.substring(0, 8) }}</div>
               </div>
               <div>
-                <div class="text-gray-400">IP</div>
+                <div class="text-gray-400">{{ i18n.t('audit.ip') }}</div>
                 <div class="text-gray-700 mt-1 font-mono break-all">{{ log.ipAddress }}</div>
               </div>
             </div>
@@ -50,7 +51,7 @@ import { AdminApiService } from '../core/api.service';
             }
           </div>
         } @empty {
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-5 py-12 text-center text-gray-400 text-sm">Loglar topilmadi</div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-5 py-12 text-center text-gray-400 text-sm">{{ i18n.t('audit.not_found') }}</div>
         }
       </div>
 
@@ -58,11 +59,11 @@ import { AdminApiService } from '../core/api.service';
         <table class="w-full">
           <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Vaqt</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Admin</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Amal</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Element</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">IP</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('audit.time') }}</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('audit.admin') }}</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('audit.action') }}</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('audit.item') }}</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('audit.ip') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
@@ -84,7 +85,7 @@ import { AdminApiService } from '../core/api.service';
                 </tr>
               }
             } @empty {
-              <tr><td colspan="5" class="px-5 py-12 text-center text-gray-400 text-sm">Loglar topilmadi</td></tr>
+              <tr><td colspan="5" class="px-5 py-12 text-center text-gray-400 text-sm">{{ i18n.t('audit.not_found') }}</td></tr>
             }
           </tbody>
         </table>
@@ -96,7 +97,7 @@ export class AuditComponent implements OnInit {
   logs = signal<any[]>([]);
   selectedLog = signal<any>(null);
 
-  constructor(private api: AdminApiService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.api.getAuditLogs().subscribe({ next: (res: any) => this.logs.set(res.content || res || []) });

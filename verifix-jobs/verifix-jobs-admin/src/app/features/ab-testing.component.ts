@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from '../core/api.service';
+import { I18nService } from '../core/i18n.service';
 
 @Component({
   selector: 'vja-ab-testing',
@@ -10,8 +11,8 @@ import { AdminApiService } from '../core/api.service';
   template: `
     <div role="main" class="space-y-4">
       <div class="flex items-center justify-between">
-        <h1 class="text-xl font-bold text-gray-800">A/B Testlar</h1>
-        <button (click)="showCreate.set(true)" class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800">+ Yangi eksperiment</button>
+        <h1 class="text-xl font-bold text-gray-800">{{ i18n.t('ab.title') }}</h1>
+        <button (click)="showCreate.set(true)" class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800">+ {{ i18n.t('ab.new') }}</button>
       </div>
 
       <!-- Experiments list -->
@@ -22,19 +23,19 @@ import { AdminApiService } from '../core/api.service';
               <h3 class="font-semibold text-gray-800">{{ exp.name }}</h3>
               <div class="flex items-center gap-2">
                 <span class="text-xs px-2 py-0.5 rounded-full" [class]="exp.active ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'">
-                  {{ exp.active ? 'Faol' : 'Nofaol' }}
+                  {{ exp.active ? i18n.t('ab.active') : i18n.t('ab.inactive') }}
                 </span>
                 <button (click)="toggleActive(exp)" class="text-xs text-black hover:underline">
-                  {{ exp.active ? 'To\\'xtatish' : 'Boshlash' }}
+                  {{ exp.active ? i18n.t('ab.stop') : i18n.t('ab.start') }}
                 </button>
               </div>
             </div>
             <p class="text-sm text-gray-500 mb-3">{{ exp.description }}</p>
             <div class="flex items-center gap-4 text-sm">
-              <span class="text-gray-400">Ishtirokchilar: <b class="text-gray-700">{{ exp.totalParticipants }}</b></span>
-              <span class="text-gray-400">Konversiyalar: <b class="text-gray-700">{{ exp.totalConversions }}</b></span>
+              <span class="text-gray-400">{{ i18n.t('ab.participants') }}: <b class="text-gray-700">{{ exp.totalParticipants }}</b></span>
+              <span class="text-gray-400">{{ i18n.t('ab.conversions') }}: <b class="text-gray-700">{{ exp.totalConversions }}</b></span>
             </div>
-            <button (click)="loadStats(exp.name)" class="mt-3 text-xs text-black hover:underline">Statistikani ko'rish</button>
+            <button (click)="loadStats(exp.name)" class="mt-3 text-xs text-black hover:underline">{{ i18n.t('ab.view_stats') }}</button>
 
             @if (selectedStats()?.name === exp.name) {
               <div class="mt-4 p-4 bg-gray-50 rounded-lg">
@@ -52,16 +53,16 @@ import { AdminApiService } from '../core/api.service';
                 </div>
                 <div class="mt-3 text-center">
                   <span class="text-xs px-3 py-1 rounded-full" [class]="selectedStats()?.winner === 'A' || selectedStats()?.winner === 'B' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'">
-                    @if (selectedStats()?.winner === 'INSUFFICIENT_DATA') { Ma'lumot yetarli emas }
-                    @else if (selectedStats()?.winner === 'TIE') { Teng }
-                    @else { G'olib: {{ selectedStats()?.winner }} ({{ selectedStats()?.confidenceLevel }}% ishonch) }
+                    @if (selectedStats()?.winner === 'INSUFFICIENT_DATA') { {{ i18n.t('ab.not_enough_data') }} }
+                    @else if (selectedStats()?.winner === 'TIE') { {{ i18n.t('ab.tie') }} }
+                    @else { {{ i18n.t('ab.winner') }}: {{ selectedStats()?.winner }} ({{ selectedStats()?.confidenceLevel }}% {{ i18n.t('ab.confidence') }}) }
                   </span>
                 </div>
               </div>
             }
           </div>
         } @empty {
-          <div class="col-span-2 py-16 text-center text-gray-400">Eksperimentlar yo'q</div>
+          <div class="col-span-2 py-16 text-center text-gray-400">{{ i18n.t('ab.empty') }}</div>
         }
       </div>
 
@@ -69,20 +70,20 @@ import { AdminApiService } from '../core/api.service';
       @if (showCreate()) {
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
           <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-            <h3 class="font-semibold text-gray-800 mb-4">Yangi A/B eksperiment</h3>
+            <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('ab.create_title') }}</h3>
             <div role="main" class="space-y-3">
               <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Nomi</label>
-                <input type="text" [(ngModel)]="newName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="masalan: cta_button_color">
+                <label class="block text-xs font-medium text-gray-600 mb-1">{{ i18n.t('common.name') }}</label>
+                <input type="text" [(ngModel)]="newName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" [placeholder]="i18n.t('ab.name_placeholder')">
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Tavsif</label>
-                <textarea [(ngModel)]="newDesc" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Eksperiment maqsadi..."></textarea>
+                <label class="block text-xs font-medium text-gray-600 mb-1">{{ i18n.t('common.description') }}</label>
+                <textarea [(ngModel)]="newDesc" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" [placeholder]="i18n.t('ab.description_placeholder')"></textarea>
               </div>
             </div>
             <div class="flex justify-end gap-2 mt-4">
-              <button (click)="showCreate.set(false)" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">Bekor</button>
-              <button (click)="create()" class="px-4 py-2 bg-black text-white rounded-lg text-sm">Yaratish</button>
+              <button (click)="showCreate.set(false)" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">{{ i18n.t('common.cancel') }}</button>
+              <button (click)="create()" class="px-4 py-2 bg-black text-white rounded-lg text-sm">{{ i18n.t('common.create') }}</button>
             </div>
           </div>
         </div>
@@ -96,7 +97,7 @@ export class AbTestingComponent implements OnInit {
   showCreate = signal(false);
   newName = ''; newDesc = '';
 
-  constructor(private api: AdminApiService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
   ngOnInit() { this.load(); }
 
   load() {

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PublicApiService } from '../../core/services/public-api.service';
+import { I18nService } from '../../core/services/i18n.service';
 
 type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
 
@@ -18,7 +19,7 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
         <!-- Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div>
-            <h2 class="text-lg font-semibold text-gray-800">Ariza topshirish</h2>
+            <h2 class="text-lg font-semibold text-gray-800">{{ i18n.t('public.apply.title') }}</h2>
             <p class="text-xs text-gray-500 truncate max-w-[280px]">{{ vacancyTitle }}</p>
           </div>
           <button (click)="close()" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -50,7 +51,7 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
           <!-- STEP: Phone -->
           @if (step() === 'phone') {
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Telefon raqamingiz</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('public.apply.phone_label') }}</label>
               <div class="flex items-center gap-2">
                 <span class="shrink-0 bg-gray-100 border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-600 font-medium">+998</span>
                 <input type="tel" [(ngModel)]="phone" placeholder="90 123 45 67" maxlength="12"
@@ -65,10 +66,10 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
                 @if (sendingOtp()) {
                   <span class="inline-flex items-center gap-2">
                     <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                    Yuborilmoqda...
+                    {{ i18n.t('public.apply.sending') }}
                   </span>
                 } @else {
-                  SMS kod yuborish
+                  {{ i18n.t('public.apply.send_code') }}
                 }
               </button>
             </div>
@@ -78,9 +79,9 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
           @if (step() === 'otp') {
             <div>
               <p class="text-sm text-gray-600 mb-4">
-                +998 {{ phone }} raqamiga SMS kod yuborildi
+                +998 {{ phone }} {{ i18n.t('public.apply.otp_sent') }}
               </p>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Tasdiqlash kodi</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('public.apply.verification_code') }}</label>
               <input type="text" [(ngModel)]="otpCode" placeholder="123456" maxlength="6"
                      class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 text-center text-lg tracking-[0.5em] font-mono placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/30"
                      (keyup.enter)="verifyOtp()" />
@@ -89,10 +90,10 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
               }
               <button (click)="verifyOtp()" [disabled]="verifyingOtp()"
                       class="w-full mt-4 bg-black hover:bg-gray-800 disabled:bg-gray-300 text-white font-semibold py-3 rounded-xl transition-colors text-sm">
-                Tasdiqlash
+                {{ i18n.t('public.apply.verify') }}
               </button>
               <button (click)="step.set('phone')" class="w-full mt-2 text-sm text-gray-500 hover:text-gray-700 py-2">
-                Raqamni o'zgartirish
+                {{ i18n.t('public.apply.change_number') }}
               </button>
             </div>
           }
@@ -101,15 +102,15 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
           @if (step() === 'info') {
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Ismingiz</label>
-                <input type="text" [(ngModel)]="firstName" placeholder="Ismingizni kiriting"
+                <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('public.apply.name_label') }}</label>
+                <input type="text" [(ngModel)]="firstName" [placeholder]="i18n.t('public.apply.name_placeholder')"
                        class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/30 text-sm" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Shahringiz</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('public.apply.city_label') }}</label>
                 <select [(ngModel)]="city"
                         class="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2 focus:ring-black/30 text-sm bg-white">
-                  <option value="">Shaharni tanlang</option>
+                  <option value="">{{ i18n.t('public.apply.select_city') }}</option>
                   @for (c of cities; track c) {
                     <option [value]="c">{{ c }}</option>
                   }
@@ -123,10 +124,10 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
                 @if (submitting()) {
                   <span class="inline-flex items-center gap-2">
                     <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                    Yuborilmoqda...
+                    {{ i18n.t('public.apply.sending') }}
                   </span>
                 } @else {
-                  Ariza yuborish
+                  {{ i18n.t('public.apply.submit') }}
                 }
               </button>
             </div>
@@ -140,11 +141,11 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
               </div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-2">Ariza yuborildi!</h3>
-              <p class="text-sm text-gray-500 mb-6">Ish beruvchi siz bilan tez orada bog'lanadi.</p>
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ i18n.t('public.apply.success_title') }}</h3>
+              <p class="text-sm text-gray-500 mb-6">{{ i18n.t('public.apply.success_desc') }}</p>
               <button (click)="close()"
                       class="bg-black hover:bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl transition-colors text-sm">
-                Yopish
+                {{ i18n.t('common.close') }}
               </button>
             </div>
           }
@@ -157,16 +158,16 @@ type ModalStep = 'phone' | 'otp' | 'info' | 'success' | 'error';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </div>
-              <h3 class="text-lg font-semibold text-gray-800 mb-2">Xatolik yuz berdi</h3>
-              <p class="text-sm text-gray-500 mb-6">Iltimos, qaytadan urinib ko'ring yoki Telegram bot orqali ariza topshiring.</p>
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ i18n.t('public.apply.error_title') }}</h3>
+              <p class="text-sm text-gray-500 mb-6">{{ i18n.t('public.apply.error_desc') }}</p>
               <div class="flex gap-3 justify-center">
                 <button (click)="step.set('phone')"
                         class="border border-gray-200 text-gray-600 font-medium px-6 py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-sm">
-                  Qayta urinish
+                  {{ i18n.t('common.retry') }}
                 </button>
                 <a href="https://t.me/VerifixJobBot" target="_blank"
                    class="bg-[#0088cc] hover:bg-[#006daa] text-white font-medium px-6 py-2.5 rounded-xl transition-colors text-sm">
-                  Telegram bot
+                  {{ i18n.t('public.apply.telegram_bot') }}
                 </a>
               </div>
             </div>
@@ -199,7 +200,7 @@ export class PublicApplyModalComponent implements OnInit {
     'Nukus', 'Navoiy', 'Qarshi', 'Jizzax', 'Termiz', 'Urganch', 'Guliston'
   ];
 
-  constructor(private publicApi: PublicApiService) {}
+  constructor(private publicApi: PublicApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     const savedPhone = localStorage.getItem('vjw_candidate_phone');
@@ -219,7 +220,7 @@ export class PublicApplyModalComponent implements OnInit {
   sendOtp() {
     const cleaned = this.phone.replace(/[^0-9]/g, '');
     if (cleaned.length < 9 || !/^[0-9]{9,12}$/.test(cleaned)) {
-      this.phoneError.set('To\'g\'ri telefon raqam kiriting (9 raqam)');
+      this.phoneError.set(this.i18n.t('public.apply.phone_invalid'));
       return;
     }
     this.phoneError.set('');
@@ -232,14 +233,14 @@ export class PublicApplyModalComponent implements OnInit {
       },
       error: () => {
         this.sendingOtp.set(false);
-        this.phoneError.set('SMS yuborishda xatolik. Qaytadan urinib ko\'ring.');
+        this.phoneError.set(this.i18n.t('public.apply.phone_send_failed'));
       },
     });
   }
 
   verifyOtp() {
     if (this.otpCode.length < 4) {
-      this.otpError.set('Tasdiqlash kodini kiriting');
+      this.otpError.set(this.i18n.t('public.apply.code_required'));
       return;
     }
     this.otpError.set('');
@@ -253,11 +254,11 @@ export class PublicApplyModalComponent implements OnInit {
 
   submitApplication() {
     if (!this.firstName.trim()) {
-      this.submitError.set('Ismingizni kiriting');
+      this.submitError.set(this.i18n.t('public.apply.name_required'));
       return;
     }
     if (!this.city) {
-      this.submitError.set('Shahringizni tanlang');
+      this.submitError.set(this.i18n.t('public.apply.city_required'));
       return;
     }
     this.submitError.set('');

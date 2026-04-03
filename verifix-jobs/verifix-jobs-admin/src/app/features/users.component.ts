@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService } from '../core/api.service';
+import { I18nService } from '../core/i18n.service';
 
 @Component({
   selector: 'vja-users',
@@ -9,7 +10,7 @@ import { AdminApiService } from '../core/api.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div role="main" class="space-y-4">
-      <h1 class="text-xl font-bold text-gray-800">Foydalanuvchilar</h1>
+      <h1 class="text-xl font-bold text-gray-800">{{ i18n.t('users.title') }}</h1>
 
       <div class="flex flex-col sm:flex-row gap-3">
         <div class="flex gap-1 overflow-x-auto bg-white rounded-lg border border-gray-200 p-1 no-scrollbar">
@@ -17,15 +18,15 @@ import { AdminApiService } from '../core/api.service';
             <button (click)="activeTab = tab.value; load()"
                     class="px-4 py-1.5 rounded-md text-xs font-medium transition whitespace-nowrap"
                     [class]="activeTab === tab.value ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-50'">
-              {{ tab.label }}
+              {{ i18n.t(tab.labelKey) }}
             </button>
           }
         </div>
-        <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="load()" placeholder="Qidirish..."
+        <input type="text" [(ngModel)]="searchQuery" (keyup.enter)="load()" [placeholder]="i18n.t('users.search')"
                class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
       </div>
 
-      <div class="text-xs text-gray-400">{{ users().length }} ta yozuv</div>
+      <div class="text-xs text-gray-400">{{ users().length }} {{ i18n.t('users.records') }}</div>
 
       <div class="sm:hidden space-y-3">
         @for (u of users(); track u.id) {
@@ -47,27 +48,27 @@ import { AdminApiService } from '../core/api.service';
 
             <div class="grid grid-cols-2 gap-3 text-xs">
               <div>
-                <div class="text-gray-400">Ro'yxatdan</div>
+                <div class="text-gray-400">{{ i18n.t('users.registered') }}</div>
                 <div class="text-gray-700 mt-1">{{ u.createdAt | date:'dd.MM.yyyy' }}</div>
               </div>
               <div>
-                <div class="text-gray-400">Rol</div>
+                <div class="text-gray-400">{{ i18n.t('common.role') }}</div>
                 <div class="text-gray-700 mt-1">{{ activeTab }}</div>
               </div>
             </div>
 
             <div class="flex justify-end">
               @if (activeTab === 'EMPLOYER' && u.status !== 'SUSPENDED') {
-                <button (click)="suspend(u)" class="h-9 px-3 rounded-lg border border-red-200 text-xs font-medium text-red-600 hover:bg-red-50">To'xtatish</button>
+                <button (click)="suspend(u)" class="h-9 px-3 rounded-lg border border-red-200 text-xs font-medium text-red-600 hover:bg-red-50">{{ i18n.t('users.suspend') }}</button>
               } @else if (activeTab === 'EMPLOYER') {
-                <button (click)="activate(u)" class="h-9 px-3 rounded-lg border border-green-200 text-xs font-medium text-green-600 hover:bg-green-50">Faollashtirish</button>
+                <button (click)="activate(u)" class="h-9 px-3 rounded-lg border border-green-200 text-xs font-medium text-green-600 hover:bg-green-50">{{ i18n.t('users.activate') }}</button>
               } @else {
-                <span class="text-xs text-gray-400">Read only</span>
+                <span class="text-xs text-gray-400">{{ i18n.t('users.read_only') }}</span>
               }
             </div>
           </div>
         } @empty {
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-5 py-12 text-center text-gray-400 text-sm">Foydalanuvchilar topilmadi</div>
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 px-5 py-12 text-center text-gray-400 text-sm">{{ i18n.t('users.not_found') }}</div>
         }
       </div>
 
@@ -75,11 +76,11 @@ import { AdminApiService } from '../core/api.service';
         <table class="w-full">
           <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Foydalanuvchi</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Kontakt</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Status</th>
-              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">Ro'yxatdan</th>
-              <th class="text-right text-xs font-medium text-gray-500 uppercase px-5 py-3">Amal</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('users.user') }}</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('common.contact') }}</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('users.status') }}</th>
+              <th class="text-left text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('users.registered') }}</th>
+              <th class="text-right text-xs font-medium text-gray-500 uppercase px-5 py-3">{{ i18n.t('users.action') }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
@@ -106,16 +107,16 @@ import { AdminApiService } from '../core/api.service';
                 <td class="px-5 py-3 text-xs text-gray-400">{{ u.createdAt | date:'dd.MM.yyyy' }}</td>
                 <td class="px-5 py-3 text-right">
                   @if (activeTab === 'EMPLOYER' && u.status !== 'SUSPENDED') {
-                    <button (click)="suspend(u)" class="text-xs text-red-600 hover:underline" aria-label="To'xtatish">To'xtatish</button>
+                    <button (click)="suspend(u)" class="text-xs text-red-600 hover:underline" [attr.aria-label]="i18n.t('users.suspend')">{{ i18n.t('users.suspend') }}</button>
                   } @else if (activeTab === 'EMPLOYER') {
-                    <button (click)="activate(u)" class="text-xs text-green-600 hover:underline">Faollashtirish</button>
+                    <button (click)="activate(u)" class="text-xs text-green-600 hover:underline">{{ i18n.t('users.activate') }}</button>
                   } @else {
-                    <span class="text-xs text-gray-400">Read only</span>
+                    <span class="text-xs text-gray-400">{{ i18n.t('users.read_only') }}</span>
                   }
                 </td>
               </tr>
             } @empty {
-              <tr><td colspan="5" class="px-5 py-12 text-center text-gray-400 text-sm">Foydalanuvchilar topilmadi</td></tr>
+              <tr><td colspan="5" class="px-5 py-12 text-center text-gray-400 text-sm">{{ i18n.t('users.not_found') }}</td></tr>
             }
           </tbody>
         </table>
@@ -129,12 +130,12 @@ export class UsersComponent implements OnInit {
   activeTab = 'CANDIDATE';
   searchQuery = '';
   tabs = [
-    { value: 'CANDIDATE', label: 'Nomzodlar' },
-    { value: 'EMPLOYER', label: 'Ish beruvchilar' },
-    { value: 'ADMIN', label: 'Adminlar' },
+    { value: 'CANDIDATE', labelKey: 'users.candidates' },
+    { value: 'EMPLOYER', labelKey: 'users.employers' },
+    { value: 'ADMIN', labelKey: 'users.admins' },
   ];
 
-  constructor(private api: AdminApiService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
   ngOnInit() { this.load(); }
 
   load() {
