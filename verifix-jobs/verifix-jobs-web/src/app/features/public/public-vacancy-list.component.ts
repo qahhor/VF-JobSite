@@ -318,8 +318,12 @@ import { SeoService } from '../../core/services/seo.service';
                   {{ i18n.t('jobs.detail') }}
                 </a>
                 <button
-                  (click)="setSelectedVacancy(selected.slug || selected.id)"
-                  class="h-11 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+                  type="button"
+                  disabled
+                  class="h-11 rounded-xl border border-emerald-200 bg-emerald-50 text-sm font-semibold text-emerald-700 inline-flex items-center justify-center gap-2 cursor-default">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
                   {{ i18n.t('jobs.selected') }}
                 </button>
               </div>
