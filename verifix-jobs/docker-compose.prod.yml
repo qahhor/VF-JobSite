@@ -59,8 +59,7 @@ services:
   elasticsearch:
     ports: !reset []
     environment:
-      - xpack.security.enabled=true
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms2g -Xmx2g
     restart: always
     deploy:
