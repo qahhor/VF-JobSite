@@ -163,6 +163,7 @@ public class PublicVacancyService {
 
     private Specification<Vacancy> publiclyVisible() {
         return (root, query, cb) -> cb.and(
+                cb.isNull(root.get("deletedAt")),
                 cb.equal(root.get("status"), VacancyStatus.ACTIVE),
                 cb.equal(root.get("moderationStatus"), ModerationStatus.APPROVED)
         );

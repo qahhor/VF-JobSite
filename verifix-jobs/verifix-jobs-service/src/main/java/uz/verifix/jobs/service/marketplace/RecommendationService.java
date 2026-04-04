@@ -2,6 +2,7 @@ package uz.verifix.jobs.service.marketplace;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -32,25 +33,33 @@ public class RecommendationService {
         Candidate candidate = candidateRepository.findById(candidateId).orElse(null);
         if (candidate == null) return List.of();
 
+        List<Vacancy> result = List.of();
+
         // Strategy 1: Match by city + preferred categories
         if (candidate.getCity() != null && candidate.getPreferredCategories() != null) {
             for (String category : candidate.getPreferredCategories()) {
-                List<Vacancy> matches = vacancyRepository.searchActive(
+                result = vacancyRepository.searchActive(
                         candidate.getCity(), category, candidate.getPreferredSalary(),
                         null, null, PageRequest.of(0, limit)).getContent();
-                if (!matches.isEmpty()) return matches;
+                if (!result.isEmpty()) break;
             }
         }
 
         // Strategy 2: Match by city only
-        if (candidate.getCity() != null) {
-            List<Vacancy> cityMatches = vacancyRepository.searchActive(
+        if (result.isEmpty() && candidate.getCity() != null) {
+            result = vacancyRepository.searchActive(
                     candidate.getCity(), null, null, null, null, PageRequest.of(0, limit)).getContent();
-            if (!cityMatches.isEmpty()) return cityMatches;
         }
 
         // Strategy 3: Latest vacancies as fallback
-        return vacancyRepository.findByCategoryAndStatus(null, VacancyStatus.ACTIVE, PageRequest.of(0, limit)).getContent();
+        if (result.isEmpty()) {
+            result = vacancyRepository.findByCategoryAndStatus(null, VacancyStatus.ACTIVE, PageRequest.of(0, limit)).getContent();
+        }
+
+        result.forEach(v -> {
+            if (v.getEmployer() != null) Hibernate.initialize(v.getEmployer());
+        });
+        return result;
     }
 
     @Cacheable(value = "similar-vacancies", key = "#vacancyId", unless = "#result.isEmpty()")
@@ -64,7 +73,14 @@ public class RecommendationService {
                 vacancy.getCity(), vacancy.getCategory(), null, null, null,
                 PageRequest.of(0, limit + 1)).getContent();
 
-        // Remove self
-        return similar.stream().filter(v -> !v.getId().equals(vacancyId)).limit(limit).toList();
+        // Remove self and initialize employer within session
+        List<Vacancy> result = similar.stream()
+                .filter(v -> !v.getId().equals(vacancyId))
+                .limit(limit)
+                .toList();
+        result.forEach(v -> {
+            if (v.getEmployer() != null) Hibernate.initialize(v.getEmployer());
+        });
+        return result;
     }
 }

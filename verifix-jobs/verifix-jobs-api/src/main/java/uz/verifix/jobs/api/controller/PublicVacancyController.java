@@ -253,6 +253,7 @@ public class PublicVacancyController {
 
     @Operation(summary = "Получить избранные вакансии кандидата")
     @GetMapping("/favorites")
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public ResponseEntity<?> getFavorites(@RequestParam String candidateId,
                                           @RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = "20") int size) {
