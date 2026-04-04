@@ -75,7 +75,7 @@ import { ToastService } from '../../shared/services/toast.service';
                   <div class="flex flex-wrap items-center gap-2">
                     <div class="text-lg font-semibold">{{ item.title || item.entityType }}</div>
                     <span class="rounded-full px-2.5 py-1 text-[11px] font-medium" [class]="statusCls(item.status)">
-                      {{ item.status }}
+                      {{ i18n.t('status.' + item.status) || item.status }}
                     </span>
                   </div>
 

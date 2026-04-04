@@ -70,6 +70,7 @@ export const appRoutes: Routes = [
       { path: 'fraud', loadComponent: () => import('./features/admin/admin-fraud.component').then(m => m.AdminFraudComponent) },
       { path: 'gov-sync', loadComponent: () => import('./features/admin/admin-gov.component').then(m => m.AdminGovComponent) },
       { path: 'settings', loadComponent: () => import('./features/admin/admin-settings.component').then(m => m.AdminSettingsComponent) },
+      { path: 'references', loadComponent: () => import('./features/admin/admin-references.component').then(m => m.AdminReferencesComponent) },
       { path: 'access', loadComponent: () => import('./features/admin/admin-access.component').then(m => m.AdminAccessComponent) },
     ]
   },

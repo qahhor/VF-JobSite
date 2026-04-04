@@ -125,7 +125,7 @@ interface HealthService {
                       <div class="mt-1 text-xs text-slate-500">{{ item.subtitle || item.entityId }}</div>
                     </div>
                     <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
-                      {{ item.status }}
+                      {{ i18n.t('status.' + item.status) || item.status }}
                     </span>
                   </div>
                   <div class="mt-3 text-sm text-slate-700 line-clamp-3">{{ item.previewText || item.reason || i18n.t('admin.no_preview') }}</div>
@@ -185,7 +185,7 @@ interface HealthService {
               <div class="mt-4 space-y-2">
                 @for (svc of services(); track svc.key) {
                   <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <span class="text-sm text-slate-700">{{ svc.name }}</span>
+                    <span class="text-sm text-slate-700">{{ i18n.t(svc.name) }}</span>
                     <span class="flex items-center gap-1.5">
                       <span class="h-2 w-2 rounded-full" [class]="svc.healthy ? 'bg-emerald-400' : 'bg-red-400'"></span>
                       <span class="text-xs font-medium" [class]="svc.healthy ? 'text-emerald-600' : 'text-red-500'">
@@ -263,12 +263,12 @@ export class AdminDashboardComponent implements OnInit {
   kpis = signal<Kpi[]>([]);
   metricCards = signal<{ label: string; value: number | string; sub?: string }[]>([]);
   services = signal<HealthService[]>([
-    { name: 'PostgreSQL', key: 'postgres', healthy: false },
-    { name: 'Redis', key: 'redis', healthy: false },
-    { name: 'Elasticsearch', key: 'elasticsearch', healthy: false },
-    { name: 'Kafka', key: 'kafka', healthy: false },
-    { name: 'ML Service', key: 'ml', healthy: false },
-    { name: 'MinIO', key: 'minio', healthy: false },
+    { name: 'admin.service.postgres', key: 'postgres', healthy: false },
+    { name: 'admin.service.redis', key: 'redis', healthy: false },
+    { name: 'admin.service.elasticsearch', key: 'elasticsearch', healthy: false },
+    { name: 'admin.service.kafka', key: 'kafka', healthy: false },
+    { name: 'admin.service.ml', key: 'ml', healthy: false },
+    { name: 'admin.service.minio', key: 'minio', healthy: false },
   ]);
   healthLoading = signal(true);
 
@@ -328,7 +328,7 @@ export class AdminDashboardComponent implements OnInit {
   private fmtAmount(n: number): string {
     if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
     if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
-    if (n > 0) return n.toLocaleString() + ' UZS';
+    if (n > 0) return n.toLocaleString() + ' ' + this.i18n.t('admin.currency_uzs');
     return '0';
   }
 }

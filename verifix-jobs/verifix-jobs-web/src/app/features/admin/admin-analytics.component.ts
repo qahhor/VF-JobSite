@@ -176,6 +176,6 @@ export class AdminAnalyticsComponent implements OnInit {
   private fmtAmount(n: number): string {
     if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
     if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
-    return n.toLocaleString() + ' UZS';
+    return n.toLocaleString() + ' ' + this.i18n.t('admin.currency_uzs');
   }
 }

@@ -27,7 +27,7 @@ import { ToastService } from '../../shared/services/toast.service';
             @for (toggle of featureToggles; track toggle.key) {
               <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
                 <div>
-                  <div class="text-sm font-medium">{{ toggle.label }}</div>
+                  <div class="text-sm font-medium">{{ i18n.t(toggle.labelKey) }}</div>
                   <div class="text-xs text-slate-400">{{ i18n.t(toggle.descKey) }}</div>
                 </div>
                 <button
@@ -90,11 +90,11 @@ export class AdminSettingsComponent implements OnInit {
   saving = signal(false);
 
   featureToggles = [
-    { key: 'kafka', label: 'Kafka', descKey: 'admin.settings.kafka_desc', enabled: false },
-    { key: 'elasticsearch', label: 'Elasticsearch', descKey: 'admin.settings.search_desc', enabled: false },
-    { key: 'minio', label: 'MinIO', descKey: 'admin.settings.storage_desc', enabled: false },
-    { key: 'ml', label: 'ML Service', descKey: 'admin.settings.ml_desc', enabled: false },
-    { key: 'govSync', label: 'Gov Sync', descKey: 'admin.settings.gov_desc', enabled: false },
+    { key: 'kafka', labelKey: 'admin.service.kafka', descKey: 'admin.settings.kafka_desc', enabled: false },
+    { key: 'elasticsearch', labelKey: 'admin.service.elasticsearch', descKey: 'admin.settings.search_desc', enabled: false },
+    { key: 'minio', labelKey: 'admin.service.minio', descKey: 'admin.settings.storage_desc', enabled: false },
+    { key: 'ml', labelKey: 'admin.service.ml', descKey: 'admin.settings.ml_desc', enabled: false },
+    { key: 'govSync', labelKey: 'admin.service.gov_sync', descKey: 'admin.settings.gov_desc', enabled: false },
   ];
 
   rateLimits = { general: 60, employer: 30 };

@@ -91,7 +91,7 @@ import { ToastService } from '../../shared/services/toast.service';
                     [class]="user.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700'
                            : user.status === 'SUSPENDED' ? 'bg-red-50 text-red-700'
                            : 'bg-slate-100 text-slate-600'">
-                    {{ user.status }}
+                    {{ i18n.t('status.' + user.status) || user.status }}
                   </span>
                   <span class="text-xs text-slate-400">{{ user.createdAt | date:'dd.MM.yyyy' }}</span>
 

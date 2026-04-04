@@ -133,7 +133,14 @@ export class AdminAuditComponent implements OnInit {
     const rows = this.logs().map(l =>
       [l.createdAt, l.adminEmail, l.action, l.entityType, l.entityId, l.ipAddress].map(v => escape(String(v ?? ''))).join(',')
     );
-    const header = 'Timestamp,Admin,Action,EntityType,EntityId,IP';
+    const header = [
+      this.i18n.t('admin.audit.col_timestamp'),
+      this.i18n.t('admin.audit.col_admin'),
+      this.i18n.t('admin.audit.col_action'),
+      this.i18n.t('admin.audit.col_entity_type'),
+      this.i18n.t('admin.audit.col_entity_id'),
+      this.i18n.t('admin.audit.col_ip'),
+    ].join(',');
     const csv = '\uFEFF' + header + '\n' + rows.join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');

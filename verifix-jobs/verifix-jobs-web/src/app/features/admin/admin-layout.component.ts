@@ -12,84 +12,115 @@ import { LangSwitcherComponent } from '../../shared/components/lang-switcher.com
   template: `
     <div class="min-h-screen bg-slate-50 text-slate-950">
       <div class="flex min-h-screen">
-        <aside class="hidden w-72 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
-          <div class="border-b border-slate-200 px-5 py-5">
-            <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Verifix Jobs</div>
-            <div class="mt-2 text-2xl font-semibold">{{ i18n.t('admin.panel') }}</div>
-            <p class="mt-2 text-sm text-slate-500">{{ i18n.t('admin.subtitle') }}</p>
+        <!-- Desktop Sidebar -->
+        <aside class="hidden w-60 shrink-0 border-r border-slate-200 bg-white md:flex md:flex-col">
+          <div class="flex items-center gap-2.5 px-5 py-4">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950 text-[10px] font-bold text-white">VJ</div>
+            <div>
+              <div class="text-sm font-semibold leading-tight">Verifix Jobs</div>
+              <div class="text-[11px] text-slate-400">{{ i18n.t('admin.panel') }}</div>
+            </div>
           </div>
 
-          <nav class="flex-1 space-y-1 px-3 py-4">
-            @for (item of visibleNavItems(); track item.path) {
+          <nav class="flex-1 overflow-y-auto px-3 py-2">
+            <div class="mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{{ i18n.t('admin.nav_main') }}</div>
+            @for (item of mainNavItems; track item.path) {
               <a
                 [routerLink]="item.path"
-                routerLinkActive="bg-slate-950 text-white"
-                class="group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-950">
-                <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" [innerHTML]="navIcons[item.icon]"></svg>
-                </span>
-                <span class="flex-1">{{ i18n.t(item.label) }}</span>
+                routerLinkActive="bg-slate-900 text-white [&>svg]:text-slate-300"
+                [routerLinkActiveOptions]="{exact: false}"
+                class="group mb-0.5 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+                <svg class="h-[18px] w-[18px] shrink-0 text-slate-400 transition group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24" [innerHTML]="navIcons[item.icon]"></svg>
+                {{ i18n.t(item.label) }}
+              </a>
+            }
+
+            <div class="mb-1.5 mt-4 px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{{ i18n.t('admin.nav_risk') }}</div>
+            @for (item of riskNavItems; track item.path) {
+              <a
+                [routerLink]="item.path"
+                routerLinkActive="bg-slate-900 text-white [&>svg]:text-slate-300"
+                [routerLinkActiveOptions]="{exact: false}"
+                class="group mb-0.5 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+                <svg class="h-[18px] w-[18px] shrink-0 text-slate-400 transition group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24" [innerHTML]="navIcons[item.icon]"></svg>
+                {{ i18n.t(item.label) }}
+              </a>
+            }
+
+            <div class="mb-1.5 mt-4 px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{{ i18n.t('admin.nav_system') }}</div>
+            @for (item of systemNavItems; track item.path) {
+              <a
+                [routerLink]="item.path"
+                routerLinkActive="bg-slate-900 text-white [&>svg]:text-slate-300"
+                [routerLinkActiveOptions]="{exact: false}"
+                class="group mb-0.5 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+                <svg class="h-[18px] w-[18px] shrink-0 text-slate-400 transition group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24" [innerHTML]="navIcons[item.icon]"></svg>
+                {{ i18n.t(item.label) }}
               </a>
             }
           </nav>
 
-          <div class="border-t border-slate-200 p-4">
+          <div class="border-t border-slate-100 px-3 py-3">
             @if (profile()) {
-              <div class="mb-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                <div class="text-sm font-medium">{{ profile()?.email }}</div>
-                <div class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">{{ profile()?.role }}</div>
+              <div class="mb-2 flex items-center gap-2.5 px-2">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
+                  {{ (profile()?.email || '?')[0].toUpperCase() }}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium leading-tight">{{ profile()?.email }}</div>
+                  <div class="text-[11px] text-slate-400">{{ profile()?.role }}</div>
+                </div>
               </div>
             }
             <button
               (click)="logout()"
-              class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-950">
+              class="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700">
+              <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
               {{ i18n.t('admin.logout') }}
             </button>
           </div>
         </aside>
 
         <div class="flex min-w-0 flex-1 flex-col">
-          <header class="sticky top-0 z-40 border-b border-slate-200 bg-slate-50/95 backdrop-blur">
-            <div class="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
+          <!-- Header -->
+          <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+            <div class="flex h-14 items-center justify-between px-4 md:px-5">
               <div class="flex items-center gap-3">
                 <button
                   (click)="mobileNav.set(!mobileNav())"
-                  class="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-700 md:hidden"
+                  class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 transition hover:bg-slate-100 md:hidden"
                   aria-label="Open navigation">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
                   </svg>
                 </button>
-                <div>
-                  <div class="text-lg font-semibold">{{ i18n.t('admin.control_center') }}</div>
-                  <div class="text-xs text-slate-500">{{ i18n.t('admin.control_center_hint') }}</div>
-                </div>
+                <div class="text-sm font-semibold text-slate-700">{{ i18n.t('admin.control_center') }}</div>
               </div>
 
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
                 <vjw-lang-switcher />
                 @if (profile()) {
-                  <div class="hidden items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2 md:flex">
-                    <div class="text-right">
-                      <div class="text-sm font-medium">{{ profile()?.email }}</div>
-                      <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ profile()?.role }}</div>
-                    </div>
-                    <a routerLink="/admin/access" class="rounded-xl bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800">
-                      {{ i18n.t('admin.access') }}
-                    </a>
-                  </div>
+                  <a routerLink="/admin/access"
+                    class="hidden items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-[13px] text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 md:flex">
+                    <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                    </svg>
+                    {{ i18n.t('admin.access') }}
+                  </a>
                 }
               </div>
             </div>
 
             @if (requiresPasswordChange()) {
-              <div class="border-t border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 md:px-6">
-                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <div class="font-semibold">{{ i18n.t('admin.password_change_required') }}</div>
-                    <div class="mt-1 text-xs text-amber-800/80">{{ i18n.t('admin.password_change_required_hint') }}</div>
+              <div class="border-t border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-900 md:px-5">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="text-[13px]">
+                    <span class="font-semibold">{{ i18n.t('admin.password_change_required') }}</span>
+                    <span class="ml-1 text-amber-700">{{ i18n.t('admin.password_change_required_hint') }}</span>
                   </div>
-                  <a routerLink="/admin/access" class="inline-flex rounded-2xl bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
+                  <a routerLink="/admin/access" class="shrink-0 rounded-lg bg-slate-900 px-3 py-1.5 text-[13px] font-medium text-white transition hover:bg-slate-800">
                     {{ i18n.t('admin.open_access_center') }}
                   </a>
                 </div>
@@ -97,44 +128,45 @@ import { LangSwitcherComponent } from '../../shared/components/lang-switcher.com
             }
           </header>
 
+          <!-- Mobile Nav Overlay -->
           @if (mobileNav()) {
-            <div class="fixed inset-0 z-50 bg-slate-950/20 md:hidden" (click)="mobileNav.set(false)">
-              <div class="h-full w-72 border-r border-slate-200 bg-white p-4" (click)="$event.stopPropagation()">
-                <div class="mb-4 flex items-center justify-between">
-                  <div class="text-lg font-semibold">{{ i18n.t('admin.panel') }}</div>
-                  <button (click)="mobileNav.set(false)" class="text-slate-500" aria-label="Close navigation">&times;</button>
+            <div class="fixed inset-0 z-50 bg-slate-950/30 backdrop-blur-[2px] md:hidden" (click)="mobileNav.set(false)">
+              <div class="flex h-full w-64 flex-col border-r border-slate-200 bg-white shadow-xl" (click)="$event.stopPropagation()">
+                <div class="flex items-center justify-between px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div class="flex h-7 w-7 items-center justify-center rounded-md bg-slate-950 text-[9px] font-bold text-white">VJ</div>
+                    <span class="text-sm font-semibold">Verifix Jobs</span>
+                  </div>
+                  <button (click)="mobileNav.set(false)" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="Close">&times;</button>
                 </div>
 
-                <div class="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                  <div class="text-sm font-medium">{{ profile()?.email || 'admin' }}</div>
-                  <div class="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">{{ profile()?.role || 'ADMIN' }}</div>
-                </div>
-
-                <nav class="space-y-1">
+                <nav class="flex-1 overflow-y-auto px-3 py-2">
                   @for (item of visibleNavItems(); track item.path) {
                     <a
                       [routerLink]="item.path"
                       (click)="mobileNav.set(false)"
-                      routerLinkActive="bg-slate-950 text-white"
-                      class="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-950">
-                      <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
-                        <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" [innerHTML]="navIcons[item.icon]"></svg>
-                      </span>
-                      <span>{{ i18n.t(item.label) }}</span>
+                      routerLinkActive="bg-slate-900 text-white [&>svg]:text-slate-300"
+                      class="group mb-0.5 flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+                      <svg class="h-[18px] w-[18px] shrink-0 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24" [innerHTML]="navIcons[item.icon]"></svg>
+                      {{ i18n.t(item.label) }}
                     </a>
                   }
                 </nav>
 
-                <div class="mt-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
-                  <span class="text-xs font-medium text-slate-500">{{ i18n.t('admin.language') || 'Language' }}</span>
-                  <vjw-lang-switcher />
+                <div class="border-t border-slate-100 px-3 py-3">
+                  <div class="mb-2 flex items-center justify-between px-2">
+                    <span class="text-[11px] font-medium text-slate-400">{{ profile()?.email || 'admin' }}</span>
+                    <vjw-lang-switcher />
+                  </div>
+                  <button
+                    (click)="logout()"
+                    class="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700">
+                    <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    {{ i18n.t('admin.logout') }}
+                  </button>
                 </div>
-
-                <button
-                  (click)="logout()"
-                  class="mt-3 w-full rounded-2xl border border-slate-200 px-4 py-3 text-left text-sm text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-950">
-                  {{ i18n.t('admin.logout') }}
-                </button>
               </div>
             </div>
           }
@@ -163,19 +195,28 @@ export class AdminLayoutComponent implements OnInit {
       : this.navItems
   );
 
-  navItems = [
+  mainNavItems = [
     { path: '/admin/dashboard', icon: 'dashboard', label: 'admin.dashboard' },
     { path: '/admin/employers', icon: 'company', label: 'admin.companies' },
-    { path: '/admin/moderation', icon: 'moderation', label: 'admin.moderation' },
     { path: '/admin/users', icon: 'users', label: 'admin.users_nav' },
-    { path: '/admin/audit', icon: 'audit', label: 'admin.audit_nav' },
     { path: '/admin/analytics', icon: 'analytics', label: 'admin.analytics_nav' },
-    { path: '/admin/experiments', icon: 'experiments', label: 'admin.experiments_nav' },
+  ];
+
+  riskNavItems = [
+    { path: '/admin/moderation', icon: 'moderation', label: 'admin.moderation' },
     { path: '/admin/fraud', icon: 'fraud', label: 'admin.fraud' },
+    { path: '/admin/audit', icon: 'audit', label: 'admin.audit_nav' },
+  ];
+
+  systemNavItems = [
+    { path: '/admin/experiments', icon: 'experiments', label: 'admin.experiments_nav' },
     { path: '/admin/gov-sync', icon: 'gov', label: 'admin.gov' },
+    { path: '/admin/references', icon: 'references', label: 'admin.references_nav' },
     { path: '/admin/settings', icon: 'settings', label: 'admin.settings_nav' },
     { path: '/admin/access', icon: 'access', label: 'admin.access' },
   ];
+
+  navItems = [...this.mainNavItems, ...this.riskNavItems, ...this.systemNavItems];
 
   navIcons: Record<string, string> = {
     dashboard: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zm10-3a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/>',
@@ -188,6 +229,7 @@ export class AdminLayoutComponent implements OnInit {
     fraud: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>',
     gov: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>',
     settings: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>',
+    references: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>',
     access: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>',
   };
 

@@ -212,7 +212,7 @@ interface IssuedAdminCredential {
                         <span class="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700">{{ i18n.t('admin.current_session') }}</span>
                       }
                       @if (admin.totpEnabled) {
-                        <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">2FA</span>
+                        <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700">{{ i18n.t('admin.2fa.badge') }}</span>
                       }
                       @if (admin.mustChangePassword) {
                         <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-800">{{ i18n.t('admin.password_rotation_required') }}</span>

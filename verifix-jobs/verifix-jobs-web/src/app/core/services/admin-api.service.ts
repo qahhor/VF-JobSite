@@ -279,4 +279,73 @@ export class AdminApiService {
   getHealthStatus(): Observable<Record<string, boolean>> {
     return this.http.get<Record<string, boolean>>(`${this.base}/health`);
   }
+
+  // ── References (Справочники) ──────────────────────────
+
+  // Cities
+  getCities(page: number, size: number, search?: string): Observable<PageResponse<RefCity>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (search) params = params.set('search', search);
+    return this.http.get<PageResponse<RefCity>>(`${this.base}/references/cities`, { params });
+  }
+  createCity(city: RefCityRequest): Observable<RefCity> {
+    return this.http.post<RefCity>(`${this.base}/references/cities`, city);
+  }
+  updateCity(id: string, city: RefCityRequest): Observable<RefCity> {
+    return this.http.put<RefCity>(`${this.base}/references/cities/${id}`, city);
+  }
+  deleteCity(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/references/cities/${id}`);
+  }
+
+  // Regions
+  getRegions(page: number, size: number, search?: string): Observable<PageResponse<RefRegion>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (search) params = params.set('search', search);
+    return this.http.get<PageResponse<RefRegion>>(`${this.base}/references/regions`, { params });
+  }
+  createRegion(region: RefRegionRequest): Observable<RefRegion> {
+    return this.http.post<RefRegion>(`${this.base}/references/regions`, region);
+  }
+  updateRegion(id: string, region: RefRegionRequest): Observable<RefRegion> {
+    return this.http.put<RefRegion>(`${this.base}/references/regions/${id}`, region);
+  }
+  deleteRegion(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/references/regions/${id}`);
+  }
+
+  // Countries
+  getCountries(): Observable<RefCountry[]> {
+    return this.http.get<RefCountry[]>(`${this.base}/references/countries`);
+  }
+  updateCountry(id: string, country: RefCountryRequest): Observable<RefCountry> {
+    return this.http.put<RefCountry>(`${this.base}/references/countries/${id}`, country);
+  }
+}
+
+// Reference interfaces
+export interface RefCity {
+  id: string; nameUzLat: string; nameRu: string; nameEn: string;
+  country: string; region: string; population: number | null;
+}
+export interface RefCityRequest {
+  nameUzLat: string; nameRu: string; nameEn: string;
+  country: string; region: string; population: number | null;
+}
+export interface RefRegion {
+  id: string; code: string; fullCode: string;
+  nameUzLat: string; nameRu: string; nameEn: string; countryIso2: string;
+}
+export interface RefRegionRequest {
+  code: string; fullCode: string;
+  nameUzLat: string; nameRu: string; nameEn: string;
+}
+export interface RefCountry {
+  id: string; iso2: string;
+  nameUzLat: string; nameRu: string; nameEn: string;
+  capital: string; phoneCode: string;
+}
+export interface RefCountryRequest {
+  nameUzLat: string; nameRu: string; nameEn: string;
+  capital: string; phoneCode: string;
 }

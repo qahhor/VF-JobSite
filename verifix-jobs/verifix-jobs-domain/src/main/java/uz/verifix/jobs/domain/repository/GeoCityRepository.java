@@ -1,5 +1,7 @@
 package uz.verifix.jobs.domain.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -60,4 +62,12 @@ public interface GeoCityRepository extends JpaRepository<GeoCity, UUID> {
             "LIMIT :limit",
             nativeQuery = true)
     List<GeoCity> findNearestCities(@Param("lon") double lon, @Param("lat") double lat, @Param("limit") int limit);
+
+    @Query("SELECT g FROM GeoCity g WHERE g.deletedAt IS NULL AND " +
+            "(:search IS NULL OR LOWER(g.nameUzLat) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(g.nameRu) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(g.nameEn) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(g.country) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "ORDER BY COALESCE(g.population, 0) DESC, g.nameUzLat ASC")
+    Page<GeoCity> searchPaged(@Param("search") String search, Pageable pageable);
 }

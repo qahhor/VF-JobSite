@@ -18,6 +18,9 @@ export const WEB_ADMIN_TRANSLATIONS: TranslationCatalog = {
   'admin.totp_code': { uz_lat: '2FA kodi', ru: 'Код 2FA' },
   'admin.totp_optional': { uz_lat: 'ixtiyoriy', ru: 'если включено' },
 
+  'admin.nav_main': { uz_lat: 'Asosiy', ru: 'Основное' },
+  'admin.nav_risk': { uz_lat: 'Risk va nazorat', ru: 'Риск и контроль' },
+  'admin.nav_system': { uz_lat: 'Tizim', ru: 'Система' },
   'admin.control_center': { uz_lat: 'Admin control center', ru: 'Центр управления' },
   'admin.control_center_hint': { uz_lat: 'Moderatsiya, risklar va kirish nazorati bir joyda.', ru: 'Модерация, риски и доступ в одном месте.' },
   'admin.dashboard_intro': { uz_lat: "Operatsion signal, moderation navbati va platforma ishonchliligi bo'yicha tezkor ko'rinish.", ru: 'Операционные сигналы, очередь модерации и надёжность платформы в одном обзоре.' },
@@ -310,5 +313,81 @@ export const WEB_ADMIN_TRANSLATIONS: TranslationCatalog = {
   'admin.system_health': { uz_lat: 'Tizim holati', ru: 'Состояние системы' },
   'admin.system_health_hint': { uz_lat: 'Infratuzilma xizmatlari holati.', ru: 'Состояние инфраструктурных сервисов.' },
   'admin.status_running': { uz_lat: 'Ishlayapti', ru: 'Работает' },
-  'admin.status_down': { uz_lat: 'Ishlamayapti', ru: 'Не работает' } 
+  'admin.status_down': { uz_lat: 'Ishlamayapti', ru: 'Не работает' },
+
+  // Service names (dashboard health + settings toggles)
+  'admin.service.postgres': { uz_lat: 'PostgreSQL', ru: 'PostgreSQL' },
+  'admin.service.redis': { uz_lat: 'Redis', ru: 'Redis' },
+  'admin.service.elasticsearch': { uz_lat: 'Elasticsearch', ru: 'Elasticsearch' },
+  'admin.service.kafka': { uz_lat: 'Kafka', ru: 'Kafka' },
+  'admin.service.ml': { uz_lat: 'ML xizmati', ru: 'ML-сервис' },
+  'admin.service.minio': { uz_lat: 'MinIO', ru: 'MinIO' },
+  'admin.service.gov_sync': { uz_lat: 'Gov Sync', ru: 'Гос. синхронизация' },
+
+  // CSV export headers
+  'admin.audit.col_timestamp': { uz_lat: 'Vaqt', ru: 'Время' },
+  'admin.audit.col_admin': { uz_lat: 'Admin', ru: 'Админ' },
+  'admin.audit.col_action': { uz_lat: 'Amal', ru: 'Действие' },
+  'admin.audit.col_entity_type': { uz_lat: 'Turi', ru: 'Тип сущности' },
+  'admin.audit.col_entity_id': { uz_lat: 'ID', ru: 'ID' },
+  'admin.audit.col_ip': { uz_lat: 'IP manzil', ru: 'IP адрес' },
+
+  // Currency
+  'admin.currency_uzs': { uz_lat: "so'm", ru: 'сум' },
+
+  // 2FA badge
+  'admin.2fa.badge': { uz_lat: '2FA', ru: '2FA' },
+
+  // Gov sync pending
+  'admin.gov.pending': { uz_lat: 'Kutilmoqda', ru: 'Ожидает' },
+
+  // Entity statuses (from backend enums)
+  'status.ACTIVE': { uz_lat: 'Faol', ru: 'Активен' },
+  'status.SUSPENDED': { uz_lat: "To'xtatilgan", ru: 'Приостановлен' },
+  'status.BLOCKED': { uz_lat: 'Bloklangan', ru: 'Заблокирован' },
+  'status.PENDING_REVIEW': { uz_lat: 'Tekshiruvda', ru: 'На проверке' },
+  'status.APPROVED': { uz_lat: 'Tasdiqlangan', ru: 'Одобрен' },
+  'status.REJECTED': { uz_lat: 'Rad etilgan', ru: 'Отклонён' },
+  'status.VERIFIED': { uz_lat: 'Tasdiqlangan', ru: 'Подтверждён' },
+  'status.INACTIVE': { uz_lat: 'Nofaol', ru: 'Неактивен' },
+  'status.DRAFT': { uz_lat: 'Qoralama', ru: 'Черновик' },
+  'status.EXPIRED': { uz_lat: 'Muddati tugagan', ru: 'Истёк' },
+
+  // References (Справочники)
+  'admin.references_nav': { uz_lat: 'Spravochniklar', ru: 'Справочники' },
+  'admin.ref.title': { uz_lat: 'Spravochniklar', ru: 'Справочники' },
+  'admin.ref.hint': { uz_lat: "Shaharlar, viloyatlar va mamlakatlarni boshqaring.", ru: 'Управляйте городами, регионами и странами.' },
+  'admin.ref.cities': { uz_lat: 'Shaharlar', ru: 'Города' },
+  'admin.ref.regions': { uz_lat: 'Viloyatlar', ru: 'Регионы' },
+  'admin.ref.countries': { uz_lat: 'Mamlakatlar', ru: 'Страны' },
+  'admin.ref.search': { uz_lat: 'Qidirish...', ru: 'Поиск...' },
+  'admin.ref.records': { uz_lat: 'yozuv', ru: 'записей' },
+  'admin.ref.add': { uz_lat: "Qo'shish", ru: 'Добавить' },
+  'admin.ref.edit': { uz_lat: 'Tahrirlash', ru: 'Редактировать' },
+  'admin.ref.delete': { uz_lat: "O'chirish", ru: 'Удалить' },
+  'admin.ref.save': { uz_lat: 'Saqlash', ru: 'Сохранить' },
+  'admin.ref.saving': { uz_lat: 'Saqlanmoqda...', ru: 'Сохраняем...' },
+  'admin.ref.saved': { uz_lat: 'Saqlandi', ru: 'Сохранено' },
+  'admin.ref.deleted': { uz_lat: "O'chirildi", ru: 'Удалено' },
+  'admin.ref.empty': { uz_lat: "Ma'lumot topilmadi", ru: 'Данные не найдены' },
+  'admin.ref.delete_confirm': { uz_lat: "Haqiqatan ham o'chirmoqchimisiz?", ru: 'Вы уверены, что хотите удалить?' },
+  'admin.ref.name_uz': { uz_lat: "Nomi (o'zbekcha)", ru: 'Название (узб.)' },
+  'admin.ref.name_ru': { uz_lat: 'Nomi (ruscha)', ru: 'Название (рус.)' },
+  'admin.ref.name_en': { uz_lat: 'Nomi (inglizcha)', ru: 'Название (англ.)' },
+  'admin.ref.country': { uz_lat: 'Mamlakat', ru: 'Страна' },
+  'admin.ref.region': { uz_lat: 'Viloyat', ru: 'Регион' },
+  'admin.ref.population': { uz_lat: 'Aholi soni', ru: 'Население' },
+  'admin.ref.code': { uz_lat: 'Kod', ru: 'Код' },
+  'admin.ref.full_code': { uz_lat: "To'liq kod", ru: 'Полный код' },
+  'admin.ref.capital': { uz_lat: 'Poytaxt', ru: 'Столица' },
+  'admin.ref.phone_code': { uz_lat: 'Telefon kodi', ru: 'Телефонный код' },
+  'admin.ref.iso2': { uz_lat: 'ISO2', ru: 'ISO2' },
+  'admin.ref.actions': { uz_lat: 'Amallar', ru: 'Действия' },
+  'admin.ref.cancel': { uz_lat: 'Bekor qilish', ru: 'Отмена' },
+  'admin.ref.confirm_delete': { uz_lat: "O'chirishni tasdiqlang", ru: 'Подтвердите удаление' },
+  'admin.ref.add_city': { uz_lat: "Shahar qo'shish", ru: 'Добавить город' },
+  'admin.ref.edit_city': { uz_lat: 'Shaharni tahrirlash', ru: 'Редактировать город' },
+  'admin.ref.add_region': { uz_lat: "Viloyat qo'shish", ru: 'Добавить регион' },
+  'admin.ref.edit_region': { uz_lat: 'Viloyatni tahrirlash', ru: 'Редактировать регион' },
+  'admin.ref.edit_country': { uz_lat: 'Mamlakatni tahrirlash', ru: 'Редактировать страну' },
 };
