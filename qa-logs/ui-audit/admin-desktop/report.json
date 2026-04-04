@@ -1,0 +1,122 @@
+[
+  {
+    "route": "login",
+    "path": "/login",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n\nBoshqaruv paneli\n\nEmail\nParol\nTOTP kod\nKirish"
+    }
+  },
+  {
+    "route": "dashboard",
+    "path": "/dashboard",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nDashboard\n👥\n+12%\n0\nJami foydalanuvchilar\n📋\n+5%\n503\nFaol vakansiyalar\n📨\n-3%\n0\nBugungi arizalar\n💰\n+8%\n0\nOylik daromad (UZS)\nTizim holati\nPostgreSQL\nIshlayapti\nRedis\nIshlayapti\nElasticsearch\nIshlayapti\nKafka\nIshlayapti\nML Service\nIshlaya"
+    }
+  },
+  {
+    "route": "moderation",
+    "path": "/moderation",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+      "ERROR k"
+    ],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nModeratsiya navbati\nKutilmoqda\nTasdiqlangan\nRad etilgan\nTURI\tELEMENT\tSTATUS\tSANA\tAMALLAR\nNavbatda element yo'q"
+    }
+  },
+  {
+    "route": "users",
+    "path": "/users",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nFoydalanuvchilar\nNomzodlar\nIsh beruvchilar\nAdminlar\n0 ta yozuv\nFOYDALANUVCHI\tKONTAKT\tSTATUS\tRO'YXATDAN\tAMAL\nFoydalanuvchilar topilmadi"
+    }
+  },
+  {
+    "route": "audit",
+    "path": "/audit",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nAudit log\nCSV\nVAQT\tADMIN\tAMAL\tELEMENT\tIP\nLoglar topilmadi"
+    }
+  },
+  {
+    "route": "analytics",
+    "path": "/analytics",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nPlatforma analitikasi\nJami nomzodlar\n0\nJami ish beruvchilar\n7\nJami vakansiyalar\n503\nOylik daromad\n0 UZS\nFoydalanuvchi o'sishi\n12 oy oldin\nBugun\nTop shaharlar\nTashkent\n1250\nSamarkand\n450\nBukhara\n320\nAndijan\n280\nFergana\n210"
+    }
+  },
+  {
+    "route": "ab-testing",
+    "path": "/ab-testing",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nA/B Testlar\n+ Yangi eksperiment\nEksperimentlar yo'q"
+    }
+  },
+  {
+    "route": "fraud",
+    "path": "/fraud",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nFraud alertlar\nYangi\nKo'rilgan\nFraud alertlar yo'q"
+    }
+  },
+  {
+    "route": "settings",
+    "path": "/settings",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs Admin",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Admin\n📊\nDashboard\n🛡️\nModeratsiya\n👥\nFoydalanuvchilar\n📜\nAudit log\n📈\nAnalitika\n🔬\nA/B Testlar\n🚨\nFraud\n⚙️\nTizim\n🚪\nChiqish\nAdmin Panel\nadmin@verifix.uz\nTizim sozlamalari\nXizmatlar\nKafka\nXabar brokeri\nElasticsearch\nQidiruv tizimi\nMinIO\nFayl saqlash\nML Service\nMashinali o'rganish\nGov Sync\nDavlat sinxronizatsiyasi\nRate limitlar\nUmumiy (req/min)\nIsh beruvchi (req/min)\nModeratsiya qoidalari\nM"
+    }
+  }
+]

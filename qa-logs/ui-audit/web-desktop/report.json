@@ -1,0 +1,329 @@
+[
+  {
+    "route": "login",
+    "path": "/login",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\nВойти\nРегистрация\nEmail\nПароль\nВойти\n\nBosh sahifaga qaytish"
+    }
+  },
+  {
+    "route": "employer-dashboard",
+    "path": "/employer/dashboard",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nDashboard\nHiring oqimi, task inbox va employer trust ko'rsatkichlari.\nFAOL VAKANSIYALAR\n3\nJAMI ARIZALAR\n0\nISHGA OLINGAN\n0\nYANGI ARIZALAR\n0\nSo'nggi davr\nTask inbox\n0"
+    }
+  },
+  {
+    "route": "employer-vacancies",
+    "path": "/employer/vacancies",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nVakansiyalar\n+ Yangi vakansiya\nBarcha statuslar\nQoralama\nFaol\nTo'xtatilgan\nYopilgan\nVAKANSIYA\tSHAHAR\tMAOSH\tSTATUS\tARIZALAR\tAMAL\nWarehouse Loader\nWAREHOUSE\n\tTashkent"
+    }
+  },
+  {
+    "route": "employer-vacancy-new",
+    "path": "/employer/vacancies/new",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nYangi vakansiya\nShablondan yaratish\n💰\nKassir\n🛒\nSotuvchi\n👨‍🍳\nOshpaz\n🚗\nHaydovchi\n💪\nYukchi\n🧹\nTozalovchi\n🛡️\nQo'riqchi\n🍽️\nOfitsiant\n🔨\nIshchi\n🧵\nTikuvchi\n🍸\nBar"
+    }
+  },
+  {
+    "route": "employer-pipeline",
+    "path": "/employer/pipeline",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nATS Pipeline\nBarcha vakansiyalar\nWarehouse Loader\nCourier Driver\nNight Shift Sorter\n🆕\nYangi\n0\n👁\nKo'rildi\n0\n⭐\nTanlandi\n0\n✉️\nTaklif\n0\n🤝\nSuhbat\n0\n📄\nTaklif\n0\n✅\nYoll"
+    }
+  },
+  {
+    "route": "employer-candidates",
+    "path": "/employer/candidates",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nNomzodlar bazasi\nQidirish\nQidiruv so'rovini kiriting"
+    }
+  },
+  {
+    "route": "employer-analytics",
+    "path": "/employer/analytics",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nAnalitika\nCSV yuklab olish\nAriza voronkasi\nArizalar\n1 (100.0%)\nYangi\n0 (0.0%)\nYollangan\n0 (0.0%)\nKunlik arizalar\nManba taqsimoti\nNEW\n0 (0.0%)\nVIEWED\n0 (0.0%)\nSHORTL"
+    }
+  },
+  {
+    "route": "employer-billing",
+    "path": "/employer/billing",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nBilling\nJoriy tarif\n💎\nFree\nJoriy obuna\nBoshlangich\nBepul / oy\nBepul / yil\n✓\n3 vakansiya\n✓\n10 rezyume ko'rish\n×\nATS\n×\nAnalitika\n×\nBrending\n×\nAPI\nTanlash\nStandart\n99"
+    }
+  },
+  {
+    "route": "employer-settings",
+    "path": "/employer/settings",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nSozlamalar\nKompaniya profili\nKompaniya nomi\nRasmiy nomi\nINN\nShahar\nTasdiqlanmagan\nStatus: PENDING\nSaqlash\nBildirishnomalar\nYangi ariza\nYangi ariza kelganda xabar be"
+    }
+  },
+  {
+    "route": "employer-integrations",
+    "path": "/employer/integrations",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nIntegratsiyalar\nDaraja:\nO'sish (6/10)\nIntegratsiya darajasi\n6 / 10\n🏢\nVerifix HRM\nUlanmagan\nKadrlar tizimi bilan sinxronizatsiya\nHRM\n🪪\nMyID\nUlanmagan\nIdentifikatsi"
+    }
+  },
+  {
+    "route": "employer-automations",
+    "path": "/employer/automations",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nAvtomatlashtirish\n+ Yangi qoida\n👁\nAvtomatik ko'rish\nYangi arizalarni avtomatik \"ko'rildi\" qilish\n💬\nXabar yuborish\nYangi ariza kelganda nomzodga xabar\n⏰\nMuddati tu"
+    }
+  },
+  {
+    "route": "employer-saved-searches",
+    "path": "/employer/saved-searches",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Saved searches | Verifix Jobs",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nSaqlangan qidiruvlar\nAlertlar, qayta foydalanish va candidate continuity uchun search presets.\n+ Yangi qidiruv\nSaqlangan qidiruvlar uchun avval kamida bir marta ari"
+    }
+  },
+  {
+    "route": "employer-chat",
+    "path": "/employer/chat",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nXabarlar\nHali xabarlar yo'q\n💬\nSuhbatni tanlang"
+    }
+  },
+  {
+    "route": "employer-team",
+    "path": "/employer/team",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nJamoa\n+ Taklif qilish\nXODIM\tROL\tAMAL\n\nqa.seed+1775156407@verifix.uz\n+998901112233\n\tAdmin\t"
+    }
+  },
+  {
+    "route": "employer-hiring-projects",
+    "path": "/employer/hiring-projects",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nHiring Projects\n\nYollash kampaniyalarini boshqarish\n\n+ Yangi loyiha\n📋\nHali loyihalar yo'q\nHiring project — bir nechta vakansiyani birlashtirib kampaniya yaratish"
+    }
+  },
+  {
+    "route": "employer-org-memory",
+    "path": "/employer/org-memory",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nOrganization Memory\n\nAI kompaniya haqida bilgan ma'lumotlar — yollash sifatini oshiradi\n\n📋 Kompaniya profili\nNomi:QA Logistics\nSoha:Logistics\nShahar:Tashkent\nStatu"
+    }
+  },
+  {
+    "route": "employer-talent-hub",
+    "path": "/employer/talent-hub",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\nTalent Hub\n\nReusable candidate pool across all employer vacancies.\n\nSearch\nAll (0)\nShortlist (0)\nHired (0)\nEnter a search query to start."
+    }
+  },
+  {
+    "route": "employer-ai-agent",
+    "path": "/employer/ai-agent",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\n🤖 Verifix Hiring Agent\n\nAI-yordamchi — nomzodlarni qidirish, tahlil qilish va taklif qilish\n\nAgent modullari\n🔍\nAI Search\nBazada nomzodlarni avtomatik qidirish\n📨\n"
+    }
+  },
+  {
+    "route": "employer-churn-alerts",
+    "path": "/employer/churn-alerts",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Verifix Jobs\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub\n🚀\nLoyihalar\n📈\nAnalitika\n💬\nXabarlar\n💳\nBilling\n🤖\nAI Agent\n🧠\nXotira\n🔗\nIntegratsiya\n⚙️\nSozlamalar\n<\nDashboard\nqa.seed+1775156407@verifix.uz\nChiqish\n⚠️ Churn Alerts\n\nKetib qolish xavfi bo'lgan nomzodlar — qayta jalb qilish kerak\n\n✅\nChurn xavfi bo'lgan nomzodlar yo'q"
+    }
+  },
+  {
+    "route": "admin-login",
+    "path": "/admin/login",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Admin Panel\n\nVerifix Jobs boshqaruv paneli\n\nEmail\nParol\nKirish"
+    }
+  },
+  {
+    "route": "admin-dashboard",
+    "path": "/admin/dashboard",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Admin\nPanel\n📊\nDashboard\n🏢\nKompaniyalar\n🔍\nModeratsiya\n🚨\nFrod nazorati\n🏛️\nDavlat sinx.\nChiqish\nDashboard\n7\nKompaniyalar\n+113 hafta\n0\nNomzodlar\n+0 hafta\n503\nVakansiyalar\n503 faol\n0\nArizalar\n0 ishga olingan\nTezkor amallar\n\nKompaniyalar\nTasdiqlash va boshqarish\n\nModeratsiya\n0 ta kutilmoqda\n\nFrod nazorati\nShubhali faoliyatlar"
+    }
+  },
+  {
+    "route": "admin-employers",
+    "path": "/admin/employers",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Admin\nPanel\n📊\nDashboard\n🏢\nKompaniyalar\n🔍\nModeratsiya\n🚨\nFrod nazorati\n🏛️\nDavlat sinx.\nChiqish\nKompaniyalar\nBarchasi\nKutilmoqda\nFaol\nBloklangan\nVerifix Demo Co\nTasdiqlangan\nFaol\nINN: DEMO001TashkentVakansiyalar: 0\nBloklash\nOila Restoran\nTasdiqlangan\nFaol\nINN: DEMO002TashkentVakansiyalar: 0\nBloklash\nExpress Logistik\nTasdiqlangan\nFaol\nINN: DEMO003SamarkandVakansiyalar: 0\nBloklash\nMega Market\nFaol"
+    }
+  },
+  {
+    "route": "admin-moderation",
+    "path": "/admin/moderation",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Admin\nPanel\n📊\nDashboard\n🏢\nKompaniyalar\n🔍\nModeratsiya\n🚨\nFrod nazorati\n🏛️\nDavlat sinx.\nChiqish\nModeratsiya\n✓\nModeratsiya navbatida hech narsa yo'q"
+    }
+  },
+  {
+    "route": "admin-fraud",
+    "path": "/admin/fraud",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Admin\nPanel\n📊\nDashboard\n🏢\nKompaniyalar\n🔍\nModeratsiya\n🚨\nFrod nazorati\n🏛️\nDavlat sinx.\nChiqish\nFrod nazorati\nFrod alertlari topilmadi"
+    }
+  },
+  {
+    "route": "admin-gov-sync",
+    "path": "/admin/gov-sync",
+    "consoleErrors": [],
+    "pageErrors": [],
+    "metrics": {
+      "title": "Verifix Jobs | Jobs in Uzbekistan",
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "textSample": "Admin\nPanel\n📊\nDashboard\n🏢\nKompaniyalar\n🔍\nModeratsiya\n🚨\nFrod nazorati\n🏛️\nDavlat sinx.\nChiqish\nDavlat sinxronizatsiyasi\nARGOS\n0sinxron\n0kutilmoqda\n0xato\n0jami\nExport\nImport\nENST\n0sinxron\n0kutilmoqda\n0xato\n0jami\nExport\nImport\nISH_MEHNAT\n0sinxron\n0kutilmoqda\n0xato\n0jami\nExport\nImport\nSinxronizatsiya tarixi\nARGOS\nENST\nish.mehnat.uz\nTarix yo'q"
+    }
+  }
+]

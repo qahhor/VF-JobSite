@@ -1,0 +1,112 @@
+[
+  {
+    "label": "public-tablet-home",
+    "consoleErrors": [],
+    "metrics": {
+      "title": "Find jobs in Uzbekistan | Verifix Jobs",
+      "overflow": true,
+      "scrollWidth": 782,
+      "innerWidth": 768,
+      "text": "Verifix Jobs\nВакансии\nКомпании\nКарта\nЗарплаты\nRU\nРаботодатель\nНайти работу в Узбекистане стало проще\n\nТысячи вакансий — найдите подходящую именно вам\n\nПоиск\nПопулярные категории\n👨‍🍳\nПовар\n15\n🚗\nВоди"
+    }
+  },
+  {
+    "label": "public-tablet-jobs",
+    "consoleErrors": [],
+    "metrics": {
+      "title": "Jobs | Verifix Jobs",
+      "overflow": true,
+      "scrollWidth": 782,
+      "innerWidth": 768,
+      "text": "Verifix Jobs\nВакансии\nКомпании\nКарта\nЗарплаты\nRU\nРаботодатель\nVakansiyalar\n\nFiltrlar orqali ishlarni tez solishtiring va to'g'ri variantni tanlang.\n\nНайти\nТип занятости\nПолная ставка\nЧастичная\nКонтрак"
+    }
+  },
+  {
+    "label": "public-mobile-job-detail",
+    "consoleErrors": [],
+    "metrics": {
+      "title": "Night Shift Sorter in Tashkent | Verifix Jobs",
+      "overflow": false,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "text": "RU\nРаботодатель\nГлавная\nРабота\nКомпании\nПрофиль\nOrqaga\n4.0M - 5.8M UZS / oy\nNight Shift Sorter\nQA Logistics\nTashkent\nTo'liq stavka\nTungi smena\n8 o'rin ochiq\nSALARY INTELLIGENCE\nBozor o'rtachasi: 3.2M "
+    }
+  },
+  {
+    "label": "public-mobile-company-detail",
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "metrics": {
+      "title": "Verifix Demo Co jobs | Verifix Jobs",
+      "overflow": false,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "text": "RU\nРаботодатель\nГлавная\nРабота\nКомпании\nПрофиль\nBosh sahifa / Kompaniyalar / Verifix Demo Co\nV\nVerifix Demo Co\nTashkent\n✓ Tasdiqlangan\nOchiq vakansiyalar\nElektrik ustasi\n2.4M+ UZS\nAndijan\nQuruvchi-ish"
+    }
+  },
+  {
+    "label": "employer-mobile-dashboard",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "☰\nDashboard\nChiqish\nDashboard\nHiring oqimi, task inbox va employer trust ko'rsatkichlari.\nFAOL VAKANSIYALAR\n3\nJAMI ARIZALAR\n0\nISHGA OLINGAN\n0\nYANGI ARIZALAR\n0\nSo'nggi davr\nTask inbox\n0 open / 0 urgent"
+    }
+  },
+  {
+    "label": "employer-mobile-vacancy-new",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "☰\nYangi vakansiya\nChiqish\nYangi vakansiya\nShablondan yaratish\n💰\nKassir\n🛒\nSotuvchi\n👨‍🍳\nOshpaz\n🚗\nHaydovchi\n💪\nYukchi\n🧹\nTozalovchi\n🛡️\nQo'riqchi\n🍽️\nOfitsiant\n🔨\nIshchi\n🧵\nTikuvchi\n🍸\nBarmen\n📦\nOmb"
+    }
+  },
+  {
+    "label": "employer-mobile-team",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "☰\nJamoa\nChiqish\nJamoa\n+ Taklif qilish\nqa.seed+1775156407@verifix.uz\n+998901112233\nAdmin\n📊\nDashboard\n📋\nVakansiyalar\n🔄\nATS Pipeline\n👥\nNomzodlar\n🎯\nTalent Hub"
+    }
+  },
+  {
+    "label": "employer-mobile-ai-agent",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "☰\nAI Agent\nChiqish\nVerifix Hiring Agent\n\nAI yordamchi - nomzodlarni qidirish, tahlil qilish va taklif qilish.\n\nAgent modullari\nAS\nAI Search\nBazada nomzodlarni avtomatik qidirish\nIV\nAI Invite\nTelegram "
+    }
+  },
+  {
+    "label": "embedded-admin-mobile-dashboard",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "Admin Panel\nDashboard\n7\nKompaniyalar\n+113 hafta\n0\nNomzodlar\n+0 hafta\n503\nVakansiyalar\n503 faol\n0\nArizalar\n0 ishga olingan\nTezkor amallar\nCO\nKompaniyalar\nTasdiqlash va boshqarish\nMOD\nModeratsiya\n0 ta k"
+    }
+  },
+  {
+    "label": "embedded-admin-mobile-gov",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "Admin Panel\nDavlat sinxronizatsiyasi\nARGOS\n0sinxron\n0kutilmoqda\n0xato\n0jami\nExport\nImport\nENST\n0sinxron\n0kutilmoqda\n0xato\n0jami\nExport\nImport\nISH_MEHNAT\n0sinxron\n0kutilmoqda\n0xato\n0jami\nExport\nImport\n"
+    }
+  },
+  {
+    "label": "standalone-admin-mobile-dashboard",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "☰\nAdmin Panel\nDashboard\n👥\n+12%\n0\nJami foydalanuvchilar\n📋\n+5%\n503\nFaol vakansiyalar\n📨\n-3%\n0\nBugungi arizalar\n💰\n+8%\n0\nOylik daromad (UZS)\nTizim holati\nPostgreSQL\nIshlayapti\nRedis\nIshlayapti\nElastics"
+    }
+  },
+  {
+    "label": "standalone-admin-mobile-moderation",
+    "consoleErrors": [],
+    "metrics": {
+      "overflow": false,
+      "text": "☰\nAdmin Panel\nModeratsiya navbati\nKutilmoqda\nTasdiqlangan\nRad etilgan\nNavbatda element yo'q"
+    }
+  }
+]

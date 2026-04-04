@@ -13,4 +13,4 @@ COPY --from=build /app/dist/verifix-jobs-admin/browser /usr/share/nginx/html
 
 EXPOSE 80
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -q -O - http://localhost/nginx-health >/dev/null 2>&1 || exit 1
+  CMD curl -fsS http://localhost/nginx-health >/dev/null || exit 1

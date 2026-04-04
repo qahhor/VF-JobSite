@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   apiUrl: '/api/v1',
-  siteUrl: 'https://jobs.verifix.uz',
+  siteUrl: 'https://job.verifix.uz',
 };
