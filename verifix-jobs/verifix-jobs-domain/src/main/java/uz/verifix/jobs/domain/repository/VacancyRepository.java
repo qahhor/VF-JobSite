@@ -19,8 +19,10 @@ import java.util.UUID;
 @Repository
 public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpecificationExecutor<Vacancy> {
 
+    @Query("SELECT v FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId AND v.status = :status")
     Page<Vacancy> findByEmployerIdAndStatus(UUID employerId, VacancyStatus status, Pageable pageable);
 
+    @Query("SELECT v FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId")
     Page<Vacancy> findByEmployerId(UUID employerId, Pageable pageable);
 
     List<Vacancy> findByStatus(VacancyStatus status);
@@ -34,11 +36,14 @@ public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpec
             nativeQuery = true)
     List<Vacancy> findNearLocation(@Param("lon") double lon, @Param("lat") double lat, @Param("distanceMeters") double distanceMeters);
 
-    long countByEmployerIdAndStatus(UUID employerId, VacancyStatus status);
+    @Query("SELECT COUNT(v) FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId AND v.status = :status")
+    long countByEmployerIdAndStatus(@Param("employerId") UUID employerId, @Param("status") VacancyStatus status);
 
-    long countByEmployerIdAndModerationStatus(UUID employerId, ModerationStatus status);
+    @Query("SELECT COUNT(v) FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId AND v.moderationStatus = :status")
+    long countByEmployerIdAndModerationStatus(@Param("employerId") UUID employerId, @Param("status") ModerationStatus status);
 
-    long countByEmployerIdAndModerationStatusIn(UUID employerId, Collection<ModerationStatus> statuses);
+    @Query("SELECT COUNT(v) FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId AND v.moderationStatus IN :statuses")
+    long countByEmployerIdAndModerationStatusIn(@Param("employerId") UUID employerId, @Param("statuses") Collection<ModerationStatus> statuses);
 
     List<Vacancy> findByStatusAndExpiresAtBefore(VacancyStatus status, Instant before);
 
@@ -95,13 +100,18 @@ public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpec
 
     Vacancy findBySlugAndStatus(String slug, VacancyStatus status);
 
-    java.util.Optional<Vacancy> findByIdAndStatus(UUID id, VacancyStatus status);
+    @Query("SELECT v FROM Vacancy v WHERE v.deletedAt IS NULL AND v.id = :id AND v.status = :status")
+    java.util.Optional<Vacancy> findByIdAndStatus(@Param("id") UUID id, @Param("status") VacancyStatus status);
 
     Page<Vacancy> findByCategoryAndStatus(String category, VacancyStatus status, Pageable pageable);
 
     Page<Vacancy> findByCityAndStatus(String city, VacancyStatus status, Pageable pageable);
 
-    List<Vacancy> findByEmployerIdAndStatus(UUID employerId, VacancyStatus status);
+    @Query("SELECT v FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId AND v.status = :status")
+    List<Vacancy> findByEmployerIdAndStatus(@Param("employerId") UUID employerId, @Param("status") VacancyStatus status);
+
+    @Query("SELECT v FROM Vacancy v WHERE v.deletedAt IS NULL AND v.id = :id")
+    java.util.Optional<Vacancy> findVisibleById(@Param("id") UUID id);
 
     // Category/City hub aggregations
     @Query(value = "SELECT v.category, COUNT(*) as cnt, AVG(v.salary_from) as avg_salary " +

@@ -13,4 +13,10 @@ import java.util.UUID;
 public interface ModerationQueueRepository extends JpaRepository<ModerationQueue, UUID> {
 
     Page<ModerationQueue> findByStatusOrderByCreatedAtAsc(ModerationStatus status, Pageable pageable);
+
+    Page<ModerationQueue> findByStatusOrderByCreatedAtDesc(ModerationStatus status, Pageable pageable);
+
+    Page<ModerationQueue> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    long countByStatus(ModerationStatus status);
 }

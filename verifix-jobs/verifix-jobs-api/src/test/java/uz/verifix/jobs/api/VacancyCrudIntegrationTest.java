@@ -9,12 +9,13 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Map;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Integration test: Vacancy create → list → update → publish → close.
- */
 class VacancyCrudIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -24,16 +25,19 @@ class VacancyCrudIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void setupEmployer() throws Exception {
+        String unique = String.valueOf(System.nanoTime());
         String body = objectMapper.writeValueAsString(Map.of(
-                "name", "Vacancy Test Co",
-                "inn", "VT" + System.nanoTime(),
-                "email", "vt" + System.nanoTime() + "@test.uz",
-                "password", "TestPass123!"
+                "companyName", "Vacancy Test Co",
+                "inn", "VT" + unique,
+                "email", "vt" + unique + "@test.uz",
+                "password", "TestPass123!",
+                "phone", "+998901112233"
         ));
 
         MvcResult result = mockMvc.perform(post("/api/v1/auth/employer/register")
-                        .contentType(MediaType.APPLICATION_JSON).content(body))
-                .andExpect(status().isOk())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
                 .andReturn();
 
         Map<String, Object> tokens = objectMapper.readValue(result.getResponse().getContentAsString(), Map.class);
@@ -41,36 +45,73 @@ class VacancyCrudIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void shouldCreateAndListVacancy() throws Exception {
-        String vacancyBody = objectMapper.writeValueAsString(Map.of(
+    void shouldCreateListUpdateAndPublishEmployerVacancy() throws Exception {
+        String createBody = objectMapper.writeValueAsString(Map.of(
                 "title", "Oshpaz kerak",
                 "description", "Tajribali oshpaz kerak",
                 "category", "COOK",
                 "city", "Tashkent",
                 "employmentType", "FULL_TIME",
-                "positionsCount", 3
+                "positionsCount", 3,
+                "expiresAt", "2026-08-01",
+                "country", "UZ",
+                "latitude", 41.311081,
+                "longitude", 69.240562
         ));
 
-        mockMvc.perform(post("/api/v1/vacancies")
+        MvcResult createResult = mockMvc.perform(post("/api/v1/vacancies")
                         .header("Authorization", "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(vacancyBody))
-                .andExpect(status().isOk())
+                        .content(createBody))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.title").value("Oshpaz kerak"))
-                .andExpect(jsonPath("$.status").value("DRAFT"));
+                .andExpect(jsonPath("$.status").value("DRAFT"))
+                .andExpect(jsonPath("$.latitude").exists())
+                .andExpect(jsonPath("$.longitude").exists())
+                .andExpect(jsonPath("$.expiresAt").exists())
+                .andReturn();
 
-        // List vacancies
-        mockMvc.perform(get("/api/v1/vacancies")
+        String vacancyId = objectMapper.readTree(createResult.getResponse().getContentAsString()).get("id").asText();
+
+        mockMvc.perform(get("/api/v1/vacancies/employer")
+                        .param("status", "DRAFT")
                         .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content[0].title").value("Oshpaz kerak"));
+
+        MvcResult updateResult = mockMvc.perform(put("/api/v1/vacancies/" + vacancyId)
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "title", "Oshpaz senior",
+                                "description", "Yangilangan tavsif",
+                                "category", "COOK",
+                                "city", "Tashkent",
+                                "employmentType", "FULL_TIME",
+                                "positionsCount", 4,
+                                "expiresAt", "2026-08-15",
+                                "country", "UZ",
+                                "latitude", 41.299500,
+                                "longitude", 69.240100
+                        ))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Oshpaz senior"))
+                .andExpect(jsonPath("$.expiresAt").exists())
+                .andReturn();
+
+        assertThat(updateResult.getResponse().getContentAsString()).contains("2026-08-15");
+
+        mockMvc.perform(post("/api/v1/vacancies/" + vacancyId + "/publish")
+                        .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("PENDING_MODERATION"))
+                .andExpect(jsonPath("$.moderationStatus").value("PENDING"));
     }
 
     @Test
     void shouldSearchPublicVacancies() throws Exception {
-        // Public search should work without auth
         mockMvc.perform(get("/api/v1/public/vacancies")
                         .param("city", "Tashkent"))
                 .andExpect(status().isOk())

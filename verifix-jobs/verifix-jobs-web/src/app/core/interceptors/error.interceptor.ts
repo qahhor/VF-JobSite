@@ -9,15 +9,30 @@ let isRefreshing = false;
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const auth = inject(AuthService);
+  const isAdminApiRequest = req.url.includes('/api/v1/admin/');
+  const isAdminLoginRequest = req.url.includes('/api/v1/admin/auth/login');
+  const isProtectedAdminRequest = isAdminApiRequest && !isAdminLoginRequest;
 
   return next(req).pipe(
     catchError((error) => {
-      // Skip auth endpoints
-      if (req.url.includes('/auth/') || req.url.includes('/admin/auth/')) {
+      if ((req.url.includes('/auth/') && !isAdminApiRequest) || isAdminLoginRequest) {
         return throwError(() => error);
       }
 
-      // 401 — try token refresh once
+      if (error.status === 401 && isProtectedAdminRequest) {
+        localStorage.removeItem('vjw_admin_token');
+        localStorage.removeItem('vjw_admin_role');
+        localStorage.removeItem('vjw_admin_must_change_password');
+        router.navigate(['/admin/login']);
+        return throwError(() => error);
+      }
+
+      if (error.status === 403 && isProtectedAdminRequest && error?.error?.error === 'PASSWORD_CHANGE_REQUIRED') {
+        localStorage.setItem('vjw_admin_must_change_password', 'true');
+        router.navigate(['/admin/access']);
+        return throwError(() => error);
+      }
+
       if (error.status === 401 && !isRefreshing) {
         isRefreshing = true;
         const refreshObs = auth.refreshToken();
@@ -28,28 +43,26 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
               isRefreshing = false;
               if (res?.accessToken) {
                 auth.setAuthFromTokens(res.accessToken, res.refreshToken);
-                // Retry original request with new token
                 const retryReq = req.clone({
                   setHeaders: { Authorization: `Bearer ${res.accessToken}` }
                 });
                 return next(retryReq);
               }
-              return doLogout(auth, router, error);
+              return doLogout(auth, error);
             }),
             catchError((refreshErr) => {
               isRefreshing = false;
-              return doLogout(auth, router, refreshErr);
+              return doLogout(auth, refreshErr);
             })
           );
         }
 
         isRefreshing = false;
-        return doLogout(auth, router, error);
+        return doLogout(auth, error);
       }
 
-      // Already refreshing or non-401 error
       if (error.status === 401) {
-        return doLogout(auth, router, error);
+        return doLogout(auth, error);
       }
 
       return throwError(() => error);
@@ -57,7 +70,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   );
 };
 
-function doLogout(auth: AuthService, router: Router, error: any) {
+function doLogout(auth: AuthService, error: any) {
   auth.logout();
   return throwError(() => error);
 }

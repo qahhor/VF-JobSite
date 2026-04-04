@@ -16,7 +16,7 @@ import { I18nService } from '../../core/services/i18n.service';
 
     <div class="max-w-6xl mx-auto px-4 py-6 pb-20 md:pb-8">
       <div class="mb-8">
-        <div class="text-xs uppercase tracking-wide text-gray-400 mb-2">Category Hubs</div>
+        <div class="text-xs uppercase tracking-wide text-gray-400 mb-2">{{ i18n.t('public.categories.hubs') }}</div>
         <h1 class="text-2xl md:text-3xl font-bold text-gray-900">{{ i18n.t('categories.title') }}</h1>
         <p class="text-sm text-gray-500 mt-2">{{ i18n.t('footer.categories') }}</p>
       </div>
@@ -88,37 +88,45 @@ export class PublicCategoriesComponent implements OnInit {
 
   private updateSeo() {
     this.seo.setPage({
-      title: 'Job categories and city hubs',
-      description: 'Explore job category landing pages and city hiring hubs across Uzbekistan on Verifix Jobs.',
+      title: this.i18n.t('seo.categories.title'),
+      description: this.i18n.t('seo.categories.description'),
       path: '/categories',
-      keywords: ['job categories', 'city jobs', 'vacancy hubs', 'uzbekistan jobs'],
+      keywords: [this.i18n.t('seo.categories.title'), this.i18n.t('seo.categories.city_hubs_title'), this.i18n.t('common.vacancies')],
       schema: [
         this.seo.buildCollectionPageSchema(
-          'Job categories and city hubs',
-          'Browse category and city landing pages for public vacancy discovery.',
+          this.i18n.t('seo.categories.collection_title'),
+          this.i18n.t('seo.categories.collection_description'),
           '/categories'
         ),
         this.seo.buildBreadcrumbSchema([
-          { name: 'Home', path: '/' },
-          { name: 'Categories', path: '/categories' }
+          { name: this.i18n.t('common.home'), path: '/' },
+          { name: this.i18n.t('seo.categories.breadcrumb_title'), path: '/categories' }
         ]),
         this.seo.buildItemListSchema(
-          'Popular job categories',
+          this.i18n.t('seo.categories.popular_title'),
           this.categories().slice(0, 12).map((item: any) => ({
-            name: item.category,
+            name: this.i18n.t('category.' + item.category),
             path: `/vacancies/category/${encodeURIComponent(item.category)}`,
-            description: item.vacancyCount ? `${item.vacancyCount} jobs` : undefined
+            description: item.vacancyCount ? this.fill('seo.categories.jobs_suffix', { count: item.vacancyCount }) : undefined
           }))
         ),
         this.seo.buildItemListSchema(
-          'City job hubs',
+          this.i18n.t('seo.categories.city_hubs_title'),
           this.cities().slice(0, 12).map((item: any) => ({
             name: item.city,
             path: `/vacancies/${encodeURIComponent(item.city)}`,
-            description: item.vacancyCount ? `${item.vacancyCount} jobs` : undefined
+            description: item.vacancyCount ? this.fill('seo.categories.jobs_suffix', { count: item.vacancyCount }) : undefined
           }))
         )
       ]
     });
+  }
+
+  private fill(key: string, params: Record<string, string | number>): string {
+    let template = this.i18n.t(key);
+    for (const [name, value] of Object.entries(params)) {
+      template = template.replaceAll(`{${name}}`, String(value));
+    }
+    return template;
   }
 }

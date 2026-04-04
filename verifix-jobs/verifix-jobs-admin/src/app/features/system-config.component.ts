@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdminApiService } from '../core/api.service';
 import { I18nService } from '../core/i18n.service';
 
 @Component({
@@ -84,7 +85,7 @@ import { I18nService } from '../core/i18n.service';
     </div>
   `,
 })
-export class SystemConfigComponent {
+export class SystemConfigComponent implements OnInit {
   featureToggles = [
     { key: 'kafka', label: 'Kafka', description: 'system.kafka_desc', enabled: false },
     { key: 'elasticsearch', label: 'Elasticsearch', description: 'system.search_desc', enabled: false },
@@ -96,17 +97,43 @@ export class SystemConfigComponent {
   rateLimits = { general: 100, employer: 30 };
   moderation = { minimumWage: 1155000, bannedWords: 'mlm, piramida, depozit, lotereya' };
   saveMessage = '';
+  saving = false;
 
-  constructor(public i18n: I18nService) {}
+  constructor(private api: AdminApiService, public i18n: I18nService) {}
+
+  ngOnInit() {
+    this.api.getSystemConfig().subscribe({
+      next: (config: any) => {
+        if (config.featureToggles) {
+          for (const toggle of this.featureToggles) {
+            const remote = config.featureToggles.find((t: any) => t.key === toggle.key);
+            if (remote) toggle.enabled = remote.enabled;
+          }
+        }
+        if (config.rateLimits) this.rateLimits = config.rateLimits;
+        if (config.moderation) this.moderation = config.moderation;
+      }
+    });
+  }
 
   save() {
+    this.saving = true;
     const payload = {
       featureToggles: this.featureToggles,
       rateLimits: this.rateLimits,
       moderation: this.moderation
     };
-    localStorage.setItem('vja_system_config', JSON.stringify(payload));
-    this.saveMessage = this.i18n.t('system.save_success');
-    setTimeout(() => this.saveMessage = '', 3000);
+    this.api.saveSystemConfig(payload).subscribe({
+      next: () => {
+        this.saving = false;
+        this.saveMessage = this.i18n.t('system.save_success');
+        setTimeout(() => this.saveMessage = '', 3000);
+      },
+      error: () => {
+        this.saving = false;
+        this.saveMessage = this.i18n.t('admin.error');
+        setTimeout(() => this.saveMessage = '', 3000);
+      }
+    });
   }
 }

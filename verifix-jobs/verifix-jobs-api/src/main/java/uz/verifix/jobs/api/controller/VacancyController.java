@@ -94,9 +94,10 @@ public class VacancyController {
     @GetMapping("/employer")
     public ResponseEntity<PageResponse<VacancyResponse>> getByEmployer(
             Authentication auth,
+            @RequestParam(required = false) VacancyStatus status,
             @PageableDefault(size = 20) Pageable pageable) {
         UUID employerId = SecurityUtils.extractEmployerId(auth);
-        Page<Vacancy> page = vacancyService.findByEmployer(employerId, pageable);
+        Page<Vacancy> page = vacancyService.findByEmployer(employerId, status, pageable);
         return ResponseEntity.ok(PageResponse.of(page.map(vacancyMapper::toResponse)));
     }
 
@@ -120,7 +121,7 @@ public class VacancyController {
     @PostMapping("/{id}/publish")
     public ResponseEntity<VacancyResponse> publish(@PathVariable UUID id, Authentication auth) {
         UUID employerId = SecurityUtils.extractEmployerId(auth);
-        Vacancy vacancy = vacancyService.changeStatus(id, employerId, VacancyStatus.ACTIVE);
+        Vacancy vacancy = vacancyService.publish(id, employerId);
         return ResponseEntity.ok(vacancyMapper.toResponse(vacancy));
     }
 

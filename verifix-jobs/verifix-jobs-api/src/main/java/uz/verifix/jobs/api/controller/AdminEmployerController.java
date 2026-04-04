@@ -14,6 +14,8 @@ import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.common.dto.PageResponse;
 import uz.verifix.jobs.domain.entity.Employer;
 import uz.verifix.jobs.domain.enums.EmployerStatus;
+import uz.verifix.jobs.domain.enums.VacancyStatus;
+import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.admin.AdminAuditService;
 import uz.verifix.jobs.service.admin.AdminEmployerService;
 
@@ -27,13 +29,15 @@ public class AdminEmployerController {
     private final AdminEmployerService adminEmployerService;
     private final AdminAuditService adminAuditService;
     private final EmployerMapper employerMapper;
+    private final VacancyRepository vacancyRepository;
 
     @GetMapping
     public ResponseEntity<PageResponse<EmployerProfileResponse>> list(
             @RequestParam(required = false) EmployerStatus status,
+            @RequestParam(required = false) String search,
             @PageableDefault(size = 20) Pageable pageable) {
-        Page<Employer> page = adminEmployerService.list(status, pageable);
-        return ResponseEntity.ok(PageResponse.of(page.map(employer -> employerMapper.toResponse(employer, 0))));
+        Page<Employer> page = adminEmployerService.list(status, search, pageable);
+        return ResponseEntity.ok(PageResponse.of(page.map(this::toResponse)));
     }
 
     @PatchMapping("/{id}/status")
@@ -43,11 +47,11 @@ public class AdminEmployerController {
             Authentication auth,
             HttpServletRequest request) {
 
-        UUID adminId = SecurityUtils.extractUserId(auth);
+        UUID adminId = SecurityUtils.extractAdminId(auth);
         Employer employer = adminEmployerService.changeStatus(id, status);
         adminAuditService.log(adminId, "EMPLOYER_STATUS_CHANGE", "Employer", id,
                 "{\"newStatus\":\"" + status + "\"}", request.getRemoteAddr());
-        return ResponseEntity.ok(employerMapper.toResponse(employer, 0));
+        return ResponseEntity.ok(toResponse(employer));
     }
 
     @PostMapping("/{id}/verify")
@@ -56,9 +60,14 @@ public class AdminEmployerController {
             Authentication auth,
             HttpServletRequest request) {
 
-        UUID adminId = SecurityUtils.extractUserId(auth);
+        UUID adminId = SecurityUtils.extractAdminId(auth);
         Employer employer = adminEmployerService.verify(id);
         adminAuditService.log(adminId, "EMPLOYER_VERIFY", "Employer", id, null, request.getRemoteAddr());
-        return ResponseEntity.ok(employerMapper.toResponse(employer, 0));
+        return ResponseEntity.ok(toResponse(employer));
+    }
+
+    private EmployerProfileResponse toResponse(Employer employer) {
+        long activeVacancies = vacancyRepository.countByEmployerIdAndStatus(employer.getId(), VacancyStatus.ACTIVE);
+        return employerMapper.toResponse(employer, activeVacancies);
     }
 }

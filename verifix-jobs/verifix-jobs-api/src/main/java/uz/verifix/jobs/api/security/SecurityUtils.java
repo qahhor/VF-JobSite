@@ -50,6 +50,16 @@ public final class SecurityUtils {
         throw new ForbiddenException("Admin authentication is required");
     }
 
+    public static AdminRole extractAdminRole(Authentication auth) {
+        if (auth.getPrincipal() instanceof AuthenticatedUser user && user.role() != null && user.employerId() == null) {
+            try {
+                return AdminRole.valueOf(user.role());
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+        throw new ForbiddenException("Admin authentication is required");
+    }
+
     public static UUID enforceCandidateAccess(Authentication auth, UUID candidateId) {
         UUID authenticatedCandidateId = extractCandidateId(auth);
         if (candidateId != null && !authenticatedCandidateId.equals(candidateId)) {

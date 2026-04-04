@@ -83,7 +83,7 @@ import { I18nService } from '../core/i18n.service';
             </div>
             <div class="flex justify-end gap-2 mt-4">
               <button (click)="showCreate.set(false)" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">{{ i18n.t('common.cancel') }}</button>
-              <button (click)="create()" class="px-4 py-2 bg-black text-white rounded-lg text-sm">{{ i18n.t('common.create') }}</button>
+              <button (click)="create()" [disabled]="!newName.trim()" class="px-4 py-2 bg-black text-white rounded-lg text-sm disabled:opacity-50">{{ i18n.t('common.create') }}</button>
             </div>
           </div>
         </div>
@@ -103,6 +103,7 @@ export class AbTestingComponent implements OnInit {
   load() {
     this.api.getExperiments().subscribe({
       next: (res: any) => this.experiments.set(res.content || res || []),
+      error: () => this.experiments.set([])
     });
   }
 
@@ -116,7 +117,8 @@ export class AbTestingComponent implements OnInit {
   }
 
   create() {
-    this.api.createExperiment(this.newName, this.newDesc).subscribe(() => {
+    if (!this.newName.trim()) return;
+    this.api.createExperiment(this.newName.trim(), this.newDesc.trim()).subscribe(() => {
       this.showCreate.set(false);
       this.newName = ''; this.newDesc = '';
       this.load();

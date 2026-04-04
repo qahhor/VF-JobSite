@@ -7,6 +7,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import uz.verifix.jobs.domain.enums.AdminRole;
 
 /**
  * Email notification channel. Sends transactional emails for:
@@ -30,7 +31,11 @@ public class EmailNotificationService {
     }
 
     @Async
-    public boolean send(String to, String subject, String body) {
+    public void send(String to, String subject, String body) {
+        sendNow(to, subject, body);
+    }
+
+    public boolean sendNow(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromAddress);
@@ -44,6 +49,23 @@ public class EmailNotificationService {
             log.error("Email sending failed to {}: {}", to, e.getMessage());
             return false;
         }
+    }
+
+    public boolean sendAdminInvite(String email, AdminRole role, String temporaryPassword, String loginUrl) {
+        String subject = "Verifix Jobs - admin invite";
+        String body = String.format(
+                "You have been invited to Verifix Jobs admin panel.%n%n" +
+                        "Role: %s%n" +
+                        "Login: %s%n" +
+                        "Temporary password: %s%n%n" +
+                        "Please sign in and change your password immediately on first login.%n%n" +
+                        "Admin panel: %s%n%n" +
+                        "If you were not expecting this invite, contact the Verifix Jobs owner.",
+                role != null ? role.name() : "MODERATOR",
+                email,
+                temporaryPassword,
+                loginUrl);
+        return sendNow(email, subject, body);
     }
 
     @Async

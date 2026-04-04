@@ -19,6 +19,12 @@ public class ModerationQueueResponse {
     private UUID entityId;
     private String status;
     private String reason;
+    private String title;
+    private String subtitle;
+    private String previewText;
+    private String city;
+    private String category;
+    private String salaryLabel;
     private Instant decidedAt;
     private Instant createdAt;
 }

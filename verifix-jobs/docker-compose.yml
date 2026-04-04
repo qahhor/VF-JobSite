@@ -133,15 +133,16 @@ services:
     container_name: verifix-jobs-api
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-verifix_jobs}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://verifix-jobs-postgres:5432/${POSTGRES_DB:-verifix_jobs}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-verifix}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-verifix_secret}
-      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_HOST: verifix-jobs-redis
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
-      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      MINIO_ENDPOINT: http://minio:9000
+      SPRING_ELASTICSEARCH_URIS: http://verifix-jobs-elasticsearch:9200
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: verifix-jobs-kafka:9092
+      JWT_SECRET: ${JWT_SECRET}
+      MINIO_ENDPOINT: http://verifix-jobs-minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
     ports:
@@ -172,13 +173,13 @@ services:
     container_name: verifix-jobs-telegram
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-verifix_jobs}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://verifix-jobs-postgres:5432/${POSTGRES_DB:-verifix_jobs}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-verifix}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-verifix_secret}
-      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_HOST: verifix-jobs-redis
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: verifix-jobs-kafka:9092
     ports:
       - "${TELEGRAM_PORT:-8081}:8081"
     depends_on:

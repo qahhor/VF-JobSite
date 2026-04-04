@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -15,10 +15,7 @@ export class AdminApiService {
 
   // Moderation
   getModerationQueue(status = 'PENDING', page = 0): Observable<any> {
-    if (status !== 'PENDING') {
-      return of({ content: [], totalElements: 0, totalPages: 0 });
-    }
-    return this.http.get(`${this.base}/admin/moderation/pending`, { params: { page } });
+    return this.http.get(`${this.base}/admin/moderation/queue`, { params: { status, page } });
   }
   approveModeration(id: string): Observable<any> { return this.http.post(`${this.base}/admin/moderation/${id}/approve`, {}); }
   rejectModeration(id: string, reason: string): Observable<any> { return this.http.post(`${this.base}/admin/moderation/${id}/reject`, { reason }); }
@@ -48,6 +45,16 @@ export class AdminApiService {
   getExperimentStats(name: string): Observable<any> { return this.http.get(`${this.base}/admin/ab/experiments/${name}/stats`); }
   activateExperiment(name: string): Observable<any> { return this.http.post(`${this.base}/admin/ab/experiments/${name}/activate`, {}); }
   deactivateExperiment(name: string): Observable<any> { return this.http.post(`${this.base}/admin/ab/experiments/${name}/deactivate`, {}); }
+
+  // System Config
+  getSystemConfig(): Observable<any> { return this.http.get(`${this.base}/admin/settings`); }
+  saveSystemConfig(config: any): Observable<any> { return this.http.put(`${this.base}/admin/settings`, config); }
+
+  // Health
+  getHealthStatus(): Observable<any> { return this.http.get(`${this.base}/admin/health`); }
+
+  // Admin profile
+  getAdminProfile(): Observable<any> { return this.http.get(`${this.base}/admin/auth/me`); }
 
   // Fraud
   getFraudAlerts(reviewed = false, page = 0): Observable<any> {

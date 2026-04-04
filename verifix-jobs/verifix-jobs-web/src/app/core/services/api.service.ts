@@ -24,6 +24,7 @@ export class ApiService {
   updateVacancy(id: string, req: Partial<VacancyCreateRequest>): Observable<Vacancy> { return this.http.put<Vacancy>(`${this.base}/vacancies/${id}`, req); }
   deleteVacancy(id: string): Observable<void> { return this.http.delete<void>(`${this.base}/vacancies/${id}`); }
   publishVacancy(id: string): Observable<Vacancy> { return this.http.post<Vacancy>(`${this.base}/vacancies/${id}/publish`, {}); }
+  bumpVacancy(id: string): Observable<Vacancy> { return this.http.post<Vacancy>(`${this.base}/vacancies/${id}/bump`, {}); }
 
   // === Applications ===
   getApplications(vacancyId?: string, status?: string, page = 0, size = 20): Observable<PageResponse<Application>> {

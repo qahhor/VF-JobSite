@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="024-01" author="codex">
+        <comment>Add invite and password rotation metadata to admin_user</comment>
+        <addColumn tableName="admin_user">
+            <column name="must_change_password" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="invite_sent_at" type="timestamp with time zone"/>
+            <column name="last_login_at" type="timestamp with time zone"/>
+            <column name="password_changed_at" type="timestamp with time zone"/>
+            <column name="invited_by" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="024-02" author="codex">
+        <comment>Index admin invite source for audit and troubleshooting</comment>
+        <createIndex indexName="idx_admin_user_invited_by" tableName="admin_user">
+            <column name="invited_by"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

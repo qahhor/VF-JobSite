@@ -21,6 +21,8 @@ public interface EmployerRepository extends JpaRepository<Employer, UUID> {
 
     Page<Employer> findByStatus(EmployerStatus status, Pageable pageable);
 
+    Page<Employer> findByStatusAndNameContainingIgnoreCase(EmployerStatus status, String name, Pageable pageable);
+
     boolean existsByInn(String inn);
 
     List<Employer> findByHrmSyncEnabledTrue();
@@ -28,6 +30,10 @@ public interface EmployerRepository extends JpaRepository<Employer, UUID> {
     Optional<Employer> findBySlug(String slug);
 
     Page<Employer> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    long countByStatus(EmployerStatus status);
+
+    long countByIsVerifiedTrue();
 
     Optional<Employer> findByHrmCompanyId(String hrmCompanyId);
 

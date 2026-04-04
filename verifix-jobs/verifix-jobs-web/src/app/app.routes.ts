@@ -63,8 +63,14 @@ export const appRoutes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./features/admin/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
       { path: 'employers', loadComponent: () => import('./features/admin/admin-employers.component').then(m => m.AdminEmployersComponent) },
       { path: 'moderation', loadComponent: () => import('./features/admin/admin-moderation.component').then(m => m.AdminModerationComponent) },
+      { path: 'users', loadComponent: () => import('./features/admin/admin-users.component').then(m => m.AdminUsersComponent) },
+      { path: 'audit', loadComponent: () => import('./features/admin/admin-audit.component').then(m => m.AdminAuditComponent) },
+      { path: 'analytics', loadComponent: () => import('./features/admin/admin-analytics.component').then(m => m.AdminAnalyticsComponent) },
+      { path: 'experiments', loadComponent: () => import('./features/admin/admin-experiments.component').then(m => m.AdminExperimentsComponent) },
       { path: 'fraud', loadComponent: () => import('./features/admin/admin-fraud.component').then(m => m.AdminFraudComponent) },
       { path: 'gov-sync', loadComponent: () => import('./features/admin/admin-gov.component').then(m => m.AdminGovComponent) },
+      { path: 'settings', loadComponent: () => import('./features/admin/admin-settings.component').then(m => m.AdminSettingsComponent) },
+      { path: 'access', loadComponent: () => import('./features/admin/admin-access.component').then(m => m.AdminAccessComponent) },
     ]
   },
 

@@ -6,6 +6,7 @@ export interface AuthUser { userId: string; email: string; role: string; employe
 // Vacancy
 export interface Vacancy {
   id: string; title: string; description: string; category: string; city: string; region: string;
+  country?: string; latitude?: number | null; longitude?: number | null;
   salaryFrom: number | null; salaryTo: number | null; currency: string;
   employmentType: string; shiftSchedule: string; benefits: string[];
   status: string; isMassHiring: boolean; positionsCount: number; positionsFilled: number;
@@ -15,6 +16,7 @@ export interface Vacancy {
 }
 export interface VacancyCreateRequest {
   title: string; description: string; category: string; city: string; region?: string;
+  country?: string; latitude?: number; longitude?: number;
   salaryFrom?: number; salaryTo?: number; currency?: string;
   employmentType: string; shiftSchedule?: string; benefits?: string[];
   isMassHiring?: boolean; positionsCount?: number; expiresAt?: string;

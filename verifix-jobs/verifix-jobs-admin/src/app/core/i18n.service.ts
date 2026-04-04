@@ -1,8 +1,52 @@
 import { Injectable, computed, signal } from '@angular/core';
 
-export type Lang = 'uz_lat' | 'uz_cyr' | 'ru' | 'en' | 'kk' | 'tg' | 'ky';
+export type Lang = 'uz_lat' | 'ru';
 
 type TranslationRow = Partial<Record<Lang, string>>;
+
+export interface LangOption {
+  code: Lang;
+  nativeName: string;
+  flag: string;
+}
+
+const LANGUAGES: LangOption[] = [
+  { code: 'uz_lat', nativeName: "O'zbekcha", flag: 'UZ' },
+  { code: 'ru', nativeName: 'Русский', flag: 'RU' },
+];
+
+function transliterateUzbekToCyrillic(input: string): string {
+  const digraphs: Array<[RegExp, string]> = [
+    [/G‘/g, 'Ғ'], [/g‘/g, 'ғ'], [/G'/g, 'Ғ'], [/g'/g, 'ғ'],
+    [/O‘/g, 'Ў'], [/o‘/g, 'ў'], [/O'/g, 'Ў'], [/o'/g, 'ў'],
+    [/Sh/g, 'Ш'], [/sh/g, 'ш'], [/Ch/g, 'Ч'], [/ch/g, 'ч'],
+    [/Ya/g, 'Я'], [/ya/g, 'я'], [/Yo/g, 'Ё'], [/yo/g, 'ё'],
+    [/Yu/g, 'Ю'], [/yu/g, 'ю'],
+  ];
+
+  const chars: Record<string, string> = {
+    A: 'А', a: 'а', B: 'Б', b: 'б', D: 'Д', d: 'д', E: 'Е', e: 'е',
+    F: 'Ф', f: 'ф', G: 'Г', g: 'г', H: 'Ҳ', h: 'ҳ', I: 'И', i: 'и',
+    J: 'Ж', j: 'ж', K: 'К', k: 'к', L: 'Л', l: 'л', M: 'М', m: 'м',
+    N: 'Н', n: 'н', O: 'О', o: 'о', P: 'П', p: 'п', Q: 'Қ', q: 'қ',
+    R: 'Р', r: 'р', S: 'С', s: 'с', T: 'Т', t: 'т', U: 'У', u: 'у',
+    V: 'В', v: 'в', X: 'Х', x: 'х', Y: 'Й', y: 'й', Z: 'З', z: 'з',
+  };
+
+  let output = input;
+  for (const [pattern, replacement] of digraphs) {
+    output = output.replace(pattern, replacement);
+  }
+
+  return output
+    .split('')
+    .map(char => chars[char] ?? char)
+    .join('');
+}
+
+function normalizeUzbekQuotes(input: string): string {
+  return input.replace(/[ʻ‘’`´]/g, "'");
+}
 
 const TRANSLATIONS: Record<string, TranslationRow> = {
   'admin.brand': { uz_lat: 'Verifix Admin', uz_cyr: 'Верификс Админ', ru: 'Verifix Admin', en: 'Verifix Admin', kk: 'Verifix Admin', tg: 'Verifix Admin', ky: 'Verifix Admin' },
@@ -128,6 +172,18 @@ const TRANSLATIONS: Record<string, TranslationRow> = {
   'quick.fraud': { uz_lat: 'Fraud alertlar', ru: 'Fraud-алерты', en: 'Fraud alerts' },
   'quick.users': { uz_lat: 'Foydalanuvchilar', ru: 'Пользователи', en: 'Users' },
   'quick.ab': { uz_lat: 'A/B testlar', ru: 'A/B тесты', en: 'A/B tests' },
+  'dash.total_vacancies': { uz_lat: 'Jami vakansiyalar', ru: 'Всего вакансий', en: 'Total vacancies' },
+  'dash.total_hired': { uz_lat: 'Ishga olingan', ru: 'Нанято', en: 'Hired' },
+  'dash.pending_moderation': { uz_lat: 'Moderatsiyada', ru: 'На модерации', en: 'Pending moderation' },
+  'dash.fraud_alerts': { uz_lat: 'Fraud alertlar', ru: 'Fraud-алерты', en: 'Fraud alerts' },
+  'dash.new_7d': { uz_lat: "7 kunda yangi", ru: 'Новых за 7 дн.', en: 'New in 7 days' },
+  'common.name': { uz_lat: 'Nomi', ru: 'Название', en: 'Name' },
+  'common.description': { uz_lat: 'Tavsif', ru: 'Описание', en: 'Description' },
+  'common.create': { uz_lat: 'Yaratish', ru: 'Создать', en: 'Create' },
+  'common.save': { uz_lat: 'Saqlash', ru: 'Сохранить', en: 'Save' },
+  'common.contact': { uz_lat: 'Aloqa', ru: 'Контакт', en: 'Contact' },
+  'common.role': { uz_lat: 'Rol', ru: 'Роль', en: 'Role' },
+  'admin.pending': { uz_lat: 'Diqqat', ru: 'Внимание', en: 'Note' },
 };
 
 @Injectable({ providedIn: 'root' })
@@ -138,12 +194,27 @@ export class I18nService {
   dir = computed(() => 'ltr');
 
   constructor() {
-    document.documentElement.lang = this.currentLang().replace('_', '-');
+    this.applyDocumentLang(this.currentLang());
+  }
+
+  get languages(): LangOption[] {
+    return LANGUAGES;
+  }
+
+  setLang(lang: Lang) {
+    this.currentLang.set(lang);
+    localStorage.setItem('vjw_lang', lang);
+    this.applyDocumentLang(lang);
   }
 
   t(key: string): string {
     const lang = this.currentLang();
-    return TRANSLATIONS[key]?.[lang] || TRANSLATIONS[key]?.uz_lat || TRANSLATIONS[key]?.ru || TRANSLATIONS[key]?.en || key;
+    const row = TRANSLATIONS[key];
+    if (!row) {
+      return key;
+    }
+
+    return row[lang] || row.uz_lat || row.ru || key;
   }
 
   private loadLang(): Lang {
@@ -153,7 +224,10 @@ export class I18nService {
     }
     const nav = navigator.language?.toLowerCase() || '';
     if (nav.startsWith('ru')) return 'ru';
-    if (nav.startsWith('en')) return 'en';
     return 'uz_lat';
+  }
+
+  private applyDocumentLang(lang: Lang) {
+    document.documentElement.lang = lang.replace('_', '-');
   }
 }

@@ -39,6 +39,8 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     long countByStatus(ApplicationStatus status);
 
+    long countByAppliedAtAfter(java.time.Instant after);
+
     long countByVacancy_EmployerIdAndStatusAndCreatedAtAfter(UUID employerId, ApplicationStatus status, java.time.Instant after);
 
     java.util.List<Application> findByCandidateId(UUID candidateId);

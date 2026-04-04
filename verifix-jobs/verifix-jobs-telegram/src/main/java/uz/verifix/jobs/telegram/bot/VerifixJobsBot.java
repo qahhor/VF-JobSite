@@ -177,8 +177,7 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         if (text.equals("/help")) return startHandler.sendMainMenu(message.getChatId(), null);
 
         // Language selection from existing user (profile change)
-        if (text.contains("O'zbekcha") || text.contains("Русский") || text.contains("English")
-                || text.contains("Қазақша") || text.contains("Тоҷикӣ") || text.contains("Кыргызча")) {
+        if (text.contains("O'zbekcha") || text.contains("Русский")) {
             return handleLanguageChange(message);
         }
 
@@ -207,19 +206,13 @@ public class VerifixJobsBot extends TelegramLongPollingBot {
         String lang = "uz";
         String langName = "O'zbekcha";
         if (text.contains("Русский")) { lang = "ru"; langName = "Русский"; }
-        else if (text.contains("English")) { lang = "en"; langName = "English"; }
-        else if (text.contains("Қазақша")) { lang = "kk"; langName = "Қазақша"; }
-        else if (text.contains("Тоҷикӣ")) { lang = "tg"; langName = "Тоҷикӣ"; }
-        else if (text.contains("Кыргызча")) { lang = "ky"; langName = "Кыргызча"; }
 
         // Update existing candidate's language
         Candidate candidate = candidateRepository.findByTelegramId(telegramId).orElse(null);
         if (candidate != null) {
-            uz.verifix.jobs.domain.enums.LanguagePreference pref = switch (lang) {
-                case "ru" -> uz.verifix.jobs.domain.enums.LanguagePreference.RU;
-                case "en" -> uz.verifix.jobs.domain.enums.LanguagePreference.EN;
-                default -> uz.verifix.jobs.domain.enums.LanguagePreference.UZ;
-            };
+            uz.verifix.jobs.domain.enums.LanguagePreference pref = "ru".equals(lang)
+                    ? uz.verifix.jobs.domain.enums.LanguagePreference.RU
+                    : uz.verifix.jobs.domain.enums.LanguagePreference.UZ;
             candidate.setLanguagePref(pref);
             candidateRepository.save(candidate);
         }

@@ -21,9 +21,16 @@ public class AdminEmployerService {
     private final EmployerRepository employerRepository;
 
     @Transactional(readOnly = true)
-    public Page<Employer> list(EmployerStatus status, Pageable pageable) {
+    public Page<Employer> list(EmployerStatus status, String search, Pageable pageable) {
+        boolean hasSearch = search != null && !search.isBlank();
+        if (status != null && hasSearch) {
+            return employerRepository.findByStatusAndNameContainingIgnoreCase(status, search.trim(), pageable);
+        }
         if (status != null) {
             return employerRepository.findByStatus(status, pageable);
+        }
+        if (hasSearch) {
+            return employerRepository.findByNameContainingIgnoreCase(search.trim(), pageable);
         }
         return employerRepository.findAll(pageable);
     }

@@ -46,10 +46,6 @@ public class RegistrationHandler {
         String lang = "uz";
         if (text != null) {
             if (text.contains("Русский")) lang = "ru";
-            else if (text.contains("English")) lang = "en";
-            else if (text.contains("Қазақша")) lang = "kk";
-            else if (text.contains("Тоҷикӣ")) lang = "tg";
-            else if (text.contains("Кыргызча")) lang = "ky";
         }
 
         state.setLanguage(lang);
@@ -59,10 +55,6 @@ public class RegistrationHandler {
         // Language-specific welcome messages
         String welcomeText = switch (lang) {
             case "ru" -> "📱 Отправьте ваш номер телефона:";
-            case "en" -> "📱 Send your phone number:";
-            case "kk" -> "📱 Телефон нөміріңізді жіберіңіз:";
-            case "tg" -> "📱 Рақами телефонатонро фиристед:";
-            case "ky" -> "📱 Телефон номериңизди жөнөтүңүз:";
             default -> "📱 Telefon raqamingizni yuboring:";
         };
 
@@ -149,7 +141,6 @@ public class RegistrationHandler {
         // Create candidate with language preference
         uz.verifix.jobs.domain.enums.LanguagePreference langPref = uz.verifix.jobs.domain.enums.LanguagePreference.UZ;
         if ("ru".equals(state.getLanguage())) langPref = uz.verifix.jobs.domain.enums.LanguagePreference.RU;
-        else if ("en".equals(state.getLanguage())) langPref = uz.verifix.jobs.domain.enums.LanguagePreference.EN;
 
         Candidate candidate = Candidate.builder()
                 .phone(state.getPhone())

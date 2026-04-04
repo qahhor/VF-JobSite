@@ -100,7 +100,7 @@ import { I18nService } from '../core/i18n.service';
             <textarea [(ngModel)]="rejectReason" rows="3" class="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" [placeholder]="i18n.t('admin.reason_placeholder')"></textarea>
             <div class="flex justify-end gap-2">
               <button (click)="rejectItem.set(null)" class="rounded-lg border border-gray-300 px-4 py-2 text-sm">{{ i18n.t('common.cancel') }}</button>
-              <button (click)="reject()" class="rounded-lg bg-red-500 px-4 py-2 text-sm text-white">{{ i18n.t('common.reject') }}</button>
+              <button (click)="reject()" [disabled]="!rejectReason.trim()" class="rounded-lg bg-red-500 px-4 py-2 text-sm text-white disabled:opacity-50">{{ i18n.t('common.reject') }}</button>
             </div>
           </div>
         </div>
@@ -142,10 +142,10 @@ export class ModerationComponent implements OnInit {
 
   reject() {
     const item = this.rejectItem();
-    if (!item) {
+    if (!item || !this.rejectReason.trim()) {
       return;
     }
-    this.api.rejectModeration(item.id, this.rejectReason).subscribe(() => {
+    this.api.rejectModeration(item.id, this.rejectReason.trim()).subscribe(() => {
       this.rejectItem.set(null);
       this.load();
     });

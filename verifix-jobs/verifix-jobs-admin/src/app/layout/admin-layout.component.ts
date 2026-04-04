@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { AdminApiService } from '../core/api.service';
 import { I18nService } from '../core/i18n.service';
 
 @Component({
@@ -72,8 +73,8 @@ import { I18nService } from '../core/i18n.service';
     }
   `,
 })
-export class AdminLayoutComponent {
-  adminEmail = 'admin@verifix.uz';
+export class AdminLayoutComponent implements OnInit {
+  adminEmail = '';
   mobileMenuOpen = false;
   logoutIcon = '\u{1F6AA}';
 
@@ -88,10 +89,16 @@ export class AdminLayoutComponent {
     { path: '/settings', icon: '\u2699\uFE0F', label: 'admin.system' },
   ];
 
-  constructor(private router: Router, public i18n: I18nService) {}
+  constructor(private router: Router, private api: AdminApiService, public i18n: I18nService) {}
+
+  ngOnInit() {
+    this.api.getAdminProfile().subscribe({
+      next: (profile: any) => this.adminEmail = profile.email || '',
+    });
+  }
 
   logout() {
-    localStorage.clear();
+    localStorage.removeItem('vja_token');
     this.router.navigate(['/login']);
   }
 }

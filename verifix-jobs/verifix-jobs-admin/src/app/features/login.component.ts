@@ -52,7 +52,7 @@ export class AdminLoginComponent {
   onSubmit() {
     this.loading.set(true); this.error.set('');
     this.api.login(this.email, this.password, this.totpCode).subscribe({
-      next: (res) => { localStorage.setItem('vja_token', res.accessToken); this.router.navigate(['/dashboard']); },
+      next: (res) => { this.loading.set(false); localStorage.setItem('vja_token', res.accessToken); this.router.navigate(['/dashboard']); },
       error: (err) => { this.loading.set(false); this.error.set(err.error?.message || this.i18n.t('admin.login_error')); }
     });
   }

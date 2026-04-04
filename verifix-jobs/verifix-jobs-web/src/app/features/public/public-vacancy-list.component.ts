@@ -287,7 +287,7 @@ import { SeoService } from '../../core/services/seo.service';
 
               @if (selectedSalaryInsight()) {
                 <div class="mt-5 rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
-                  <div class="text-[10px] uppercase tracking-wide text-emerald-700 mb-2">Salary Intelligence</div>
+                  <div class="text-[10px] uppercase tracking-wide text-emerald-700 mb-2">{{ i18n.t('public.vacancy.salary_intelligence') }}</div>
                   <div class="text-sm font-semibold text-emerald-900">{{ marketRange() }}</div>
                   <div class="text-xs text-emerald-700 mt-1">{{ i18n.t('jobs.market_range') }}</div>
                 </div>
@@ -379,7 +379,7 @@ import { SeoService } from '../../core/services/seo.service';
                   href="https://t.me/VerifixJobBot"
                   target="_blank"
                   class="h-11 px-4 rounded-xl bg-[#2AABEE] text-white text-sm font-medium flex items-center justify-center hover:bg-[#229ED9] transition">
-                  Telegram bot
+                  {{ i18n.t('public.apply.telegram_bot') }}
                 </a>
                 <a
                   routerLink="/favorites"
@@ -825,18 +825,18 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   }
 
   private buildSeoDescription(categoryLabel: string): string {
-    const lang = this.i18n.lang();
-    const context = [categoryLabel, this.city].filter(Boolean).join(lang === 'ru' ? ' в ' : ' in ');
+    const context = [categoryLabel, this.city].filter(Boolean).join(' | ');
     const totalLabel = this.total()
-      ? (lang === 'ru' ? `${this.total()} активных вакансий` : lang === 'en' ? `${this.total()} active vacancies` : `${this.total()} faol vakansiya`)
-      : (lang === 'ru' ? 'Просматривайте активные вакансии' : lang === 'en' ? 'Browse active vacancies' : 'Faol vakansiyalarni ko‘ring');
+      ? this.fill('seo.jobs.active_count', { count: this.total() })
+      : this.i18n.t('seo.jobs.browse_active');
     const filters = [
       this.employmentType ? this.empType(this.employmentType) : '',
       this.shiftSchedule ? this.shiftLabel(this.shiftSchedule) : '',
       this.verifiedOnly ? this.i18n.t('jobs.verified_employer') : ''
     ].filter(Boolean);
-    const scope = context || (lang === 'ru' ? 'по Узбекистану' : lang === 'en' ? 'across Uzbekistan' : "O'zbekiston bo'ylab");
-    return [totalLabel, scope, filters.join(', ')].filter(Boolean).join('. ');
+    const scope = context || this.i18n.t('seo.jobs.scope_uzbekistan');
+    const filtersLabel = filters.length ? this.fill('seo.jobs.description_filters', { filters: filters.join(', ') }) : '';
+    return [totalLabel, scope, filtersLabel].filter(Boolean).join('. ');
   }
 
   private shouldNoIndex(): boolean {
@@ -894,32 +894,20 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
   }
 
   private localizedCityTitle(city: string): string {
-    const lang = this.i18n.lang();
-    if (lang === 'ru') return `Вакансии в ${city}`;
-    if (lang === 'en') return `Jobs in ${city}`;
-    return `${city} bo'yicha vakansiyalar`;
+    return this.fill('seo.jobs.city_title', { city });
   }
 
   private localizedQuerySubtitle(query: string): string {
-    const lang = this.i18n.lang();
-    if (lang === 'ru') return `Найдите подходящую работу по запросу "${query}".`;
-    if (lang === 'en') return `Find matching jobs for "${query}".`;
-    return `"${query}" bo'yicha mos ishlarni toping.`;
+    return this.fill('seo.jobs.query_subtitle', { query });
   }
 
   private localizedDefaultSubtitle(): string {
-    const lang = this.i18n.lang();
-    if (lang === 'ru') return 'Сравнивайте вакансии по фильтрам и быстрее находите подходящий вариант.';
-    if (lang === 'en') return 'Compare jobs with filters and find the right fit faster.';
-    return "Filtrlar orqali ishlarni tez solishtiring va to'g'ri variantni tanlang.";
+    return this.i18n.t('seo.jobs.default_subtitle');
   }
 
   private localizedSeoTitle(categoryLabel: string): string {
-    const lang = this.i18n.lang();
     if (categoryLabel && this.city) {
-      if (lang === 'ru') return `${categoryLabel} в ${this.city}`;
-      if (lang === 'en') return `${categoryLabel} jobs in ${this.city}`;
-      return `${categoryLabel} - ${this.city}`;
+      return this.fill('seo.jobs.title_in_city', { category: categoryLabel, city: this.city });
     }
     if (categoryLabel) {
       return categoryLabel;
@@ -928,5 +916,13 @@ export class PublicVacancyListComponent implements OnInit, DoCheck {
       return this.localizedCityTitle(this.city);
     }
     return this.i18n.t('common.vacancies');
+  }
+
+  private fill(key: string, params: Record<string, string | number>): string {
+    let template = this.i18n.t(key);
+    for (const [name, value] of Object.entries(params)) {
+      template = template.replaceAll(`{${name}}`, String(value));
+    }
+    return template;
   }
 }

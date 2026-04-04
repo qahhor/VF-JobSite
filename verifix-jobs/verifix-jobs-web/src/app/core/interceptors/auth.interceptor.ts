@@ -5,8 +5,11 @@ import { AuthService } from '../services/auth.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
 
-  // Use admin token for admin API calls
-  if (req.url.includes('/admin/') && !req.url.includes('/admin/auth/')) {
+  const isAdminApiRequest = req.url.includes('/api/v1/admin/');
+  const isAdminLoginRequest = req.url.includes('/api/v1/admin/auth/login');
+
+  // Use admin token for all protected admin API calls
+  if (isAdminApiRequest && !isAdminLoginRequest) {
     const adminToken = localStorage.getItem('vjw_admin_token');
     if (adminToken) {
       req = req.clone({ setHeaders: { Authorization: `Bearer ${adminToken}` } });

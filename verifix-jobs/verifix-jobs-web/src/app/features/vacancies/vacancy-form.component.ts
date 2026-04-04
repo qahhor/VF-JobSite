@@ -2,10 +2,13 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { of, switchMap } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { VacancyCreateRequest } from '../../core/models';
 import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-templates';
+
+type SubmitMode = 'draft' | 'publish';
 
 @Component({
   selector: 'vjw-vacancy-form',
@@ -53,6 +56,7 @@ import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-te
                 <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.vacancy') }} *</label>
                 <input type="text" [(ngModel)]="form.title" [ngModelOptions]="{ standalone: true }" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black/20 focus:border-primary outline-none" [placeholder]="i18n.t('vacancy_form.title_placeholder')" [attr.aria-label]="i18n.t('common.vacancy')" aria-required="true">
               </div>
+
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('common.category') }} *</label>
@@ -66,6 +70,20 @@ import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-te
                     @for (c of cities; track c) { <option [value]="c">{{ c }}</option> }
                   </select>
                 </div>
+              </div>
+
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('vacancy_form.latitude') }}</label>
+                    <input type="number" step="0.000001" [(ngModel)]="form.latitude" [ngModelOptions]="{ standalone: true }" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black/20 focus:border-primary outline-none" placeholder="41.311081">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('vacancy_form.longitude') }}</label>
+                    <input type="number" step="0.000001" [(ngModel)]="form.longitude" [ngModelOptions]="{ standalone: true }" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black/20 focus:border-primary outline-none" placeholder="69.240562">
+                  </div>
+                </div>
+                <p class="mt-3 text-xs text-gray-500">{{ i18n.t('vacancy_form.location_hint') }}</p>
               </div>
             </div>
           }
@@ -138,8 +156,14 @@ import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-te
           }
 
           @if (step() === 4) {
-            <div class="space-y-3">
-              <h3 class="font-semibold text-gray-800">{{ i18n.t('vacancy_form.review') }}</h3>
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-semibold text-gray-800">{{ i18n.t('vacancy_form.review') }}</h3>
+                @if (canPublishAction()) {
+                  <p class="mt-2 text-sm text-gray-500">{{ i18n.t('vacancy_form.publish_hint') }}</p>
+                }
+              </div>
+
               <div class="grid grid-cols-2 gap-2 text-sm">
                 <span class="text-gray-500">{{ i18n.t('common.name') }}:</span><span class="font-medium">{{ form.title }}</span>
                 <span class="text-gray-500">{{ i18n.t('common.category') }}:</span><span>{{ i18n.t('category.' + form.category) }}</span>
@@ -147,9 +171,12 @@ import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-te
                 <span class="text-gray-500">{{ i18n.t('vacancy_form.work_type') }}:</span><span>{{ employmentLabel(form.employmentType) }}</span>
                 <span class="text-gray-500">{{ i18n.t('common.salary') }}:</span><span>{{ form.salaryFrom || '-' }} - {{ form.salaryTo || '-' }} UZS</span>
                 <span class="text-gray-500">{{ i18n.t('vacancy_form.positions') }}:</span><span>{{ form.positionsCount }}</span>
+                <span class="text-gray-500">{{ i18n.t('vacancy_form.expiry') }}:</span><span>{{ form.expiresAt || '-' }}</span>
+                <span class="text-gray-500">{{ i18n.t('vacancy_detail.location') }}:</span><span>{{ locationPreview() }}</span>
               </div>
+
               @if (form.description) {
-                <div class="mt-3 p-3 bg-gray-50 rounded-lg text-sm text-gray-600">{{ form.description }}</div>
+                <div class="p-3 bg-gray-50 rounded-lg text-sm text-gray-600">{{ form.description }}</div>
               }
             </div>
           }
@@ -164,9 +191,17 @@ import { SYSTEM_TEMPLATES, VacancyTemplate } from '../../shared/utils/vacancy-te
             @if (step() < 4) {
               <button type="button" (click)="nextStep()" class="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-gray-800">{{ i18n.t('common.next') }}</button>
             } @else {
-              <button type="submit" [disabled]="saving()" class="min-w-[140px] px-6 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed">
-                {{ saving() ? i18n.t('vacancy_form.saving') : (isEdit ? i18n.t('vacancy_form.update') : i18n.t('vacancy_form.create')) }}
-              </button>
+              <div class="flex flex-wrap justify-end gap-2">
+                @if (canPublishAction()) {
+                  <button type="button" (click)="submit('draft')" [disabled]="saving()"
+                          class="min-w-[160px] px-5 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    {{ i18n.t('vacancy_form.save_draft') }}
+                  </button>
+                }
+                <button type="submit" [disabled]="saving()" class="min-w-[180px] px-6 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed">
+                  {{ saving() ? i18n.t('vacancy_form.saving') : primaryActionLabel() }}
+                </button>
+              </div>
             }
           </div>
         </div>
@@ -180,12 +215,27 @@ export class VacancyFormComponent implements OnInit {
   step = signal(0);
   saving = signal(false);
   benefitsStr = '';
+  currentStatus = signal('DRAFT');
 
   templates = SYSTEM_TEMPLATES;
 
-  form: VacancyCreateRequest & { shiftSchedule?: string; positionsCount?: number; isMassHiring?: boolean; salaryTo?: number; expiresAt?: string } = {
-    title: '', description: '', category: 'COOK', city: 'Tashkent',
-    employmentType: 'FULL_TIME', shiftSchedule: 'MORNING', positionsCount: 1,
+  form: VacancyCreateRequest & {
+    shiftSchedule?: string;
+    positionsCount?: number;
+    isMassHiring?: boolean;
+    salaryTo?: number;
+    expiresAt?: string;
+    latitude?: number;
+    longitude?: number;
+  } = {
+    title: '',
+    description: '',
+    category: 'COOK',
+    city: 'Tashkent',
+    country: 'UZ',
+    employmentType: 'FULL_TIME',
+    shiftSchedule: 'MORNING',
+    positionsCount: 1,
   };
 
   useTemplate(t: VacancyTemplate) {
@@ -198,12 +248,15 @@ export class VacancyFormComponent implements OnInit {
   }
 
   steps = [
-    { id: 0, labelKey: 'vacancy_form.step.basic' }, { id: 1, labelKey: 'vacancy_form.step.details' },
-    { id: 2, labelKey: 'vacancy_form.step.requirements' }, { id: 3, labelKey: 'vacancy_form.step.salary' }, { id: 4, labelKey: 'vacancy_form.step.confirm' },
+    { id: 0, labelKey: 'vacancy_form.step.basic' },
+    { id: 1, labelKey: 'vacancy_form.step.details' },
+    { id: 2, labelKey: 'vacancy_form.step.requirements' },
+    { id: 3, labelKey: 'vacancy_form.step.salary' },
+    { id: 4, labelKey: 'vacancy_form.step.confirm' },
   ];
 
-  categories = ['COOK','DRIVER','SALES','BUILDER','CLEANER','WAITER','CASHIER','WAREHOUSE','SECURITY','ELECTRICIAN','PLUMBER','TAILOR','COURIER','LOADER','MECHANIC','PAINTER','WELDER','CARPENTER','GARDENER','NANNY'];
-  cities = ['Tashkent','Samarkand','Bukhara','Andijan','Namangan','Fergana','Nukus','Karshi','Navoi','Jizzakh','Gulistan','Termez','Urgench','Khiva','Chirchik','Almalyk'];
+  categories = ['COOK', 'DRIVER', 'SALES', 'BUILDER', 'CLEANER', 'WAITER', 'CASHIER', 'WAREHOUSE', 'SECURITY', 'ELECTRICIAN', 'PLUMBER', 'TAILOR', 'COURIER', 'LOADER', 'MECHANIC', 'PAINTER', 'WELDER', 'CARPENTER', 'GARDENER', 'NANNY'];
+  cities = ['Tashkent', 'Samarkand', 'Bukhara', 'Andijan', 'Namangan', 'Fergana', 'Nukus', 'Karshi', 'Navoi', 'Jizzakh', 'Gulistan', 'Termez', 'Urgench', 'Khiva', 'Chirchik', 'Almalyk'];
 
   constructor(private api: ApiService, private route: ActivatedRoute, private router: Router, public i18n: I18nService) {}
 
@@ -212,7 +265,18 @@ export class VacancyFormComponent implements OnInit {
     if (this.vacancyId) {
       this.isEdit = true;
       this.api.getVacancy(this.vacancyId).subscribe(v => {
-        this.form = { ...v, benefits: v.benefits, salaryFrom: v.salaryFrom ?? undefined, salaryTo: v.salaryTo ?? undefined } as any;
+        this.currentStatus.set(v.status || 'DRAFT');
+        this.form = {
+          ...this.form,
+          ...v,
+          benefits: v.benefits,
+          country: v.country || 'UZ',
+          latitude: v.latitude ?? undefined,
+          longitude: v.longitude ?? undefined,
+          salaryFrom: v.salaryFrom ?? undefined,
+          salaryTo: v.salaryTo ?? undefined,
+          expiresAt: this.toDateInput(v.expiresAt),
+        } as any;
         this.benefitsStr = v.benefits?.join(', ') || '';
       });
     }
@@ -225,6 +289,10 @@ export class VacancyFormComponent implements OnInit {
     const s = this.step();
     if (s === 0 && (!this.form.title?.trim() || !this.form.category || !this.form.city)) {
       this.formError.set(this.i18n.t('vacancy_form.validation_basic'));
+      return;
+    }
+    if (s === 0 && this.hasPartialCoordinates()) {
+      this.formError.set(this.i18n.t('vacancy_form.validation_coordinates'));
       return;
     }
     if (s === 1 && (!this.form.description || this.form.description.trim().length < 10)) {
@@ -246,25 +314,52 @@ export class VacancyFormComponent implements OnInit {
       this.nextStep();
       return;
     }
-    this.submit();
+    this.submit(this.canPublishAction() ? 'publish' : 'draft');
   }
 
-  submit() {
+  submit(mode: SubmitMode) {
     if (!this.form.title?.trim()) {
       this.formError.set(this.i18n.t('vacancy_form.validation_title'));
       return;
     }
+    if (this.hasPartialCoordinates()) {
+      this.formError.set(this.i18n.t('vacancy_form.validation_coordinates'));
+      return;
+    }
+
     this.saving.set(true);
     this.formError.set('');
-    this.form.benefits = this.benefitsStr.split(',').map(s => s.trim()).filter(Boolean);
-    const req = this.isEdit ? this.api.updateVacancy(this.vacancyId!, this.form) : this.api.createVacancy(this.form);
-    req.subscribe({
-      next: () => this.router.navigate(['/employer/vacancies']),
-      error: (err: any) => {
-        this.saving.set(false);
-        this.formError.set(err.error?.message || this.i18n.t('vacancy_form.generic_error'));
-      },
-    });
+
+    const payload = this.buildPayload();
+    const request$ = this.isEdit
+      ? this.api.updateVacancy(this.vacancyId!, payload)
+      : this.api.createVacancy(payload);
+
+    request$
+      .pipe(
+        switchMap(vacancy => (mode === 'publish' ? this.api.publishVacancy(vacancy.id) : of(vacancy)))
+      )
+      .subscribe({
+        next: () => {
+          this.saving.set(false);
+          this.router.navigate(['/employer/vacancies']);
+        },
+        error: (err: any) => {
+          this.saving.set(false);
+          this.formError.set(err.error?.message || this.i18n.t('vacancy_form.generic_error'));
+        },
+      });
+  }
+
+  canPublishAction(): boolean {
+    return !this.isEdit || this.currentStatus() === 'DRAFT';
+  }
+
+  primaryActionLabel(): string {
+    if (this.canPublishAction()) {
+      return this.isEdit ? this.i18n.t('vacancy_form.save_and_publish') : this.i18n.t('vacancy_form.publish');
+    }
+    return this.isEdit ? this.i18n.t('vacancy_form.update') : this.i18n.t('vacancy_form.create');
   }
 
   employmentLabel(value: string): string {
@@ -274,5 +369,54 @@ export class VacancyFormComponent implements OnInit {
       CONTRACT: this.i18n.t('employment.contract'),
       TEMPORARY: this.i18n.t('employment.temporary')
     } as Record<string, string>)[value] || value;
+  }
+
+  locationPreview(): string {
+    if (this.form.latitude != null && this.form.longitude != null) {
+      return `${this.form.latitude}, ${this.form.longitude}`;
+    }
+    return this.i18n.t('common.not_set');
+  }
+
+  private buildPayload(): VacancyCreateRequest {
+    return {
+      title: this.form.title.trim(),
+      description: this.form.description?.trim() || '',
+      category: this.form.category,
+      city: this.form.city,
+      region: this.form.region?.trim() || undefined,
+      country: this.form.country || 'UZ',
+      latitude: this.normalizeCoordinate(this.form.latitude),
+      longitude: this.normalizeCoordinate(this.form.longitude),
+      salaryFrom: this.form.salaryFrom ?? undefined,
+      salaryTo: this.form.salaryTo ?? undefined,
+      currency: this.form.currency || 'UZS',
+      employmentType: this.form.employmentType,
+      shiftSchedule: this.form.shiftSchedule,
+      benefits: this.benefitsStr.split(',').map(s => s.trim()).filter(Boolean),
+      isMassHiring: !!this.form.isMassHiring,
+      positionsCount: this.form.positionsCount ?? 1,
+      expiresAt: this.form.expiresAt || undefined,
+    };
+  }
+
+  private hasPartialCoordinates(): boolean {
+    const hasLat = this.form.latitude !== undefined && this.form.latitude !== null && `${this.form.latitude}` !== '';
+    const hasLon = this.form.longitude !== undefined && this.form.longitude !== null && `${this.form.longitude}` !== '';
+    return hasLat !== hasLon;
+  }
+
+  private normalizeCoordinate(value?: number): number | undefined {
+    if (value === null || value === undefined || `${value}` === '') {
+      return undefined;
+    }
+    return Number(value);
+  }
+
+  private toDateInput(value?: string): string | undefined {
+    if (!value) {
+      return undefined;
+    }
+    return value.slice(0, 10);
   }
 }

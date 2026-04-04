@@ -27,20 +27,34 @@ import { I18nService } from '../core/i18n.service';
         }
       </div>
 
+      <!-- Secondary stats row -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        @for (stat of secondaryStats(); track stat.label) {
+          <div class="bg-white rounded-lg px-4 py-3 shadow-sm border border-gray-100">
+            <div class="text-lg font-bold text-gray-800">{{ stat.value }}</div>
+            <div class="text-xs text-gray-400 mt-0.5">{{ i18n.t(stat.label) }}</div>
+          </div>
+        }
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
           <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('admin.system_status') }}</h3>
-          <div role="main" class="space-y-3">
-            @for (s of services; track s.name) {
-              <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-600">{{ s.name }}</span>
-                <span class="flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full" [class]="s.healthy ? 'bg-green-400' : 'bg-red-400'"></span>
-                  <span class="text-xs" [class]="s.healthy ? 'text-green-600' : 'text-red-600'">{{ s.healthy ? i18n.t('admin.running') : i18n.t('admin.error') }}</span>
-                </span>
-              </div>
-            }
-          </div>
+          @if (healthLoading) {
+            <div class="text-sm text-gray-400 py-4 text-center">{{ i18n.t('admin.logging_in') }}</div>
+          } @else {
+            <div role="main" class="space-y-3">
+              @for (s of services(); track s.name) {
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">{{ s.name }}</span>
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full" [class]="s.healthy ? 'bg-green-400' : 'bg-red-400'"></span>
+                    <span class="text-xs" [class]="s.healthy ? 'text-green-600' : 'text-red-600'">{{ s.healthy ? i18n.t('admin.running') : i18n.t('admin.error') }}</span>
+                  </span>
+                </div>
+              }
+            </div>
+          }
         </div>
 
         <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
@@ -54,23 +68,6 @@ import { I18nService } from '../core/i18n.service';
           </div>
         </div>
       </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div class="p-5 border-b border-gray-100">
-          <h3 class="font-semibold text-gray-800">{{ i18n.t('admin.activity') }}</h3>
-        </div>
-        <div class="divide-y divide-gray-50">
-          @for (a of activity(); track $index) {
-            <div class="px-5 py-3 flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm" [class]="a.color">{{ a.icon }}</div>
-              <div class="flex-1">
-                <div class="text-sm text-gray-700">{{ a.text }}</div>
-                <div class="text-xs text-gray-400">{{ a.time }}</div>
-              </div>
-            </div>
-          }
-        </div>
-      </div>
     </div>
   `,
 })
@@ -82,13 +79,15 @@ export class AdminDashboardComponent implements OnInit {
     { icon: '\u{1F4B0}', value: '0', label: 'admin.monthly_revenue', trend: 0 },
   ]);
 
-  activity = signal<{ icon: string; text: string; time: string; color: string }[]>([]);
+  secondaryStats = signal<{ label: string; value: string }[]>([]);
 
-  services = [
-    { name: 'PostgreSQL', healthy: true }, { name: 'Redis', healthy: true },
-    { name: 'Elasticsearch', healthy: true }, { name: 'Kafka', healthy: true },
-    { name: 'ML Service', healthy: true }, { name: 'MinIO', healthy: true },
-  ];
+  services = signal([
+    { name: 'PostgreSQL', healthy: false }, { name: 'Redis', healthy: false },
+    { name: 'Elasticsearch', healthy: false }, { name: 'Kafka', healthy: false },
+    { name: 'ML Service', healthy: false }, { name: 'MinIO', healthy: false },
+  ]);
+
+  healthLoading = true;
 
   quickLinks = [
     { path: '/moderation', icon: '\u{1F6E1}\uFE0F', label: 'quick.moderation' },
@@ -101,20 +100,48 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.api.getAnalytics().subscribe({
-      next: (data: any) => {
+      next: (d: any) => {
         this.kpis.set([
-          { icon: '\u{1F465}', value: data.totalUsers?.toString() || '0', label: this.i18n.t('admin.total_users'), trend: 12 },
-          { icon: '\u{1F4CB}', value: data.activeVacancies?.toString() || '0', label: this.i18n.t('admin.active_vacancies'), trend: 5 },
-          { icon: '\u{1F4E8}', value: data.applicationsToday?.toString() || '0', label: this.i18n.t('admin.applications_today'), trend: -3 },
-          { icon: '\u{1F4B0}', value: this.formatAmount(data.monthlyRevenue || 0), label: `${this.i18n.t('admin.monthly_revenue')} (UZS)`, trend: 8 },
+          { icon: '\u{1F465}', value: this.fmt(d.totalUsers ?? (d.totalCandidates + d.totalEmployers)), label: 'admin.total_users', trend: d.usersTrend ?? 0 },
+          { icon: '\u{1F4CB}', value: this.fmt(d.activeVacancies ?? 0), label: 'admin.active_vacancies', trend: d.vacanciesTrend ?? 0 },
+          { icon: '\u{1F4E8}', value: this.fmt(d.applicationsToday ?? 0), label: 'admin.applications_today', trend: d.applicationsTrend ?? 0 },
+          { icon: '\u{1F4B0}', value: this.fmtAmount(d.monthlyRevenue ?? 0), label: 'admin.monthly_revenue', trend: d.revenueTrend ?? 0 },
         ]);
-      }
+
+        this.secondaryStats.set([
+          { label: 'dash.total_vacancies', value: this.fmt(d.totalVacancies ?? 0) },
+          { label: 'dash.total_hired', value: this.fmt(d.totalHired ?? 0) },
+          { label: 'dash.pending_moderation', value: this.fmt(d.pendingModeration ?? 0) },
+          { label: 'dash.fraud_alerts', value: this.fmt(d.openFraudAlerts ?? 0) },
+          { label: 'dash.new_7d', value: `+${this.fmt(d.newCandidatesLast7Days ?? 0)}` },
+        ]);
+      },
+      error: () => {}
+    });
+
+    this.api.getHealthStatus().subscribe({
+      next: (health: any) => {
+        this.healthLoading = false;
+        const statusMap: Record<string, string> = {
+          'PostgreSQL': 'postgres', 'Redis': 'redis', 'Elasticsearch': 'elasticsearch',
+          'Kafka': 'kafka', 'ML Service': 'ml', 'MinIO': 'minio',
+        };
+        this.services.set(this.services().map(s => ({
+          ...s,
+          healthy: health[statusMap[s.name]] ?? false
+        })));
+      },
+      error: () => { this.healthLoading = false; }
     });
   }
 
-  formatAmount(n: number): string {
+  private fmt(n: number): string {
+    return n.toLocaleString();
+  }
+
+  private fmtAmount(n: number): string {
     if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
     if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
-    return n.toLocaleString();
+    return n.toLocaleString() + ' UZS';
   }
 }

@@ -100,15 +100,19 @@ export class AuditComponent implements OnInit {
   constructor(private api: AdminApiService, public i18n: I18nService) {}
 
   ngOnInit() {
-    this.api.getAuditLogs().subscribe({ next: (res: any) => this.logs.set(res.content || res || []) });
+    this.api.getAuditLogs().subscribe({ next: (res: any) => this.logs.set(res.content || res || []), error: () => this.logs.set([]) });
   }
 
   exportCsv() {
+    const esc = (v: any) => {
+      const s = String(v ?? '');
+      return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s;
+    };
     let csv = 'Timestamp,Admin,Action,EntityType,EntityId,IP\n';
     this.logs().forEach(l => {
-      csv += `${l.createdAt},${l.adminEmail || l.adminId},${l.action},${l.entityType},${l.entityId},${l.ipAddress}\n`;
+      csv += [l.createdAt, l.adminEmail || l.adminId, l.action, l.entityType, l.entityId, l.ipAddress].map(esc).join(',') + '\n';
     });
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'audit.csv'; a.click();
   }
 }

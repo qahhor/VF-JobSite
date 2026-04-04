@@ -28,5 +28,6 @@
     <include file="db/changelog/changelog-021-chat.xml"/>
     <include file="db/changelog/changelog-022-saved-search-alerts.xml"/>
     <include file="db/changelog/changelog-023-multi-country.xml"/>
+    <include file="db/changelog/changelog-024-admin-invites.xml"/>
 
 </databaseChangeLog>

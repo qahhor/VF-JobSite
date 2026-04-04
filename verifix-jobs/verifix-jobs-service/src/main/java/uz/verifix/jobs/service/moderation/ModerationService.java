@@ -127,6 +127,14 @@ public class ModerationService {
         return moderationQueueRepository.findByStatusOrderByCreatedAtAsc(ModerationStatus.PENDING, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<ModerationQueue> getQueue(ModerationStatus status, Pageable pageable) {
+        if (status != null) {
+            return moderationQueueRepository.findByStatusOrderByCreatedAtDesc(status, pageable);
+        }
+        return moderationQueueRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
     private String checkAutoReject(Vacancy vacancy) {
         String text = (vacancy.getTitle() + " " + (vacancy.getDescription() != null ? vacancy.getDescription() : "")).toLowerCase();
         for (Pattern pattern : blacklistedPatterns()) {

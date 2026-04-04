@@ -21,6 +21,7 @@ public enum ErrorCode {
     INVALID_OTP("INVALID_OTP", "Invalid or expired OTP code"),
     INVALID_TOTP("INVALID_TOTP", "Invalid TOTP code"),
     TOTP_REQUIRED("TOTP_REQUIRED", "TOTP code is required"),
+    PASSWORD_CHANGE_REQUIRED("PASSWORD_CHANGE_REQUIRED", "Password change is required before continuing"),
     OTP_RATE_LIMIT("OTP_RATE_LIMIT", "Too many OTP requests, try again later"),
     RATE_LIMITED("RATE_LIMITED", "Rate limit exceeded"),
 

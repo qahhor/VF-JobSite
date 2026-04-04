@@ -76,6 +76,7 @@ export class FraudComponent implements OnInit {
   load() {
     this.api.getFraudAlerts(this.showReviewed).subscribe({
       next: (res: any) => this.alerts.set(res.content || res || []),
+      error: () => this.alerts.set([])
     });
   }
 

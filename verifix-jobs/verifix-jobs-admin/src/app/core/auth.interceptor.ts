@@ -11,7 +11,7 @@ export const adminAuthInterceptor: HttpInterceptorFn = (req, next) => {
   }
   return next(req).pipe(
     catchError((err) => {
-      if (err.status === 401) { localStorage.clear(); router.navigate(['/login']); }
+      if (err.status === 401) { localStorage.removeItem('vja_token'); router.navigate(['/login']); }
       return throwError(() => err);
     })
   );

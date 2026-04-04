@@ -21,12 +21,19 @@ import { I18nService } from '../../core/services/i18n.service';
       </div>
 
       <div class="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:flex-row">
-        <input type="text" [(ngModel)]="search" (ngModelChange)="onSearch()" [placeholder]="i18n.t('vacancy.list.search_placeholder')"
-               class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-black/20">
-        <select [(ngModel)]="statusFilter" (ngModelChange)="load()"
-                class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm">
+        <input
+          type="text"
+          [(ngModel)]="search"
+          (ngModelChange)="onSearch()"
+          [placeholder]="i18n.t('vacancy.list.search_placeholder')"
+          class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-black/20">
+        <select
+          [(ngModel)]="statusFilter"
+          (ngModelChange)="load()"
+          class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm">
           <option value="">{{ i18n.t('vacancy.list.all_statuses') }}</option>
           <option value="DRAFT">{{ i18n.t('status.draft') }}</option>
+          <option value="PENDING_MODERATION">{{ i18n.t('status.pending_moderation') }}</option>
           <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
           <option value="PAUSED">{{ i18n.t('status.paused') }}</option>
           <option value="CLOSED">{{ i18n.t('status.closed') }}</option>
@@ -67,9 +74,28 @@ import { I18nService } from '../../core/services/i18n.service';
                     <span class="rounded-full px-2 py-0.5 text-xs" [class]="getStatusClass(v.status)">{{ getStatusLabel(v.status) }}</span>
                   </td>
                   <td class="hidden px-5 py-3 text-sm text-gray-600 sm:table-cell">{{ v.positionsFilled }}/{{ v.positionsCount }}</td>
-                  <td class="flex items-center justify-end gap-2 px-5 py-3 text-right">
-                    <button (click)="bump(v.id)" class="rounded border border-gray-200 px-2 py-1 text-xs transition hover:bg-gray-50" [title]="i18n.t('vacancy.list.bump')">↑</button>
-                    <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="text-sm text-black hover:underline">{{ i18n.t('vacancy.list.edit') }}</a>
+                  <td class="px-5 py-3">
+                    <div class="flex items-center justify-end gap-2 text-right">
+                      @if (v.status === 'DRAFT') {
+                        <button
+                          type="button"
+                          (click)="publish(v.id)"
+                          class="rounded border border-black px-2 py-1 text-xs font-medium text-black transition hover:bg-black hover:text-white"
+                          [title]="i18n.t('common.publish')">
+                          {{ i18n.t('common.publish') }}
+                        </button>
+                      }
+                      @if (v.status === 'ACTIVE') {
+                        <button
+                          type="button"
+                          (click)="bump(v.id)"
+                          class="rounded border border-gray-200 px-2 py-1 text-xs transition hover:bg-gray-50"
+                          [title]="i18n.t('vacancy.list.bump')">
+                          ↑
+                        </button>
+                      }
+                      <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="text-sm text-black hover:underline">{{ i18n.t('vacancy.list.edit') }}</a>
+                    </div>
                   </td>
                 </tr>
               } @empty {
@@ -84,8 +110,13 @@ import { I18nService } from '../../core/services/i18n.service';
             <span class="text-sm text-gray-500">{{ totalElements() }} {{ i18n.t('vacancy.list.total_results') }}</span>
             <div class="flex gap-1">
               @for (p of pages(); track p) {
-                <button (click)="goToPage(p)" [class]="p === currentPage() ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-                        class="h-8 w-8 rounded-lg text-sm font-medium transition">{{ p + 1 }}</button>
+                <button
+                  type="button"
+                  (click)="goToPage(p)"
+                  [class]="p === currentPage() ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                  class="h-8 w-8 rounded-lg text-sm font-medium transition">
+                  {{ p + 1 }}
+                </button>
               }
             </div>
           </div>
@@ -96,6 +127,7 @@ import { I18nService } from '../../core/services/i18n.service';
 })
 export class VacancyListComponent implements OnInit {
   vacancies = signal<Vacancy[]>([]);
+  allVacancies = signal<Vacancy[]>([]);
   currentPage = signal(0);
   totalPages = signal(0);
   totalElements = signal(0);
@@ -112,7 +144,8 @@ export class VacancyListComponent implements OnInit {
   load() {
     this.api.getVacancies(this.currentPage(), 20, this.statusFilter || undefined).subscribe({
       next: res => {
-        this.vacancies.set(res.content);
+        this.allVacancies.set(res.content);
+        this.vacancies.set(this.applySearch(res.content));
         this.totalPages.set(res.totalPages);
         this.totalElements.set(res.totalElements);
         this.pages.set(Array.from({ length: Math.min(res.totalPages, 7) }, (_, i) => i));
@@ -127,7 +160,7 @@ export class VacancyListComponent implements OnInit {
 
   onSearch() {
     this.currentPage.set(0);
-    this.load();
+    this.vacancies.set(this.applySearch(this.allVacancies()));
   }
 
   formatSalary(n: number): string {
@@ -161,6 +194,23 @@ export class VacancyListComponent implements OnInit {
   }
 
   bump(id: string) {
+    this.api.bumpVacancy(id).subscribe({ next: () => this.load(), error: () => {} });
+  }
+
+  publish(id: string) {
     this.api.publishVacancy(id).subscribe({ next: () => this.load(), error: () => {} });
+  }
+
+  private applySearch(items: Vacancy[]): Vacancy[] {
+    const query = this.search.trim().toLowerCase();
+    if (!query) {
+      return items;
+    }
+
+    return items.filter(v => [v.title, v.category, v.city]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase()
+      .includes(query));
   }
 }

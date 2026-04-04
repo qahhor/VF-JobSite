@@ -19,6 +19,7 @@ public class AuthResponse {
     private UUID userId;
     private UUID employerId;
     private String role;
+    private Boolean mustChangePassword;
 
     public static AuthResponse of(String accessToken, String refreshToken, UUID userId, UUID employerId, String role) {
         return AuthResponse.builder()

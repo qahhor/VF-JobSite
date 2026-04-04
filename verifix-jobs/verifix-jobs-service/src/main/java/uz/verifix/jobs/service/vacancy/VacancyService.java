@@ -24,6 +24,7 @@ import uz.verifix.jobs.domain.repository.EmployerRepository;
 import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.domain.specification.VacancySpecification;
 import uz.verifix.jobs.service.billing.SubscriptionEnforcementService;
+import uz.verifix.jobs.service.moderation.ModerationService;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -42,6 +43,7 @@ public class VacancyService {
     private final VacancyRepository vacancyRepository;
     private final EmployerRepository employerRepository;
     private final SubscriptionEnforcementService subscriptionEnforcementService;
+    private final ModerationService moderationService;
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     @Transactional
@@ -144,19 +146,40 @@ public class VacancyService {
 
     @Transactional(readOnly = true)
     public Vacancy getById(UUID vacancyId) {
-        Vacancy v = vacancyRepository.findById(vacancyId)
+        Vacancy v = vacancyRepository.findVisibleById(vacancyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vacancy", vacancyId));
         if (v.getEmployer() != null) org.hibernate.Hibernate.initialize(v.getEmployer());
         return v;
     }
 
     @Transactional(readOnly = true)
-    public Page<Vacancy> findByEmployer(UUID employerId, Pageable pageable) {
-        Page<Vacancy> page = vacancyRepository.findByEmployerId(employerId, pageable);
+    public Page<Vacancy> findByEmployer(UUID employerId, VacancyStatus status, Pageable pageable) {
+        Page<Vacancy> page = status != null
+                ? vacancyRepository.findByEmployerIdAndStatus(employerId, status, pageable)
+                : vacancyRepository.findByEmployerId(employerId, pageable);
         page.getContent().forEach(v -> {
             if (v.getEmployer() != null) org.hibernate.Hibernate.initialize(v.getEmployer());
         });
         return page;
+    }
+
+    @Transactional
+    public Vacancy publish(UUID vacancyId, UUID employerId) {
+        Vacancy vacancy = getVacancyForEmployer(vacancyId, employerId);
+
+        if (vacancy.getStatus() == VacancyStatus.ACTIVE || vacancy.getStatus() == VacancyStatus.PENDING_MODERATION) {
+            initializeRelations(vacancy);
+            return vacancy;
+        }
+
+        if (vacancy.getStatus() == VacancyStatus.DRAFT) {
+            moderationService.submitForModeration(vacancyId);
+            return getById(vacancyId);
+        }
+
+        vacancy = changeStatus(vacancyId, employerId, VacancyStatus.ACTIVE);
+        initializeRelations(vacancy);
+        return vacancy;
     }
 
     @Transactional(readOnly = true)
@@ -190,7 +213,7 @@ public class VacancyService {
     }
 
     private Vacancy getVacancyForEmployer(UUID vacancyId, UUID employerId) {
-        Vacancy vacancy = vacancyRepository.findById(vacancyId)
+        Vacancy vacancy = vacancyRepository.findVisibleById(vacancyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vacancy", vacancyId));
         if (!vacancy.getEmployer().getId().equals(employerId)) {
             throw new ForbiddenException("You don't have access to this vacancy");

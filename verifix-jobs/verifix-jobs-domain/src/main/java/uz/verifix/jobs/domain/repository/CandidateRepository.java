@@ -36,4 +36,9 @@ public interface CandidateRepository extends JpaRepository<Candidate, UUID>,
     List<Candidate> findByDigestPref(DigestPreference digestPref);
 
     long countByCreatedAtAfter(java.time.Instant after);
+
+    @Query(value = "SELECT TO_CHAR(c.created_at, 'YYYY-MM') AS month, COUNT(*) AS cnt " +
+            "FROM candidate c WHERE c.deleted_at IS NULL AND c.created_at >= :since " +
+            "GROUP BY TO_CHAR(c.created_at, 'YYYY-MM') ORDER BY month", nativeQuery = true)
+    List<Object[]> countByMonthSince(@Param("since") java.time.Instant since);
 }

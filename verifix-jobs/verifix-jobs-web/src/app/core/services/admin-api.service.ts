@@ -4,42 +4,184 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PageResponse } from '../models';
 
+export interface AdminAuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  userId?: string;
+  role: string;
+  mustChangePassword?: boolean;
+}
+
+export interface AdminProfile {
+  id: string;
+  email: string;
+  role: string;
+  totpEnabled: boolean;
+  mustChangePassword: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
+  passwordChangedAt?: string;
+  inviteSentAt?: string;
+}
+
+export interface AdminOverview {
+  totalEmployers: number;
+  totalCandidates: number;
+  totalVacancies: number;
+  activeVacancies: number;
+  totalApplications: number;
+  totalHired: number;
+  newCandidatesLast7Days: number;
+  newVacanciesLast7Days: number;
+  pendingModeration: number;
+  openFraudAlerts: number;
+  activeAdmins: number;
+  pendingEmployers: number;
+  verifiedEmployers: number;
+  totalUsers?: number;
+  applicationsToday?: number;
+  monthlyRevenue?: number;
+  usersTrend?: number;
+  vacanciesTrend?: number;
+  applicationsTrend?: number;
+  revenueTrend?: number;
+}
+
+export interface EmployerAdminRow {
+  id: string;
+  name: string;
+  inn?: string;
+  city?: string;
+  email?: string;
+  industry?: string;
+  status: string;
+  isVerified?: boolean;
+  activeVacancies?: number;
+  createdAt: string;
+}
+
+export interface AdminAuditItem {
+  id: string;
+  createdAt: string;
+  adminId?: string;
+  adminEmail?: string;
+  action: string;
+  entityType?: string;
+  entityId?: string;
+  details?: string;
+  ipAddress?: string;
+}
+
+export interface AdminModerationItem {
+  id: string;
+  entityType: string;
+  entityId: string;
+  status: string;
+  reason?: string;
+  title?: string;
+  subtitle?: string;
+  previewText?: string;
+  city?: string;
+  category?: string;
+  salaryLabel?: string;
+  decidedAt?: string;
+  createdAt: string;
+}
+
+export interface AdminFraudAlert {
+  id: string;
+  entityType: string;
+  entityId: string;
+  fraudType: string;
+  score?: number;
+  flags?: string | string[];
+  reviewed?: boolean;
+  reviewedBy?: string;
+  createdAt: string;
+}
+
+export interface AdminUserRow {
+  id: string;
+  email: string;
+  role: string;
+  totpEnabled: boolean;
+  mustChangePassword: boolean;
+  currentUser: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
+  inviteSentAt?: string;
+  passwordChangedAt?: string;
+}
+
+export interface TotpSetupResponse {
+  secret: string;
+  otpAuthUri: string;
+}
+
+export interface AdminInviteResponse {
+  id: string;
+  email: string;
+  role: string;
+  mustChangePassword: boolean;
+  emailSent: boolean;
+  temporaryPassword: string;
+  inviteSentAt?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminApiService {
   private base = `${environment.apiUrl}/admin`;
 
   constructor(private http: HttpClient) {}
 
-  // Auth
-  login(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.base}/auth/login`, { email, password });
+  login(email: string, password: string, totpCode?: string): Observable<AdminAuthResponse> {
+    return this.http.post<AdminAuthResponse>(`${this.base}/auth/login`, { email, password, totpCode });
   }
 
-  // Analytics
-  getOverview(): Observable<any> {
-    return this.http.get<any>(`${this.base}/analytics/overview`);
+  getCurrentAdminProfile(): Observable<AdminProfile> {
+    return this.http.get<AdminProfile>(`${this.base}/auth/me`);
   }
 
-  // Employers
-  getEmployers(page = 0, size = 20, status?: string): Observable<PageResponse<any>> {
+  changeAdminPassword(currentPassword: string, newPassword: string): Observable<AdminProfile> {
+    return this.http.post<AdminProfile>(`${this.base}/auth/change-password`, { currentPassword, newPassword });
+  }
+
+  setupAdminTwoFactor(): Observable<TotpSetupResponse> {
+    return this.http.post<TotpSetupResponse>(`${this.base}/auth/2fa/setup`, {});
+  }
+
+  getOverview(): Observable<AdminOverview> {
+    return this.http.get<AdminOverview>(`${this.base}/analytics/overview`);
+  }
+
+  getAuditLogs(page = 0, size = 20): Observable<PageResponse<AdminAuditItem>> {
+    const params = new HttpParams().set('page', page).set('size', size);
+    return this.http.get<PageResponse<AdminAuditItem>>(`${this.base}/audit`, { params });
+  }
+
+  getEmployers(page = 0, size = 20, status?: string, search?: string): Observable<PageResponse<EmployerAdminRow>> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (status) params = params.set('status', status);
-    return this.http.get<PageResponse<any>>(`${this.base}/employers`, { params });
+    if (search) params = params.set('search', search);
+    return this.http.get<PageResponse<EmployerAdminRow>>(`${this.base}/employers`, { params });
   }
 
-  changeEmployerStatus(id: string, status: string): Observable<any> {
-    return this.http.patch<any>(`${this.base}/employers/${id}/status`, null, { params: { status } });
+  changeEmployerStatus(id: string, status: string): Observable<EmployerAdminRow> {
+    return this.http.patch<EmployerAdminRow>(`${this.base}/employers/${id}/status`, null, { params: { status } });
   }
 
-  verifyEmployer(id: string): Observable<any> {
-    return this.http.post<any>(`${this.base}/employers/${id}/verify`, {});
+  verifyEmployer(id: string): Observable<EmployerAdminRow> {
+    return this.http.post<EmployerAdminRow>(`${this.base}/employers/${id}/verify`, {});
   }
 
-  // Moderation
-  getPendingModeration(page = 0, size = 20): Observable<PageResponse<any>> {
-    return this.http.get<PageResponse<any>>(`${this.base}/moderation/pending`, {
-      params: new HttpParams().set('page', page).set('size', size)
-    });
+  getModerationQueue(status?: string, page = 0, size = 20): Observable<PageResponse<AdminModerationItem>> {
+    let params = new HttpParams().set('page', page).set('size', size);
+    if (status) params = params.set('status', status);
+    return this.http.get<PageResponse<AdminModerationItem>>(`${this.base}/moderation/queue`, { params });
+  }
+
+  getPendingModeration(page = 0, size = 20): Observable<PageResponse<AdminModerationItem>> {
+    return this.getModerationQueue('PENDING', page, size);
   }
 
   approveModeration(id: string): Observable<void> {
@@ -50,14 +192,91 @@ export class AdminApiService {
     return this.http.post<void>(`${this.base}/moderation/${id}/reject`, { reason });
   }
 
-  // Fraud
-  getFraudAlerts(page = 0, size = 20): Observable<any> {
-    return this.http.get<any>(`${this.base}/fraud/alerts`, {
-      params: new HttpParams().set('page', page).set('size', size)
-    });
+  getFraudAlerts(reviewed = false, page = 0, size = 20): Observable<PageResponse<AdminFraudAlert>> {
+    const params = new HttpParams()
+      .set('reviewed', reviewed)
+      .set('page', page)
+      .set('size', size);
+    return this.http.get<PageResponse<AdminFraudAlert>>(`${this.base}/fraud`, { params });
   }
 
-  reviewFraudAlert(id: string): Observable<any> {
-    return this.http.patch<any>(`${this.base}/fraud/${id}/review`, {});
+  reviewFraudAlert(id: string): Observable<{ status: string }> {
+    return this.http.patch<{ status: string }>(`${this.base}/fraud/${id}/review`, {});
+  }
+
+  getAdminUsers(page = 0, size = 20, search?: string): Observable<PageResponse<AdminUserRow>> {
+    let params = new HttpParams()
+      .set('type', 'ADMIN')
+      .set('page', page)
+      .set('size', size);
+    if (search) params = params.set('search', search);
+    return this.http.get<PageResponse<AdminUserRow>>(`${this.base}/users`, { params });
+  }
+
+  createAdminUser(payload: { email: string; password: string; role: string }): Observable<AdminUserRow> {
+    return this.http.post<AdminUserRow>(`${this.base}/users/admins`, payload);
+  }
+
+  inviteAdminUser(payload: { email: string; role: string }): Observable<AdminInviteResponse> {
+    return this.http.post<AdminInviteResponse>(`${this.base}/users/admins/invite`, payload);
+  }
+
+  updateAdminRole(id: string, role: string): Observable<AdminUserRow> {
+    return this.http.patch<AdminUserRow>(`${this.base}/users/admins/${id}/role`, { role });
+  }
+
+  resetAdminPassword(id: string, password: string): Observable<AdminUserRow> {
+    return this.http.post<AdminUserRow>(`${this.base}/users/admins/${id}/reset-password`, { password });
+  }
+
+  // Users (all types: candidates, employers, admins)
+  getUsers(type: string, page = 0, size = 20, search?: string): Observable<PageResponse<any>> {
+    let params = new HttpParams().set('type', type).set('page', page).set('size', size);
+    if (search) params = params.set('search', search);
+    return this.http.get<PageResponse<any>>(`${this.base}/users`, { params });
+  }
+
+  suspendUser(id: string): Observable<any> {
+    return this.http.put(`${this.base}/users/${id}/suspend`, {});
+  }
+
+  activateUser(id: string): Observable<any> {
+    return this.http.put(`${this.base}/users/${id}/activate`, {});
+  }
+
+  // A/B Experiments
+  getExperiments(page = 0): Observable<PageResponse<any>> {
+    const params = new HttpParams().set('page', page);
+    return this.http.get<PageResponse<any>>(`${this.base}/ab/experiments`, { params });
+  }
+
+  createExperiment(name: string, description: string): Observable<any> {
+    return this.http.post(`${this.base}/ab/experiments`, { name, description });
+  }
+
+  getExperimentStats(name: string): Observable<any> {
+    return this.http.get(`${this.base}/ab/experiments/${name}/stats`);
+  }
+
+  activateExperiment(name: string): Observable<any> {
+    return this.http.post(`${this.base}/ab/experiments/${name}/activate`, {});
+  }
+
+  deactivateExperiment(name: string): Observable<any> {
+    return this.http.post(`${this.base}/ab/experiments/${name}/deactivate`, {});
+  }
+
+  // System settings
+  getSystemConfig(): Observable<any> {
+    return this.http.get(`${this.base}/settings`);
+  }
+
+  saveSystemConfig(config: any): Observable<any> {
+    return this.http.put(`${this.base}/settings`, config);
+  }
+
+  // Health
+  getHealthStatus(): Observable<Record<string, boolean>> {
+    return this.http.get<Record<string, boolean>>(`${this.base}/health`);
   }
 }

@@ -46,7 +46,7 @@ import * as L from 'leaflet';
                 }
                 <div class="text-sm font-semibold text-gray-800 truncate">{{ v.title }}</div>
                 <div class="text-xs text-gray-400 mt-0.5">{{ v.employerName || v.employer?.name }}</div>
-                <div class="text-xs text-gray-400 mt-2">&#128205; {{ v.city }} @if (v.distance) { · {{ v.distance.toFixed(1) }} km }</div>
+                <div class="text-xs text-gray-400 mt-2">&#128205; {{ v.city }} @if (v.distance) { &middot; {{ fill('public.map.distance', { distance: v.distance.toFixed(1) }) }} }</div>
               </a>
             }
           </div>
@@ -186,24 +186,41 @@ export class VacancyMapComponent implements OnInit, AfterViewInit, OnDestroy {
   private updateSeo(vacancies: any[] = this.nearbyVacancies()) {
     this.seo.setPage({
       title: this.i18n.t('public.map.title'),
-      description: 'Find jobs near you on the Verifix Jobs map, compare nearby salaries, and open vacancy pages by location.',
+      description: this.i18n.t('seo.map.description'),
       path: '/map',
-      keywords: ['job map', 'nearby jobs', 'vacancy map', 'uzbekistan jobs'],
+      keywords: [this.i18n.t('public.map.title'), this.i18n.t('seo.map.itemlist_title'), this.i18n.t('common.vacancies')],
       schema: [
-        this.seo.buildCollectionPageSchema('Vacancy map', 'Map view for nearby public vacancies.', '/map'),
+        this.seo.buildCollectionPageSchema(
+          this.i18n.t('seo.map.collection_title'),
+          this.i18n.t('seo.map.collection_description'),
+          '/map'
+        ),
         this.seo.buildBreadcrumbSchema([
-          { name: 'Home', path: '/' },
-          { name: 'Map', path: '/map' }
+          { name: this.i18n.t('common.home'), path: '/' },
+          { name: this.i18n.t('seo.map.breadcrumb_title'), path: '/map' }
         ]),
         this.seo.buildItemListSchema(
-          'Nearby vacancies',
+          this.i18n.t('seo.map.itemlist_title'),
           (vacancies || []).slice(0, 10).map((vacancy: any) => ({
             name: vacancy.title,
             path: `/jobs/${vacancy.slug || vacancy.id}`,
-            description: [vacancy.city, vacancy.distance ? `${vacancy.distance.toFixed(1)} km away` : 'Map vacancy'].join(' | ')
+            description: [
+              vacancy.city,
+              vacancy.distance
+                ? this.fill('seo.map.distance_away', { distance: vacancy.distance.toFixed(1) })
+                : this.i18n.t('seo.map.location_vacancy')
+            ].join(' | ')
           }))
         )
       ]
     });
+  }
+
+  private fill(key: string, params: Record<string, string | number>): string {
+    let template = this.i18n.t(key);
+    for (const [name, value] of Object.entries(params)) {
+      template = template.replaceAll(`{${name}}`, String(value));
+    }
+    return template;
   }
 }

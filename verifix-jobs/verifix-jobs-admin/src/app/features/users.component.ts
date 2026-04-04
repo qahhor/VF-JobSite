@@ -26,7 +26,7 @@ import { I18nService } from '../core/i18n.service';
                class="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
       </div>
 
-      <div class="text-xs text-gray-400">{{ users().length }} {{ i18n.t('users.records') }}</div>
+      <div class="text-xs text-gray-400">{{ totalElements }} {{ i18n.t('users.records') }}</div>
 
       <div class="sm:hidden space-y-3">
         @for (u of users(); track u.id) {
@@ -121,6 +121,16 @@ import { I18nService } from '../core/i18n.service';
           </tbody>
         </table>
       </div>
+
+      @if (totalPages > 1) {
+        <div class="flex items-center justify-center gap-2 pt-2">
+          <button (click)="goPage(currentPage - 1)" [disabled]="currentPage === 0"
+                  class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs disabled:opacity-40">&laquo;</button>
+          <span class="text-xs text-gray-500">{{ currentPage + 1 }} / {{ totalPages }}</span>
+          <button (click)="goPage(currentPage + 1)" [disabled]="currentPage >= totalPages - 1"
+                  class="px-3 py-1.5 rounded-lg border border-gray-200 text-xs disabled:opacity-40">&raquo;</button>
+        </div>
+      }
     </div>
   `,
   styles: [`.no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`]
@@ -129,6 +139,9 @@ export class UsersComponent implements OnInit {
   users = signal<any[]>([]);
   activeTab = 'CANDIDATE';
   searchQuery = '';
+  currentPage = 0;
+  totalPages = 0;
+  totalElements = 0;
   tabs = [
     { value: 'CANDIDATE', labelKey: 'users.candidates' },
     { value: 'EMPLOYER', labelKey: 'users.employers' },
@@ -139,9 +152,20 @@ export class UsersComponent implements OnInit {
   ngOnInit() { this.load(); }
 
   load() {
-    this.api.getUsers(this.activeTab, 0, this.searchQuery).subscribe({
-      next: (res: any) => this.users.set(res.content || res || []),
+    this.api.getUsers(this.activeTab, this.currentPage, this.searchQuery).subscribe({
+      next: (res: any) => {
+        this.users.set(res.content || res || []);
+        this.totalElements = res.totalElements ?? this.users().length;
+        this.totalPages = res.totalPages ?? 1;
+      },
+      error: () => this.users.set([])
     });
+  }
+
+  goPage(page: number) {
+    if (page < 0 || page >= this.totalPages) return;
+    this.currentPage = page;
+    this.load();
   }
 
   suspend(u: any) { this.api.suspendUser(u.id).subscribe(() => this.load()); }

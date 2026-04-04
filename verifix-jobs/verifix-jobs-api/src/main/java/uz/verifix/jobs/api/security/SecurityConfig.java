@@ -29,6 +29,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AdminPasswordPolicyFilter adminPasswordPolicyFilter;
     private final TenantContextFilter tenantContextFilter;
     private final RateLimitFilter rateLimitFilter;
 
@@ -79,6 +80,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(adminPasswordPolicyFilter, JwtAuthenticationFilter.class)
                 .addFilterAfter(tenantContextFilter, JwtAuthenticationFilter.class)
                 .addFilterAfter(rateLimitFilter, TenantContextFilter.class)
                 .build();

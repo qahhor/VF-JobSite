@@ -14,7 +14,7 @@ import { I18nService } from '../core/i18n.service';
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         @for (m of metrics(); track m.label) {
           <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-            <div class="text-xs text-gray-500 mb-1">{{ m.label }}</div>
+            <div class="text-xs text-gray-500 mb-1">{{ i18n.t(m.label) }}</div>
             <div class="text-2xl font-bold text-gray-800">{{ m.value }}</div>
           </div>
         }
@@ -51,12 +51,8 @@ import { I18nService } from '../core/i18n.service';
 })
 export class AdminAnalyticsComponent implements OnInit {
   metrics = signal<{ label: string; value: string }[]>([]);
-  growthBars = signal<number[]>([20, 25, 30, 35, 28, 40, 45, 50, 55, 60, 70, 80]);
-  topCities = signal<{ name: string; count: number; percent: number }[]>([
-    { name: 'Tashkent', count: 1250, percent: 100 }, { name: 'Samarkand', count: 450, percent: 36 },
-    { name: 'Bukhara', count: 320, percent: 25.6 }, { name: 'Andijan', count: 280, percent: 22.4 },
-    { name: 'Fergana', count: 210, percent: 16.8 },
-  ]);
+  growthBars = signal<number[]>([]);
+  topCities = signal<{ name: string; count: number; percent: number }[]>([]);
 
   constructor(private api: AdminApiService, public i18n: I18nService) {}
 
@@ -64,12 +60,21 @@ export class AdminAnalyticsComponent implements OnInit {
     this.api.getAnalytics().subscribe({
       next: (d: any) => {
         this.metrics.set([
-          { label: this.i18n.t('analytics.total_candidates'), value: d.totalCandidates?.toLocaleString() || '0' },
-          { label: this.i18n.t('analytics.total_employers'), value: d.totalEmployers?.toLocaleString() || '0' },
-          { label: this.i18n.t('analytics.total_vacancies'), value: d.totalVacancies?.toLocaleString() || '0' },
-          { label: this.i18n.t('analytics.monthly_revenue'), value: (d.monthlyRevenue || 0).toLocaleString() + ' UZS' },
+          { label: 'analytics.total_candidates', value: d.totalCandidates?.toLocaleString() || '0' },
+          { label: 'analytics.total_employers', value: d.totalEmployers?.toLocaleString() || '0' },
+          { label: 'analytics.total_vacancies', value: d.totalVacancies?.toLocaleString() || '0' },
+          { label: 'analytics.monthly_revenue', value: (d.monthlyRevenue || 0).toLocaleString() + ' UZS' },
         ]);
-      }
+        if (d.growthData?.length) {
+          const max = Math.max(...d.growthData);
+          this.growthBars.set(d.growthData.map((v: number) => max > 0 ? (v / max) * 100 : 0));
+        }
+        if (d.topCities?.length) {
+          const maxCity = d.topCities[0]?.count || 1;
+          this.topCities.set(d.topCities.map((c: any) => ({ ...c, percent: (c.count / maxCity) * 100 })));
+        }
+      },
+      error: () => {}
     });
   }
 }

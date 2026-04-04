@@ -37,7 +37,7 @@ verifix-jobs/
 | `employer/` | Auth, profile, notifications, managers |
 | `geo/` | PostGIS + Nominatim geocoding |
 | `gov/` | Gov sync (ARGOS, ENST, Mehnat), HRM bridge |
-| `i18n/` | MessageService (uz/ru/en/kk/ky/tg) |
+| `i18n/` | MessageService (uz/ru) |
 | `ml/` | Matching, salary prediction, fraud detection, notification optimizer |
 | `moderation/` | Content moderation |
 | `notification/` | Multi-channel: SMS, Telegram, push, email |
