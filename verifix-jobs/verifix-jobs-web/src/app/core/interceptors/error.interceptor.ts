@@ -19,7 +19,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      if (error.status === 401 && isProtectedAdminRequest) {
+      if ((error.status === 401 || error.status === 403) && isProtectedAdminRequest) {
+        if (error.status === 403 && error?.error?.error === 'PASSWORD_CHANGE_REQUIRED') {
+          localStorage.setItem('vjw_admin_must_change_password', 'true');
+          router.navigate(['/admin/access']);
+          return throwError(() => error);
+        }
         localStorage.removeItem('vjw_admin_token');
         localStorage.removeItem('vjw_admin_role');
         localStorage.removeItem('vjw_admin_must_change_password');
@@ -27,13 +32,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      if (error.status === 403 && isProtectedAdminRequest && error?.error?.error === 'PASSWORD_CHANGE_REQUIRED') {
-        localStorage.setItem('vjw_admin_must_change_password', 'true');
-        router.navigate(['/admin/access']);
-        return throwError(() => error);
-      }
-
-      if (error.status === 401 && !isRefreshing) {
+      if ((error.status === 401 || error.status === 403) && !isRefreshing) {
         isRefreshing = true;
         const refreshObs = auth.refreshToken();
 
@@ -61,7 +60,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return doLogout(auth, error);
       }
 
-      if (error.status === 401) {
+      if (error.status === 401 || error.status === 403) {
         return doLogout(auth, error);
       }
 
