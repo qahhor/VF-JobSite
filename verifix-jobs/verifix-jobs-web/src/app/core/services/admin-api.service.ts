@@ -75,7 +75,12 @@ export interface EmployerDetailResponse {
   moderationStatus?: string;
   subscriptionPlan?: string;
   isVerified?: boolean;
+  verifiedAt?: string;
+  deactivatedAt?: string;
+  deactivationReason?: string;
   activeVacancies: number;
+  totalVacancies: number;
+  slug?: string;
   description?: string;
   websiteUrl?: string;
   employeeCountRange?: string;
@@ -95,6 +100,9 @@ export interface AdminEmployerRequest {
   employeeCountRange?: string;
   foundedYear?: number | null;
   description?: string;
+  status?: string;
+  isVerified?: boolean;
+  deactivationReason?: string;
 }
 
 export interface AdminAuditItem {
@@ -203,12 +211,14 @@ export class AdminApiService {
     return this.http.get<PageResponse<EmployerAdminRow>>(`${this.base}/employers`, { params });
   }
 
-  changeEmployerStatus(id: string, status: string): Observable<EmployerAdminRow> {
-    return this.http.patch<EmployerAdminRow>(`${this.base}/employers/${id}/status`, null, { params: { status } });
+  changeEmployerStatus(id: string, status: string, reason?: string): Observable<EmployerDetailResponse> {
+    let params: Record<string, string> = { status };
+    if (reason) params['reason'] = reason;
+    return this.http.patch<EmployerDetailResponse>(`${this.base}/employers/${id}/status`, null, { params });
   }
 
-  verifyEmployer(id: string): Observable<EmployerAdminRow> {
-    return this.http.post<EmployerAdminRow>(`${this.base}/employers/${id}/verify`, {});
+  verifyEmployer(id: string): Observable<EmployerDetailResponse> {
+    return this.http.post<EmployerDetailResponse>(`${this.base}/employers/${id}/verify`, {});
   }
 
   getEmployerDetail(id: string): Observable<EmployerDetailResponse> {

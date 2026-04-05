@@ -39,6 +39,9 @@ public interface VacancyRepository extends JpaRepository<Vacancy, UUID>, JpaSpec
     @Query("SELECT COUNT(v) FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId AND v.status = :status")
     long countByEmployerIdAndStatus(@Param("employerId") UUID employerId, @Param("status") VacancyStatus status);
 
+    @Query("SELECT COUNT(v) FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId")
+    long countByEmployerId(@Param("employerId") UUID employerId);
+
     @Query("SELECT COUNT(v) FROM Vacancy v WHERE v.deletedAt IS NULL AND v.employer.id = :employerId AND v.moderationStatus = :status")
     long countByEmployerIdAndModerationStatus(@Param("employerId") UUID employerId, @Param("status") ModerationStatus status);
 

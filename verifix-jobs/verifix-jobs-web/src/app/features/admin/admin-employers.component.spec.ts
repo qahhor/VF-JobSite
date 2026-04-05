@@ -7,17 +7,19 @@ import { ToastService } from '../../shared/services/toast.service';
 
 const MOCK_EMPLOYER_DETAIL = {
   id: 'e1', name: 'Test Corp', inn: '123', legalName: 'Test LLC', city: 'Ташкент',
-  region: 'UZ-13', industry: 'IT', status: 'ACTIVE', isVerified: true, activeVacancies: 5,
+  region: 'UZ-13', industry: 'IT', status: 'ACTIVE', isVerified: true,
+  verifiedAt: '2025-03-01T10:00:00Z', deactivatedAt: null, deactivationReason: null,
+  activeVacancies: 5, totalVacancies: 12, slug: 'test-corp',
   websiteUrl: 'https://test.uz', employeeCountRange: '11-50', foundedYear: 2020,
-  description: 'A test company', createdAt: '2025-01-01',
+  description: 'A test company', createdAt: '2025-01-01', updatedAt: '2025-06-01',
 };
 
 const MOCK_CITIES = [
-  { id: 'c1', nameUzLat: 'Toshkent', nameRu: 'Ташкент', nameEn: 'Tashkent', country: 'UZ', region: 'UZ-13', population: 2500000 }
+  { id: 'c1', nameUzLat: 'Toshkent', nameRu: 'Ташкент', nameEn: 'Tashkent', country: 'UZ', region: 'UZ-13', population: 2500000, isActive: true }
 ];
 
 const MOCK_REGIONS = [
-  { id: 'r1', code: '13', fullCode: 'UZ-13', nameUzLat: 'Toshkent shahri', nameRu: 'Город Ташкент', nameEn: 'Tashkent', countryIso2: 'UZ' }
+  { id: 'r1', code: '13', fullCode: 'UZ-13', nameUzLat: 'Toshkent shahri', nameRu: 'Город Ташкент', nameEn: 'Tashkent', countryIso2: 'UZ', isActive: true }
 ];
 
 describe('AdminEmployersComponent', () => {
@@ -84,6 +86,9 @@ describe('AdminEmployersComponent', () => {
     expect(component.formData.region).toBe('');
     expect(component.formData.city).toBe('');
     expect(component.formData.industry).toBe('');
+    expect(component.formData.status).toBe('');
+    expect(component.formData.isVerified).toBeFalse();
+    expect(component.formData.deactivationReason).toBe('');
   });
 
   // ── Edit form ─────────────────────────────────────────────────────────────
@@ -94,7 +99,6 @@ describe('AdminEmployersComponent', () => {
     const detailReq = httpMock.expectOne(r => r.url.includes('/employers/e1') && r.method === 'GET');
     detailReq.flush(MOCK_EMPLOYER_DETAIL);
 
-    // Bug fix: openEdit must also load cities for pre-selected region
     const citiesReq = httpMock.expectOne(r => r.url.includes('/cities/by-country/UZ'));
     citiesReq.flush(MOCK_CITIES);
 
@@ -105,6 +109,19 @@ describe('AdminEmployersComponent', () => {
     expect(component.formData.city).toBe('Ташкент');
     expect(component.formData.industry).toBe('IT');
     expect(component.formData.foundedYear).toBe(2020);
+  });
+
+  it('openEdit populates lifecycle fields (status, isVerified, deactivationReason)', () => {
+    component.openEdit('e1');
+
+    const detailReq = httpMock.expectOne(r => r.url.includes('/employers/e1') && r.method === 'GET');
+    detailReq.flush(MOCK_EMPLOYER_DETAIL);
+
+    httpMock.expectOne(r => r.url.includes('/cities/by-country/UZ')).flush(MOCK_CITIES);
+
+    expect(component.formData.status).toBe('ACTIVE');
+    expect(component.formData.isVerified).toBeTrue();
+    expect(component.formData.deactivationReason).toBe('');
   });
 
   it('openEdit populates filteredCities so city dropdown is not empty', () => {
@@ -142,6 +159,30 @@ describe('AdminEmployersComponent', () => {
     expect(component.showForm()).toBeFalse();
   });
 
+  // ── isDeactivatedStatus getter ─────────────────────────────────────────────
+
+  it('isDeactivatedStatus returns true for BLOCKED/SUSPENDED/INACTIVE', () => {
+    component.formData.status = 'BLOCKED';
+    expect(component.isDeactivatedStatus).toBeTrue();
+
+    component.formData.status = 'SUSPENDED';
+    expect(component.isDeactivatedStatus).toBeTrue();
+
+    component.formData.status = 'INACTIVE';
+    expect(component.isDeactivatedStatus).toBeTrue();
+  });
+
+  it('isDeactivatedStatus returns false for ACTIVE/PENDING/empty', () => {
+    component.formData.status = 'ACTIVE';
+    expect(component.isDeactivatedStatus).toBeFalse();
+
+    component.formData.status = 'PENDING';
+    expect(component.isDeactivatedStatus).toBeFalse();
+
+    component.formData.status = '';
+    expect(component.isDeactivatedStatus).toBeFalse();
+  });
+
   // ── Save form ─────────────────────────────────────────────────────────────
 
   it('saveForm creates new employer and clears state', () => {
@@ -153,7 +194,6 @@ describe('AdminEmployersComponent', () => {
     const createReq = httpMock.expectOne(r => r.url.includes('/employers') && r.method === 'POST');
     createReq.flush({ id: 'new1', name: 'New Corp' });
 
-    // After create: flush the reload request
     const reloadReq = httpMock.expectOne(r => r.url.includes('/employers') && r.method === 'GET');
     reloadReq.flush({ content: [], totalPages: 0, totalElements: 0, page: 0, size: 20, last: true });
 
@@ -162,12 +202,29 @@ describe('AdminEmployersComponent', () => {
     expect(toast.success).toHaveBeenCalled();
   });
 
+  it('saveForm includes status, isVerified and deactivationReason in payload when set', () => {
+    component.openCreate();
+    component.formData.name = 'Blocked Corp';
+    component.formData.status = 'BLOCKED';
+    component.formData.isVerified = false;
+    component.formData.deactivationReason = 'Fraud detected';
+    component.saveForm();
+
+    const createReq = httpMock.expectOne(r => r.url.includes('/employers') && r.method === 'POST');
+    expect(createReq.request.body.status).toBe('BLOCKED');
+    expect(createReq.request.body.deactivationReason).toBe('Fraud detected');
+    createReq.flush({ id: 'new1', name: 'Blocked Corp' });
+    httpMock.expectOne(r => r.url.includes('/employers') && r.method === 'GET')
+      .flush({ content: [], totalPages: 0, totalElements: 0, page: 0, size: 20, last: true });
+  });
+
   it('saveForm updates employer, clears editingId and filteredCities', () => {
     component.editingId.set('e1');
     component.formData = {
       name: 'Updated Corp', inn: '999', legalName: 'Updated LLC',
       city: 'Ташкент', region: 'UZ-13', industry: 'RETAIL',
-      websiteUrl: '', employeeCountRange: '51-200', foundedYear: 2021, description: ''
+      websiteUrl: '', employeeCountRange: '51-200', foundedYear: 2021, description: '',
+      status: 'ACTIVE', isVerified: true, deactivationReason: '',
     };
     component.filteredCities.set(MOCK_CITIES as any);
     component.saveForm();
@@ -246,7 +303,7 @@ describe('AdminEmployersComponent', () => {
     component.verify('e1');
 
     const req = httpMock.expectOne(r => r.url.includes('/employers/e1/verify') && r.method === 'POST');
-    req.flush({ id: 'e1', name: 'Test', status: 'ACTIVE', isVerified: true });
+    req.flush({ id: 'e1', name: 'Test', status: 'ACTIVE', isVerified: true, activeVacancies: 5, totalVacancies: 10 });
 
     const reloadReq = httpMock.expectOne(r => r.url.includes('/employers') && r.method === 'GET');
     reloadReq.flush({ content: [], totalPages: 0, totalElements: 0, page: 0, size: 20, last: true });
@@ -259,7 +316,7 @@ describe('AdminEmployersComponent', () => {
 
     const req = httpMock.expectOne(r => r.url.includes('/employers/e1/status') && r.method === 'PATCH');
     expect(req.request.params.get('status')).toBe('ACTIVE');
-    req.flush({ id: 'e1', name: 'Test', status: 'ACTIVE' });
+    req.flush({ id: 'e1', name: 'Test', status: 'ACTIVE', activeVacancies: 5, totalVacancies: 10 });
 
     const reloadReq = httpMock.expectOne(r => r.url.includes('/employers') && r.method === 'GET');
     reloadReq.flush({ content: [], totalPages: 0, totalElements: 0, page: 0, size: 20, last: true });
@@ -267,23 +324,51 @@ describe('AdminEmployersComponent', () => {
     expect(toast.success).toHaveBeenCalled();
   });
 
-  it('block calls PATCH with status=BLOCKED and shows success toast', () => {
-    component.block('e1');
+  it('openBlockModal sets blockTargetId and clears blockReason', () => {
+    component.blockReason = 'old reason';
+    component.openBlockModal('e1');
+    expect(component.blockTargetId()).toBe('e1');
+    expect(component.blockReason).toBe('');
+  });
+
+  it('doBlock calls PATCH with status=BLOCKED and reason, then reloads', () => {
+    component.openBlockModal('e1');
+    component.blockReason = 'Violation of ToS';
+    component.doBlock();
 
     const req = httpMock.expectOne(r => r.url.includes('/employers/e1/status') && r.method === 'PATCH');
     expect(req.request.params.get('status')).toBe('BLOCKED');
-    req.flush({ id: 'e1', name: 'Test', status: 'BLOCKED' });
+    expect(req.request.params.get('reason')).toBe('Violation of ToS');
+    req.flush({ id: 'e1', name: 'Test', status: 'BLOCKED', activeVacancies: 0, totalVacancies: 3 });
 
     const reloadReq = httpMock.expectOne(r => r.url.includes('/employers') && r.method === 'GET');
     reloadReq.flush({ content: [], totalPages: 0, totalElements: 0, page: 0, size: 20, last: true });
 
+    expect(component.blockTargetId()).toBeNull();
+    expect(component.blockReason).toBe('');
     expect(toast.success).toHaveBeenCalled();
+  });
+
+  it('doBlock does nothing when blockTargetId is null', () => {
+    component.blockTargetId.set(null);
+    component.doBlock();
+    httpMock.expectNone(r => r.url.includes('/employers') && r.method === 'PATCH');
   });
 
   it('verify shows error toast on failure', () => {
     component.verify('e1');
     const req = httpMock.expectOne(r => r.url.includes('/employers/e1/verify'));
     req.flush('Error', { status: 500, statusText: 'Server Error' });
+    expect(toast.error).toHaveBeenCalled();
+  });
+
+  it('doBlock shows error toast on failure', () => {
+    component.openBlockModal('e1');
+    component.doBlock();
+
+    const req = httpMock.expectOne(r => r.url.includes('/employers/e1/status') && r.method === 'PATCH');
+    req.flush('Error', { status: 500, statusText: 'Server Error' });
+
     expect(toast.error).toHaveBeenCalled();
   });
 
@@ -330,6 +415,8 @@ describe('AdminEmployersComponent', () => {
     expect(component.statusCls('ACTIVE')).toContain('emerald');
     expect(component.statusCls('PENDING')).toContain('amber');
     expect(component.statusCls('BLOCKED')).toContain('red');
+    expect(component.statusCls('SUSPENDED')).toContain('orange');
+    expect(component.statusCls('INACTIVE')).toContain('slate');
     expect(component.statusCls('UNKNOWN')).toContain('slate');
   });
 
@@ -337,6 +424,8 @@ describe('AdminEmployersComponent', () => {
     expect(component.statusLabel('ACTIVE')).toBeTruthy();
     expect(component.statusLabel('PENDING')).toBeTruthy();
     expect(component.statusLabel('BLOCKED')).toBeTruthy();
+    expect(component.statusLabel('SUSPENDED')).toBeTruthy();
+    expect(component.statusLabel('INACTIVE')).toBeTruthy();
     expect(component.statusLabel('UNKNOWN')).toBe('UNKNOWN');
   });
 

@@ -2,6 +2,7 @@ package uz.verifix.jobs.api.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import uz.verifix.jobs.domain.enums.EmployerStatus;
 
 @Data
 public class AdminEmployerRequest {
@@ -17,4 +18,13 @@ public class AdminEmployerRequest {
     private String employeeCountRange;
     private Integer foundedYear;
     private String description;
+
+    /** Admin can set status directly (null = keep existing or use default ACTIVE on create) */
+    private EmployerStatus status;
+
+    /** Admin can grant/revoke verification flag */
+    private Boolean isVerified;
+
+    /** Required when changing status to BLOCKED/INACTIVE/SUSPENDED */
+    private String deactivationReason;
 }

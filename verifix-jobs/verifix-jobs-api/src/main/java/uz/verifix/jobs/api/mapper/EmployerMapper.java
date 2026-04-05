@@ -13,5 +13,10 @@ public interface EmployerMapper {
     @Mapping(target = "status", expression = "java(employer.getStatus() != null ? employer.getStatus().name() : null)")
     @Mapping(target = "moderationStatus", expression = "java(employer.getModerationStatus() != null ? employer.getModerationStatus().name() : null)")
     @Mapping(target = "activeVacancies", source = "activeVacancies")
-    EmployerProfileResponse toResponse(Employer employer, long activeVacancies);
+    @Mapping(target = "totalVacancies", source = "totalVacancies")
+    @Mapping(target = "verifiedAt", source = "employer.verifiedAt")
+    @Mapping(target = "deactivatedAt", source = "employer.deactivatedAt")
+    @Mapping(target = "deactivationReason", source = "employer.deactivationReason")
+    @Mapping(target = "slug", source = "employer.slug")
+    EmployerProfileResponse toResponse(Employer employer, long activeVacancies, long totalVacancies);
 }

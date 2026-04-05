@@ -10,6 +10,7 @@ import uz.verifix.jobs.api.dto.response.EmployerProfileResponse;
 import uz.verifix.jobs.api.mapper.EmployerMapper;
 import uz.verifix.jobs.api.security.SecurityUtils;
 import uz.verifix.jobs.domain.entity.Employer;
+import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.employer.EmployerProfileService;
 
 import java.util.UUID;
@@ -21,13 +22,15 @@ public class EmployerController {
 
     private final EmployerProfileService employerProfileService;
     private final EmployerMapper employerMapper;
+    private final VacancyRepository vacancyRepository;
 
     @GetMapping("/profile")
     public ResponseEntity<EmployerProfileResponse> getProfile(Authentication auth) {
         UUID employerId = SecurityUtils.extractEmployerId(auth);
         Employer employer = employerProfileService.getProfile(employerId);
         long activeVacancies = employerProfileService.getActiveVacancyCount(employerId);
-        return ResponseEntity.ok(employerMapper.toResponse(employer, activeVacancies));
+        long totalVacancies = vacancyRepository.countByEmployerId(employerId);
+        return ResponseEntity.ok(employerMapper.toResponse(employer, activeVacancies, totalVacancies));
     }
 
     @PutMapping("/profile")
@@ -47,7 +50,8 @@ public class EmployerController {
                 request.getLongitude()
         );
         long activeVacancies = employerProfileService.getActiveVacancyCount(employerId);
-        return ResponseEntity.ok(employerMapper.toResponse(employer, activeVacancies));
+        long totalVacancies = vacancyRepository.countByEmployerId(employerId);
+        return ResponseEntity.ok(employerMapper.toResponse(employer, activeVacancies, totalVacancies));
     }
 
     @PatchMapping("/profile/logo")
@@ -58,7 +62,8 @@ public class EmployerController {
         UUID employerId = SecurityUtils.extractEmployerId(auth);
         Employer employer = employerProfileService.updateLogo(employerId, logoUrl);
         long activeVacancies = employerProfileService.getActiveVacancyCount(employerId);
-        return ResponseEntity.ok(employerMapper.toResponse(employer, activeVacancies));
+        long totalVacancies = vacancyRepository.countByEmployerId(employerId);
+        return ResponseEntity.ok(employerMapper.toResponse(employer, activeVacancies, totalVacancies));
     }
 
     @DeleteMapping("/profile")

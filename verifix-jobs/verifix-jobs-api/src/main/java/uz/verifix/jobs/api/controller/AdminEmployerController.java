@@ -59,7 +59,8 @@ public class AdminEmployerController {
                 request.getName(), request.getInn(), request.getLegalName(),
                 request.getCity(), request.getRegion(), request.getIndustry(),
                 request.getWebsiteUrl(), request.getEmployeeCountRange(),
-                request.getFoundedYear(), request.getDescription());
+                request.getFoundedYear(), request.getDescription(),
+                request.getStatus(), request.getIsVerified(), request.getDeactivationReason());
         adminAuditService.log(adminId, "EMPLOYER_CREATE", "Employer", employer.getId(),
                 "{\"name\":\"" + request.getName() + "\"}", httpRequest.getRemoteAddr());
         return ResponseEntity.ok(toResponse(employer));
@@ -77,7 +78,8 @@ public class AdminEmployerController {
                 request.getName(), request.getInn(), request.getLegalName(),
                 request.getCity(), request.getRegion(), request.getIndustry(),
                 request.getWebsiteUrl(), request.getEmployeeCountRange(),
-                request.getFoundedYear(), request.getDescription());
+                request.getFoundedYear(), request.getDescription(),
+                request.getStatus(), request.getIsVerified(), request.getDeactivationReason());
         adminAuditService.log(adminId, "EMPLOYER_UPDATE", "Employer", id,
                 "{\"name\":\"" + request.getName() + "\"}", httpRequest.getRemoteAddr());
         return ResponseEntity.ok(toResponse(employer));
@@ -99,11 +101,12 @@ public class AdminEmployerController {
     public ResponseEntity<EmployerProfileResponse> changeStatus(
             @PathVariable UUID id,
             @RequestParam EmployerStatus status,
+            @RequestParam(required = false) String reason,
             Authentication auth,
             HttpServletRequest request) {
 
         UUID adminId = SecurityUtils.extractAdminId(auth);
-        Employer employer = adminEmployerService.changeStatus(id, status);
+        Employer employer = adminEmployerService.changeStatus(id, status, reason);
         adminAuditService.log(adminId, "EMPLOYER_STATUS_CHANGE", "Employer", id,
                 "{\"newStatus\":\"" + status + "\"}", request.getRemoteAddr());
         return ResponseEntity.ok(toResponse(employer));
@@ -123,6 +126,7 @@ public class AdminEmployerController {
 
     private EmployerProfileResponse toResponse(Employer employer) {
         long activeVacancies = vacancyRepository.countByEmployerIdAndStatus(employer.getId(), VacancyStatus.ACTIVE);
-        return employerMapper.toResponse(employer, activeVacancies);
+        long totalVacancies = adminEmployerService.countTotal(employer.getId());
+        return employerMapper.toResponse(employer, activeVacancies, totalVacancies);
     }
 }

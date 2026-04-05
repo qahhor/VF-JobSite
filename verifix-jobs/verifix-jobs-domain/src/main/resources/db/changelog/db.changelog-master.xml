@@ -31,5 +31,6 @@
     <include file="db/changelog/changelog-024-admin-invites.xml"/>
     <include file="db/changelog/changelog-025-uz-reference-data.xml"/>
     <include file="db/changelog/changelog-026-geo-active-flag.xml"/>
+    <include file="db/changelog/changelog-027-employer-lifecycle.xml"/>
 
 </databaseChangeLog>

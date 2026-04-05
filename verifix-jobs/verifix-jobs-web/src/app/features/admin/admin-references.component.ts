@@ -739,7 +739,7 @@ export class AdminReferencesComponent implements OnInit {
     if (this.formType() === 'country') { this.saveCountry(); return; }
   }
 
-  private saveCity() {
+  saveCity() {
     this.saving.set(true);
     const obs = this.editingId
       ? this.api.updateCity(this.editingId, this.cityForm)
@@ -750,7 +750,7 @@ export class AdminReferencesComponent implements OnInit {
     });
   }
 
-  private saveRegion() {
+  saveRegion() {
     this.saving.set(true);
     const obs = this.editingId
       ? this.api.updateRegion(this.editingId, this.regionForm)

@@ -65,8 +65,17 @@ public class Employer extends BaseEntity {
     @Builder.Default
     private Boolean isVerified = false;
 
+    @Column(name = "verified_at")
+    private Instant verifiedAt;
+
     @Column(name = "myid_verified_at")
     private Instant myidVerifiedAt;
+
+    @Column(name = "deactivated_at")
+    private Instant deactivatedAt;
+
+    @Column(name = "deactivation_reason", columnDefinition = "TEXT")
+    private String deactivationReason;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "moderation_status", nullable = false)

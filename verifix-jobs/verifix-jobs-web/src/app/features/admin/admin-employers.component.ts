@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApiService, AdminOverview, EmployerAdminRow, EmployerDetailResponse, RefCity, RefRegion } from '../../core/services/admin-api.service';
@@ -47,7 +47,7 @@ import { ToastService } from '../../shared/services/toast.service';
               class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-slate-950"
               [placeholder]="i18n.t('admin.search_companies')" />
           </div>
-          <div class="w-full lg:w-44">
+          <div class="w-full lg:w-48">
             <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.moderation.status') }}</label>
             <select
               [(ngModel)]="statusFilter"
@@ -56,6 +56,8 @@ import { ToastService } from '../../shared/services/toast.service';
               <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
               <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
               <option value="BLOCKED">{{ i18n.t('status.blocked') }}</option>
+              <option value="SUSPENDED">{{ i18n.t('status.SUSPENDED') }}</option>
+              <option value="INACTIVE">{{ i18n.t('status.INACTIVE') }}</option>
             </select>
           </div>
           <div class="flex gap-2">
@@ -107,18 +109,21 @@ import { ToastService } from '../../shared/services/toast.service';
                   <td class="py-2.5 pr-3 text-center text-slate-500">{{ company.activeVacancies || 0 }}</td>
                   <td class="py-2.5 text-right">
                     <div class="flex items-center justify-end gap-1">
+                      <!-- View -->
                       <button (click)="openDetail(company.id)" title="Просмотр"
                         class="rounded-md p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                           <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
                       </button>
+                      <!-- Edit -->
                       <button (click)="openEdit(company.id)" title="Редактировать"
                         class="rounded-md p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                           <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
                       </button>
+                      <!-- Verify (if not verified) -->
                       @if (!company.isVerified) {
                         <button (click)="verify(company.id)" title="Верифицировать"
                           class="rounded-md p-1.5 text-emerald-400 transition hover:bg-emerald-50 hover:text-emerald-600">
@@ -127,7 +132,8 @@ import { ToastService } from '../../shared/services/toast.service';
                           </svg>
                         </button>
                       }
-                      @if (company.status === 'PENDING') {
+                      <!-- Activate (if PENDING or BLOCKED or SUSPENDED or INACTIVE) -->
+                      @if (company.status !== 'ACTIVE') {
                         <button (click)="activate(company.id)" title="Активировать"
                           class="rounded-md p-1.5 text-blue-400 transition hover:bg-blue-50 hover:text-blue-600">
                           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -135,22 +141,16 @@ import { ToastService } from '../../shared/services/toast.service';
                           </svg>
                         </button>
                       }
-                      @if (company.status === 'ACTIVE') {
-                        <button (click)="block(company.id)" title="Заблокировать"
+                      <!-- Block (if ACTIVE or PENDING) -->
+                      @if (company.status === 'ACTIVE' || company.status === 'PENDING') {
+                        <button (click)="openBlockModal(company.id)" title="Заблокировать"
                           class="rounded-md p-1.5 text-red-400 transition hover:bg-red-50 hover:text-red-600">
                           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
                           </svg>
                         </button>
                       }
-                      @if (company.status === 'BLOCKED') {
-                        <button (click)="activate(company.id)" title="Разблокировать"
-                          class="rounded-md p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                          </svg>
-                        </button>
-                      }
+                      <!-- Delete (only if no active vacancies) -->
                       @if ((company.activeVacancies || 0) === 0) {
                         <button (click)="confirmDelete(company)" title="Удалить"
                           class="rounded-md p-1.5 text-red-300 transition hover:bg-red-50 hover:text-red-500">
@@ -190,67 +190,115 @@ import { ToastService } from '../../shared/services/toast.service';
       </section>
     </div>
 
-    <!-- Detail Modal -->
+    <!-- ═══ Detail Modal ═══ -->
     @if (detailEmployer()) {
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="detailEmployer.set(null)">
-        <div class="relative mx-4 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
+        <div class="relative mx-4 max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
           <button (click)="detailEmployer.set(null)" class="absolute right-3 top-3 rounded-md p-1 text-slate-400 hover:text-slate-700">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
           @if (detailEmployer(); as emp) {
-            <h2 class="text-lg font-semibold">{{ emp.name }}</h2>
-            <div class="mt-1 flex flex-wrap gap-1.5">
+            <!-- Title + badges -->
+            <h2 class="pr-8 text-lg font-semibold">{{ emp.name }}</h2>
+            @if (emp.slug) {
+              <div class="mt-0.5 text-xs text-slate-400">/companies/{{ emp.slug }}</div>
+            }
+            <div class="mt-2 flex flex-wrap gap-1.5">
               <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold" [class]="statusCls(emp.status)">{{ statusLabel(emp.status) }}</span>
               @if (emp.isVerified) {
-                <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{{ i18n.t('settings.verified') }}</span>
+                <span class="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">✓ {{ i18n.t('settings.verified') }}</span>
+              } @else {
+                <span class="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-600">{{ i18n.t('admin.pending') }}</span>
               }
             </div>
 
-            <div class="mt-4 space-y-2.5 text-sm">
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+            <!-- Lifecycle block (only when relevant) -->
+            @if (emp.verifiedAt || emp.deactivatedAt) {
+              <div class="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs space-y-1">
+                @if (emp.verifiedAt) {
+                  <div class="flex items-center gap-2 text-emerald-700">
+                    <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>{{ i18n.t('admin.verified_at') }}: {{ emp.verifiedAt | date:'dd.MM.yyyy HH:mm' }}</span>
+                  </div>
+                }
+                @if (emp.deactivatedAt) {
+                  <div class="flex items-center gap-2 text-red-600">
+                    <svg class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>{{ i18n.t('admin.deactivated_at') }}: {{ emp.deactivatedAt | date:'dd.MM.yyyy HH:mm' }}</span>
+                  </div>
+                  @if (emp.deactivationReason) {
+                    <div class="ml-5 text-slate-500 italic">"{{ emp.deactivationReason }}"</div>
+                  }
+                }
+              </div>
+            }
+
+            <!-- Vacancy metrics -->
+            <div class="mt-3 grid grid-cols-2 gap-2">
+              <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400">{{ i18n.t('admin.active_vacancies') }}</div>
+                <div class="text-xl font-bold text-emerald-600">{{ emp.activeVacancies }}</div>
+              </div>
+              <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center">
+                <div class="text-[10px] uppercase tracking-wider text-slate-400">{{ i18n.t('admin.total_vacancies') }}</div>
+                <div class="text-xl font-bold text-slate-700">{{ emp.totalVacancies }}</div>
+              </div>
+            </div>
+
+            <!-- Details grid -->
+            <div class="mt-4 space-y-2 text-sm">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">INN:</span>
                 <span>{{ emp.inn || '—' }}</span>
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">{{ i18n.t('employer.legal_name') }}:</span>
                 <span>{{ emp.legalName || '—' }}</span>
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">{{ i18n.t('employer.industry') }}:</span>
                 <span>{{ emp.industry || '—' }}</span>
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">{{ i18n.t('employer.city') }}:</span>
                 <span>{{ emp.city || '—' }}{{ emp.region ? ', ' + emp.region : '' }}</span>
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">{{ i18n.t('employer.website') }}:</span>
-                <span>{{ emp.websiteUrl || '—' }}</span>
+                @if (emp.websiteUrl) {
+                  <a [href]="emp.websiteUrl" target="_blank" class="text-cyan-600 hover:underline truncate">{{ emp.websiteUrl }}</a>
+                } @else {
+                  <span>—</span>
+                }
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">{{ i18n.t('employer.employees') }}:</span>
                 <span>{{ emp.employeeCountRange || '—' }}</span>
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">{{ i18n.t('employer.founded') }}:</span>
                 <span>{{ emp.foundedYear || '—' }}</span>
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
-                <span class="text-slate-400">{{ i18n.t('employer.description') }}:</span>
-                <span class="whitespace-pre-line">{{ emp.description || '—' }}</span>
-              </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
-                <span class="text-slate-400">{{ i18n.t('common.vacancies') }}:</span>
-                <span>{{ emp.activeVacancies }}</span>
-              </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              <div class="grid grid-cols-[130px_1fr] gap-1">
                 <span class="text-slate-400">{{ i18n.t('employer.subscription') }}:</span>
                 <span>{{ emp.subscriptionPlan || 'FREE' }}</span>
               </div>
-              <div class="grid grid-cols-[120px_1fr] gap-1">
+              @if (emp.description) {
+                <div class="grid grid-cols-[130px_1fr] gap-1">
+                  <span class="text-slate-400">{{ i18n.t('employer.description') }}:</span>
+                  <span class="whitespace-pre-line">{{ emp.description }}</span>
+                </div>
+              }
+              <div class="grid grid-cols-[130px_1fr] gap-1 pt-1 border-t border-slate-100">
                 <span class="text-slate-400">{{ i18n.t('common.created') }}:</span>
                 <span>{{ emp.createdAt | date:'dd.MM.yyyy HH:mm' }}</span>
               </div>
+              @if (emp.updatedAt) {
+                <div class="grid grid-cols-[130px_1fr] gap-1">
+                  <span class="text-slate-400">{{ i18n.t('common.updated') }}:</span>
+                  <span>{{ emp.updatedAt | date:'dd.MM.yyyy HH:mm' }}</span>
+                </div>
+              }
             </div>
 
             <div class="mt-4 flex gap-2">
@@ -266,22 +314,27 @@ import { ToastService } from '../../shared/services/toast.service';
       </div>
     }
 
-    <!-- Create/Edit Modal -->
+    <!-- ═══ Create/Edit Modal ═══ -->
     @if (showForm()) {
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="showForm.set(false)">
-        <div class="relative mx-4 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
+        <div class="relative mx-4 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
           <button (click)="showForm.set(false)" class="absolute right-3 top-3 rounded-md p-1 text-slate-400 hover:text-slate-700">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
 
-          <h2 class="text-lg font-semibold">{{ editingId() ? i18n.t('common.edit') : i18n.t('common.add') }} {{ i18n.t('employer.company').toLowerCase() }}</h2>
+          <h2 class="text-lg font-semibold">
+            {{ editingId() ? i18n.t('common.edit') : i18n.t('common.add') }} {{ i18n.t('employer.company').toLowerCase() }}
+          </h2>
 
           <div class="mt-4 space-y-3">
+            <!-- Name (required) -->
             <div>
               <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('employer.company_name') }} *</label>
               <input [(ngModel)]="formData.name" type="text"
                 class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
             </div>
+
+            <!-- INN + Legal name -->
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="mb-1 block text-xs font-medium text-slate-500">INN</label>
@@ -294,6 +347,8 @@ import { ToastService } from '../../shared/services/toast.service';
                   class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
               </div>
             </div>
+
+            <!-- Region + City -->
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('employer.region') }}</label>
@@ -316,6 +371,8 @@ import { ToastService } from '../../shared/services/toast.service';
                 </select>
               </div>
             </div>
+
+            <!-- Industry -->
             <div>
               <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('employer.industry') }}</label>
               <select [(ngModel)]="formData.industry"
@@ -326,11 +383,15 @@ import { ToastService } from '../../shared/services/toast.service';
                 }
               </select>
             </div>
+
+            <!-- Website -->
             <div>
               <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('employer.website') }}</label>
               <input [(ngModel)]="formData.websiteUrl" type="url"
                 class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
             </div>
+
+            <!-- Employees + Founded -->
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('employer.employees') }}</label>
@@ -351,18 +412,58 @@ import { ToastService } from '../../shared/services/toast.service';
                   class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
               </div>
             </div>
+
+            <!-- Description -->
             <div>
               <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('employer.description') }}</label>
               <textarea [(ngModel)]="formData.description" rows="3"
                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-950"></textarea>
             </div>
+
+            <!-- ── Admin-only fields ── -->
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-3">
+              <div class="text-[10px] uppercase tracking-wider text-slate-400 font-medium">{{ i18n.t('admin.moderation.status') }}</div>
+
+              <!-- Status select -->
+              <div>
+                <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.moderation.status') }}</label>
+                <select [(ngModel)]="formData.status"
+                  class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-slate-950">
+                  <option value="">— {{ i18n.t('filter.all') }}</option>
+                  <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
+                  <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
+                  <option value="BLOCKED">{{ i18n.t('status.blocked') }}</option>
+                  <option value="SUSPENDED">{{ i18n.t('status.SUSPENDED') }}</option>
+                  <option value="INACTIVE">{{ i18n.t('status.INACTIVE') }}</option>
+                </select>
+              </div>
+
+              <!-- isVerified checkbox -->
+              <label class="flex cursor-pointer items-center gap-2 text-sm">
+                <input type="checkbox" [(ngModel)]="formData.isVerified"
+                  class="h-4 w-4 rounded border-slate-300 accent-emerald-500" />
+                <span>{{ i18n.t('settings.verified') }}</span>
+              </label>
+
+              <!-- Deactivation reason (only for deactivated statuses) -->
+              @if (isDeactivatedStatus()) {
+                <div>
+                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.deactivation_reason') }}</label>
+                  <textarea [(ngModel)]="formData.deactivationReason" rows="2"
+                    [placeholder]="i18n.t('admin.block_reason_placeholder')"
+                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-950"></textarea>
+                </div>
+              }
+            </div>
           </div>
 
           <div class="mt-4 flex gap-2">
-            <button (click)="saveForm()" [disabled]="!formData.name" class="h-8 rounded-lg bg-slate-950 px-4 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:opacity-40">
+            <button (click)="saveForm()" [disabled]="!formData.name"
+              class="h-8 rounded-lg bg-slate-950 px-4 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:opacity-40">
               {{ i18n.t('common.save') }}
             </button>
-            <button (click)="showForm.set(false)" class="h-8 rounded-lg border border-slate-200 px-4 text-xs font-semibold transition hover:bg-slate-50">
+            <button (click)="showForm.set(false)"
+              class="h-8 rounded-lg border border-slate-200 px-4 text-xs font-semibold transition hover:bg-slate-50">
               {{ i18n.t('common.cancel') }}
             </button>
           </div>
@@ -370,7 +471,31 @@ import { ToastService } from '../../shared/services/toast.service';
       </div>
     }
 
-    <!-- Delete Confirmation -->
+    <!-- ═══ Block Reason Modal ═══ -->
+    @if (blockTargetId()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="blockTargetId.set(null)">
+        <div class="mx-4 w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
+          <h3 class="text-base font-semibold">{{ i18n.t('admin.confirm_block') }}</h3>
+          <p class="mt-1 text-sm text-slate-500">{{ i18n.t('admin.confirm_block_msg') }}</p>
+          <div class="mt-3">
+            <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.block_reason') }}</label>
+            <textarea [(ngModel)]="blockReason" rows="2"
+              [placeholder]="i18n.t('admin.block_reason_placeholder')"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-950"></textarea>
+          </div>
+          <div class="mt-4 flex gap-2">
+            <button (click)="doBlock()" class="h-8 rounded-lg bg-red-500 px-4 text-xs font-semibold text-white transition hover:bg-red-400">
+              {{ i18n.t('admin.block') }}
+            </button>
+            <button (click)="blockTargetId.set(null)" class="h-8 rounded-lg border border-slate-200 px-4 text-xs font-semibold transition hover:bg-slate-50">
+              {{ i18n.t('common.cancel') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══ Delete Confirmation ═══ -->
     @if (deleteTarget()) {
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="deleteTarget.set(null)">
         <div class="mx-4 w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
@@ -398,6 +523,7 @@ export class AdminEmployersComponent implements OnInit {
   showForm = signal(false);
   editingId = signal<string | null>(null);
   deleteTarget = signal<EmployerAdminRow | null>(null);
+  blockTargetId = signal<string | null>(null);
   currentPage = signal(0);
   totalPages = signal(0);
   regions = signal<RefRegion[]>([]);
@@ -405,9 +531,16 @@ export class AdminEmployersComponent implements OnInit {
   statusFilter = '';
   search = '';
   pageSize = 20;
+  blockReason = '';
+
+  readonly DEACTIVATED_STATUSES = new Set(['BLOCKED', 'SUSPENDED', 'INACTIVE']);
 
   industries = ['FOOD', 'TRANSPORT', 'CONSTRUCTION', 'RETAIL', 'SERVICES', 'MANUFACTURING', 'IT', 'EDUCATION', 'HEALTHCARE'];
   formData: EmployerFormData = this.emptyForm();
+
+  get isDeactivatedStatus(): boolean {
+    return this.DEACTIVATED_STATUSES.has(this.formData.status || '');
+  }
 
   constructor(
     private api: AdminApiService,
@@ -464,6 +597,7 @@ export class AdminEmployersComponent implements OnInit {
   openCreate() {
     this.editingId.set(null);
     this.formData = this.emptyForm();
+    this.filteredCities.set([]);
     this.showForm.set(true);
   }
 
@@ -482,6 +616,9 @@ export class AdminEmployersComponent implements OnInit {
           employeeCountRange: emp.employeeCountRange || '',
           foundedYear: emp.foundedYear || null,
           description: emp.description || '',
+          status: emp.status || '',
+          isVerified: !!emp.isVerified,
+          deactivationReason: emp.deactivationReason || '',
         };
         // Load cities for the pre-selected region without clearing the city field
         if (emp.region) {
@@ -501,6 +638,9 @@ export class AdminEmployersComponent implements OnInit {
   saveForm() {
     if (!this.formData.name) return;
     const payload = { ...this.formData };
+    // Send null for empty status so backend uses default
+    if (!payload.status) delete (payload as any).status;
+    if (!payload.deactivationReason) delete (payload as any).deactivationReason;
     const isEdit = !!this.editingId();
     const obs = isEdit
       ? this.api.updateEmployer(this.editingId()!, payload)
@@ -552,31 +692,53 @@ export class AdminEmployersComponent implements OnInit {
     });
   }
 
-  block(id: string) {
-    this.api.changeEmployerStatus(id, 'BLOCKED').subscribe({
-      next: () => { this.load(); this.toast.success(this.i18n.t('admin.company_blocked')); },
+  openBlockModal(id: string) {
+    this.blockTargetId.set(id);
+    this.blockReason = '';
+  }
+
+  doBlock() {
+    const id = this.blockTargetId();
+    if (!id) return;
+    this.api.changeEmployerStatus(id, 'BLOCKED', this.blockReason || undefined).subscribe({
+      next: () => {
+        this.blockTargetId.set(null);
+        this.blockReason = '';
+        this.load();
+        this.toast.success(this.i18n.t('admin.company_blocked'));
+      },
       error: () => this.toast.error(this.i18n.t('admin.action_failed'))
     });
   }
 
+  // ── Helpers ──
   statusCls(status: string): string {
     return ({
-      PENDING: 'border border-amber-400/30 bg-amber-500/10 text-amber-600',
-      ACTIVE: 'border border-emerald-400/30 bg-emerald-500/10 text-emerald-600',
-      BLOCKED: 'border border-red-400/30 bg-red-500/10 text-red-600',
+      PENDING:   'border border-amber-400/30 bg-amber-500/10 text-amber-600',
+      ACTIVE:    'border border-emerald-400/30 bg-emerald-500/10 text-emerald-600',
+      BLOCKED:   'border border-red-400/30 bg-red-500/10 text-red-600',
+      SUSPENDED: 'border border-orange-400/30 bg-orange-500/10 text-orange-600',
+      INACTIVE:  'border border-slate-300 bg-slate-100 text-slate-500',
     } as Record<string, string>)[status] || 'border border-slate-200 bg-white text-slate-600';
   }
 
   statusLabel(status: string): string {
     return ({
-      PENDING: this.i18n.t('admin.pending'),
-      ACTIVE: this.i18n.t('status.active'),
-      BLOCKED: this.i18n.t('status.blocked'),
+      PENDING:   this.i18n.t('admin.pending'),
+      ACTIVE:    this.i18n.t('status.active'),
+      BLOCKED:   this.i18n.t('status.blocked'),
+      SUSPENDED: this.i18n.t('status.SUSPENDED'),
+      INACTIVE:  this.i18n.t('status.INACTIVE'),
     } as Record<string, string>)[status] || status;
   }
 
   private emptyForm(): EmployerFormData {
-    return { name: '', inn: '', legalName: '', city: '', region: '', industry: '', websiteUrl: '', employeeCountRange: '', foundedYear: null, description: '' };
+    return {
+      name: '', inn: '', legalName: '', city: '', region: '',
+      industry: '', websiteUrl: '', employeeCountRange: '',
+      foundedYear: null, description: '',
+      status: '', isVerified: false, deactivationReason: '',
+    };
   }
 }
 
@@ -591,4 +753,7 @@ interface EmployerFormData {
   employeeCountRange: string;
   foundedYear: number | null;
   description: string;
+  status: string;
+  isVerified: boolean;
+  deactivationReason: string;
 }

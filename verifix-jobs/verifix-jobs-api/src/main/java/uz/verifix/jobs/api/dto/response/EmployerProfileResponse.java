@@ -28,11 +28,16 @@ public class EmployerProfileResponse {
     private String moderationStatus;
     private String subscriptionPlan;
     private Boolean isVerified;
+    private Instant verifiedAt;
+    private Instant deactivatedAt;
+    private String deactivationReason;
     private long activeVacancies;
+    private long totalVacancies;
     private String description;
     private String websiteUrl;
     private String employeeCountRange;
     private Integer foundedYear;
+    private String slug;
     private Instant createdAt;
     private Instant updatedAt;
 }
