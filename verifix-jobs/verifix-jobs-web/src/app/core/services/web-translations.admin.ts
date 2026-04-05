@@ -364,6 +364,7 @@ export const WEB_ADMIN_TRANSLATIONS: TranslationCatalog = {
   'status.ACTIVE': { uz_lat: 'Faol', ru: 'Активен' },
   'status.SUSPENDED': { uz_lat: "To'xtatilgan", ru: 'Приостановлен' },
   'status.BLOCKED': { uz_lat: 'Bloklangan', ru: 'Заблокирован' },
+  'status.PENDING': { uz_lat: 'Kutilmoqda', ru: 'Ожидает' },
   'status.PENDING_REVIEW': { uz_lat: 'Tekshiruvda', ru: 'На проверке' },
   'status.APPROVED': { uz_lat: 'Tasdiqlangan', ru: 'Одобрен' },
   'status.REJECTED': { uz_lat: 'Rad etilgan', ru: 'Отклонён' },
