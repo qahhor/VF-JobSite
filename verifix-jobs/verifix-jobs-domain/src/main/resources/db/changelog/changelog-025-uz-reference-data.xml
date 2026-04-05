@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- ═══ 025-01: Update Uzbekistan region names (uz_lat / ru) ═══ -->
+    <changeSet id="025-01-uz-region-names" author="admin">
+        <comment>Fix Uzbekistan region names: add proper uz_lat and ru translations</comment>
+        <sql>
+            UPDATE geo_region SET name_uz_lat = 'Andijon viloyati',     name_ru = 'Андижанская область'      WHERE full_code = 'UZ-01';
+            UPDATE geo_region SET name_uz_lat = 'Buxoro viloyati',      name_ru = 'Бухарская область'         WHERE full_code = 'UZ-02';
+            UPDATE geo_region SET name_uz_lat = E'Farg''ona viloyati',  name_ru = 'Ферганская область'        WHERE full_code = 'UZ-03';
+            UPDATE geo_region SET name_uz_lat = 'Jizzax viloyati',      name_ru = 'Джизакская область'        WHERE full_code = 'UZ-15';
+            UPDATE geo_region SET name_uz_lat = 'Namangan viloyati',    name_ru = 'Наманганская область'      WHERE full_code = 'UZ-06';
+            UPDATE geo_region SET name_uz_lat = 'Navoiy viloyati',      name_ru = 'Навоийская область'        WHERE full_code = 'UZ-07';
+            UPDATE geo_region SET name_uz_lat = 'Qashqadaryo viloyati', name_ru = 'Кашкадарьинская область'   WHERE full_code = 'UZ-08';
+            UPDATE geo_region SET name_uz_lat = E'Qoraqalpog''iston Respublikasi', name_ru = 'Республика Каракалпакстан' WHERE full_code = 'UZ-09';
+            UPDATE geo_region SET name_uz_lat = 'Samarqand viloyati',   name_ru = 'Самаркандская область'     WHERE full_code = 'UZ-10';
+            UPDATE geo_region SET name_uz_lat = 'Sirdaryo viloyati',    name_ru = 'Сырдарьинская область'     WHERE full_code = 'UZ-16';
+            UPDATE geo_region SET name_uz_lat = 'Surxondaryo viloyati', name_ru = 'Сурхандарьинская область'  WHERE full_code = 'UZ-12';
+            UPDATE geo_region SET name_uz_lat = 'Toshkent shahri',      name_ru = 'Город Ташкент'             WHERE full_code = 'UZ-13';
+            UPDATE geo_region SET name_uz_lat = 'Toshkent viloyati',    name_ru = 'Ташкентская область'       WHERE full_code = 'UZ-14';
+            UPDATE geo_region SET name_uz_lat = 'Xorazm viloyati',      name_ru = 'Хорезмская область'        WHERE full_code = 'UZ-05';
+        </sql>
+    </changeSet>
+
+    <!-- ═══ 025-02: Update Uzbekistan city names (uz_lat / ru) ═══ -->
+    <changeSet id="025-02-uz-city-names" author="admin">
+        <comment>Fix Uzbekistan city names: add proper uz_lat and ru translations</comment>
+        <sql>
+            -- Major cities — update both name_uz_lat and name_ru
+            UPDATE geo_city SET name_uz_lat = 'Toshkent',      name_ru = 'Ташкент'       WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'tashkent'  OR LOWER(name_en) = 'tashkent');
+            UPDATE geo_city SET name_uz_lat = 'Samarqand',     name_ru = 'Самарканд'     WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'samarkand' OR LOWER(name_en) = 'samarkand' OR LOWER(name_uz_lat) = 'samarqand');
+            UPDATE geo_city SET name_uz_lat = 'Namangan',      name_ru = 'Наманган'      WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'namangan'  OR LOWER(name_en) = 'namangan') AND name_ru IS DISTINCT FROM 'Наманган';
+            UPDATE geo_city SET name_uz_lat = 'Andijon',       name_ru = 'Андижан'       WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'andijan'   OR LOWER(name_en) = 'andijan'  OR LOWER(name_uz_lat) = 'andijon');
+            UPDATE geo_city SET name_uz_lat = 'Nukus',         name_ru = 'Нукус'         WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'nukus'     OR LOWER(name_en) = 'nukus');
+            UPDATE geo_city SET name_uz_lat = 'Buxoro',        name_ru = 'Бухара'        WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'bukhara'   OR LOWER(name_en) = 'bukhara'  OR LOWER(name_uz_lat) = 'buxoro');
+            UPDATE geo_city SET name_uz_lat = E'Farg''ona',    name_ru = 'Фергана'       WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'fergana'   OR LOWER(name_en) = 'fergana'  OR LOWER(name_uz_lat) LIKE 'farg%');
+            UPDATE geo_city SET name_uz_lat = 'Qarshi',        name_ru = 'Карши'         WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'karshi'    OR LOWER(name_en) = 'karshi'   OR LOWER(name_uz_lat) = 'qarshi');
+            UPDATE geo_city SET name_uz_lat = E'Qo''qon',     name_ru = 'Коканд'        WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'kokand'    OR LOWER(name_en) = 'kokand');
+            UPDATE geo_city SET name_uz_lat = E'Marg''ilon',   name_ru = 'Маргилан'      WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'margilan'  OR LOWER(name_en) = 'margilan');
+            UPDATE geo_city SET name_uz_lat = 'Chirchiq',      name_ru = 'Чирчик'        WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'chirchik'  OR LOWER(name_en) = 'chirchik' OR LOWER(name_uz_lat) = 'chirchiq');
+            UPDATE geo_city SET name_uz_lat = 'Jizzax',        name_ru = 'Джизак'        WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'jizzakh'   OR LOWER(name_en) = 'jizzakh'  OR LOWER(name_uz_lat) = 'jizzax');
+            UPDATE geo_city SET name_uz_lat = 'Urganch',       name_ru = 'Ургенч'        WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'urgench'   OR LOWER(name_en) = 'urgench'  OR LOWER(name_uz_lat) = 'urganch');
+            UPDATE geo_city SET name_uz_lat = 'Navoiy',        name_ru = 'Навои'         WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'navoi'     OR LOWER(name_en) = 'navoi'    OR LOWER(name_uz_lat) = 'navoiy');
+            UPDATE geo_city SET name_uz_lat = 'Termiz',        name_ru = 'Термез'        WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'termez'    OR LOWER(name_en) = 'termez'   OR LOWER(name_uz_lat) = 'termiz');
+            UPDATE geo_city SET name_uz_lat = 'Angren',        name_ru = 'Ангрен'        WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'angren'    OR LOWER(name_en) = 'angren');
+            UPDATE geo_city SET name_uz_lat = 'Olmaliq',       name_ru = 'Алмалык'       WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'almalyk'   OR LOWER(name_en) = 'almalyk'  OR LOWER(name_uz_lat) = 'olmaliq');
+            UPDATE geo_city SET name_uz_lat = 'Guliston',      name_ru = 'Гулистан'      WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'gulistan'  OR LOWER(name_en) = 'gulistan' OR LOWER(name_uz_lat) = 'guliston');
+            UPDATE geo_city SET name_uz_lat = 'Denov',         name_ru = 'Денау'         WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'denau'     OR LOWER(name_en) = 'denau'    OR LOWER(name_uz_lat) = 'denov');
+            UPDATE geo_city SET name_uz_lat = 'Shahrisabz',    name_ru = 'Шахрисабз'     WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'shahrisabz' OR LOWER(name_en) = 'shahrisabz');
+            UPDATE geo_city SET name_uz_lat = E'To''rtko''l',  name_ru = 'Турткуль'      WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'turtkul'   OR LOWER(name_en) = 'turtkul');
+            UPDATE geo_city SET name_uz_lat = 'Zarafshon',     name_ru = 'Зарафшан'      WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'zarafshan' OR LOWER(name_en) = 'zarafshan' OR LOWER(name_uz_lat) = 'zarafshon');
+            UPDATE geo_city SET name_uz_lat = 'Xiva',          name_ru = 'Хива'          WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'khiva'     OR LOWER(name_en) = 'khiva'    OR LOWER(name_uz_lat) = 'xiva');
+            UPDATE geo_city SET name_uz_lat = 'Bekobod',       name_ru = 'Бекабад'       WHERE country = 'UZ' AND (LOWER(name_uz_lat) = 'bekabad'   OR LOWER(name_en) = 'bekabad'  OR LOWER(name_uz_lat) = 'bekobod');
+        </sql>
+    </changeSet>
+
+    <!-- ═══ 025-03: Insert missing major Uzbekistan cities ═══ -->
+    <changeSet id="025-03-uz-insert-missing-cities" author="admin">
+        <comment>Add major UZ cities that may be missing from initial seed</comment>
+        <sql>
+            -- Insert only if not existing (by name_uz_lat + country)
+            INSERT INTO geo_city (id, name_uz_lat, name_ru, name_en, country, region, population, location, created_at, updated_at)
+            SELECT gen_random_uuid(), v.uz, v.ru, v.en, 'UZ', v.reg, v.pop,
+                   ST_SetSRID(ST_MakePoint(v.lon, v.lat), 4326), NOW(), NOW()
+            FROM (VALUES
+                ('Toshkent',     'Ташкент',     'Tashkent',     'UZ-13', 2571668, 69.2401, 41.2995),
+                ('Samarqand',    'Самарканд',   'Samarkand',    'UZ-10',  513572, 66.9597, 39.6542),
+                ('Namangan',     'Наманган',    'Namangan',     'UZ-06',  475700, 71.6726, 40.9983),
+                ('Andijon',      'Андижан',     'Andijan',      'UZ-01',  409000, 72.3440, 40.7821),
+                ('Nukus',        'Нукус',       'Nukus',        'UZ-09',  312000, 59.6000, 42.4600),
+                ('Buxoro',       'Бухара',      'Bukhara',      'UZ-02',  280000, 64.4286, 39.7745),
+                (E'Farg''ona',   'Фергана',     'Fergana',      'UZ-03',  264900, 71.7909, 40.3834),
+                ('Qarshi',       'Карши',       'Karshi',       'UZ-08',  252000, 65.7980, 38.8606),
+                (E'Qo''qon',    'Коканд',      'Kokand',       'UZ-03',  228000, 70.9429, 40.5283),
+                (E'Marg''ilon',  'Маргилан',    'Margilan',     'UZ-03',  215000, 71.7240, 40.4700),
+                ('Chirchiq',     'Чирчик',      'Chirchik',     'UZ-14',  167000, 69.5825, 41.4689),
+                ('Jizzax',       'Джизак',      'Jizzakh',      'UZ-15',  166800, 67.8422, 40.1158),
+                ('Urganch',      'Ургенч',      'Urgench',      'UZ-05',  157000, 60.6344, 41.5500),
+                ('Navoiy',       'Навои',       'Navoi',        'UZ-07',  148000, 65.3792, 40.1033),
+                ('Termiz',       'Термез',      'Termez',       'UZ-12',  140404, 67.2783, 37.2242),
+                ('Angren',       'Ангрен',      'Angren',       'UZ-14',  128000, 70.1436, 41.0167),
+                ('Olmaliq',      'Алмалык',     'Almalyk',      'UZ-14',  126000, 69.5983, 40.8453),
+                ('Guliston',     'Гулистан',    'Gulistan',     'UZ-16',  79000,  68.7842, 40.4897),
+                ('Denov',        'Денау',       'Denau',        'UZ-12',  75000,  67.8933, 38.2767),
+                ('Shahrisabz',   'Шахрисабз',   'Shahrisabz',   'UZ-08',  74500,  66.8303, 39.0514),
+                ('Xiva',         'Хива',        'Khiva',        'UZ-05',  56000,  60.6367, 41.3781),
+                ('Bekobod',      'Бекабад',     'Bekabad',      'UZ-14',  87000,  69.2189, 40.2217),
+                ('Zarafshon',    'Зарафшан',    'Zarafshan',    'UZ-07',  65000,  66.6600, 41.5667),
+                (E'To''rtko''l', 'Турткуль',    'Turtkul',      'UZ-09',  55000,  60.9000, 41.5500)
+            ) AS v(uz, ru, en, reg, pop, lon, lat)
+            WHERE NOT EXISTS (
+                SELECT 1 FROM geo_city gc WHERE gc.country = 'UZ' AND (
+                    LOWER(gc.name_uz_lat) = LOWER(v.uz) OR LOWER(gc.name_en) = LOWER(v.en)
+                )
+            );
+        </sql>
+    </changeSet>
+
+    <!-- ═══ 025-04: Backfill geo_city region_id for UZ cities ═══ -->
+    <changeSet id="025-04-uz-city-region-backfill" author="admin">
+        <comment>Link UZ cities to their geo_region by region code in the region string field</comment>
+        <sql>
+            UPDATE geo_city gc
+            SET region_id = gr.id
+            FROM geo_region gr
+            JOIN geo_country gco ON gr.country_id = gco.id
+            WHERE gco.iso2 = 'UZ'
+              AND gc.country = 'UZ'
+              AND gc.region IS NOT NULL
+              AND gc.region_id IS NULL
+              AND gr.full_code = gc.region;
+
+            -- Also backfill country_id
+            UPDATE geo_city gc
+            SET country_id = gco.id
+            FROM geo_country gco
+            WHERE gco.iso2 = 'UZ'
+              AND gc.country = 'UZ'
+              AND gc.country_id IS NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

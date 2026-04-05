@@ -9,3 +9,5 @@ node_modules/
 
 qa-logs/
 backup/
+
+SERVER_ACCESS.local.md

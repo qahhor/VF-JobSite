@@ -116,6 +116,11 @@ export const WEB_SHARED_TRANSLATIONS: TranslationCatalog = {
   'common.search': { uz_lat: 'Qidirish', ru: 'Поиск' },
   'common.close': { uz_lat: 'Yopish', ru: 'Закрыть' },
   'common.submit': { uz_lat: 'Yuborish', ru: 'Отправить' },
+  'common.add': { uz_lat: "Qo'shish", ru: 'Добавить' },
+  'common.page': { uz_lat: 'Sahifa', ru: 'Страница' },
+  'common.actions': { uz_lat: 'Amallar', ru: 'Действия' },
+  'common.created': { uz_lat: 'Yaratildi', ru: 'Создано' },
+  'common.confirm_delete': { uz_lat: "O'chirishni tasdiqlang", ru: 'Подтвердите удаление' },
   'status.new': { uz_lat: 'Yangi', ru: 'Новый' },
   'status.viewed': { uz_lat: "Ko'rildi", ru: 'Просмотрен' },
   'status.shortlist': { uz_lat: 'Tanlandi', ru: 'Шорт-лист' },
@@ -232,4 +237,10 @@ export const WEB_SHARED_TRANSLATIONS: TranslationCatalog = {
   'industry.IT': { uz_lat: 'IT', ru: 'IT' },
   'industry.EDUCATION': { uz_lat: "Ta'lim", ru: 'Образование' },
   'industry.HEALTHCARE': { uz_lat: "Sog'liqni saqlash", ru: 'Здравоохранение' },
+
+  'pwa.install_title': { uz_lat: "Ilovani o'rnating", ru: 'Установите приложение' },
+  'pwa.install_desc': { uz_lat: "Tez kirish uchun bosh ekranga qo'shing", ru: 'Добавьте на главный экран для быстрого доступа' },
+  'pwa.install_btn': { uz_lat: "O'rnatish", ru: 'Установить' },
+  'pwa.update_title': { uz_lat: 'Yangilanish mavjud', ru: 'Доступно обновление' },
+  'pwa.update_btn': { uz_lat: 'Yangilash', ru: 'Обновить' },
 };

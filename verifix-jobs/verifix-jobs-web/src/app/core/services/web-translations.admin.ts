@@ -115,6 +115,10 @@ export const WEB_ADMIN_TRANSLATIONS: TranslationCatalog = {
   'admin.reactivate': { uz_lat: 'Qayta faollashtirish', ru: 'Активировать снова' },
   'admin.block': { uz_lat: 'Bloklash', ru: 'Заблокировать' },
   'admin.no_companies': { uz_lat: 'Kompaniyalar topilmadi', ru: 'Компании не найдены' },
+  'admin.company_updated': { uz_lat: 'Kompaniya yangilandi', ru: 'Компания обновлена' },
+  'admin.company_created': { uz_lat: 'Kompaniya yaratildi', ru: 'Компания создана' },
+  'admin.company_deleted': { uz_lat: "Kompaniya o'chirildi", ru: 'Компания удалена' },
+  'admin.delete_employer_confirm': { uz_lat: "Rostdan o'chirmoqchimisiz?", ru: 'Вы действительно хотите удалить' },
 
   'admin.moderation.title': { uz_lat: 'Moderatsiya', ru: 'Модерация' },
   'admin.moderation.status': { uz_lat: 'Status', ru: 'Статус' },

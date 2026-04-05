@@ -23,9 +23,9 @@ public interface GeoRegionRepository extends JpaRepository<GeoRegion, UUID> {
     Optional<GeoRegion> findByCountry_Iso2IgnoreCaseAndCodeIgnoreCase(String iso2, String code);
 
     @Query("SELECT r FROM GeoRegion r LEFT JOIN FETCH r.country WHERE " +
-            ":search IS NULL OR LOWER(r.nameUzLat) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(r.nameRu) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(r.code) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            ":search IS NULL OR LOWER(r.nameUzLat) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) " +
+            "OR LOWER(r.nameRu) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) " +
+            "OR LOWER(r.code) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) " +
             "ORDER BY r.nameUzLat ASC")
     Page<GeoRegion> searchPaged(@Param("search") String search, Pageable pageable);
 }

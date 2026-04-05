@@ -218,6 +218,26 @@ type Tab = 'cities' | 'regions' | 'countries';
               <form (ngSubmit)="saveCity()" class="space-y-3">
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <label class="block">
+                    <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.country') }} *</span>
+                    <select [(ngModel)]="cityForm.country" name="country" required (ngModelChange)="onCityCountryChange()"
+                      class="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-[13px] outline-none focus:border-slate-900">
+                      <option value="">—</option>
+                      @for (c of refCountries(); track c.iso2) {
+                        <option [value]="c.iso2">{{ c.iso2 }} — {{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
+                      }
+                    </select>
+                  </label>
+                  <label class="block">
+                    <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.region') }}</span>
+                    <select [(ngModel)]="cityForm.region" name="region"
+                      class="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-[13px] outline-none focus:border-slate-900">
+                      <option value="">—</option>
+                      @for (r of cityFormRegions(); track r.id) {
+                        <option [value]="r.fullCode">{{ i18n.lang() === 'ru' ? r.nameRu : r.nameUzLat }}</option>
+                      }
+                    </select>
+                  </label>
+                  <label class="block">
                     <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.name_uz') }} *</span>
                     <input [(ngModel)]="cityForm.nameUzLat" name="nameUzLat" required
                       class="h-10 w-full rounded-lg border border-slate-300 px-3 text-[13px] outline-none focus:border-slate-900" />
@@ -230,16 +250,6 @@ type Tab = 'cities' | 'regions' | 'countries';
                   <label class="block">
                     <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.name_en') }}</span>
                     <input [(ngModel)]="cityForm.nameEn" name="nameEn"
-                      class="h-10 w-full rounded-lg border border-slate-300 px-3 text-[13px] outline-none focus:border-slate-900" />
-                  </label>
-                  <label class="block">
-                    <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.country') }} *</span>
-                    <input [(ngModel)]="cityForm.country" name="country" required placeholder="UZ"
-                      class="h-10 w-full rounded-lg border border-slate-300 px-3 text-[13px] outline-none focus:border-slate-900" />
-                  </label>
-                  <label class="block">
-                    <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.region') }}</span>
-                    <input [(ngModel)]="cityForm.region" name="region"
                       class="h-10 w-full rounded-lg border border-slate-300 px-3 text-[13px] outline-none focus:border-slate-900" />
                   </label>
                   <label class="block">
@@ -263,6 +273,16 @@ type Tab = 'cities' | 'regions' | 'countries';
             @if (formType() === 'region') {
               <form (ngSubmit)="saveRegion()" class="space-y-3">
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <label class="block sm:col-span-2">
+                    <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.country') }} *</span>
+                    <select [(ngModel)]="regionForm.countryIso2" name="countryIso2" required
+                      class="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-[13px] outline-none focus:border-slate-900">
+                      <option value="">—</option>
+                      @for (c of refCountries(); track c.iso2) {
+                        <option [value]="c.iso2">{{ c.iso2 }} — {{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
+                      }
+                    </select>
+                  </label>
                   <label class="block">
                     <span class="mb-1 block text-xs font-medium text-slate-600">{{ i18n.t('admin.ref.code') }} *</span>
                     <input [(ngModel)]="regionForm.code" name="code" required placeholder="TK"
@@ -388,8 +408,11 @@ export class AdminReferencesComponent implements OnInit {
   editingId: string | null = null;
   saving = signal(false);
 
+  refCountries = signal<RefCountry[]>([]);
+  cityFormRegions = signal<RefRegion[]>([]);
+
   cityForm: RefCityRequest = { nameUzLat: '', nameRu: '', nameEn: '', country: 'UZ', region: '', population: null };
-  regionForm: RefRegionRequest = { code: '', fullCode: '', nameUzLat: '', nameRu: '', nameEn: '' };
+  regionForm: RefRegionRequest = { code: '', fullCode: '', nameUzLat: '', nameRu: '', nameEn: '', countryIso2: 'UZ' };
   countryForm: RefCountryRequest = { nameUzLat: '', nameRu: '', nameEn: '', capital: '', phoneCode: '' };
 
   deleteTarget = signal<{ id: string; name: string; type: Tab } | null>(null);
@@ -400,7 +423,25 @@ export class AdminReferencesComponent implements OnInit {
     private toast: ToastService
   ) {}
 
-  ngOnInit() { this.loadData(); }
+  ngOnInit() {
+    this.api.getCountries().subscribe({
+      next: (list) => this.refCountries.set(list),
+      error: () => {}
+    });
+    this.loadData();
+  }
+
+  onCityCountryChange() {
+    this.cityForm.region = '';
+    if (this.cityForm.country) {
+      this.api.getRegionsByCountry(this.cityForm.country).subscribe({
+        next: (list) => this.cityFormRegions.set(list),
+        error: () => this.cityFormRegions.set([])
+      });
+    } else {
+      this.cityFormRegions.set([]);
+    }
+  }
 
   switchTab(tab: Tab) {
     this.activeTab.set(tab);
@@ -463,8 +504,9 @@ export class AdminReferencesComponent implements OnInit {
 
   private resetForms() {
     this.cityForm = { nameUzLat: '', nameRu: '', nameEn: '', country: 'UZ', region: '', population: null };
-    this.regionForm = { code: '', fullCode: '', nameUzLat: '', nameRu: '', nameEn: '' };
+    this.regionForm = { code: '', fullCode: '', nameUzLat: '', nameRu: '', nameEn: '', countryIso2: 'UZ' };
     this.countryForm = { nameUzLat: '', nameRu: '', nameEn: '', capital: '', phoneCode: '' };
+    this.onCityCountryChange();
   }
 
   // ── City CRUD ─────────────────────────────────────────
@@ -474,6 +516,7 @@ export class AdminReferencesComponent implements OnInit {
     this.editingId = city.id;
     this.formTitle.set(this.i18n.t('admin.ref.edit'));
     this.cityForm = { nameUzLat: city.nameUzLat, nameRu: city.nameRu, nameEn: city.nameEn, country: city.country, region: city.region, population: city.population };
+    this.onCityCountryChange();
     this.showForm.set(true);
   }
 
@@ -498,7 +541,7 @@ export class AdminReferencesComponent implements OnInit {
     this.formType.set('region');
     this.editingId = region.id;
     this.formTitle.set(this.i18n.t('admin.ref.edit'));
-    this.regionForm = { code: region.code, fullCode: region.fullCode, nameUzLat: region.nameUzLat, nameRu: region.nameRu, nameEn: region.nameEn };
+    this.regionForm = { code: region.code, fullCode: region.fullCode, nameUzLat: region.nameUzLat, nameRu: region.nameRu, nameEn: region.nameEn, countryIso2: region.countryIso2 || '' };
     this.showForm.set(true);
   }
 

@@ -63,11 +63,12 @@ public interface GeoCityRepository extends JpaRepository<GeoCity, UUID> {
             nativeQuery = true)
     List<GeoCity> findNearestCities(@Param("lon") double lon, @Param("lat") double lat, @Param("limit") int limit);
 
-    @Query("SELECT g FROM GeoCity g WHERE g.deletedAt IS NULL AND " +
-            "(:search IS NULL OR LOWER(g.nameUzLat) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(g.nameRu) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(g.nameEn) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(g.country) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+    @EntityGraph(attributePaths = {"countryRef", "regionRef"})
+    @Query("SELECT g FROM GeoCity g WHERE " +
+            "(:search IS NULL OR LOWER(g.nameUzLat) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) " +
+            "OR LOWER(g.nameRu) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) " +
+            "OR LOWER(g.nameEn) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')) " +
+            "OR LOWER(g.country) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%'))) " +
             "ORDER BY COALESCE(g.population, 0) DESC, g.nameUzLat ASC")
     Page<GeoCity> searchPaged(@Param("search") String search, Pageable pageable);
 }

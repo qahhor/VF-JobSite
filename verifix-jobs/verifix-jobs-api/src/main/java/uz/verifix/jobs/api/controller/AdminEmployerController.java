@@ -1,6 +1,7 @@
 package uz.verifix.jobs.api.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import uz.verifix.jobs.api.dto.request.AdminEmployerRequest;
 import uz.verifix.jobs.api.dto.response.EmployerProfileResponse;
 import uz.verifix.jobs.api.mapper.EmployerMapper;
 import uz.verifix.jobs.api.security.SecurityUtils;
@@ -38,6 +40,59 @@ public class AdminEmployerController {
             @PageableDefault(size = 20) Pageable pageable) {
         Page<Employer> page = adminEmployerService.list(status, search, pageable);
         return ResponseEntity.ok(PageResponse.of(page.map(this::toResponse)));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployerProfileResponse> getById(@PathVariable UUID id) {
+        Employer employer = adminEmployerService.getById(id);
+        return ResponseEntity.ok(toResponse(employer));
+    }
+
+    @PostMapping
+    public ResponseEntity<EmployerProfileResponse> create(
+            @Valid @RequestBody AdminEmployerRequest request,
+            Authentication auth,
+            HttpServletRequest httpRequest) {
+
+        UUID adminId = SecurityUtils.extractAdminId(auth);
+        Employer employer = adminEmployerService.create(
+                request.getName(), request.getInn(), request.getLegalName(),
+                request.getCity(), request.getRegion(), request.getIndustry(),
+                request.getWebsiteUrl(), request.getEmployeeCountRange(),
+                request.getFoundedYear(), request.getDescription());
+        adminAuditService.log(adminId, "EMPLOYER_CREATE", "Employer", employer.getId(),
+                "{\"name\":\"" + request.getName() + "\"}", httpRequest.getRemoteAddr());
+        return ResponseEntity.ok(toResponse(employer));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployerProfileResponse> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody AdminEmployerRequest request,
+            Authentication auth,
+            HttpServletRequest httpRequest) {
+
+        UUID adminId = SecurityUtils.extractAdminId(auth);
+        Employer employer = adminEmployerService.update(id,
+                request.getName(), request.getInn(), request.getLegalName(),
+                request.getCity(), request.getRegion(), request.getIndustry(),
+                request.getWebsiteUrl(), request.getEmployeeCountRange(),
+                request.getFoundedYear(), request.getDescription());
+        adminAuditService.log(adminId, "EMPLOYER_UPDATE", "Employer", id,
+                "{\"name\":\"" + request.getName() + "\"}", httpRequest.getRemoteAddr());
+        return ResponseEntity.ok(toResponse(employer));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID id,
+            Authentication auth,
+            HttpServletRequest httpRequest) {
+
+        UUID adminId = SecurityUtils.extractAdminId(auth);
+        adminEmployerService.delete(id);
+        adminAuditService.log(adminId, "EMPLOYER_DELETE", "Employer", id, null, httpRequest.getRemoteAddr());
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/status")

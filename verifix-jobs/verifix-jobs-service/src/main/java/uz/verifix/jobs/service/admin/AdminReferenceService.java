@@ -40,6 +40,11 @@ public class AdminReferenceService {
                 .orElseThrow(() -> new ResourceNotFoundException("GeoCity", id.toString()));
     }
 
+    @Transactional(readOnly = true)
+    public List<GeoCity> citiesByScope(String countryIso2, String region) {
+        return cityRepository.findByGeoScope(countryIso2, region, null);
+    }
+
     @Transactional
     public GeoCity createCity(GeoCity city) {
         GeoCity saved = cityRepository.save(city);
@@ -82,21 +87,38 @@ public class AdminReferenceService {
                 .orElseThrow(() -> new ResourceNotFoundException("GeoRegion", id.toString()));
     }
 
+    @Transactional(readOnly = true)
+    public List<GeoRegion> regionsByCountry(String countryIso2) {
+        return regionRepository.findByCountry_Iso2IgnoreCaseOrderByNameEnAsc(countryIso2);
+    }
+
     @Transactional
-    public GeoRegion createRegion(GeoRegion region) {
+    public GeoRegion createRegion(String code, String fullCode, String nameUzLat, String nameRu, String nameEn, String countryIso2) {
+        GeoRegion region = new GeoRegion();
+        region.setCode(code);
+        region.setFullCode(fullCode);
+        region.setNameUzLat(nameUzLat);
+        region.setNameRu(nameRu);
+        region.setNameEn(nameEn);
+        if (countryIso2 != null) {
+            countryRepository.findByIso2IgnoreCase(countryIso2).ifPresent(region::setCountry);
+        }
         GeoRegion saved = regionRepository.save(region);
         log.info("Region created: {} ({})", saved.getNameUzLat(), saved.getId());
         return saved;
     }
 
     @Transactional
-    public GeoRegion updateRegion(UUID id, GeoRegion updates) {
+    public GeoRegion updateRegion(UUID id, String code, String fullCode, String nameUzLat, String nameRu, String nameEn, String countryIso2) {
         GeoRegion region = getRegion(id);
-        region.setNameUzLat(updates.getNameUzLat());
-        region.setNameRu(updates.getNameRu());
-        region.setNameEn(updates.getNameEn());
-        region.setCode(updates.getCode());
-        region.setFullCode(updates.getFullCode());
+        region.setCode(code);
+        region.setFullCode(fullCode);
+        region.setNameUzLat(nameUzLat);
+        region.setNameRu(nameRu);
+        region.setNameEn(nameEn);
+        if (countryIso2 != null) {
+            countryRepository.findByIso2IgnoreCase(countryIso2).ifPresent(region::setCountry);
+        }
         GeoRegion saved = regionRepository.save(region);
         log.info("Region updated: {} ({})", saved.getNameUzLat(), saved.getId());
         return saved;

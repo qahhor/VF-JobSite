@@ -29,6 +29,10 @@ public class EmployerProfileResponse {
     private String subscriptionPlan;
     private Boolean isVerified;
     private long activeVacancies;
+    private String description;
+    private String websiteUrl;
+    private String employeeCountRange;
+    private Integer foundedYear;
     private Instant createdAt;
     private Instant updatedAt;
 }

@@ -1,6 +1,17 @@
 import { TranslationCatalog } from './web-translations.util';
 
 export const WEB_EMPLOYER_TRANSLATIONS: TranslationCatalog = {
+  'employer.company': { uz_lat: 'Kompaniya', ru: 'Компания' },
+  'employer.company_name': { uz_lat: 'Kompaniya nomi', ru: 'Название компании' },
+  'employer.legal_name': { uz_lat: 'Yuridik nomi', ru: 'Юридическое название' },
+  'employer.city': { uz_lat: 'Shahar', ru: 'Город' },
+  'employer.region': { uz_lat: 'Viloyat', ru: 'Регион' },
+  'employer.industry': { uz_lat: 'Soha', ru: 'Отрасль' },
+  'employer.website': { uz_lat: 'Veb-sayt', ru: 'Веб-сайт' },
+  'employer.employees': { uz_lat: 'Xodimlar soni', ru: 'Кол-во сотрудников' },
+  'employer.founded': { uz_lat: 'Tashkil etilgan', ru: 'Год основания' },
+  'employer.description': { uz_lat: 'Tavsif', ru: 'Описание' },
+  'employer.subscription': { uz_lat: 'Obuna', ru: 'Подписка' },
   'employer.portal': { uz_lat: 'Employer portal', ru: 'Кабинет работодателя' },
   'employer.logout': { uz_lat: 'Chiqish', ru: 'Выйти' },
   'employer.nav.dashboard': { uz_lat: 'Dashboard', ru: 'Панель' },

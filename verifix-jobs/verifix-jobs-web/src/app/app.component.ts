@@ -22,7 +22,7 @@ import { ToastContainerComponent } from './shared/components/toast-container.com
           <div class="text-xs text-gray-400 mt-0.5">{{ i18n.t('pwa.install_desc') }}</div>
         </div>
         <button (click)="installPwa()" class="h-9 px-4 bg-white text-black rounded-lg text-xs font-semibold hover:bg-gray-100 transition shrink-0">{{ i18n.t('pwa.install_btn') }}</button>
-        <button (click)="showInstall.set(false)" class="text-gray-500 hover:text-white text-lg leading-none shrink-0">✕</button>
+        <button (click)="dismissInstall()" class="text-gray-500 hover:text-white text-lg leading-none shrink-0">✕</button>
       </div>
     }
 
@@ -50,7 +50,8 @@ export class AppComponent implements OnInit {
     window.addEventListener('beforeinstallprompt', (e: Event) => {
       e.preventDefault();
       this.deferredPrompt = e;
-      // Show after 30 seconds if user hasn't installed
+      const dismissed = localStorage.getItem('vjw_pwa_dismissed');
+      if (dismissed && Date.now() - Number(dismissed) < 30 * 24 * 60 * 60 * 1000) return;
       setTimeout(() => {
         if (this.deferredPrompt) this.showInstall.set(true);
       }, 30000);
@@ -62,6 +63,11 @@ export class AppComponent implements OnInit {
         .pipe(filter((e): e is VersionReadyEvent => e.type === 'VERSION_READY'))
         .subscribe(() => this.showUpdate.set(true));
     }
+  }
+
+  dismissInstall() {
+    localStorage.setItem('vjw_pwa_dismissed', String(Date.now()));
+    this.showInstall.set(false);
   }
 
   installPwa() {

@@ -79,6 +79,18 @@ public class AdminReferenceController {
         return ResponseEntity.ok(PageResponse.of(page));
     }
 
+    @GetMapping("/regions/by-country/{countryIso2}")
+    public ResponseEntity<List<RegionResponse>> regionsByCountry(@PathVariable String countryIso2) {
+        return ResponseEntity.ok(referenceService.regionsByCountry(countryIso2).stream().map(RegionResponse::from).toList());
+    }
+
+    @GetMapping("/cities/by-country/{countryIso2}")
+    public ResponseEntity<List<CityResponse>> citiesByCountry(
+            @PathVariable String countryIso2,
+            @RequestParam(required = false) String region) {
+        return ResponseEntity.ok(referenceService.citiesByScope(countryIso2, region).stream().map(CityResponse::from).toList());
+    }
+
     @GetMapping("/regions/{id}")
     public ResponseEntity<RegionResponse> getRegion(@PathVariable UUID id) {
         return ResponseEntity.ok(RegionResponse.from(referenceService.getRegion(id)));
@@ -86,24 +98,14 @@ public class AdminReferenceController {
 
     @PostMapping("/regions")
     public ResponseEntity<RegionResponse> createRegion(@RequestBody RegionRequest req) {
-        GeoRegion region = new GeoRegion();
-        region.setCode(req.code());
-        region.setFullCode(req.fullCode());
-        region.setNameUzLat(req.nameUzLat());
-        region.setNameRu(req.nameRu());
-        region.setNameEn(req.nameEn());
-        return ResponseEntity.ok(RegionResponse.from(referenceService.createRegion(region)));
+        return ResponseEntity.ok(RegionResponse.from(referenceService.createRegion(
+                req.code(), req.fullCode(), req.nameUzLat(), req.nameRu(), req.nameEn(), req.countryIso2())));
     }
 
     @PutMapping("/regions/{id}")
     public ResponseEntity<RegionResponse> updateRegion(@PathVariable UUID id, @RequestBody RegionRequest req) {
-        GeoRegion updates = new GeoRegion();
-        updates.setCode(req.code());
-        updates.setFullCode(req.fullCode());
-        updates.setNameUzLat(req.nameUzLat());
-        updates.setNameRu(req.nameRu());
-        updates.setNameEn(req.nameEn());
-        return ResponseEntity.ok(RegionResponse.from(referenceService.updateRegion(id, updates)));
+        return ResponseEntity.ok(RegionResponse.from(referenceService.updateRegion(
+                id, req.code(), req.fullCode(), req.nameUzLat(), req.nameRu(), req.nameEn(), req.countryIso2())));
     }
 
     @DeleteMapping("/regions/{id}")
@@ -133,13 +135,16 @@ public class AdminReferenceController {
     // ── DTOs ────────────────────────────────────────────────
 
     public record CityRequest(String nameUzLat, String nameRu, String nameEn, String country, String region, Integer population) {}
-    public record CityResponse(UUID id, String nameUzLat, String nameRu, String nameEn, String country, String region, Integer population) {
+    public record CityResponse(UUID id, String nameUzLat, String nameRu, String nameEn, String country, String region, String countryIso2, UUID regionId, Integer population) {
         static CityResponse from(GeoCity c) {
-            return new CityResponse(c.getId(), c.getNameUzLat(), c.getNameRu(), c.getNameEn(), c.getCountry(), c.getRegion(), c.getPopulation());
+            return new CityResponse(c.getId(), c.getNameUzLat(), c.getNameRu(), c.getNameEn(), c.getCountry(), c.getRegion(),
+                    c.getCountryRef() != null ? c.getCountryRef().getIso2() : c.getCountry(),
+                    c.getRegionRef() != null ? c.getRegionRef().getId() : null,
+                    c.getPopulation());
         }
     }
 
-    public record RegionRequest(String code, String fullCode, String nameUzLat, String nameRu, String nameEn) {}
+    public record RegionRequest(String code, String fullCode, String nameUzLat, String nameRu, String nameEn, String countryIso2) {}
     public record RegionResponse(UUID id, String code, String fullCode, String nameUzLat, String nameRu, String nameEn, String countryIso2) {
         static RegionResponse from(GeoRegion r) {
             return new RegionResponse(r.getId(), r.getCode(), r.getFullCode(), r.getNameUzLat(), r.getNameRu(), r.getNameEn(),

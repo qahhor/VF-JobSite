@@ -60,6 +60,43 @@ export interface EmployerAdminRow {
   createdAt: string;
 }
 
+export interface EmployerDetailResponse {
+  id: string;
+  name: string;
+  inn?: string;
+  legalName?: string;
+  logoUrl?: string;
+  industry?: string;
+  city?: string;
+  region?: string;
+  latitude?: number;
+  longitude?: number;
+  status: string;
+  moderationStatus?: string;
+  subscriptionPlan?: string;
+  isVerified?: boolean;
+  activeVacancies: number;
+  description?: string;
+  websiteUrl?: string;
+  employeeCountRange?: string;
+  foundedYear?: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface AdminEmployerRequest {
+  name: string;
+  inn?: string;
+  legalName?: string;
+  city?: string;
+  region?: string;
+  industry?: string;
+  websiteUrl?: string;
+  employeeCountRange?: string;
+  foundedYear?: number | null;
+  description?: string;
+}
+
 export interface AdminAuditItem {
   id: string;
   createdAt: string;
@@ -172,6 +209,22 @@ export class AdminApiService {
 
   verifyEmployer(id: string): Observable<EmployerAdminRow> {
     return this.http.post<EmployerAdminRow>(`${this.base}/employers/${id}/verify`, {});
+  }
+
+  getEmployerDetail(id: string): Observable<EmployerDetailResponse> {
+    return this.http.get<EmployerDetailResponse>(`${this.base}/employers/${id}`);
+  }
+
+  createEmployer(data: AdminEmployerRequest): Observable<EmployerDetailResponse> {
+    return this.http.post<EmployerDetailResponse>(`${this.base}/employers`, data);
+  }
+
+  updateEmployer(id: string, data: AdminEmployerRequest): Observable<EmployerDetailResponse> {
+    return this.http.put<EmployerDetailResponse>(`${this.base}/employers/${id}`, data);
+  }
+
+  deleteEmployer(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/employers/${id}`);
   }
 
   getModerationQueue(status?: string, page = 0, size = 20): Observable<PageResponse<AdminModerationItem>> {
@@ -298,6 +351,16 @@ export class AdminApiService {
     return this.http.delete<void>(`${this.base}/references/cities/${id}`);
   }
 
+  getRegionsByCountry(countryIso2: string): Observable<RefRegion[]> {
+    return this.http.get<RefRegion[]>(`${this.base}/references/regions/by-country/${countryIso2}`);
+  }
+
+  getCitiesByCountry(countryIso2: string, region?: string): Observable<RefCity[]> {
+    let params = new HttpParams();
+    if (region) params = params.set('region', region);
+    return this.http.get<RefCity[]>(`${this.base}/references/cities/by-country/${countryIso2}`, { params });
+  }
+
   // Regions
   getRegions(page: number, size: number, search?: string): Observable<PageResponse<RefRegion>> {
     let params = new HttpParams().set('page', page).set('size', size);
@@ -326,7 +389,7 @@ export class AdminApiService {
 // Reference interfaces
 export interface RefCity {
   id: string; nameUzLat: string; nameRu: string; nameEn: string;
-  country: string; region: string; population: number | null;
+  country: string; region: string; countryIso2?: string; regionId?: string; population: number | null;
 }
 export interface RefCityRequest {
   nameUzLat: string; nameRu: string; nameEn: string;
@@ -339,6 +402,7 @@ export interface RefRegion {
 export interface RefRegionRequest {
   code: string; fullCode: string;
   nameUzLat: string; nameRu: string; nameEn: string;
+  countryIso2?: string;
 }
 export interface RefCountry {
   id: string; iso2: string;
