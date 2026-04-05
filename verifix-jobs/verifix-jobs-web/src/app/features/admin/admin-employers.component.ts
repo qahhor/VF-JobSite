@@ -357,9 +357,9 @@ import { ToastService } from '../../shared/services/toast.service';
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.region') }}</label>
                 <select [(ngModel)]="formData.region" (ngModelChange)="onRegionChange()"
                   class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
-                  <option value="">—</option>
+                  <option [ngValue]="''">—</option>
                   @for (r of regions(); track r.id) {
-                    <option [value]="r.fullCode">{{ i18n.lang() === 'ru' ? r.nameRu : r.nameUzLat }}</option>
+                    <option [ngValue]="r.fullCode">{{ i18n.lang() === 'ru' ? r.nameRu : r.nameUzLat }}</option>
                   }
                 </select>
               </div>
@@ -367,9 +367,9 @@ import { ToastService } from '../../shared/services/toast.service';
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.city') }}</label>
                 <select [(ngModel)]="formData.city"
                   class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
-                  <option value="">—</option>
+                  <option [ngValue]="''">—</option>
                   @for (c of filteredCities(); track c.id) {
-                    <option [value]="i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat">{{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
+                    <option [ngValue]="i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat">{{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
                   }
                 </select>
               </div>
@@ -380,9 +380,9 @@ import { ToastService } from '../../shared/services/toast.service';
               <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.industry') }}</label>
               <select [(ngModel)]="formData.industry"
                 class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
-                <option value="">—</option>
+                <option [ngValue]="''">—</option>
                 @for (ind of industries; track ind) {
-                  <option [value]="ind">{{ i18n.t('industry.' + ind) }}</option>
+                  <option [ngValue]="ind">{{ i18n.t('industry.' + ind) }}</option>
                 }
               </select>
             </div>
@@ -400,13 +400,13 @@ import { ToastService } from '../../shared/services/toast.service';
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.employees') }}</label>
                 <select [(ngModel)]="formData.employeeCountRange"
                   class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
-                  <option value="">—</option>
-                  <option value="1-10">1-10</option>
-                  <option value="11-50">11-50</option>
-                  <option value="51-200">51-200</option>
-                  <option value="201-500">201-500</option>
-                  <option value="501-1000">501-1000</option>
-                  <option value="1000+">1000+</option>
+                  <option [ngValue]="''">—</option>
+                  <option [ngValue]="'1-10'">1-10</option>
+                  <option [ngValue]="'11-50'">11-50</option>
+                  <option [ngValue]="'51-200'">51-200</option>
+                  <option [ngValue]="'201-500'">201-500</option>
+                  <option [ngValue]="'501-1000'">501-1000</option>
+                  <option [ngValue]="'1000+'">1000+</option>
                 </select>
               </div>
               <div>
@@ -432,12 +432,12 @@ import { ToastService } from '../../shared/services/toast.service';
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.moderation.status') }}</label>
                 <select [(ngModel)]="formData.status"
                   class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
-                  <option value="">— {{ i18n.t('filter.all') }}</option>
-                  <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
-                  <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
-                  <option value="BLOCKED">{{ i18n.t('status.blocked') }}</option>
-                  <option value="SUSPENDED">{{ i18n.t('status.SUSPENDED') }}</option>
-                  <option value="INACTIVE">{{ i18n.t('status.INACTIVE') }}</option>
+                  <option [ngValue]="''">—</option>
+                  <option [ngValue]="'PENDING'">{{ i18n.lang() === 'ru' ? 'Ожидает' : 'Kutilmoqda' }}</option>
+                  <option [ngValue]="'ACTIVE'">{{ i18n.lang() === 'ru' ? 'Активная' : 'Faol' }}</option>
+                  <option [ngValue]="'BLOCKED'">{{ i18n.lang() === 'ru' ? 'Заблокирован' : 'Bloklangan' }}</option>
+                  <option [ngValue]="'SUSPENDED'">{{ i18n.lang() === 'ru' ? 'Приостановлен' : "To'xtatilgan" }}</option>
+                  <option [ngValue]="'INACTIVE'">{{ i18n.lang() === 'ru' ? 'Неактивен' : 'Nofaol' }}</option>
                 </select>
               </div>
 
