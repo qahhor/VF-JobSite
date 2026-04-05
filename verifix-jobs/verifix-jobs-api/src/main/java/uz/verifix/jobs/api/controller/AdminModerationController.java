@@ -21,6 +21,8 @@ import uz.verifix.jobs.domain.repository.VacancyRepository;
 import uz.verifix.jobs.service.admin.AdminAuditService;
 import uz.verifix.jobs.service.moderation.ModerationService;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -34,6 +36,7 @@ public class AdminModerationController {
     private final VacancyRepository vacancyRepository;
 
     @GetMapping("/pending")
+    @Transactional(readOnly = true)
     public ResponseEntity<PageResponse<ModerationQueueResponse>> getPending(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<ModerationQueue> page = moderationService.getPendingQueue(pageable);
@@ -41,6 +44,7 @@ public class AdminModerationController {
     }
 
     @GetMapping("/queue")
+    @Transactional(readOnly = true)
     public ResponseEntity<PageResponse<ModerationQueueResponse>> getQueue(
             @RequestParam(required = false) ModerationStatus status,
             @PageableDefault(size = 20) Pageable pageable) {
