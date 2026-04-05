@@ -23,27 +23,34 @@ import { SkeletonComponent } from '../../shared/components/skeleton.component';
       }
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" [class.hidden]="loading()">
         @for (kpi of kpis(); track kpi.label) {
-          <div class="rounded-2xl border border-border bg-white p-5 shadow-card hover:border-dashed hover:border-primary/30 transition cursor-pointer">
+          <div class="rounded-2xl p-5 transition cursor-pointer hover:opacity-90"
+               [class]="'bg-sidebar text-white'">
             <div class="flex items-center justify-between">
-              <span class="text-caption font-medium uppercase tracking-wider text-muted">{{ kpi.label }}</span>
+              <span class="text-caption font-medium uppercase tracking-wider text-white/50">{{ kpi.label }}</span>
               @if (kpi.trend !== 0) {
                 <span class="flex items-center gap-0.5 text-xs font-semibold"
-                      [class]="kpi.trend > 0 ? 'text-accent' : 'text-error'">
+                      [class]="kpi.trend > 0 ? 'text-emerald-400' : 'text-red-400'">
                   <lucide-icon [img]="kpi.trend > 0 ? TrendingUpIcon : TrendingDownIcon" [size]="14"></lucide-icon>
                   {{ kpi.trend > 0 ? '+' : '' }}{{ kpi.trend }}%
                 </span>
               }
             </div>
-            <div class="mt-2 text-title font-semibold text-gray-900">{{ kpi.value }}</div>
-            <!-- Mini sparkline (CSS bars) -->
-            <div class="mt-3 flex items-end gap-[2px] h-8">
-              @for (bar of kpi.sparkline; track $index) {
-                <div class="flex-1 rounded-t-sm transition-all"
-                     [style.height.%]="bar"
-                     [class]="kpi.trend >= 0 ? 'bg-primary/20' : 'bg-error/20'"></div>
-              }
+            <div class="mt-2 text-title font-semibold text-white">{{ kpi.value }}</div>
+            <!-- SVG area sparkline -->
+            <div class="mt-3 h-10">
+              <svg viewBox="0 0 140 40" class="w-full h-full" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient [id]="'grad-'+$index" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" [attr.stop-color]="kpi.trend >= 0 ? '#0EA5E9' : '#EF4444'" stop-opacity="0.4"/>
+                    <stop offset="100%" [attr.stop-color]="kpi.trend >= 0 ? '#0EA5E9' : '#EF4444'" stop-opacity="0.05"/>
+                  </linearGradient>
+                </defs>
+                <path [attr.d]="sparklinePath(kpi.sparkline)" [attr.fill]="'url(#grad-'+$index+')'" stroke="none"/>
+                <path [attr.d]="sparklineLinePath(kpi.sparkline)" fill="none"
+                      [attr.stroke]="kpi.trend >= 0 ? '#0EA5E9' : '#EF4444'" stroke-width="2" stroke-linecap="round"/>
+              </svg>
             </div>
-            <div class="mt-1 text-[10px] text-muted">{{ kpi.period }}</div>
+            <div class="mt-1 text-[10px] text-white/40">{{ kpi.period }}</div>
           </div>
         }
       </div>
@@ -258,6 +265,21 @@ export class DashboardComponent implements OnInit {
               VACANCY_EXPIRED: 'bg-warning/10 text-warning' } as Record<string, string>)[type] || 'bg-surface text-muted';
   }
 
+  // ── SVG sparkline helpers ──
+  sparklineLinePath(data: number[]): string {
+    const w = 140, h = 40, pad = 2;
+    const max = Math.max(...data, 1);
+    const pts = data.map((v, i) => `${pad + (i / (data.length - 1)) * (w - pad * 2)},${h - pad - (v / max) * (h - pad * 2)}`);
+    return 'M' + pts.join('L');
+  }
+
+  sparklinePath(data: number[]): string {
+    const line = this.sparklineLinePath(data);
+    const w = 140, h = 40, pad = 2;
+    const lastX = pad + ((data.length - 1) / (data.length - 1)) * (w - pad * 2);
+    return line + `L${lastX},${h}L${pad},${h}Z`;
+  }
+
   // ── Data Loaders ──
   private loadDashboard() {
     this.api.getDashboard().subscribe({
@@ -312,7 +334,7 @@ export class DashboardComponent implements OnInit {
           NEW: 'Applied', VIEWED: 'Screened', SHORTLIST: 'Shortlisted',
           INTERVIEW: 'Interview', OFFER: 'Offer', HIRED: 'Hired'
         };
-        const colors = ['bg-primary', 'bg-primary/80', 'bg-primary/60', 'bg-indigo-400', 'bg-violet-400', 'bg-accent'];
+        const colors = ['bg-amber-400', 'bg-orange-400', 'bg-blue-500', 'bg-indigo-500', 'bg-violet-500', 'bg-emerald-500'];
         const entries = order.map((status, i) => ({
           label: labels[status] || status,
           count: (data.statusCounts[status] || 0) as number,

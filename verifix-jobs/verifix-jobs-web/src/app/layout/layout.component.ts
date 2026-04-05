@@ -234,6 +234,14 @@ interface NavSection {
       </div>
     }
 
+    <!-- Floating AI Button (bottom-right) -->
+    <a routerLink="/employer/ai-assistant"
+       class="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-modal hover:bg-primary-600 transition-all hover:scale-105 lg:bottom-8 lg:right-8"
+       title="AI Assistant — Sia">
+      <lucide-icon [img]="SparklesIcon" [size]="24"></lucide-icon>
+      <span class="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-accent border-2 border-white animate-pulse-soft"></span>
+    </a>
+
     <!-- Command Palette -->
     @if (commandPaletteOpen()) {
       <vjw-command-palette (close)="commandPaletteOpen.set(false)"></vjw-command-palette>
@@ -256,6 +264,7 @@ export class LayoutComponent {
   XIcon = X;
   MoonIcon = Moon;
   SunIcon = Sun;
+  SparklesIcon = Sparkles;
 
   // ── State ──
   collapsed = signal(false);

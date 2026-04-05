@@ -79,6 +79,7 @@ export const WEB_EMPLOYER_TRANSLATIONS: TranslationCatalog = {
   'dashboard.quick.pipeline': { uz_lat: 'Pipeline ochish', ru: 'Открыть Pipeline' },
   'dashboard.quick.ai': { uz_lat: 'AI Assistent', ru: 'AI Ассистент' },
   'dashboard.quick.report': { uz_lat: "Hisobot yuklab olish", ru: 'Скачать отчёт' },
+  'dashboard.loading': { uz_lat: 'Yuklanmoqda...', ru: 'Загрузка...' },
   'dashboard.period_hint': { uz_lat: "So'nggi davr", ru: 'За последний период' },
   'dashboard.maturity.advanced': { uz_lat: "Ilg'or", ru: 'Продвинутый' },
   'dashboard.maturity.growing': { uz_lat: "O'sishda", ru: 'Растущий' },
