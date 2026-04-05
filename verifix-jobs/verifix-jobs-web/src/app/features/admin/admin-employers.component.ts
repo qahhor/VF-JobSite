@@ -459,13 +459,13 @@ import { ToastService } from '../../shared/services/toast.service';
             </div>
           </div>
 
-          <div class="mt-4 flex gap-2">
+          <div class="mt-5 flex gap-3 border-t border-border pt-4">
             <button (click)="saveForm()" [disabled]="!formData.name"
-              class="h-8 rounded-lg bg-primary px-4 text-xs font-semibold text-white transition hover:bg-primary-600 disabled:opacity-40">
+              class="h-10 rounded-xl bg-primary px-6 text-sm font-semibold text-white transition hover:bg-primary-600 disabled:opacity-40">
               {{ i18n.t('common.save') }}
             </button>
             <button (click)="showForm.set(false)"
-              class="h-8 rounded-lg border border-border px-4 text-xs font-semibold transition hover:bg-surface">
+              class="h-10 rounded-xl border border-border px-6 text-sm font-semibold text-gray-700 transition hover:bg-surface">
               {{ i18n.t('common.cancel') }}
             </button>
           </div>
@@ -528,7 +528,12 @@ export class AdminEmployersComponent implements OnInit {
   blockTargetId = signal<string | null>(null);
   currentPage = signal(0);
   totalPages = signal(0);
-  countries = signal<{ iso2: string; nameUzLat: string; nameRu: string }[]>([]);
+  countries = signal<{ iso2: string; nameUzLat: string; nameRu: string }[]>([
+    { iso2: 'UZ', nameUzLat: "O'zbekiston", nameRu: 'Узбекистан' },
+    { iso2: 'KZ', nameUzLat: "Qozog'iston", nameRu: 'Казахстан' },
+    { iso2: 'KG', nameUzLat: "Qirg'iziston", nameRu: 'Киргизия' },
+    { iso2: 'TJ', nameUzLat: 'Tojikiston', nameRu: 'Таджикистан' },
+  ]);
   regions = signal<RefRegion[]>([]);
   filteredCities = signal<RefCity[]>([]);
   statusFilter = '';
