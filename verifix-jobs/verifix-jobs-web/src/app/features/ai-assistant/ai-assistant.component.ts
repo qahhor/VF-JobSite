@@ -169,17 +169,31 @@ export class AiAssistantComponent {
     });
   }
 
-  private addAssistantMessage(content: string) {
+  private addAssistantMessage(fullContent: string) {
     const assistantMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: 'assistant',
-      content,
+      content: '',
       timestamp: new Date(),
       confidence: 85 + Math.floor(Math.random() * 12),
       sources: ['Vacancy Analytics', 'Application Pipeline']
     };
     this.messages.update(m => [...m, assistantMsg]);
     this.isTyping.set(false);
+
+    // Typewriter effect — reveal char by char
+    let idx = 0;
+    const interval = setInterval(() => {
+      idx += 2; // 2 chars at a time for speed
+      if (idx >= fullContent.length) {
+        assistantMsg.content = fullContent;
+        this.messages.update(m => [...m]);
+        clearInterval(interval);
+      } else {
+        assistantMsg.content = fullContent.substring(0, idx);
+        this.messages.update(m => [...m]);
+      }
+    }, 15);
   }
 
   private getMockResponse(input: string): string {

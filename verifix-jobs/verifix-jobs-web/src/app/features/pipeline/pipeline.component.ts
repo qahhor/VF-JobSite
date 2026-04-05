@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { ApiService } from '../../core/services/api.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { Application, ApplicationStatus, Vacancy } from '../../core/models';
@@ -9,7 +10,13 @@ import { LucideAngularModule, Search, Filter, X, ChevronLeft, ChevronRight } fro
 @Component({
   selector: 'vjw-pipeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, DragDropModule],
+  styles: [`
+    .cdk-drag-preview { border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); transform: rotate(2deg); opacity: 0.9; }
+    .cdk-drag-placeholder { opacity: 0.3; border: 2px dashed #0EA5E9; border-radius: 12px; background: #F0F9FF; }
+    .cdk-drag-animating { transition: transform 200ms ease-out; }
+    .cdk-drop-list-dragging .cdk-drag { transition: transform 200ms ease-out; }
+  `],
   template: `
     <div class="space-y-5">
       <!-- Header -->
@@ -30,7 +37,7 @@ import { LucideAngularModule, Search, Filter, X, ChevronLeft, ChevronRight } fro
         </div>
       </div>
 
-      <!-- Desktop Kanban -->
+      <!-- Desktop Kanban with CDK Drag-Drop -->
       <div class="hidden lg:flex gap-3 overflow-x-auto pb-4">
         @for (col of columns; track col.status) {
           <div class="flex-shrink-0 w-72 rounded-2xl bg-surface border border-border/50">
@@ -42,10 +49,14 @@ import { LucideAngularModule, Search, Filter, X, ChevronLeft, ChevronRight } fro
                 {{ getColumnApps(col.status).length }}
               </span>
             </div>
-            <div class="px-2 pb-2 space-y-2 min-h-[200px] max-h-[calc(100vh-250px)] overflow-y-auto">
+            <div cdkDropList [cdkDropListData]="col.status"
+                 [cdkDropListConnectedTo]="columnIds"
+                 [id]="'col-' + col.status"
+                 (cdkDropListDropped)="onDrop($event)"
+                 class="px-2 pb-2 space-y-2 min-h-[200px] max-h-[calc(100vh-250px)] overflow-y-auto cdk-drop-list-custom">
               @for (app of getColumnApps(col.status); track app.id) {
-                <div (click)="selectedApp.set(app)"
-                  class="rounded-xl bg-white p-3 shadow-card border border-border/50 cursor-pointer hover:shadow-dropdown hover:border-primary/20 transition group">
+                <div cdkDrag [cdkDragData]="app" (click)="selectedApp.set(app)"
+                  class="rounded-xl bg-white p-3 shadow-card border border-border/50 cursor-grab hover:shadow-dropdown hover:border-primary/20 transition group">
                   <div class="flex items-center gap-2.5 mb-2">
                     <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
                          [class]="'bg-primary/10 text-primary'">
@@ -203,6 +214,8 @@ export class PipelineComponent implements OnInit {
   selectedVacancyId = '';
   searchQuery = '';
 
+  columnIds = ['col-NEW', 'col-VIEWED', 'col-SHORTLIST', 'col-INTERVIEW', 'col-OFFER', 'col-HIRED', 'col-REJECTED'];
+
   columns = [
     { status: 'NEW', label: 'Applied', headerColor: 'text-primary' },
     { status: 'VIEWED', label: 'Screening', headerColor: 'text-muted' },
@@ -258,6 +271,15 @@ export class PipelineComponent implements OnInit {
       'OFFER': [{ status: 'HIRED', label: 'Hire', class: 'bg-accent/10 text-accent hover:bg-accent/20' }],
     };
     return map[status] || [];
+  }
+
+  onDrop(event: CdkDragDrop<string>) {
+    if (event.previousContainer === event.container) return;
+    const app = event.item.data as Application;
+    const newStatus = event.container.data;
+    if (app.status !== newStatus) {
+      this.moveApp(app, newStatus);
+    }
   }
 
   statusLabel(status: string): string {

@@ -10,6 +10,25 @@
    =================================================== */
 
 @layer base {
+  /* Employer Panel: route transition */
+  router-outlet + * {
+    animation: routeFadeIn 150ms ease-out;
+  }
+  @keyframes routeFadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Employer Panel: focus-visible ring */
+  *:focus-visible {
+    outline: 2px solid #0EA5E9;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
   :root {
     color-scheme: light;
     /* Typography scale — optimized for readability */

@@ -6,6 +6,7 @@ import { I18nService } from '../core/services/i18n.service';
 import { LucideAngularModule, LayoutDashboard, Building2, Briefcase, Kanban,
   Users, CalendarClock, Clock, BarChart3, Sparkles, Settings, Plug, CreditCard,
   ChevronLeft, ChevronRight, Search, Globe, Bell, LogOut, Menu, X, Moon, Sun } from 'lucide-angular';
+import { CommandPaletteComponent } from '../shared/components/command-palette.component';
 
 interface NavItem {
   path: string;
@@ -23,7 +24,7 @@ interface NavSection {
 @Component({
   selector: 'vjw-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, LucideAngularModule, CommandPaletteComponent],
   template: `
     <!-- ═══ Desktop Sidebar ═══ -->
     <aside class="fixed inset-y-0 left-0 z-30 hidden lg:flex flex-col bg-sidebar text-white transition-all duration-200"
@@ -231,6 +232,11 @@ interface NavSection {
           </div>
         </aside>
       </div>
+    }
+
+    <!-- Command Palette -->
+    @if (commandPaletteOpen()) {
+      <vjw-command-palette (close)="commandPaletteOpen.set(false)"></vjw-command-palette>
     }
   `,
   styles: [`

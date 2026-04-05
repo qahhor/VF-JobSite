@@ -49,11 +49,11 @@ import { LucideAngularModule, Plus, MoreVertical } from 'lucide-angular';
           <table class="w-full text-sm">
             <thead>
               <tr class="border-b border-border text-left">
-                <th class="px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Title</th>
+                <th (click)="sort('title')" class="px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted cursor-pointer hover:text-gray-700 select-none">Title {{ sortIcon('title') }}</th>
                 <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted md:table-cell">Department</th>
-                <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted lg:table-cell">Location</th>
+                <th (click)="sort('city')" class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted lg:table-cell cursor-pointer hover:text-gray-700 select-none">Location {{ sortIcon('city') }}</th>
                 <th class="px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Status</th>
-                <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted text-center sm:table-cell">Applications</th>
+                <th (click)="sort('positionsFilled')" class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted text-center sm:table-cell cursor-pointer hover:text-gray-700 select-none">Applications {{ sortIcon('positionsFilled') }}</th>
                 <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted text-center xl:table-cell">Views</th>
                 <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted lg:table-cell">Published</th>
                 <th class="px-5 py-3 text-right text-caption font-medium uppercase tracking-wider text-muted"></th>
@@ -137,6 +137,8 @@ export class VacancyListComponent implements OnInit {
   openMenuId = signal<string | null>(null);
   statusFilter = '';
   search = '';
+  sortField = '';
+  sortDir: 'asc' | 'desc' = 'asc';
 
   constructor(private api: ApiService, public i18n: I18nService) {}
 
@@ -170,6 +172,27 @@ export class VacancyListComponent implements OnInit {
     if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
     if (n >= 1_000) return `${(n / 1_000).toFixed(0)}K`;
     return n.toString();
+  }
+
+  sort(field: string) {
+    if (this.sortField === field) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortField = field;
+      this.sortDir = 'asc';
+    }
+    const dir = this.sortDir === 'asc' ? 1 : -1;
+    this.vacancies.update(list => [...list].sort((a: any, b: any) => {
+      const va = a[field] ?? '';
+      const vb = b[field] ?? '';
+      if (typeof va === 'number') return (va - vb) * dir;
+      return String(va).localeCompare(String(vb)) * dir;
+    }));
+  }
+
+  sortIcon(field: string): string {
+    if (this.sortField !== field) return '';
+    return this.sortDir === 'asc' ? '↑' : '↓';
   }
 
   toggleMenu(id: string) {
