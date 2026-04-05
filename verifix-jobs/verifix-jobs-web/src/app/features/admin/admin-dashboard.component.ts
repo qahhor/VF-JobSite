@@ -1,262 +1,223 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import {
-  AdminApiService,
-  AdminAuditItem,
-  AdminFraudAlert,
-  AdminModerationItem,
-  AdminOverview,
-  AdminProfile,
-} from '../../core/services/admin-api.service';
+import { AdminApiService, AdminAuditItem, AdminFraudAlert, AdminModerationItem, AdminOverview } from '../../core/services/admin-api.service';
 import { I18nService } from '../../core/services/i18n.service';
+import { LucideAngularModule, Shield, AlertTriangle, Users, Building2, Briefcase, FileText, CheckCircle, BarChart3, Settings, TrendingUp, TrendingDown, ArrowRight } from 'lucide-angular';
 
-interface Kpi {
-  label: string;
-  value: string;
-  trend: number;
-}
-
-interface HealthService {
-  name: string;
-  key: string;
-  healthy: boolean;
-}
+interface Kpi { label: string; value: string; trend: number; icon: any; }
+interface HealthService { name: string; key: string; healthy: boolean; }
 
 @Component({
   selector: 'vjw-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, LucideAngularModule],
   template: `
     <div class="space-y-5">
-      <!-- Header with operational signals -->
-      <section class="rounded-2xl border border-border bg-white p-6 shadow-card">
-        <div class="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-          <div>
-            <div class="text-sm uppercase tracking-[0.24em] text-muted">{{ i18n.t('admin.dashboard') }}</div>
-            <h1 class="mt-3 text-3xl font-semibold text-slate-950">{{ i18n.t('admin.control_center') }}</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">{{ i18n.t('admin.dashboard_intro') }}</p>
-          </div>
-
-          <div class="grid gap-3 sm:grid-cols-3">
-            <a routerLink="/admin/moderation" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
-              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.pending_review') }}</div>
-              <div class="mt-2 text-2xl font-semibold text-slate-950">{{ overview()?.pendingModeration || 0 }}</div>
-            </a>
-            <a routerLink="/admin/fraud" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
-              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.open_alerts') }}</div>
-              <div class="mt-2 text-2xl font-semibold text-slate-950">{{ overview()?.openFraudAlerts || 0 }}</div>
-            </a>
-            <a routerLink="/admin/access" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
-              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.active_admins') }}</div>
-              <div class="mt-2 text-2xl font-semibold text-slate-950">{{ overview()?.activeAdmins || 0 }}</div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- KPI cards with trends -->
-      <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        @if (kpis().length === 0) {
-          @for (i of [1,2,3,4]; track i) {
-            <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
-              <div class="flex items-center justify-between">
-                <div class="h-3 w-20 animate-pulse rounded bg-slate-200"></div>
-                <div class="h-5 w-12 animate-pulse rounded-lg bg-slate-100"></div>
-              </div>
-              <div class="mt-3 h-8 w-24 animate-pulse rounded-lg bg-slate-200"></div>
-            </div>
-          }
-        }
+      <!-- ═══ KPI Row — dark cards like employer panel ═══ -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
         @for (kpi of kpis(); track kpi.label) {
-          <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="rounded-2xl bg-sidebar p-5 text-white">
             <div class="flex items-center justify-between">
-              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t(kpi.label) }}</div>
+              <span class="text-caption font-medium uppercase tracking-wider text-white/50">{{ i18n.t(kpi.label) }}</span>
               @if (kpi.trend !== 0) {
-                <span class="inline-flex items-center gap-0.5 rounded-lg px-2 py-0.5 text-xs font-medium"
-                  [class]="kpi.trend > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'">
-                  <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    [class]="kpi.trend < 0 ? 'rotate-180' : ''">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/>
-                  </svg>
+                <span class="flex items-center gap-0.5 text-xs font-semibold"
+                      [class]="kpi.trend > 0 ? 'text-emerald-400' : 'text-red-400'">
+                  <lucide-icon [img]="kpi.trend > 0 ? TrendingUpIcon : TrendingDownIcon" [size]="14"></lucide-icon>
                   {{ kpi.trend > 0 ? '+' : '' }}{{ kpi.trend }}%
                 </span>
               }
             </div>
-            <div class="mt-3 text-3xl font-semibold text-slate-950">{{ kpi.value }}</div>
+            <div class="mt-2 text-3xl font-bold text-white">{{ kpi.value }}</div>
           </div>
         }
-      </section>
+      </div>
 
-      <!-- Secondary stats -->
-      <section class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <!-- ═══ Secondary stats — compact grid ═══ -->
+      <div class="grid grid-cols-3 lg:grid-cols-6 gap-3">
         @for (card of metricCards(); track card.label) {
           <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
-            <div class="text-xl font-bold text-slate-900">{{ card.value }}</div>
-            <div class="mt-1 text-xs text-muted">{{ card.label }}</div>
+            <div class="text-xl font-bold text-gray-900">{{ card.value }}</div>
+            <div class="mt-1 text-[11px] text-muted">{{ card.label }}</div>
             @if (card.sub) {
-              <div class="mt-1 text-xs text-muted">{{ card.sub }}</div>
+              <div class="mt-0.5 text-[10px] text-muted">{{ card.sub }}</div>
             }
           </div>
         }
-      </section>
+      </div>
 
-      <!-- Main content grid -->
-      <section class="grid gap-5 2xl:grid-cols-[1.2fr_1fr]">
-        <div class="space-y-5">
-          <!-- Moderation preview -->
-          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
-            <div class="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.needs_attention') }}</h2>
-                <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.needs_attention_hint') }}</p>
-              </div>
-              <a routerLink="/admin/moderation" class="text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-4">
-                {{ i18n.t('admin.view_queue') }}
-              </a>
-            </div>
-
-            <div class="grid gap-3 lg:grid-cols-2">
+      <!-- ═══ Three-column layout: Attention + Health + Quick Actions ═══ -->
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
+        <!-- Moderation preview -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-heading font-semibold text-gray-900">{{ i18n.t('admin.needs_attention') }}</h2>
+            <a routerLink="/admin/moderation" class="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+              {{ i18n.t('admin.view_queue') }}
+              <lucide-icon [img]="ArrowRightIcon" [size]="12"></lucide-icon>
+            </a>
+          </div>
+          @if (moderationPreview().length) {
+            <div class="space-y-2">
               @for (item of moderationPreview(); track item.id) {
-                <div class="rounded-2xl border border-border bg-surface p-4">
-                  <div class="flex items-start justify-between gap-3">
-                    <div class="min-w-0">
-                      <div class="text-sm font-semibold text-slate-950">{{ item.title || item.entityType }}</div>
-                      <div class="mt-1 text-xs text-muted">{{ item.subtitle || item.entityId }}</div>
-                    </div>
-                    <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
+                <div class="rounded-xl border border-border/50 bg-surface p-3">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="text-sm font-medium text-gray-900 truncate">{{ item.title || item.entityType }}</div>
+                    <span class="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
                       {{ i18n.t('status.' + item.status) || item.status }}
                     </span>
                   </div>
-                  <div class="mt-3 text-sm text-slate-700 line-clamp-3">{{ item.previewText || item.reason || i18n.t('admin.no_preview') }}</div>
-                  <div class="mt-4 flex flex-wrap gap-2 text-xs text-muted">
-                    @if (item.city) { <span>{{ item.city }}</span> }
-                    @if (item.category) { <span>{{ item.category }}</span> }
-                    @if (item.salaryLabel) { <span>{{ item.salaryLabel }}</span> }
-                  </div>
-                </div>
-              } @empty {
-                <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-10 text-center text-sm text-muted lg:col-span-2">
-                  {{ i18n.t('admin.no_pending_queue') }}
+                  <div class="mt-1 text-[11px] text-muted truncate">{{ item.subtitle || item.entityId }}</div>
                 </div>
               }
             </div>
-          </div>
+          } @else {
+            <div class="flex items-center justify-center h-24 text-sm text-muted">{{ i18n.t('admin.no_pending_queue') }}</div>
+          }
+        </div>
 
-          <!-- Recent activity -->
-          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
-            <div class="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.recent_activity') }}</h2>
-                <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.recent_activity_hint') }}</p>
-              </div>
-              <a routerLink="/admin/audit" class="text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-4">
-                {{ i18n.t('admin.open_section') }}
-              </a>
+        <!-- System health -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <h2 class="text-heading font-semibold text-gray-900 mb-4">{{ i18n.t('admin.system_health') }}</h2>
+          @if (healthLoading()) {
+            <div class="flex items-center justify-center h-24 text-sm text-muted">{{ i18n.t('admin.logging_in') }}</div>
+          } @else {
+            <div class="space-y-2">
+              @for (svc of services(); track svc.key) {
+                <div class="flex items-center justify-between rounded-xl border border-border/50 bg-surface px-3 py-2.5">
+                  <span class="text-sm text-gray-700">{{ i18n.t(svc.name) }}</span>
+                  <span class="flex items-center gap-1.5">
+                    <span class="h-2 w-2 rounded-full" [class]="svc.healthy ? 'bg-emerald-400' : 'bg-red-400'"></span>
+                    <span class="text-[11px] font-medium" [class]="svc.healthy ? 'text-emerald-600' : 'text-red-500'">
+                      {{ svc.healthy ? i18n.t('admin.status_running') : i18n.t('admin.status_down') }}
+                    </span>
+                  </span>
+                </div>
+              }
             </div>
+          }
+        </div>
 
-            <div class="space-y-3">
+        <!-- Quick actions -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <h2 class="text-heading font-semibold text-gray-900 mb-4">{{ i18n.t('admin.quick_actions') }}</h2>
+          <div class="space-y-2">
+            <a routerLink="/admin/employers" class="flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-3 hover:border-primary/30 hover:bg-primary/5 transition">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <lucide-icon [img]="Building2Icon" [size]="16" class="text-primary"></lucide-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-900">{{ i18n.t('admin.companies') }}</div>
+                <div class="text-[10px] text-muted">{{ i18n.t('admin.review_companies') }}</div>
+              </div>
+            </a>
+            <a routerLink="/admin/moderation" class="flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-3 hover:border-primary/30 hover:bg-primary/5 transition">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10">
+                <lucide-icon [img]="ShieldIcon" [size]="16" class="text-warning"></lucide-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-900">{{ i18n.t('admin.moderation') }}</div>
+                <div class="text-[10px] text-muted">{{ overview()?.pendingModeration || 0 }} pending</div>
+              </div>
+            </a>
+            <a routerLink="/admin/analytics" class="flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-3 hover:border-primary/30 hover:bg-primary/5 transition">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10">
+                <lucide-icon [img]="BarChart3Icon" [size]="16" class="text-accent"></lucide-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-900">{{ i18n.t('admin.analytics_nav') }}</div>
+                <div class="text-[10px] text-muted">{{ i18n.t('admin.analytics.hint') }}</div>
+              </div>
+            </a>
+            <a routerLink="/admin/settings" class="flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-3 hover:border-primary/30 hover:bg-primary/5 transition">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface border border-border">
+                <lucide-icon [img]="SettingsIcon" [size]="16" class="text-muted"></lucide-icon>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-900">{{ i18n.t('admin.settings_nav') }}</div>
+                <div class="text-[10px] text-muted">{{ i18n.t('admin.settings.hint') }}</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Two-column: Activity + Fraud ═══ -->
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+        <!-- Recent activity -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-heading font-semibold text-gray-900">{{ i18n.t('admin.recent_activity') }}</h2>
+            <a routerLink="/admin/audit" class="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+              {{ i18n.t('admin.open_section') }}
+              <lucide-icon [img]="ArrowRightIcon" [size]="12"></lucide-icon>
+            </a>
+          </div>
+          @if (auditItems().length) {
+            <div class="space-y-2">
               @for (item of auditItems(); track item.id) {
-                <div class="rounded-2xl border border-border bg-surface p-4">
-                  <div class="flex items-center justify-between gap-3">
-                    <div class="text-sm font-semibold text-slate-950">{{ item.action }}</div>
-                    <div class="text-xs text-muted">{{ item.createdAt | date:'dd.MM HH:mm' }}</div>
+                <div class="flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-3">
+                  <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
+                       [class]="actionStyle(item.action)">
+                    {{ item.action?.substring(0,2) || '?' }}
                   </div>
-                  <div class="mt-2 text-xs text-muted">{{ item.adminEmail || 'admin' }} · {{ item.entityType || 'SYSTEM' }}</div>
-                </div>
-              } @empty {
-                <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-10 text-center text-sm text-muted">
-                  {{ i18n.t('admin.no_activity') }}
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium text-gray-900">{{ item.action }}</div>
+                    <div class="text-[10px] text-muted">{{ item.adminEmail || 'admin' }} · {{ item.entityType || 'SYSTEM' }}</div>
+                  </div>
+                  <div class="text-[10px] text-muted whitespace-nowrap">{{ item.createdAt | date:'dd.MM HH:mm' }}</div>
                 </div>
               }
             </div>
-          </div>
+          } @else {
+            <div class="flex items-center justify-center h-24 text-sm text-muted">{{ i18n.t('admin.no_activity') }}</div>
+          }
         </div>
 
-        <div class="space-y-5">
-          <!-- System health -->
-          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
-            <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.system_health') }}</h2>
-            <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.system_health_hint') }}</p>
-
-            @if (healthLoading()) {
-              <div class="mt-4 py-4 text-center text-sm text-muted">{{ i18n.t('admin.logging_in') }}</div>
-            } @else {
-              <div class="mt-4 space-y-2">
-                @for (svc of services(); track svc.key) {
-                  <div class="flex items-center justify-between rounded-xl border border-border/50 bg-surface px-4 py-3">
-                    <span class="text-sm text-slate-700">{{ i18n.t(svc.name) }}</span>
-                    <span class="flex items-center gap-1.5">
-                      <span class="h-2 w-2 rounded-full" [class]="svc.healthy ? 'bg-emerald-400' : 'bg-red-400'"></span>
-                      <span class="text-xs font-medium" [class]="svc.healthy ? 'text-emerald-600' : 'text-red-500'">
-                        {{ svc.healthy ? i18n.t('admin.status_running') : i18n.t('admin.status_down') }}
-                      </span>
-                    </span>
-                  </div>
-                }
-              </div>
-            }
+        <!-- Fraud alerts -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-heading font-semibold text-gray-900">{{ i18n.t('admin.fraud') }}</h2>
+            <a routerLink="/admin/fraud" class="text-xs font-medium text-primary hover:underline flex items-center gap-1">
+              {{ i18n.t('admin.open_section') }}
+              <lucide-icon [img]="ArrowRightIcon" [size]="12"></lucide-icon>
+            </a>
           </div>
-
-          <!-- Quick actions -->
-          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
-            <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.quick_actions') }}</h2>
-            <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.quick_actions_hint') }}</p>
-
-            <div class="mt-5 grid gap-3">
-              <a routerLink="/admin/employers" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
-                <div class="text-sm font-semibold text-slate-950">{{ i18n.t('admin.companies') }}</div>
-                <div class="mt-1 text-xs text-muted">{{ i18n.t('admin.review_companies') }}</div>
-              </a>
-              <a routerLink="/admin/analytics" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
-                <div class="text-sm font-semibold text-slate-950">{{ i18n.t('admin.analytics_nav') }}</div>
-                <div class="mt-1 text-xs text-muted">{{ i18n.t('admin.analytics.hint') }}</div>
-              </a>
-              <a routerLink="/admin/settings" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
-                <div class="text-sm font-semibold text-slate-950">{{ i18n.t('admin.settings_nav') }}</div>
-                <div class="mt-1 text-xs text-muted">{{ i18n.t('admin.settings.hint') }}</div>
-              </a>
-            </div>
-          </div>
-
-          <!-- Fraud preview -->
-          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
-            <div class="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.fraud') }}</h2>
-                <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.fraud_hint') }}</p>
-              </div>
-              <a routerLink="/admin/fraud" class="text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-4">
-                {{ i18n.t('admin.open_section') }}
-              </a>
-            </div>
-
-            <div class="space-y-3">
+          @if (fraudPreview().length) {
+            <div class="space-y-2">
               @for (alert of fraudPreview(); track alert.id) {
-                <div class="rounded-2xl border border-border bg-surface p-4">
-                  <div class="flex items-center justify-between gap-3">
-                    <div class="text-sm font-semibold text-slate-950">{{ alert.fraudType }}</div>
-                    <span class="rounded-full px-2.5 py-1 text-[11px] font-medium" [class]="severityClass(alert.score)">
-                      {{ alert.score || 0 }}
-                    </span>
+                <div class="flex items-center gap-3 rounded-xl border border-border/50 bg-surface p-3">
+                  <lucide-icon [img]="AlertTriangleIcon" [size]="16" class="shrink-0"
+                    [class]="(alert.score || 0) >= 0.7 ? 'text-error' : 'text-warning'"></lucide-icon>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium text-gray-900">{{ alert.fraudType }}</div>
+                    <div class="text-[10px] text-muted">{{ alert.entityType }} · {{ alert.entityId?.substring(0,8) }}</div>
                   </div>
-                  <div class="mt-2 text-xs text-muted">{{ alert.entityType }} · {{ alert.entityId }}</div>
-                </div>
-              } @empty {
-                <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-10 text-center text-sm text-muted">
-                  {{ i18n.t('admin.no_fraud_alerts') }}
+                  <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold" [class]="severityClass(alert.score)">
+                    {{ ((alert.score || 0) * 100).toFixed(0) }}%
+                  </span>
                 </div>
               }
             </div>
-          </div>
+          } @else {
+            <div class="flex items-center justify-center h-24 text-sm text-muted">{{ i18n.t('admin.no_fraud_alerts') }}</div>
+          }
         </div>
-      </section>
+      </div>
     </div>
   `,
 })
 export class AdminDashboardComponent implements OnInit {
+  TrendingUpIcon = TrendingUp;
+  TrendingDownIcon = TrendingDown;
+  ArrowRightIcon = ArrowRight;
+  ShieldIcon = Shield;
+  AlertTriangleIcon = AlertTriangle;
+  Building2Icon = Building2;
+  BarChart3Icon = BarChart3;
+  SettingsIcon = Settings;
+
   overview = signal<AdminOverview | null>(null);
-  profile = signal<AdminProfile | null>(null);
   auditItems = signal<AdminAuditItem[]>([]);
   moderationPreview = signal<AdminModerationItem[]>([]);
   fraudPreview = signal<AdminFraudAlert[]>([]);
@@ -275,20 +236,16 @@ export class AdminDashboardComponent implements OnInit {
   constructor(private api: AdminApiService, public i18n: I18nService) {}
 
   ngOnInit() {
-    this.api.getCurrentAdminProfile().subscribe({ next: (p) => this.profile.set(p), error: () => {} });
-
     this.api.getOverview().subscribe({
       next: (d) => {
         this.overview.set(d);
-
         const totalUsers = d.totalUsers ?? (d.totalCandidates + d.totalEmployers);
         this.kpis.set([
-          { label: 'admin.kpi.total_users', value: this.fmt(totalUsers), trend: d.usersTrend ?? 0 },
-          { label: 'admin.kpi.active_vacancies', value: this.fmt(d.activeVacancies), trend: d.vacanciesTrend ?? 0 },
-          { label: 'admin.kpi.applications_today', value: this.fmt(d.applicationsToday ?? 0), trend: d.applicationsTrend ?? 0 },
-          { label: 'admin.kpi.monthly_revenue', value: this.fmtAmount(d.monthlyRevenue ?? 0), trend: d.revenueTrend ?? 0 },
+          { label: 'admin.kpi.total_users', value: this.fmt(totalUsers), trend: d.usersTrend ?? 0, icon: Users },
+          { label: 'admin.kpi.active_vacancies', value: this.fmt(d.activeVacancies), trend: d.vacanciesTrend ?? 0, icon: Briefcase },
+          { label: 'admin.kpi.applications_today', value: this.fmt(d.applicationsToday ?? 0), trend: d.applicationsTrend ?? 0, icon: FileText },
+          { label: 'admin.kpi.monthly_revenue', value: this.fmtAmount(d.monthlyRevenue ?? 0), trend: d.revenueTrend ?? 0, icon: BarChart3 },
         ]);
-
         this.metricCards.set([
           { label: this.i18n.t('admin.companies'), value: d.totalEmployers, sub: `${this.i18n.t('admin.pending')}: ${d.pendingEmployers}` },
           { label: this.i18n.t('admin.candidates'), value: d.totalCandidates, sub: `+${d.newCandidatesLast7Days} / 7d` },
@@ -302,33 +259,35 @@ export class AdminDashboardComponent implements OnInit {
     });
 
     this.api.getHealthStatus().subscribe({
-      next: (health) => {
-        this.healthLoading.set(false);
-        this.services.update(svcs => svcs.map(s => ({ ...s, healthy: health[s.key] ?? false })));
-      },
+      next: (health) => { this.healthLoading.set(false); this.services.update(svcs => svcs.map(s => ({ ...s, healthy: health[s.key] ?? false }))); },
       error: () => this.healthLoading.set(false),
     });
 
-    this.api.getAuditLogs(0, 6).subscribe({ next: (r) => this.auditItems.set(r.content || []), error: () => {} });
-    this.api.getPendingModeration(0, 4).subscribe({ next: (r) => this.moderationPreview.set(r.content || []), error: () => {} });
-    this.api.getFraudAlerts(false, 0, 4).subscribe({ next: (r) => this.fraudPreview.set(r.content || []), error: () => {} });
+    this.api.getAuditLogs(0, 5).subscribe({ next: (r) => this.auditItems.set(r.content || []), error: () => {} });
+    this.api.getPendingModeration(0, 3).subscribe({ next: (r) => this.moderationPreview.set(r.content || []), error: () => {} });
+    this.api.getFraudAlerts(false, 0, 3).subscribe({ next: (r) => this.fraudPreview.set(r.content || []), error: () => {} });
+  }
+
+  actionStyle(action: string): string {
+    if (action?.includes('CREATE')) return 'bg-accent/10 text-accent';
+    if (action?.includes('DELETE')) return 'bg-error/10 text-error';
+    if (action?.includes('STATUS')) return 'bg-warning/10 text-warning';
+    return 'bg-primary/10 text-primary';
   }
 
   severityClass(score?: number): string {
     const n = Number(score || 0);
     if (n >= 0.7) return 'border border-red-200 bg-red-50 text-red-700';
     if (n >= 0.4) return 'border border-amber-200 bg-amber-50 text-amber-700';
-    return 'border border-border bg-white text-slate-600';
+    return 'border border-border bg-white text-gray-600';
   }
 
-  private fmt(n: number): string {
-    return n.toLocaleString();
-  }
+  private fmt(n: number): string { return n.toLocaleString(); }
 
   private fmtAmount(n: number): string {
     if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
     if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
-    if (n > 0) return n.toLocaleString() + ' ' + this.i18n.t('admin.currency_uzs');
+    if (n > 0) return n.toLocaleString() + ' UZS';
     return '0';
   }
 }
