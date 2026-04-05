@@ -11,103 +11,99 @@ import { ToastService } from '../../shared/services/toast.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="space-y-4">
-      <!-- Header + Stats -->
-      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
-        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <div class="text-[11px] uppercase tracking-[0.2em] text-primary">{{ i18n.t('admin.companies') }}</div>
-            <h1 class="mt-1 text-xl font-semibold">{{ i18n.t('admin.company_control') }}</h1>
+      <!-- Header: Title + Stats -->
+      <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 class="text-title font-semibold text-gray-900">{{ i18n.t('admin.company_control') }}</h1>
+          <p class="mt-1 text-sm text-muted">{{ overview()?.totalEmployers || 0 }} {{ i18n.t('admin.companies').toLowerCase() }}, {{ overview()?.pendingEmployers || 0 }} {{ i18n.t('admin.pending').toLowerCase() }}</p>
+        </div>
+        <div class="flex gap-2">
+          <div class="rounded-2xl bg-sidebar px-4 py-3 text-center min-w-[90px]">
+            <div class="text-2xl font-bold text-white">{{ overview()?.totalEmployers || 0 }}</div>
+            <div class="text-[10px] uppercase tracking-wider text-white/50">{{ i18n.t('admin.companies') }}</div>
           </div>
-          <div class="flex gap-2">
-            <div class="rounded-xl border border-border bg-surface px-3 py-2 text-center min-w-[80px]">
-              <div class="text-[10px] uppercase tracking-wider text-muted">{{ i18n.t('admin.companies') }}</div>
-              <div class="text-lg font-semibold">{{ overview()?.totalEmployers || 0 }}</div>
-            </div>
-            <div class="rounded-xl border border-border bg-surface px-3 py-2 text-center min-w-[80px]">
-              <div class="text-[10px] uppercase tracking-wider text-muted">{{ i18n.t('admin.pending') }}</div>
-              <div class="text-lg font-semibold">{{ overview()?.pendingEmployers || 0 }}</div>
-            </div>
-            <div class="rounded-xl border border-border bg-surface px-3 py-2 text-center min-w-[80px]">
-              <div class="text-[10px] uppercase tracking-wider text-muted">{{ i18n.t('settings.verified') }}</div>
-              <div class="text-lg font-semibold">{{ overview()?.verifiedEmployers || 0 }}</div>
-            </div>
+          <div class="rounded-2xl bg-sidebar px-4 py-3 text-center min-w-[90px]">
+            <div class="text-2xl font-bold text-amber-400">{{ overview()?.pendingEmployers || 0 }}</div>
+            <div class="text-[10px] uppercase tracking-wider text-white/50">{{ i18n.t('admin.pending') }}</div>
+          </div>
+          <div class="rounded-2xl bg-sidebar px-4 py-3 text-center min-w-[90px]">
+            <div class="text-2xl font-bold text-emerald-400">{{ overview()?.verifiedEmployers || 0 }}</div>
+            <div class="text-[10px] uppercase tracking-wider text-white/50">{{ i18n.t('settings.verified') }}</div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- Search + Filters + Actions -->
-      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
-        <div class="flex flex-col gap-3 lg:flex-row lg:items-end">
-          <div class="flex-1">
-            <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('common.search') }}</label>
-            <input
-              [(ngModel)]="search"
-              (keyup.enter)="load()"
-              type="text"
-              class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-primary"
-              [placeholder]="i18n.t('admin.search_companies')" />
-          </div>
-          <div class="w-full lg:w-48">
-            <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.moderation.status') }}</label>
-            <select
-              [(ngModel)]="statusFilter"
-              class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-primary">
-              <option value="">{{ i18n.t('filter.all') }}</option>
-              <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
-              <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
-              <option value="BLOCKED">{{ i18n.t('status.blocked') }}</option>
-              <option value="SUSPENDED">{{ i18n.t('status.SUSPENDED') }}</option>
-              <option value="INACTIVE">{{ i18n.t('status.INACTIVE') }}</option>
-            </select>
-          </div>
-          <div class="flex gap-2">
-            <button (click)="load()" class="h-9 rounded-lg bg-primary px-4 text-xs font-semibold text-white transition hover:bg-primary-600">
-              {{ i18n.t('common.search') }}
-            </button>
-            <button (click)="openCreate()" class="h-9 rounded-lg bg-primary px-4 text-xs font-semibold text-white transition hover:bg-primary-600">
-              + {{ i18n.t('common.add') }}
-            </button>
-          </div>
+      <!-- Search + Filters + Table in one card -->
+      <div class="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
+        <!-- Filters row -->
+        <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+          <input [(ngModel)]="search" (keyup.enter)="load()" type="text"
+            class="flex-1 h-10 rounded-xl border border-border bg-white px-4 text-sm outline-none transition focus:border-primary"
+            [placeholder]="i18n.t('admin.search_companies')" />
+          <select [(ngModel)]="statusFilter" (ngModelChange)="load()"
+            class="h-10 rounded-xl border border-border bg-white px-3 text-sm outline-none focus:border-primary w-full sm:w-44">
+            <option value="">{{ i18n.t('filter.all') }}</option>
+            <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
+            <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
+            <option value="BLOCKED">{{ i18n.t('status.blocked') }}</option>
+            <option value="SUSPENDED">{{ i18n.t('status.SUSPENDED') }}</option>
+            <option value="INACTIVE">{{ i18n.t('status.INACTIVE') }}</option>
+          </select>
+          <button (click)="openCreate()"
+            class="h-10 rounded-xl bg-primary px-5 text-sm font-semibold text-white transition hover:bg-primary-600 whitespace-nowrap">
+            + {{ i18n.t('common.add') }}
+          </button>
         </div>
 
         <!-- Table -->
-        <div class="mt-4 overflow-x-auto">
+        <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
-              <tr class="border-b border-border text-left text-xs uppercase tracking-wider text-muted">
-                <th class="pb-2 pr-3 font-medium">{{ i18n.t('employer.company') }}</th>
-                <th class="pb-2 pr-3 font-medium">INN</th>
-                <th class="pb-2 pr-3 font-medium">{{ i18n.t('employer.city') }}</th>
-                <th class="pb-2 pr-3 font-medium">{{ i18n.t('admin.moderation.status') }}</th>
-                <th class="pb-2 pr-3 font-medium text-center">{{ i18n.t('common.vacancies') }}</th>
-                <th class="pb-2 font-medium text-right">{{ i18n.t('common.actions') }}</th>
+              <tr class="border-y border-border text-left">
+                <th class="px-4 py-3 text-caption font-medium uppercase tracking-wider text-muted">{{ i18n.t('employer.company') }}</th>
+                <th class="px-4 py-3 text-caption font-medium uppercase tracking-wider text-muted">INN</th>
+                <th class="hidden md:table-cell px-4 py-3 text-caption font-medium uppercase tracking-wider text-muted">{{ i18n.t('employer.industry') }}</th>
+                <th class="px-4 py-3 text-caption font-medium uppercase tracking-wider text-muted">{{ i18n.t('employer.city') }}</th>
+                <th class="px-4 py-3 text-caption font-medium uppercase tracking-wider text-muted">{{ i18n.t('admin.moderation.status') }}</th>
+                <th class="px-4 py-3 text-caption font-medium uppercase tracking-wider text-muted text-center">{{ i18n.t('common.vacancies') }}</th>
+                <th class="px-4 py-3 text-right text-caption font-medium uppercase tracking-wider text-muted"></th>
               </tr>
             </thead>
             <tbody>
               @for (company of employers(); track company.id) {
                 <tr class="border-b border-border/50 hover:bg-surface/50 transition">
-                  <td class="py-2.5 pr-3">
+                  <td class="px-4 py-3">
                     <div class="flex items-center gap-2">
-                      <span class="font-medium text-slate-900">{{ company.name }}</span>
-                      @if (company.isVerified) {
-                        <svg class="h-3.5 w-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
-                        </svg>
-                      }
+                      <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-xs font-semibold text-primary">
+                        {{ company.name?.charAt(0) || '?' }}
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                          <span class="font-medium text-gray-900 truncate">{{ company.name }}</span>
+                          @if (company.isVerified) {
+                            <svg class="h-3.5 w-3.5 shrink-0 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                            </svg>
+                          }
+                        </div>
+                        @if (company.email) {
+                          <div class="text-[11px] text-muted truncate">{{ company.email }}</div>
+                        }
+                      </div>
                     </div>
-                    @if (company.email) {
-                      <div class="text-xs text-muted">{{ company.email }}</div>
-                    }
                   </td>
-                  <td class="py-2.5 pr-3 text-muted">{{ company.inn || '—' }}</td>
-                  <td class="py-2.5 pr-3 text-muted">{{ company.city || '—' }}</td>
-                  <td class="py-2.5 pr-3">
-                    <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold" [class]="statusCls(company.status)">
+                  <td class="px-4 py-3 font-mono text-xs text-muted">{{ company.inn || '—' }}</td>
+                  <td class="hidden md:table-cell px-4 py-3 text-muted text-xs">{{ company.industry || '—' }}</td>
+                  <td class="px-4 py-3 text-muted">{{ company.city || '—' }}</td>
+                  <td class="px-4 py-3">
+                    <span class="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold" [class]="statusCls(company.status)">
                       {{ statusLabel(company.status) }}
                     </span>
                   </td>
-                  <td class="py-2.5 pr-3 text-center text-muted">{{ company.activeVacancies || 0 }}</td>
-                  <td class="py-2.5 text-right">
+                  <td class="px-4 py-3 text-center">
+                    <span class="font-semibold text-primary">{{ company.activeVacancies || 0 }}</span>
+                  </td>
+                  <td class="px-4 py-3 text-right">
                     <div class="flex items-center justify-end gap-1">
                       <!-- View -->
                       <button (click)="openDetail(company.id)" title="Просмотр"
@@ -173,21 +169,17 @@ import { ToastService } from '../../shared/services/toast.service';
 
         <!-- Pagination -->
         @if (totalPages() > 1) {
-          <div class="mt-3 flex items-center justify-between border-t border-border/50 pt-3">
+          <div class="flex items-center justify-between border-t border-border px-4 py-3">
             <span class="text-xs text-muted">{{ i18n.t('common.page') }} {{ currentPage() + 1 }} / {{ totalPages() }}</span>
             <div class="flex gap-1">
               <button [disabled]="currentPage() === 0" (click)="goToPage(currentPage() - 1)"
-                class="rounded-md border border-border px-2.5 py-1 text-xs transition hover:bg-surface disabled:opacity-40">
-                ←
-              </button>
+                class="h-8 w-8 rounded-lg border border-border text-xs transition hover:bg-surface disabled:opacity-40">←</button>
               <button [disabled]="currentPage() >= totalPages() - 1" (click)="goToPage(currentPage() + 1)"
-                class="rounded-md border border-border px-2.5 py-1 text-xs transition hover:bg-surface disabled:opacity-40">
-                →
-              </button>
+                class="h-8 w-8 rounded-lg border border-border text-xs transition hover:bg-surface disabled:opacity-40">→</button>
             </div>
           </div>
         }
-      </section>
+      </div>
     </div>
 
     <!-- ═══ Detail Modal ═══ -->
@@ -669,6 +661,8 @@ export class AdminEmployersComponent implements OnInit {
   saveForm() {
     if (!this.formData.name) return;
     const payload = { ...this.formData };
+    // Remove frontend-only fields not in backend DTO
+    delete (payload as any).country;
     // Send null for empty status so backend uses default
     if (!payload.status) delete (payload as any).status;
     if (!payload.deactivationReason) delete (payload as any).deactivationReason;
