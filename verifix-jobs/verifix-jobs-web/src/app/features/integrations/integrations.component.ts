@@ -11,7 +11,7 @@ import { I18nService } from '../../core/services/i18n.service';
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('integrations.title') }}</h1>
+        <h1 class="text-title font-semibold text-gray-900">{{ i18n.t('integrations.title') }}</h1>
         @if (hub()) {
           <div class="flex items-center gap-2">
             <span class="text-sm text-gray-500">{{ i18n.t('integrations.level') }}:</span>
@@ -25,13 +25,13 @@ import { I18nService } from '../../core/services/i18n.service';
 
       <!-- Progress bar -->
       @if (hub()) {
-        <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+        <div class="bg-white rounded-xl p-5 shadow-card border border-border">
           <div class="flex items-center justify-between mb-2">
             <span class="text-sm font-medium text-gray-700">{{ i18n.t('integrations.progress') }}</span>
             <span class="text-sm text-gray-400">{{ hub()!.connectedCount }} / {{ hub()!.integrations.length }}</span>
           </div>
           <div class="w-full bg-gray-100 rounded-full h-3">
-            <div class="bg-black rounded-full h-3 transition-all" [style.width.%]="(hub()!.connectedCount / hub()!.integrations.length) * 100"></div>
+            <div class="bg-primary rounded-full h-3 transition-all" [style.width.%]="(hub()!.connectedCount / hub()!.integrations.length) * 100"></div>
           </div>
         </div>
       }
@@ -39,7 +39,7 @@ import { I18nService } from '../../core/services/i18n.service';
       <!-- Integration cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         @for (item of hub()?.integrations || []; track item.name) {
-          <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-start gap-4">
+          <div class="bg-white rounded-xl p-5 shadow-card border border-border flex items-start gap-4">
             <div class="w-10 h-10 rounded-lg flex items-center justify-center text-lg shrink-0"
                  [class]="item.connected ? 'bg-green-50' : 'bg-gray-100'">
               {{ categoryIcon(item.category) }}

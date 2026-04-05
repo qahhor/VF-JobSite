@@ -12,10 +12,10 @@ import { PricingPlan, Payment } from '../../core/models';
   imports: [CommonModule],
   template: `
     <div class="space-y-6">
-      <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('billing.title') }}</h1>
+      <h1 class="text-title font-semibold text-gray-900">{{ i18n.t('billing.title') }}</h1>
 
       <!-- Current plan -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-6 shadow-card border border-border">
         <h3 class="font-semibold text-gray-800 mb-2">{{ i18n.t('billing.current') }}</h3>
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-black text-xl">💎</div>
@@ -56,7 +56,7 @@ import { PricingPlan, Payment } from '../../core/models';
               </li>
             </ul>
             @if (plan.code !== currentPlan()) {
-              <button (click)="upgrade(plan.code)" class="w-full py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition">
+              <button (click)="upgrade(plan.code)" class="w-full py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition">
                 {{ i18n.t('billing.select') }}
               </button>
             } @else {
@@ -67,7 +67,7 @@ import { PricingPlan, Payment } from '../../core/models';
       </div>
 
       <!-- Promotion Packages (TOP) -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-6 shadow-card border border-border">
         <h3 class="font-semibold text-gray-800 mb-4">⭐ {{ i18n.t('billing.top_packages') }}</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           @for (pkg of promotionPackages; track pkg.days) {
@@ -85,7 +85,7 @@ import { PricingPlan, Payment } from '../../core/models';
       </div>
 
       <!-- Bundle Packages -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-6 shadow-card border border-border">
         <h3 class="font-semibold text-gray-800 mb-4">📦 {{ i18n.t('billing.bundles') }}</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           @for (bundle of bundles; track bundle.name) {
@@ -100,7 +100,7 @@ import { PricingPlan, Payment } from '../../core/models';
                 <div class="text-xl font-bold text-gray-900">{{ formatPrice(bundle.price) }} <span class="text-xs font-normal text-gray-400">UZS{{ i18n.t('billing.per_month') }}</span></div>
                 <div class="text-xs text-gray-400 line-through">{{ formatPrice(bundle.originalPrice) }}</div>
               </div>
-              <button class="w-full mt-3 h-9 bg-black text-white rounded-lg text-xs font-medium hover:bg-gray-800 transition">
+              <button class="w-full mt-3 h-9 bg-primary text-white rounded-lg text-xs font-medium hover:bg-primary-600 transition">
                 {{ i18n.t('billing.select') }}
               </button>
             </div>
@@ -109,7 +109,7 @@ import { PricingPlan, Payment } from '../../core/models';
       </div>
 
       <!-- Payment history -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl shadow-card border border-border">
         <div class="p-5 border-b border-gray-100">
           <h3 class="font-semibold text-gray-800">{{ i18n.t('billing.history') }}</h3>
         </div>
@@ -144,7 +144,7 @@ import { PricingPlan, Payment } from '../../core/models';
         </div>
       <!-- Entitlements / Limits -->
       @if (entitlements().length) {
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="bg-white rounded-xl shadow-card border border-border">
           <div class="px-5 py-4 border-b border-gray-100"><h3 class="font-semibold text-gray-800">📊 {{ i18n.t('billing.entitlements') }}</h3></div>
           <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
             @for (e of entitlements(); track e.id) {
