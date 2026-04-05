@@ -13,27 +13,27 @@ import { ToastService } from '../../shared/services/toast.service';
     <div class="space-y-5">
       <div>
         <h1 class="text-2xl font-semibold">{{ i18n.t('admin.settings.title') }}</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ i18n.t('admin.settings.hint') }}</p>
+        <p class="mt-1 text-sm text-muted">{{ i18n.t('admin.settings.hint') }}</p>
       </div>
 
       @if (loading()) {
-        <div class="py-12 text-center text-sm text-slate-400">{{ i18n.t('admin.logging_in') }}</div>
+        <div class="py-12 text-center text-sm text-muted">{{ i18n.t('admin.logging_in') }}</div>
       } @else {
         <!-- Feature toggles -->
-        <div class="rounded-[28px] border border-slate-200 bg-white p-5">
+        <div class="rounded-2xl border border-border bg-white p-5">
           <h3 class="text-sm font-semibold">{{ i18n.t('admin.settings.services') }}</h3>
-          <p class="mt-1 text-xs text-slate-500">{{ i18n.t('admin.settings.services_hint') }}</p>
+          <p class="mt-1 text-xs text-muted">{{ i18n.t('admin.settings.services_hint') }}</p>
           <div class="mt-4 space-y-3">
             @for (toggle of featureToggles; track toggle.key) {
-              <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+              <div class="flex items-center justify-between rounded-xl border border-border/50 bg-surface px-4 py-3">
                 <div>
                   <div class="text-sm font-medium">{{ i18n.t(toggle.labelKey) }}</div>
-                  <div class="text-xs text-slate-400">{{ i18n.t(toggle.descKey) }}</div>
+                  <div class="text-xs text-muted">{{ i18n.t(toggle.descKey) }}</div>
                 </div>
                 <button
                   (click)="toggle.enabled = !toggle.enabled"
                   class="relative h-6 w-11 rounded-full transition"
-                  [class]="toggle.enabled ? 'bg-slate-950' : 'bg-slate-300'">
+                  [class]="toggle.enabled ? 'bg-primary' : 'bg-slate-300'">
                   <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform"
                     [class.translate-x-5]="toggle.enabled"></span>
                 </button>
@@ -43,31 +43,31 @@ import { ToastService } from '../../shared/services/toast.service';
         </div>
 
         <!-- Rate limits -->
-        <div class="rounded-[28px] border border-slate-200 bg-white p-5">
+        <div class="rounded-2xl border border-border bg-white p-5">
           <h3 class="text-sm font-semibold">{{ i18n.t('admin.settings.rate_limits') }}</h3>
           <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label class="block">
-              <span class="mb-1 block text-xs text-slate-500">{{ i18n.t('admin.settings.general_rate') }}</span>
-              <input type="number" [(ngModel)]="rateLimits.general" class="h-11 w-full rounded-2xl border border-slate-300 px-4 text-sm outline-none focus:border-slate-950" />
+              <span class="mb-1 block text-xs text-muted">{{ i18n.t('admin.settings.general_rate') }}</span>
+              <input type="number" [(ngModel)]="rateLimits.general" class="h-11 w-full rounded-2xl border border-border px-4 text-sm outline-none focus:border-slate-950" />
             </label>
             <label class="block">
-              <span class="mb-1 block text-xs text-slate-500">{{ i18n.t('admin.settings.employer_rate') }}</span>
-              <input type="number" [(ngModel)]="rateLimits.employer" class="h-11 w-full rounded-2xl border border-slate-300 px-4 text-sm outline-none focus:border-slate-950" />
+              <span class="mb-1 block text-xs text-muted">{{ i18n.t('admin.settings.employer_rate') }}</span>
+              <input type="number" [(ngModel)]="rateLimits.employer" class="h-11 w-full rounded-2xl border border-border px-4 text-sm outline-none focus:border-slate-950" />
             </label>
           </div>
         </div>
 
         <!-- Moderation rules -->
-        <div class="rounded-[28px] border border-slate-200 bg-white p-5">
+        <div class="rounded-2xl border border-border bg-white p-5">
           <h3 class="text-sm font-semibold">{{ i18n.t('admin.settings.moderation_rules') }}</h3>
           <div class="mt-4 space-y-3">
             <label class="block">
-              <span class="mb-1 block text-xs text-slate-500">{{ i18n.t('admin.settings.minimum_wage') }}</span>
-              <input type="number" [(ngModel)]="moderation.minimumWage" class="h-11 w-full rounded-2xl border border-slate-300 px-4 text-sm outline-none focus:border-slate-950" />
+              <span class="mb-1 block text-xs text-muted">{{ i18n.t('admin.settings.minimum_wage') }}</span>
+              <input type="number" [(ngModel)]="moderation.minimumWage" class="h-11 w-full rounded-2xl border border-border px-4 text-sm outline-none focus:border-slate-950" />
             </label>
             <label class="block">
-              <span class="mb-1 block text-xs text-slate-500">{{ i18n.t('admin.settings.banned_words') }}</span>
-              <textarea [(ngModel)]="moderation.bannedWords" rows="3" [placeholder]="i18n.t('admin.settings.banned_placeholder')" class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-950"></textarea>
+              <span class="mb-1 block text-xs text-muted">{{ i18n.t('admin.settings.banned_words') }}</span>
+              <textarea [(ngModel)]="moderation.bannedWords" rows="3" [placeholder]="i18n.t('admin.settings.banned_placeholder')" class="w-full rounded-2xl border border-border px-4 py-3 text-sm outline-none focus:border-slate-950"></textarea>
             </label>
           </div>
         </div>
@@ -77,7 +77,7 @@ import { ToastService } from '../../shared/services/toast.service';
           <button
             (click)="save()"
             [disabled]="saving()"
-            class="rounded-2xl bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50">
+            class="rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary-600 disabled:opacity-50">
             {{ saving() ? i18n.t('admin.saving_password') : i18n.t('admin.settings.save') }}
           </button>
         </div>

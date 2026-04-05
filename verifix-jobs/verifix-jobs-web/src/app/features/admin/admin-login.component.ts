@@ -10,15 +10,15 @@ import { I18nService } from '../../core/services/i18n.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
+    <div class="flex min-h-screen items-center justify-center bg-surface px-4 py-10">
       <div class="w-full max-w-md">
         <div class="mb-8 text-center">
-          <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Verifix Jobs</div>
+          <div class="text-sm uppercase tracking-[0.24em] text-muted">Verifix Jobs</div>
           <h1 class="mt-4 text-4xl font-semibold text-slate-950">{{ i18n.t('admin.panel') }}</h1>
-          <p class="mt-3 text-sm leading-6 text-slate-500">{{ i18n.t('admin.subtitle') }}</p>
+          <p class="mt-3 text-sm leading-6 text-muted">{{ i18n.t('admin.subtitle') }}</p>
         </div>
 
-        <div class="rounded-[28px] border border-slate-200 bg-white p-7 shadow-sm">
+        <div class="rounded-2xl border border-border bg-white p-7 shadow-card">
           @if (error()) {
             <div class="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error() }}</div>
           }
@@ -32,7 +32,7 @@ import { I18nService } from '../../core/services/i18n.service';
                 name="email"
                 required
                 autocomplete="email"
-                class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-slate-950"
+                class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-slate-950"
                 placeholder="admin@verifix.uz" />
             </label>
 
@@ -44,14 +44,14 @@ import { I18nService } from '../../core/services/i18n.service';
                 name="password"
                 required
                 autocomplete="current-password"
-                class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-slate-950"
+                class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-slate-950"
                 placeholder="••••••••" />
             </label>
 
             <label class="block">
               <div class="mb-2 flex items-center justify-between gap-2">
                 <span class="text-sm font-medium text-slate-700">{{ i18n.t('admin.totp_code') }}</span>
-                <span class="text-xs text-slate-500">{{ i18n.t('admin.totp_optional') }}</span>
+                <span class="text-xs text-muted">{{ i18n.t('admin.totp_optional') }}</span>
               </div>
               <input
                 type="text"
@@ -59,14 +59,14 @@ import { I18nService } from '../../core/services/i18n.service';
                 name="totpCode"
                 inputmode="numeric"
                 maxlength="6"
-                class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-slate-950"
+                class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-slate-950"
                 placeholder="123456" />
             </label>
 
             <button
               type="submit"
               [disabled]="loading()"
-              class="mt-2 inline-flex h-12 w-full items-center justify-center rounded-2xl bg-slate-950 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">
+              class="mt-2 inline-flex h-12 w-full items-center justify-center rounded-2xl bg-primary text-sm font-semibold text-white transition hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60">
               {{ loading() ? i18n.t('admin.logging_in') : i18n.t('auth.login') }}
             </button>
           </form>

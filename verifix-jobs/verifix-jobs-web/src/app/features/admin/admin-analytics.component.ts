@@ -12,20 +12,20 @@ import { ToastService } from '../../shared/services/toast.service';
     <div class="space-y-5">
       <div>
         <h1 class="text-2xl font-semibold">{{ i18n.t('admin.analytics.title') }}</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ i18n.t('admin.analytics.hint') }}</p>
+        <p class="mt-1 text-sm text-muted">{{ i18n.t('admin.analytics.hint') }}</p>
       </div>
 
       @if (loading()) {
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
           @for (i of [1,2,3,4]; track i) {
-            <div class="rounded-[20px] border border-slate-200 bg-white p-4">
+            <div class="rounded-2xl border border-border bg-white p-4">
               <div class="h-7 w-20 animate-pulse rounded-lg bg-slate-200"></div>
               <div class="mt-2 h-4 w-28 animate-pulse rounded bg-slate-100"></div>
             </div>
           }
         </div>
         <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <div class="rounded-[28px] border border-slate-200 bg-white p-5">
+          <div class="rounded-2xl border border-border bg-white p-5">
             <div class="h-4 w-32 animate-pulse rounded bg-slate-200"></div>
             <div class="mt-4 flex h-40 items-end gap-1.5">
               @for (i of [1,2,3,4,5,6]; track i) {
@@ -33,7 +33,7 @@ import { ToastService } from '../../shared/services/toast.service';
               }
             </div>
           </div>
-          <div class="rounded-[28px] border border-slate-200 bg-white p-5">
+          <div class="rounded-2xl border border-border bg-white p-5">
             <div class="h-4 w-32 animate-pulse rounded bg-slate-200"></div>
             <div class="mt-4 space-y-4">
               @for (i of [1,2,3]; track i) {
@@ -49,33 +49,33 @@ import { ToastService } from '../../shared/services/toast.service';
         <!-- Metric cards -->
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
           @for (m of metrics(); track m.label) {
-            <div class="rounded-[20px] border border-slate-200 bg-white p-4">
+            <div class="rounded-2xl border border-border bg-white p-4">
               <div class="text-2xl font-bold text-slate-900">{{ m.value }}</div>
-              <div class="mt-1 text-xs text-slate-500">{{ i18n.t(m.label) }}</div>
+              <div class="mt-1 text-xs text-muted">{{ i18n.t(m.label) }}</div>
             </div>
           }
         </div>
 
         <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <!-- Growth chart -->
-          <div class="rounded-[28px] border border-slate-200 bg-white p-5">
+          <div class="rounded-2xl border border-border bg-white p-5">
             <h3 class="mb-4 text-sm font-semibold">{{ i18n.t('admin.analytics.user_growth') }}</h3>
             @if (growthBars().length === 0) {
-              <div class="flex h-40 items-center justify-center text-sm text-slate-400">
+              <div class="flex h-40 items-center justify-center text-sm text-muted">
                 {{ i18n.t('admin.no_activity') }}
               </div>
             } @else {
               <div class="flex h-40 items-end gap-2">
                 @for (bar of growthBars(); track $index) {
                   <div class="group flex flex-1 flex-col items-center gap-1">
-                    <span class="text-[10px] font-medium text-slate-500 opacity-0 transition group-hover:opacity-100">
+                    <span class="text-[10px] font-medium text-muted opacity-0 transition group-hover:opacity-100">
                       {{ growthValues()[$index] }}
                     </span>
                     <div
                       class="w-full rounded-t-lg bg-slate-900 transition-all hover:bg-slate-700"
                       [style.height.%]="bar || 2">
                     </div>
-                    <span class="text-[10px] text-slate-400">{{ monthLabels()[$index] }}</span>
+                    <span class="text-[10px] text-muted">{{ monthLabels()[$index] }}</span>
                   </div>
                 }
               </div>
@@ -83,13 +83,13 @@ import { ToastService } from '../../shared/services/toast.service';
           </div>
 
           <!-- Top cities -->
-          <div class="rounded-[28px] border border-slate-200 bg-white p-5">
+          <div class="rounded-2xl border border-border bg-white p-5">
             <h3 class="mb-4 text-sm font-semibold">{{ i18n.t('admin.analytics.top_cities') }}</h3>
             @if (topCities().length === 0) {
               <div class="flex h-40 items-center justify-center">
                 <div class="text-center">
                   <div class="text-2xl text-slate-300">📍</div>
-                  <div class="mt-2 text-sm text-slate-400">{{ i18n.t('admin.no_activity') }}</div>
+                  <div class="mt-2 text-sm text-muted">{{ i18n.t('admin.no_activity') }}</div>
                 </div>
               </div>
             } @else {
@@ -98,7 +98,7 @@ import { ToastService } from '../../shared/services/toast.service';
                   <div>
                     <div class="mb-1 flex items-center justify-between text-xs">
                       <span class="flex items-center gap-2 font-medium text-slate-700">
-                        <span class="inline-flex h-5 w-5 items-center justify-center rounded-md bg-slate-100 text-[10px] font-semibold text-slate-500">{{ idx + 1 }}</span>
+                        <span class="inline-flex h-5 w-5 items-center justify-center rounded-md bg-slate-100 text-[10px] font-semibold text-muted">{{ idx + 1 }}</span>
                         {{ city.name }}
                       </span>
                       <span class="font-medium text-slate-600">{{ city.count }}</span>

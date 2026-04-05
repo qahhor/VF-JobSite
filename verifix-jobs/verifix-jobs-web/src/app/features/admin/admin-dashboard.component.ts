@@ -30,25 +30,25 @@ interface HealthService {
   template: `
     <div class="space-y-5">
       <!-- Header with operational signals -->
-      <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+      <section class="rounded-2xl border border-border bg-white p-6 shadow-card">
         <div class="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <div class="text-sm uppercase tracking-[0.24em] text-slate-500">{{ i18n.t('admin.dashboard') }}</div>
+            <div class="text-sm uppercase tracking-[0.24em] text-muted">{{ i18n.t('admin.dashboard') }}</div>
             <h1 class="mt-3 text-3xl font-semibold text-slate-950">{{ i18n.t('admin.control_center') }}</h1>
             <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">{{ i18n.t('admin.dashboard_intro') }}</p>
           </div>
 
           <div class="grid gap-3 sm:grid-cols-3">
-            <a routerLink="/admin/moderation" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('admin.pending_review') }}</div>
+            <a routerLink="/admin/moderation" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.pending_review') }}</div>
               <div class="mt-2 text-2xl font-semibold text-slate-950">{{ overview()?.pendingModeration || 0 }}</div>
             </a>
-            <a routerLink="/admin/fraud" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('admin.open_alerts') }}</div>
+            <a routerLink="/admin/fraud" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.open_alerts') }}</div>
               <div class="mt-2 text-2xl font-semibold text-slate-950">{{ overview()?.openFraudAlerts || 0 }}</div>
             </a>
-            <a routerLink="/admin/access" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('admin.active_admins') }}</div>
+            <a routerLink="/admin/access" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.active_admins') }}</div>
               <div class="mt-2 text-2xl font-semibold text-slate-950">{{ overview()?.activeAdmins || 0 }}</div>
             </a>
           </div>
@@ -59,7 +59,7 @@ interface HealthService {
       <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         @if (kpis().length === 0) {
           @for (i of [1,2,3,4]; track i) {
-            <div class="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
               <div class="flex items-center justify-between">
                 <div class="h-3 w-20 animate-pulse rounded bg-slate-200"></div>
                 <div class="h-5 w-12 animate-pulse rounded-lg bg-slate-100"></div>
@@ -69,9 +69,9 @@ interface HealthService {
           }
         }
         @for (kpi of kpis(); track kpi.label) {
-          <div class="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
             <div class="flex items-center justify-between">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t(kpi.label) }}</div>
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t(kpi.label) }}</div>
               @if (kpi.trend !== 0) {
                 <span class="inline-flex items-center gap-0.5 rounded-lg px-2 py-0.5 text-xs font-medium"
                   [class]="kpi.trend > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'">
@@ -91,11 +91,11 @@ interface HealthService {
       <!-- Secondary stats -->
       <section class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         @for (card of metricCards(); track card.label) {
-          <div class="rounded-[20px] border border-slate-200 bg-white p-4 shadow-sm">
+          <div class="rounded-2xl border border-border bg-white p-4 shadow-card">
             <div class="text-xl font-bold text-slate-900">{{ card.value }}</div>
-            <div class="mt-1 text-xs text-slate-500">{{ card.label }}</div>
+            <div class="mt-1 text-xs text-muted">{{ card.label }}</div>
             @if (card.sub) {
-              <div class="mt-1 text-xs text-slate-400">{{ card.sub }}</div>
+              <div class="mt-1 text-xs text-muted">{{ card.sub }}</div>
             }
           </div>
         }
@@ -105,11 +105,11 @@ interface HealthService {
       <section class="grid gap-5 2xl:grid-cols-[1.2fr_1fr]">
         <div class="space-y-5">
           <!-- Moderation preview -->
-          <div class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
             <div class="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.needs_attention') }}</h2>
-                <p class="mt-2 text-sm text-slate-500">{{ i18n.t('admin.needs_attention_hint') }}</p>
+                <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.needs_attention_hint') }}</p>
               </div>
               <a routerLink="/admin/moderation" class="text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-4">
                 {{ i18n.t('admin.view_queue') }}
@@ -118,25 +118,25 @@ interface HealthService {
 
             <div class="grid gap-3 lg:grid-cols-2">
               @for (item of moderationPreview(); track item.id) {
-                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="rounded-2xl border border-border bg-surface p-4">
                   <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
                       <div class="text-sm font-semibold text-slate-950">{{ item.title || item.entityType }}</div>
-                      <div class="mt-1 text-xs text-slate-500">{{ item.subtitle || item.entityId }}</div>
+                      <div class="mt-1 text-xs text-muted">{{ item.subtitle || item.entityId }}</div>
                     </div>
                     <span class="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
                       {{ i18n.t('status.' + item.status) || item.status }}
                     </span>
                   </div>
                   <div class="mt-3 text-sm text-slate-700 line-clamp-3">{{ item.previewText || item.reason || i18n.t('admin.no_preview') }}</div>
-                  <div class="mt-4 flex flex-wrap gap-2 text-xs text-slate-500">
+                  <div class="mt-4 flex flex-wrap gap-2 text-xs text-muted">
                     @if (item.city) { <span>{{ item.city }}</span> }
                     @if (item.category) { <span>{{ item.category }}</span> }
                     @if (item.salaryLabel) { <span>{{ item.salaryLabel }}</span> }
                   </div>
                 </div>
               } @empty {
-                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500 lg:col-span-2">
+                <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-10 text-center text-sm text-muted lg:col-span-2">
                   {{ i18n.t('admin.no_pending_queue') }}
                 </div>
               }
@@ -144,11 +144,11 @@ interface HealthService {
           </div>
 
           <!-- Recent activity -->
-          <div class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
             <div class="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.recent_activity') }}</h2>
-                <p class="mt-2 text-sm text-slate-500">{{ i18n.t('admin.recent_activity_hint') }}</p>
+                <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.recent_activity_hint') }}</p>
               </div>
               <a routerLink="/admin/audit" class="text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-4">
                 {{ i18n.t('admin.open_section') }}
@@ -157,15 +157,15 @@ interface HealthService {
 
             <div class="space-y-3">
               @for (item of auditItems(); track item.id) {
-                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="rounded-2xl border border-border bg-surface p-4">
                   <div class="flex items-center justify-between gap-3">
                     <div class="text-sm font-semibold text-slate-950">{{ item.action }}</div>
-                    <div class="text-xs text-slate-500">{{ item.createdAt | date:'dd.MM HH:mm' }}</div>
+                    <div class="text-xs text-muted">{{ item.createdAt | date:'dd.MM HH:mm' }}</div>
                   </div>
-                  <div class="mt-2 text-xs text-slate-500">{{ item.adminEmail || 'admin' }} · {{ item.entityType || 'SYSTEM' }}</div>
+                  <div class="mt-2 text-xs text-muted">{{ item.adminEmail || 'admin' }} · {{ item.entityType || 'SYSTEM' }}</div>
                 </div>
               } @empty {
-                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+                <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-10 text-center text-sm text-muted">
                   {{ i18n.t('admin.no_activity') }}
                 </div>
               }
@@ -175,16 +175,16 @@ interface HealthService {
 
         <div class="space-y-5">
           <!-- System health -->
-          <div class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
             <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.system_health') }}</h2>
-            <p class="mt-2 text-sm text-slate-500">{{ i18n.t('admin.system_health_hint') }}</p>
+            <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.system_health_hint') }}</p>
 
             @if (healthLoading()) {
-              <div class="mt-4 py-4 text-center text-sm text-slate-400">{{ i18n.t('admin.logging_in') }}</div>
+              <div class="mt-4 py-4 text-center text-sm text-muted">{{ i18n.t('admin.logging_in') }}</div>
             } @else {
               <div class="mt-4 space-y-2">
                 @for (svc of services(); track svc.key) {
-                  <div class="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+                  <div class="flex items-center justify-between rounded-xl border border-border/50 bg-surface px-4 py-3">
                     <span class="text-sm text-slate-700">{{ i18n.t(svc.name) }}</span>
                     <span class="flex items-center gap-1.5">
                       <span class="h-2 w-2 rounded-full" [class]="svc.healthy ? 'bg-emerald-400' : 'bg-red-400'"></span>
@@ -199,32 +199,32 @@ interface HealthService {
           </div>
 
           <!-- Quick actions -->
-          <div class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
             <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.quick_actions') }}</h2>
-            <p class="mt-2 text-sm text-slate-500">{{ i18n.t('admin.quick_actions_hint') }}</p>
+            <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.quick_actions_hint') }}</p>
 
             <div class="mt-5 grid gap-3">
-              <a routerLink="/admin/employers" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100">
+              <a routerLink="/admin/employers" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
                 <div class="text-sm font-semibold text-slate-950">{{ i18n.t('admin.companies') }}</div>
-                <div class="mt-1 text-xs text-slate-500">{{ i18n.t('admin.review_companies') }}</div>
+                <div class="mt-1 text-xs text-muted">{{ i18n.t('admin.review_companies') }}</div>
               </a>
-              <a routerLink="/admin/analytics" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100">
+              <a routerLink="/admin/analytics" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
                 <div class="text-sm font-semibold text-slate-950">{{ i18n.t('admin.analytics_nav') }}</div>
-                <div class="mt-1 text-xs text-slate-500">{{ i18n.t('admin.analytics.hint') }}</div>
+                <div class="mt-1 text-xs text-muted">{{ i18n.t('admin.analytics.hint') }}</div>
               </a>
-              <a routerLink="/admin/settings" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-slate-100">
+              <a routerLink="/admin/settings" class="rounded-2xl border border-border bg-surface p-4 transition hover:border-border hover:bg-slate-100">
                 <div class="text-sm font-semibold text-slate-950">{{ i18n.t('admin.settings_nav') }}</div>
-                <div class="mt-1 text-xs text-slate-500">{{ i18n.t('admin.settings.hint') }}</div>
+                <div class="mt-1 text-xs text-muted">{{ i18n.t('admin.settings.hint') }}</div>
               </a>
             </div>
           </div>
 
           <!-- Fraud preview -->
-          <div class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="rounded-2xl border border-border bg-white p-6 shadow-card">
             <div class="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h2 class="text-xl font-semibold text-slate-950">{{ i18n.t('admin.fraud') }}</h2>
-                <p class="mt-2 text-sm text-slate-500">{{ i18n.t('admin.fraud_hint') }}</p>
+                <p class="mt-2 text-sm text-muted">{{ i18n.t('admin.fraud_hint') }}</p>
               </div>
               <a routerLink="/admin/fraud" class="text-sm font-medium text-slate-900 underline decoration-slate-300 underline-offset-4">
                 {{ i18n.t('admin.open_section') }}
@@ -233,17 +233,17 @@ interface HealthService {
 
             <div class="space-y-3">
               @for (alert of fraudPreview(); track alert.id) {
-                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="rounded-2xl border border-border bg-surface p-4">
                   <div class="flex items-center justify-between gap-3">
                     <div class="text-sm font-semibold text-slate-950">{{ alert.fraudType }}</div>
                     <span class="rounded-full px-2.5 py-1 text-[11px] font-medium" [class]="severityClass(alert.score)">
                       {{ alert.score || 0 }}
                     </span>
                   </div>
-                  <div class="mt-2 text-xs text-slate-500">{{ alert.entityType }} · {{ alert.entityId }}</div>
+                  <div class="mt-2 text-xs text-muted">{{ alert.entityType }} · {{ alert.entityId }}</div>
                 </div>
               } @empty {
-                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-10 text-center text-sm text-slate-500">
+                <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-10 text-center text-sm text-muted">
                   {{ i18n.t('admin.no_fraud_alerts') }}
                 </div>
               }
@@ -318,7 +318,7 @@ export class AdminDashboardComponent implements OnInit {
     const n = Number(score || 0);
     if (n >= 0.7) return 'border border-red-200 bg-red-50 text-red-700';
     if (n >= 0.4) return 'border border-amber-200 bg-amber-50 text-amber-700';
-    return 'border border-slate-200 bg-white text-slate-600';
+    return 'border border-border bg-white text-slate-600';
   }
 
   private fmt(n: number): string {

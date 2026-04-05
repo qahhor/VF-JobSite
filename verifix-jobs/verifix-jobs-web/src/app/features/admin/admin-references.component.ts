@@ -21,15 +21,15 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
     <div class="space-y-4">
 
       <!-- Header -->
-      <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
         <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <div class="text-[11px] uppercase tracking-[0.2em] text-cyan-400">{{ i18n.t('admin.ref.title') }}</div>
+            <div class="text-[11px] uppercase tracking-[0.2em] text-primary">{{ i18n.t('admin.ref.title') }}</div>
             <h1 class="mt-1 text-xl font-semibold">{{ i18n.t('admin.ref.hint') }}</h1>
           </div>
           <div class="flex gap-2">
-            <div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center min-w-[80px]">
-              <div class="text-[10px] uppercase tracking-wider text-slate-400">{{ i18n.t('admin.ref.records') }}</div>
+            <div class="rounded-xl border border-border bg-surface px-3 py-2 text-center min-w-[80px]">
+              <div class="text-[10px] uppercase tracking-wider text-muted">{{ i18n.t('admin.ref.records') }}</div>
               <div class="text-lg font-semibold">{{ totalElements() }}</div>
             </div>
           </div>
@@ -37,16 +37,16 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
       </section>
 
       <!-- Tabs + Controls -->
-      <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <section class="rounded-2xl border border-border bg-white p-4 shadow-card">
         <!-- Tab bar -->
-        <div class="flex flex-wrap gap-2 border-b border-slate-100 pb-3 mb-4">
+        <div class="flex flex-wrap gap-2 border-b border-border/50 pb-3 mb-4">
           @for (tab of tabs; track tab.key) {
             <button
               (click)="switchTab(tab.key)"
               class="rounded-lg border px-4 py-1.5 text-[13px] font-medium transition"
               [class]="activeTab() === tab.key
                 ? 'border-slate-900 bg-slate-900 text-white'
-                : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'">
+                : 'border-border bg-white text-slate-600 hover:border-border hover:bg-surface'">
               {{ i18n.t(tab.label) }}
             </button>
           }
@@ -56,18 +56,18 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
         <div class="flex flex-col gap-3 sm:flex-row sm:items-end">
           @if (activeTab() !== 'countries') {
             <div class="flex-1">
-              <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('common.search') }}</label>
+              <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('common.search') }}</label>
               <input
                 type="text"
                 [(ngModel)]="searchQuery"
                 (keyup.enter)="loadData()"
                 [placeholder]="i18n.t('admin.ref.search')"
-                class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-slate-950" />
+                class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-slate-950" />
             </div>
             <div class="w-full sm:w-40">
-              <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.moderation.status') }}</label>
+              <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.moderation.status') }}</label>
               <select [(ngModel)]="activeFilter" (ngModelChange)="loadData()"
-                class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-slate-950">
+                class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-slate-950">
                 <option value="all">{{ i18n.t('admin.ref.filter_all') }}</option>
                 <option value="active">{{ i18n.t('admin.ref.filter_active') }}</option>
                 <option value="inactive">{{ i18n.t('admin.ref.filter_inactive') }}</option>
@@ -76,10 +76,10 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
           }
           <div class="flex items-center gap-2">
             @if (activeTab() !== 'countries') {
-              <button (click)="loadData()" class="h-9 rounded-lg bg-slate-950 px-4 text-xs font-semibold text-white transition hover:bg-slate-800">
+              <button (click)="loadData()" class="h-9 rounded-lg bg-primary px-4 text-xs font-semibold text-white transition hover:bg-primary-600">
                 {{ i18n.t('common.search') }}
               </button>
-              <button (click)="openForm()" class="h-9 rounded-lg bg-cyan-600 px-4 text-xs font-semibold text-white transition hover:bg-cyan-500">
+              <button (click)="openForm()" class="h-9 rounded-lg bg-primary px-4 text-xs font-semibold text-white transition hover:bg-primary-600">
                 + {{ i18n.t('admin.ref.add') }}
               </button>
             }
@@ -90,7 +90,7 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
         @if (loading()) {
           <div class="mt-4 space-y-2">
             @for (i of [1,2,3,4,5]; track i) {
-              <div class="rounded-xl border border-slate-100 p-3">
+              <div class="rounded-xl border border-border/50 p-3">
                 <div class="flex items-center gap-3">
                   <div class="h-4 w-40 animate-pulse rounded bg-slate-200"></div>
                   <div class="h-4 w-32 animate-pulse rounded bg-slate-100"></div>
@@ -104,14 +104,14 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
         <!-- ═══ CITIES TABLE ═══ -->
         @if (!loading() && activeTab() === 'cities') {
           @if (cities().length === 0) {
-            <div class="mt-4 rounded-xl border border-slate-200 p-10 text-center text-sm text-slate-400">
+            <div class="mt-4 rounded-xl border border-border p-10 text-center text-sm text-muted">
               {{ i18n.t('admin.ref.empty') }}
             </div>
           } @else {
             <div class="mt-4 overflow-x-auto">
               <table class="w-full text-sm">
                 <thead>
-                  <tr class="border-b border-slate-200 text-left text-xs uppercase tracking-wider text-slate-400">
+                  <tr class="border-b border-border text-left text-xs uppercase tracking-wider text-muted">
                     <th class="pb-2 pr-3 font-medium">{{ i18n.t('admin.ref.name_uz') }} / {{ i18n.t('admin.ref.name_ru') }}</th>
                     <th class="pb-2 pr-3 font-medium hidden md:table-cell">{{ i18n.t('admin.ref.name_en') }}</th>
                     <th class="pb-2 pr-3 font-medium">{{ i18n.t('admin.ref.country') }} / {{ i18n.t('admin.ref.region') }}</th>
@@ -122,36 +122,36 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
                 </thead>
                 <tbody>
                   @for (city of cities(); track city.id) {
-                    <tr class="border-b border-slate-100 transition hover:bg-slate-50/50"
+                    <tr class="border-b border-border/50 transition hover:bg-surface/50"
                         [class.opacity-50]="!city.isActive">
                       <td class="py-2.5 pr-3">
                         <div class="font-medium text-slate-900">{{ city.nameUzLat }}</div>
                         @if (city.nameRu) {
-                          <div class="text-xs text-slate-400">{{ city.nameRu }}</div>
+                          <div class="text-xs text-muted">{{ city.nameRu }}</div>
                         }
                       </td>
-                      <td class="py-2.5 pr-3 text-slate-500 hidden md:table-cell">{{ city.nameEn || '—' }}</td>
+                      <td class="py-2.5 pr-3 text-muted hidden md:table-cell">{{ city.nameEn || '—' }}</td>
                       <td class="py-2.5 pr-3">
                         <div class="font-mono text-xs text-slate-700">{{ city.countryIso2 || city.country }}</div>
                         @if (city.region) {
-                          <div class="text-xs text-slate-400">{{ city.region }}</div>
+                          <div class="text-xs text-muted">{{ city.region }}</div>
                         }
                       </td>
-                      <td class="py-2.5 pr-3 text-slate-500 hidden sm:table-cell">
+                      <td class="py-2.5 pr-3 text-muted hidden sm:table-cell">
                         {{ city.population ? (city.population | number) : '—' }}
                       </td>
                       <td class="py-2.5 pr-3 text-center">
                         <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold"
                           [class]="city.isActive
                             ? 'border border-emerald-400/30 bg-emerald-500/10 text-emerald-700'
-                            : 'border border-slate-200 bg-slate-100 text-slate-500'">
+                            : 'border border-border bg-slate-100 text-muted'">
                           {{ city.isActive ? i18n.t('admin.ref.active') : i18n.t('admin.ref.inactive') }}
                         </span>
                       </td>
                       <td class="py-2.5 text-right">
                         <div class="flex items-center justify-end gap-1">
                           <button (click)="editCity(city)" title="{{ i18n.t('admin.ref.edit') }}"
-                            class="rounded-md p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                            class="rounded-md p-1.5 text-muted transition hover:bg-slate-100 hover:text-slate-700">
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                               <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -188,14 +188,14 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
         <!-- ═══ REGIONS TABLE ═══ -->
         @if (!loading() && activeTab() === 'regions') {
           @if (regions().length === 0) {
-            <div class="mt-4 rounded-xl border border-slate-200 p-10 text-center text-sm text-slate-400">
+            <div class="mt-4 rounded-xl border border-border p-10 text-center text-sm text-muted">
               {{ i18n.t('admin.ref.empty') }}
             </div>
           } @else {
             <div class="mt-4 overflow-x-auto">
               <table class="w-full text-sm">
                 <thead>
-                  <tr class="border-b border-slate-200 text-left text-xs uppercase tracking-wider text-slate-400">
+                  <tr class="border-b border-border text-left text-xs uppercase tracking-wider text-muted">
                     <th class="pb-2 pr-3 font-medium">{{ i18n.t('admin.ref.full_code') }}</th>
                     <th class="pb-2 pr-3 font-medium">{{ i18n.t('admin.ref.name_uz') }} / {{ i18n.t('admin.ref.name_ru') }}</th>
                     <th class="pb-2 pr-3 font-medium hidden md:table-cell">{{ i18n.t('admin.ref.name_en') }}</th>
@@ -206,29 +206,29 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
                 </thead>
                 <tbody>
                   @for (region of regions(); track region.id) {
-                    <tr class="border-b border-slate-100 transition hover:bg-slate-50/50"
+                    <tr class="border-b border-border/50 transition hover:bg-surface/50"
                         [class.opacity-50]="!region.isActive">
                       <td class="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700">{{ region.fullCode }}</td>
                       <td class="py-2.5 pr-3">
                         <div class="font-medium text-slate-900">{{ region.nameUzLat }}</div>
                         @if (region.nameRu) {
-                          <div class="text-xs text-slate-400">{{ region.nameRu }}</div>
+                          <div class="text-xs text-muted">{{ region.nameRu }}</div>
                         }
                       </td>
-                      <td class="py-2.5 pr-3 text-slate-500 hidden md:table-cell">{{ region.nameEn || '—' }}</td>
-                      <td class="py-2.5 pr-3 font-mono text-xs text-slate-500">{{ region.countryIso2 || '—' }}</td>
+                      <td class="py-2.5 pr-3 text-muted hidden md:table-cell">{{ region.nameEn || '—' }}</td>
+                      <td class="py-2.5 pr-3 font-mono text-xs text-muted">{{ region.countryIso2 || '—' }}</td>
                       <td class="py-2.5 pr-3 text-center">
                         <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold"
                           [class]="region.isActive
                             ? 'border border-emerald-400/30 bg-emerald-500/10 text-emerald-700'
-                            : 'border border-slate-200 bg-slate-100 text-slate-500'">
+                            : 'border border-border bg-slate-100 text-muted'">
                           {{ region.isActive ? i18n.t('admin.ref.active') : i18n.t('admin.ref.inactive') }}
                         </span>
                       </td>
                       <td class="py-2.5 text-right">
                         <div class="flex items-center justify-end gap-1">
                           <button (click)="editRegion(region)" title="{{ i18n.t('admin.ref.edit') }}"
-                            class="rounded-md p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                            class="rounded-md p-1.5 text-muted transition hover:bg-slate-100 hover:text-slate-700">
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                               <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -267,7 +267,7 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-slate-200 text-left text-xs uppercase tracking-wider text-slate-400">
+                <tr class="border-b border-border text-left text-xs uppercase tracking-wider text-muted">
                   <th class="pb-2 pr-3 font-medium">ISO2</th>
                   <th class="pb-2 pr-3 font-medium">{{ i18n.t('admin.ref.name_uz') }} / {{ i18n.t('admin.ref.name_ru') }}</th>
                   <th class="pb-2 pr-3 font-medium hidden md:table-cell">{{ i18n.t('admin.ref.name_en') }}</th>
@@ -278,20 +278,20 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
               </thead>
               <tbody>
                 @for (c of countries(); track c.id) {
-                  <tr class="border-b border-slate-100 transition hover:bg-slate-50/50">
+                  <tr class="border-b border-border/50 transition hover:bg-surface/50">
                     <td class="py-2.5 pr-3 font-mono text-xs font-semibold text-slate-700">{{ c.iso2 }}</td>
                     <td class="py-2.5 pr-3">
                       <div class="font-medium text-slate-900">{{ c.nameUzLat }}</div>
                       @if (c.nameRu) {
-                        <div class="text-xs text-slate-400">{{ c.nameRu }}</div>
+                        <div class="text-xs text-muted">{{ c.nameRu }}</div>
                       }
                     </td>
-                    <td class="py-2.5 pr-3 text-slate-500 hidden md:table-cell">{{ c.nameEn || '—' }}</td>
-                    <td class="py-2.5 pr-3 text-slate-500 hidden sm:table-cell">{{ c.capital || '—' }}</td>
-                    <td class="py-2.5 pr-3 text-slate-500 hidden sm:table-cell">{{ c.phoneCode || '—' }}</td>
+                    <td class="py-2.5 pr-3 text-muted hidden md:table-cell">{{ c.nameEn || '—' }}</td>
+                    <td class="py-2.5 pr-3 text-muted hidden sm:table-cell">{{ c.capital || '—' }}</td>
+                    <td class="py-2.5 pr-3 text-muted hidden sm:table-cell">{{ c.phoneCode || '—' }}</td>
                     <td class="py-2.5 text-right">
                       <button (click)="editCountry(c)" title="{{ i18n.t('admin.ref.edit') }}"
-                        class="rounded-md p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                        class="rounded-md p-1.5 text-muted transition hover:bg-slate-100 hover:text-slate-700">
                         <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                           <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
@@ -306,13 +306,13 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
 
         <!-- Pagination -->
         @if (!loading() && activeTab() !== 'countries' && totalPages() > 1) {
-          <div class="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
-            <span class="text-xs text-slate-400">{{ i18n.t('common.page') }} {{ currentPage() + 1 }} / {{ totalPages() }}</span>
+          <div class="mt-3 flex items-center justify-between border-t border-border/50 pt-3">
+            <span class="text-xs text-muted">{{ i18n.t('common.page') }} {{ currentPage() + 1 }} / {{ totalPages() }}</span>
             <div class="flex gap-1">
               <button [disabled]="currentPage() === 0" (click)="goPage(currentPage() - 1)"
-                class="rounded-md border border-slate-200 px-2.5 py-1 text-xs transition hover:bg-slate-50 disabled:opacity-40">←</button>
+                class="rounded-md border border-border px-2.5 py-1 text-xs transition hover:bg-surface disabled:opacity-40">←</button>
               <button [disabled]="currentPage() >= totalPages() - 1" (click)="goPage(currentPage() + 1)"
-                class="rounded-md border border-slate-200 px-2.5 py-1 text-xs transition hover:bg-slate-50 disabled:opacity-40">→</button>
+                class="rounded-md border border-border px-2.5 py-1 text-xs transition hover:bg-surface disabled:opacity-40">→</button>
             </div>
           </div>
         }
@@ -323,7 +323,7 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
     @if (showForm()) {
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="closeForm()">
         <div class="relative mx-4 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
-          <button (click)="closeForm()" class="absolute right-3 top-3 rounded-md p-1 text-slate-400 hover:text-slate-700">
+          <button (click)="closeForm()" class="absolute right-3 top-3 rounded-md p-1 text-muted hover:text-slate-700">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
           <h3 class="text-lg font-semibold mb-4">{{ formTitle() }}</h3>
@@ -334,9 +334,9 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
               <!-- Row 1: Country + Region -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.country') }} *</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.country') }} *</label>
                   <select [(ngModel)]="cityForm.country" (ngModelChange)="onCityCountryChange()"
-                    class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-slate-950">
+                    class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
                     <option value="">—</option>
                     @for (c of refCountries(); track c.iso2) {
                       <option [value]="c.iso2">{{ c.iso2 }} — {{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
@@ -344,9 +344,9 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
                   </select>
                 </div>
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.region') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.region') }}</label>
                   <select [(ngModel)]="cityForm.region"
-                    class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-slate-950">
+                    class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
                     <option value="">—</option>
                     @for (r of cityFormRegions(); track r.id) {
                       <option [value]="r.fullCode">{{ i18n.lang() === 'ru' ? r.nameRu : r.nameUzLat }}</option>
@@ -356,28 +356,28 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
               </div>
               <!-- Row 2: UZ name -->
               <div>
-                <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_uz') }} *</label>
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_uz') }} *</label>
                 <input [(ngModel)]="cityForm.nameUzLat" type="text"
-                  class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
               </div>
               <!-- Row 3: RU + EN names -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_ru') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_ru') }}</label>
                   <input [(ngModel)]="cityForm.nameRu" type="text"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_en') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_en') }}</label>
                   <input [(ngModel)]="cityForm.nameEn" type="text"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
               </div>
               <!-- Row 4: Population -->
               <div>
-                <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.population') }}</label>
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.population') }}</label>
                 <input [(ngModel)]="cityForm.population" type="number" min="0"
-                  class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
               </div>
             </div>
           }
@@ -387,9 +387,9 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
             <div class="space-y-3">
               <!-- Row 1: Country (full width) -->
               <div>
-                <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.country') }} *</label>
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.country') }} *</label>
                 <select [(ngModel)]="regionForm.countryIso2"
-                  class="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-slate-950">
+                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
                   <option value="">—</option>
                   @for (c of refCountries(); track c.iso2) {
                     <option [value]="c.iso2">{{ c.iso2 }} — {{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
@@ -399,33 +399,33 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
               <!-- Row 2: Code + Full code -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.code') }} *</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.code') }} *</label>
                   <input [(ngModel)]="regionForm.code" type="text" placeholder="13"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm font-mono outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm font-mono outline-none focus:border-slate-950" />
                 </div>
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.full_code') }} *</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.full_code') }} *</label>
                   <input [(ngModel)]="regionForm.fullCode" type="text" placeholder="UZ-13"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm font-mono outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm font-mono outline-none focus:border-slate-950" />
                 </div>
               </div>
               <!-- Row 3: UZ name -->
               <div>
-                <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_uz') }} *</label>
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_uz') }} *</label>
                 <input [(ngModel)]="regionForm.nameUzLat" type="text"
-                  class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
               </div>
               <!-- Row 4: RU + EN names -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_ru') }} *</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_ru') }} *</label>
                   <input [(ngModel)]="regionForm.nameRu" type="text"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_en') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_en') }}</label>
                   <input [(ngModel)]="regionForm.nameEn" type="text"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
               </div>
             </div>
@@ -436,34 +436,34 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
             <div class="space-y-3">
               <!-- Row 1: UZ name -->
               <div>
-                <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_uz') }}</label>
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_uz') }}</label>
                 <input [(ngModel)]="countryForm.nameUzLat" type="text"
-                  class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
               </div>
               <!-- Row 2: RU + EN names -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_ru') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_ru') }}</label>
                   <input [(ngModel)]="countryForm.nameRu" type="text"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.name_en') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.name_en') }}</label>
                   <input [(ngModel)]="countryForm.nameEn" type="text"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
               </div>
               <!-- Row 3: Capital + Phone code -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.capital') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.capital') }}</label>
                   <input [(ngModel)]="countryForm.capital" type="text"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
                 <div>
-                  <label class="mb-1 block text-xs font-medium text-slate-500">{{ i18n.t('admin.ref.phone_code') }}</label>
+                  <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.ref.phone_code') }}</label>
                   <input [(ngModel)]="countryForm.phoneCode" type="text" placeholder="+998"
-                    class="h-9 w-full rounded-lg border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" />
+                    class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
                 </div>
               </div>
             </div>
@@ -472,10 +472,10 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
           <!-- Form actions -->
           <div class="mt-5 flex gap-2">
             <button (click)="save()" [disabled]="saving() || !canSave()"
-              class="h-8 rounded-lg bg-slate-950 px-4 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:opacity-40">
+              class="h-8 rounded-lg bg-primary px-4 text-xs font-semibold text-white transition hover:bg-primary-600 disabled:opacity-40">
               {{ saving() ? i18n.t('admin.ref.saving') : i18n.t('admin.ref.save') }}
             </button>
-            <button (click)="closeForm()" class="h-8 rounded-lg border border-slate-200 px-4 text-xs font-semibold transition hover:bg-slate-50">
+            <button (click)="closeForm()" class="h-8 rounded-lg border border-border px-4 text-xs font-semibold transition hover:bg-surface">
               {{ i18n.t('common.cancel') }}
             </button>
           </div>
@@ -488,14 +488,14 @@ type ActiveFilter = 'all' | 'active' | 'inactive';
       <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="deleteTarget.set(null)">
         <div class="mx-4 w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl" (click)="$event.stopPropagation()">
           <h3 class="text-base font-semibold">{{ i18n.t('admin.ref.confirm_delete') }}</h3>
-          <p class="mt-2 text-sm text-slate-500">
+          <p class="mt-2 text-sm text-muted">
             {{ i18n.t('admin.ref.delete_confirm') }} <strong>{{ deleteTarget()!.name }}</strong>?
           </p>
           <div class="mt-4 flex gap-2">
             <button (click)="confirmDelete()" class="h-8 rounded-lg bg-red-500 px-4 text-xs font-semibold text-white transition hover:bg-red-400">
               {{ i18n.t('admin.ref.delete') }}
             </button>
-            <button (click)="deleteTarget.set(null)" class="h-8 rounded-lg border border-slate-200 px-4 text-xs font-semibold transition hover:bg-slate-50">
+            <button (click)="deleteTarget.set(null)" class="h-8 rounded-lg border border-border px-4 text-xs font-semibold transition hover:bg-surface">
               {{ i18n.t('common.cancel') }}
             </button>
           </div>

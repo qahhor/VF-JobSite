@@ -11,39 +11,39 @@ import { ToastService } from '../../shared/services/toast.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="space-y-6">
-      <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+      <section class="rounded-2xl border border-border bg-white p-6 shadow-card">
         <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <div class="text-sm uppercase tracking-[0.24em] text-cyan-300">{{ i18n.t('admin.fraud') }}</div>
+            <div class="text-sm uppercase tracking-[0.24em] text-primary">{{ i18n.t('admin.fraud') }}</div>
             <h1 class="mt-3 text-3xl font-semibold">{{ i18n.t('admin.fraud_center') }}</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500">{{ i18n.t('admin.fraud_center_hint') }}</p>
+            <p class="mt-3 max-w-2xl text-sm leading-6 text-muted">{{ i18n.t('admin.fraud_center_hint') }}</p>
           </div>
 
           <div class="grid gap-3 sm:grid-cols-3">
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('admin.open_alerts') }}</div>
+            <div class="rounded-2xl border border-border bg-surface p-4">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.open_alerts') }}</div>
               <div class="mt-2 text-2xl font-semibold">{{ pendingAlerts().length }}</div>
             </div>
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('admin.high_risk') }}</div>
+            <div class="rounded-2xl border border-border bg-surface p-4">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.high_risk') }}</div>
               <div class="mt-2 text-2xl font-semibold">{{ highRiskCount() }}</div>
             </div>
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('admin.reviewed_alerts') }}</div>
+            <div class="rounded-2xl border border-border bg-surface p-4">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.reviewed_alerts') }}</div>
               <div class="mt-2 text-2xl font-semibold">{{ reviewedAlerts().length }}</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+      <section class="rounded-2xl border border-border bg-white p-6 shadow-card">
         <div class="grid gap-4 xl:grid-cols-[220px_1fr_auto]">
           <label class="block">
             <span class="mb-2 block text-sm font-medium text-slate-700">{{ i18n.t('admin.fraud_filter') }}</span>
             <select
               [(ngModel)]="reviewed"
               (ngModelChange)="load()"
-              class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-slate-950">
+              class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none transition focus:border-slate-950">
               <option [ngValue]="false">{{ i18n.t('admin.pending') }}</option>
               <option [ngValue]="true">{{ i18n.t('admin.reviewed_alerts') }}</option>
             </select>
@@ -54,12 +54,12 @@ import { ToastService } from '../../shared/services/toast.service';
             <input
               [(ngModel)]="search"
               type="text"
-              class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-slate-950"
+              class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none transition focus:border-slate-950"
               [placeholder]="i18n.t('admin.search_alerts')" />
           </label>
 
           <div class="flex items-end gap-3">
-            <button (click)="load()" class="h-12 rounded-2xl bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800">
+            <button (click)="load()" class="h-12 rounded-2xl bg-primary px-5 text-sm font-semibold text-white transition hover:bg-primary-600">
               {{ i18n.t('admin.reload') }}
             </button>
           </div>
@@ -67,7 +67,7 @@ import { ToastService } from '../../shared/services/toast.service';
 
         <div class="mt-6 space-y-3">
           @for (alert of filteredAlerts(); track alert.id) {
-            <div class="rounded-2xl border p-5" [class]="alert.reviewed ? 'border-slate-200 bg-slate-50' : 'border-amber-200 bg-amber-50'">
+            <div class="rounded-2xl border p-5" [class]="alert.reviewed ? 'border-border bg-surface' : 'border-amber-200 bg-amber-50'">
               <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div class="min-w-0 flex-1">
                   <div class="flex flex-wrap items-center gap-2">
@@ -85,7 +85,7 @@ import { ToastService } from '../../shared/services/toast.service';
 
                   <div class="mt-4 flex flex-wrap gap-2">
                     @for (flag of parsedFlags(alert.flags); track flag) {
-                      <span class="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700">
+                      <span class="rounded-full border border-border bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700">
                         {{ flag }}
                       </span>
                     }
@@ -96,7 +96,7 @@ import { ToastService } from '../../shared/services/toast.service';
                   @if (!alert.reviewed) {
                     <button
                       (click)="review(alert.id)"
-                      class="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                      class="rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary-600">
                       {{ i18n.t('admin.mark_reviewed') }}
                     </button>
                   } @else {
@@ -108,7 +108,7 @@ import { ToastService } from '../../shared/services/toast.service';
               </div>
             </div>
           } @empty {
-            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-12 text-center text-sm text-slate-500">
+            <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-12 text-center text-sm text-muted">
               {{ i18n.t('admin.no_fraud_alerts') }}
             </div>
           }
@@ -168,7 +168,7 @@ export class AdminFraudComponent implements OnInit {
     const numeric = Number(score || 0);
     if (numeric >= 0.7) return 'border border-red-200 bg-red-100 text-red-700';
     if (numeric >= 0.4) return 'border border-amber-200 bg-amber-100 text-amber-800';
-    return 'border border-slate-200 bg-white text-slate-600';
+    return 'border border-border bg-white text-slate-600';
   }
 
   severityLabel(score?: number): string {

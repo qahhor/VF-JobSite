@@ -11,39 +11,39 @@ import { ToastService } from '../../shared/services/toast.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="space-y-6">
-      <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+      <section class="rounded-2xl border border-border bg-white p-6 shadow-card">
         <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <div class="text-sm uppercase tracking-[0.24em] text-cyan-300">{{ i18n.t('admin.moderation') }}</div>
+            <div class="text-sm uppercase tracking-[0.24em] text-primary">{{ i18n.t('admin.moderation') }}</div>
             <h1 class="mt-3 text-3xl font-semibold">{{ i18n.t('admin.moderation_hub') }}</h1>
-            <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-500">{{ i18n.t('admin.moderation_hub_hint') }}</p>
+            <p class="mt-3 max-w-2xl text-sm leading-6 text-muted">{{ i18n.t('admin.moderation_hub_hint') }}</p>
           </div>
 
           <div class="grid gap-3 sm:grid-cols-3">
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('admin.pending') }}</div>
+            <div class="rounded-2xl border border-border bg-surface p-4">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('admin.pending') }}</div>
               <div class="mt-2 text-2xl font-semibold">{{ pendingCount() }}</div>
             </div>
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('status.approved') }}</div>
+            <div class="rounded-2xl border border-border bg-surface p-4">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('status.approved') }}</div>
               <div class="mt-2 text-2xl font-semibold">{{ approvedCount() }}</div>
             </div>
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <div class="text-xs uppercase tracking-[0.18em] text-slate-500">{{ i18n.t('status.rejected') }}</div>
+            <div class="rounded-2xl border border-border bg-surface p-4">
+              <div class="text-xs uppercase tracking-[0.18em] text-muted">{{ i18n.t('status.rejected') }}</div>
               <div class="mt-2 text-2xl font-semibold">{{ rejectedCount() }}</div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+      <section class="rounded-2xl border border-border bg-white p-6 shadow-card">
         <div class="grid gap-4 xl:grid-cols-[220px_1fr_auto]">
           <label class="block">
             <span class="mb-2 block text-sm font-medium text-slate-700">{{ i18n.t('admin.moderation.status') }}</span>
             <select
               [(ngModel)]="statusFilter"
               (ngModelChange)="load()"
-              class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-slate-950">
+              class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none transition focus:border-slate-950">
               <option value="">{{ i18n.t('filter.all') }}</option>
               <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
               <option value="APPROVED">{{ i18n.t('status.approved') }}</option>
@@ -56,12 +56,12 @@ import { ToastService } from '../../shared/services/toast.service';
             <input
               [(ngModel)]="search"
               type="text"
-              class="h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm outline-none transition focus:border-slate-950"
+              class="h-12 w-full rounded-2xl border border-border bg-white px-4 text-sm outline-none transition focus:border-slate-950"
               [placeholder]="i18n.t('admin.search_queue')" />
           </label>
 
           <div class="flex items-end gap-3">
-            <button (click)="load()" class="h-12 rounded-2xl bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800">
+            <button (click)="load()" class="h-12 rounded-2xl bg-primary px-5 text-sm font-semibold text-white transition hover:bg-primary-600">
               {{ i18n.t('admin.reload') }}
             </button>
           </div>
@@ -69,7 +69,7 @@ import { ToastService } from '../../shared/services/toast.service';
 
         <div class="mt-6 space-y-3">
           @for (item of filteredItems(); track item.id) {
-            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+            <div class="rounded-2xl border border-border bg-surface p-5">
               <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div class="min-w-0 flex-1">
                   <div class="flex flex-wrap items-center gap-2">
@@ -79,7 +79,7 @@ import { ToastService } from '../../shared/services/toast.service';
                     </span>
                   </div>
 
-                  <div class="mt-2 flex flex-wrap gap-4 text-sm text-slate-500">
+                  <div class="mt-2 flex flex-wrap gap-4 text-sm text-muted">
                     @if (item.subtitle) { <span>{{ item.subtitle }}</span> }
                     @if (item.city) { <span>{{ item.city }}</span> }
                     @if (item.category) { <span>{{ item.category }}</span> }
@@ -90,7 +90,7 @@ import { ToastService } from '../../shared/services/toast.service';
                     {{ item.previewText || item.reason || i18n.t('admin.no_preview') }}
                   </div>
 
-                  <div class="mt-4 text-xs text-slate-500">
+                  <div class="mt-4 text-xs text-muted">
                     {{ item.createdAt | date:'dd.MM.yyyy HH:mm' }}
                     @if (item.decidedAt) {
                       &middot; {{ i18n.t('admin.decision_date') }}: {{ item.decidedAt | date:'dd.MM.yyyy HH:mm' }}
@@ -119,7 +119,7 @@ import { ToastService } from '../../shared/services/toast.service';
                           <textarea
                             [(ngModel)]="rejectReason"
                             rows="3"
-                            class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-950"
+                            class="w-full rounded-2xl border border-border bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-950"
                             [placeholder]="i18n.t('admin.moderation.reject_reason')"></textarea>
                           <div class="flex gap-2">
                             <button
@@ -129,7 +129,7 @@ import { ToastService } from '../../shared/services/toast.service';
                             </button>
                             <button
                               (click)="toggleReject('')"
-                              class="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-white">
+                              class="rounded-2xl border border-border px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-white">
                               {{ i18n.t('common.cancel') }}
                             </button>
                           </div>
@@ -137,7 +137,7 @@ import { ToastService } from '../../shared/services/toast.service';
                       }
                     </div>
                   } @else {
-                    <div class="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">
+                    <div class="rounded-2xl border border-border bg-white p-4 text-sm text-slate-700">
                       {{ item.reason || i18n.t('admin.review_completed') }}
                     </div>
                   }
@@ -145,7 +145,7 @@ import { ToastService } from '../../shared/services/toast.service';
               </div>
             </div>
           } @empty {
-            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-12 text-center text-sm text-slate-500">
+            <div class="rounded-2xl border border-dashed border-border bg-surface px-4 py-12 text-center text-sm text-muted">
               {{ i18n.t('admin.moderation.empty') }}
             </div>
           }
@@ -215,7 +215,7 @@ export class AdminModerationComponent implements OnInit {
       PENDING: 'border border-amber-400/30 bg-amber-500/10 text-amber-300',
       APPROVED: 'border border-emerald-400/30 bg-emerald-500/10 text-emerald-300',
       REJECTED: 'border border-red-400/30 bg-red-500/10 text-red-300',
-    } as Record<string, string>)[status] || 'border border-slate-200 bg-white text-slate-600';
+    } as Record<string, string>)[status] || 'border border-border bg-white text-slate-600';
   }
 
   filteredItems(): AdminModerationItem[] {

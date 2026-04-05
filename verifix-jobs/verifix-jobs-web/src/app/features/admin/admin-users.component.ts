@@ -13,7 +13,7 @@ import { ToastService } from '../../shared/services/toast.service';
     <div class="space-y-5">
       <div>
         <h1 class="text-2xl font-semibold">{{ i18n.t('admin.users.title') }}</h1>
-        <p class="mt-1 text-sm text-slate-500">{{ i18n.t('admin.users.hint') }}</p>
+        <p class="mt-1 text-sm text-muted">{{ i18n.t('admin.users.hint') }}</p>
       </div>
 
       <!-- Tabs -->
@@ -23,8 +23,8 @@ import { ToastService } from '../../shared/services/toast.service';
             (click)="switchTab(tab.type)"
             class="rounded-2xl border px-4 py-2.5 text-sm font-medium transition"
             [class]="activeTab() === tab.type
-              ? 'border-slate-950 bg-slate-950 text-white'
-              : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'">
+              ? 'border-slate-950 bg-primary text-white'
+              : 'border-border bg-white text-slate-600 hover:border-border hover:bg-surface'">
             {{ i18n.t(tab.label) }}
           </button>
         }
@@ -38,12 +38,12 @@ import { ToastService } from '../../shared/services/toast.service';
             [(ngModel)]="searchQuery"
             (keyup.enter)="loadUsers()"
             [placeholder]="i18n.t('admin.users.search')"
-            class="h-11 w-full rounded-2xl border border-slate-300 bg-white pl-4 pr-10 text-sm outline-none transition focus:border-slate-950" />
-          <button (click)="loadUsers()" class="absolute right-1.5 top-1.5 rounded-xl bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white">
+            class="h-11 w-full rounded-2xl border border-border bg-white pl-4 pr-10 text-sm outline-none transition focus:border-slate-950" />
+          <button (click)="loadUsers()" class="absolute right-1.5 top-1.5 rounded-xl bg-primary px-3 py-1.5 text-xs font-semibold text-white">
             &rarr;
           </button>
         </div>
-        <div class="text-sm text-slate-500">
+        <div class="text-sm text-muted">
           {{ totalElements() }} {{ i18n.t('admin.users.records') }}
         </div>
       </div>
@@ -52,7 +52,7 @@ import { ToastService } from '../../shared/services/toast.service';
       @if (loading()) {
         <div class="space-y-2">
           @for (i of [1,2,3,4,5]; track i) {
-            <div class="rounded-[20px] border border-slate-200 bg-white p-4">
+            <div class="rounded-2xl border border-border bg-white p-4">
               <div class="flex items-center gap-3">
                 <div class="h-9 w-9 animate-pulse rounded-2xl bg-slate-200"></div>
                 <div class="flex-1 space-y-2">
@@ -65,14 +65,14 @@ import { ToastService } from '../../shared/services/toast.service';
           }
         </div>
       } @else if (users().length === 0) {
-        <div class="rounded-[28px] border border-slate-200 bg-white p-12 text-center">
+        <div class="rounded-2xl border border-border bg-white p-12 text-center">
           <div class="text-3xl">&#x1F465;</div>
-          <div class="mt-3 text-sm text-slate-500">{{ i18n.t('admin.users.not_found') }}</div>
+          <div class="mt-3 text-sm text-muted">{{ i18n.t('admin.users.not_found') }}</div>
         </div>
       } @else {
         <div class="space-y-2">
           @for (user of users(); track user.id) {
-            <div class="rounded-[20px] border border-slate-200 bg-white p-4 transition hover:border-slate-300">
+            <div class="rounded-2xl border border-border bg-white p-4 transition hover:border-border">
               <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-2">
@@ -81,7 +81,7 @@ import { ToastService } from '../../shared/services/toast.service';
                     </div>
                     <div class="min-w-0">
                       <div class="truncate text-sm font-medium">{{ user.firstName && user.lastName ? user.firstName + ' ' + user.lastName : (user.name || user.email) }}</div>
-                      <div class="truncate text-xs text-slate-500">{{ user.email || user.phone || '' }}</div>
+                      <div class="truncate text-xs text-muted">{{ user.email || user.phone || '' }}</div>
                     </div>
                   </div>
                 </div>
@@ -93,7 +93,7 @@ import { ToastService } from '../../shared/services/toast.service';
                            : 'bg-slate-100 text-slate-600'">
                     {{ i18n.t('status.' + user.status) || user.status }}
                   </span>
-                  <span class="text-xs text-slate-400">{{ user.createdAt | date:'dd.MM.yyyy' }}</span>
+                  <span class="text-xs text-muted">{{ user.createdAt | date:'dd.MM.yyyy' }}</span>
 
                   @if (activeTab() === 'EMPLOYER') {
                     @if (user.status === 'ACTIVE') {
@@ -118,14 +118,14 @@ import { ToastService } from '../../shared/services/toast.service';
             <button
               [disabled]="currentPage() === 0"
               (click)="goPage(currentPage() - 1)"
-              class="rounded-xl border border-slate-200 px-4 py-2 text-sm transition hover:bg-slate-50 disabled:opacity-40">
+              class="rounded-xl border border-border px-4 py-2 text-sm transition hover:bg-surface disabled:opacity-40">
               &larr;
             </button>
             <span class="text-sm text-slate-600">{{ currentPage() + 1 }} / {{ totalPages() }}</span>
             <button
               [disabled]="currentPage() >= totalPages() - 1"
               (click)="goPage(currentPage() + 1)"
-              class="rounded-xl border border-slate-200 px-4 py-2 text-sm transition hover:bg-slate-50 disabled:opacity-40">
+              class="rounded-xl border border-border px-4 py-2 text-sm transition hover:bg-surface disabled:opacity-40">
               &rarr;
             </button>
           </div>

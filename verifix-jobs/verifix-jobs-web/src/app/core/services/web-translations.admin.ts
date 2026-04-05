@@ -19,8 +19,11 @@ export const WEB_ADMIN_TRANSLATIONS: TranslationCatalog = {
   'admin.totp_optional': { uz_lat: 'ixtiyoriy', ru: 'если включено' },
 
   'admin.nav_main': { uz_lat: 'Asosiy', ru: 'Основное' },
-  'admin.nav_risk': { uz_lat: 'Risk va nazorat', ru: 'Риск и контроль' },
+  'admin.nav_monitoring': { uz_lat: 'Monitoring', ru: 'Мониторинг' },
+  'admin.nav_manage': { uz_lat: 'Boshqaruv', ru: 'Управление' },
+  'admin.nav_analytics': { uz_lat: 'Analitika', ru: 'Аналитика' },
   'admin.nav_system': { uz_lat: 'Tizim', ru: 'Система' },
+  'admin.nav_risk': { uz_lat: 'Risk va nazorat', ru: 'Риск и контроль' },
   'admin.control_center': { uz_lat: 'Admin control center', ru: 'Центр управления' },
   'admin.control_center_hint': { uz_lat: 'Moderatsiya, risklar va kirish nazorati bir joyda.', ru: 'Модерация, риски и доступ в одном месте.' },
   'admin.dashboard_intro': { uz_lat: "Operatsion signal, moderation navbati va platforma ishonchliligi bo'yicha tezkor ko'rinish.", ru: 'Операционные сигналы, очередь модерации и надёжность платформы в одном обзоре.' },
