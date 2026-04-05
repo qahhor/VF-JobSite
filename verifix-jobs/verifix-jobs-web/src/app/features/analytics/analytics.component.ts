@@ -3,138 +3,314 @@ import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api.service';
 import { DashboardData } from '../../core/models';
 import { I18nService } from '../../core/services/i18n.service';
+import { LucideAngularModule, Clock, DollarSign, TrendingUp, PieChart, Users,
+  Filter, Plus, Download, RotateCcw, GripVertical } from 'lucide-angular';
 
 @Component({
   selector: 'vjw-analytics',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LucideAngularModule],
   template: `
-    <div class="space-y-6">
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('analytics.title') }}</h1>
-        <button (click)="exportCsv()" [attr.aria-label]="i18n.t('analytics.export_csv')" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50">{{ i18n.t('analytics.export_csv') }}</button>
+    <div class="space-y-5">
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-title font-semibold text-gray-900">Analytics Hub</h1>
+          <p class="mt-1 text-sm text-muted">Customizable widget-based insights</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-surface transition">
+            <lucide-icon [img]="FilterIcon" [size]="16"></lucide-icon>
+            Global Filters
+          </button>
+          <button (click)="exportCsv()" class="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-surface transition">
+            <lucide-icon [img]="DownloadIcon" [size]="16"></lucide-icon>
+            Export
+          </button>
+          <button class="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-card hover:bg-primary-600 transition">
+            <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+            Add Widget
+          </button>
+        </div>
       </div>
 
-      <!-- Funnel -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.funnel') }}</h3>
-        <div class="space-y-3">
-          @for (stage of funnel(); track stage.label) {
-            <div class="flex items-center gap-4">
-              <span class="w-28 text-sm text-gray-500 text-right">{{ stage.label }}</span>
-              <div class="flex-1 h-8 bg-gray-100 rounded-lg overflow-hidden relative">
-                <div class="h-full rounded-lg transition-all duration-700"
-                     [style.width.%]="stage.percent" [class]="stage.color"></div>
-                <span class="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-700">
-                  {{ stage.count }} ({{ stage.percent.toFixed(1) }}%)
-                </span>
+      <!-- Widget Grid Row 1: Time-to-Fill (big) + Application Sources (donut) -->
+      <div class="grid grid-cols-1 xl:grid-cols-5 gap-5">
+        <!-- Time to Fill -->
+        <div class="xl:col-span-3 rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="ClockIcon" [size]="18" class="text-muted"></lucide-icon>
+              <h3 class="text-heading font-semibold text-gray-900">Time to Fill (Days)</h3>
+            </div>
+            <lucide-icon [img]="GripIcon" [size]="16" class="text-muted/50 cursor-grab"></lucide-icon>
+          </div>
+          <!-- Line chart as CSS -->
+          <div class="relative h-48">
+            <div class="absolute inset-0 flex items-end">
+              @for (point of timeToFillData(); track $index; let i = $index) {
+                <div class="flex-1 flex flex-col items-center gap-1">
+                  <div class="text-[10px] text-muted">{{ point.value }}d</div>
+                  <div class="w-full max-w-[40px] mx-auto rounded-t-md transition-all hover:opacity-80"
+                       [style.height.%]="point.percent"
+                       [class]="'bg-primary/30'"></div>
+                  <div class="text-[9px] text-muted">{{ point.label }}</div>
+                </div>
+              }
+            </div>
+            <!-- Reference lines -->
+            <div class="absolute left-0 right-0 top-1/4 border-t border-dashed border-border/50"></div>
+            <div class="absolute left-0 right-0 top-1/2 border-t border-dashed border-border/50"></div>
+            <div class="absolute left-0 right-0 top-3/4 border-t border-dashed border-border/50"></div>
+          </div>
+        </div>
+
+        <!-- Application Sources -->
+        <div class="xl:col-span-2 rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="PieChartIcon" [size]="18" class="text-muted"></lucide-icon>
+              <h3 class="text-heading font-semibold text-gray-900">Application Sources</h3>
+            </div>
+            <lucide-icon [img]="GripIcon" [size]="16" class="text-muted/50 cursor-grab"></lucide-icon>
+          </div>
+          <!-- Donut chart as CSS ring -->
+          <div class="flex items-center justify-center mb-4">
+            <div class="relative h-36 w-36">
+              <svg viewBox="0 0 100 100" class="h-full w-full -rotate-90">
+                @for (seg of sourceSegments(); track seg.label; let i = $index) {
+                  <circle cx="50" cy="50" r="40" fill="none" [attr.stroke]="seg.color"
+                    stroke-width="16" [attr.stroke-dasharray]="seg.dashArray" [attr.stroke-dashoffset]="seg.dashOffset"></circle>
+                }
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-lg font-bold text-gray-900">{{ totalApps() }}</div>
+                  <div class="text-[10px] text-muted">Total</div>
+                </div>
               </div>
             </div>
-          }
+          </div>
+          <div class="space-y-2">
+            @for (src of sourceSegments(); track src.label) {
+              <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                  <div class="h-2.5 w-2.5 rounded-full" [style.background]="src.color"></div>
+                  <span class="text-gray-700">{{ src.label }}</span>
+                </div>
+                <span class="font-semibold text-gray-900">{{ src.percent }}%</span>
+              </div>
+            }
+          </div>
         </div>
       </div>
 
-      <!-- Charts Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Applications over time -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.daily_applications') }}</h3>
-          <div class="h-48 flex items-end gap-0.5">
-            @for (bar of dailyBars(); track $index) {
-              <div class="flex-1 rounded-t-sm transition-all hover:opacity-80 cursor-pointer relative group"
-                   [style.height.%]="bar.percent" [class]="'bg-primary'">
-                <div class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 whitespace-nowrap">
-                  {{ bar.date }}: {{ bar.count }}
+      <!-- Widget Grid Row 2: Cost per Hire, Offer Acceptance, Diversity -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Cost per Hire -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="DollarIcon" [size]="18" class="text-muted"></lucide-icon>
+              <h3 class="text-sm font-semibold text-gray-900">Cost per Hire</h3>
+            </div>
+            <lucide-icon [img]="GripIcon" [size]="16" class="text-muted/50 cursor-grab"></lucide-icon>
+          </div>
+          <div class="text-3xl font-bold text-gray-900">$1,240</div>
+          <div class="mt-1 flex items-center gap-1 text-xs text-accent">
+            <lucide-icon [img]="TrendingUpIcon" [size]="14"></lucide-icon>
+            12% lower than last month
+          </div>
+          <div class="mt-4 space-y-2">
+            @for (cost of costBreakdown; track cost.label) {
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-muted">{{ cost.label }}</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-20 h-1.5 bg-surface rounded-full overflow-hidden">
+                    <div class="h-full rounded-full bg-primary" [style.width.%]="cost.percent"></div>
+                  </div>
+                  <span class="font-semibold text-gray-700 w-10 text-right">{{ cost.value }}</span>
                 </div>
               </div>
             }
           </div>
         </div>
 
-        <!-- Sources breakdown -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.sources') }}</h3>
-          <div class="space-y-4">
-            @for (src of sources(); track src.source) {
+        <!-- Offer Acceptance Rate -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="TrendingUpIcon" [size]="18" class="text-muted"></lucide-icon>
+              <h3 class="text-sm font-semibold text-gray-900">Offer Acceptance Rate</h3>
+            </div>
+            <lucide-icon [img]="GripIcon" [size]="16" class="text-muted/50 cursor-grab"></lucide-icon>
+          </div>
+          <div class="flex items-center justify-center my-4">
+            <div class="relative h-32 w-32">
+              <svg viewBox="0 0 100 100" class="h-full w-full -rotate-90">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#E2E8F0" stroke-width="12"></circle>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#10B981" stroke-width="12"
+                  [attr.stroke-dasharray]="42 * 2 * 3.14159"
+                  [attr.stroke-dashoffset]="42 * 2 * 3.14159 * (1 - 0.78)"
+                  stroke-linecap="round"></circle>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <div class="text-2xl font-bold text-accent">78%</div>
+                <div class="text-[10px] text-muted">Accepted</div>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-center text-xs">
+            <div><div class="text-lg font-bold text-gray-900">45</div><div class="text-muted">Offers sent</div></div>
+            <div><div class="text-lg font-bold text-accent">35</div><div class="text-muted">Accepted</div></div>
+          </div>
+        </div>
+
+        <!-- Diversity Heatmap -->
+        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <lucide-icon [img]="UsersIcon" [size]="18" class="text-muted"></lucide-icon>
+              <h3 class="text-sm font-semibold text-gray-900">Diversity Heatmap</h3>
+            </div>
+            <lucide-icon [img]="GripIcon" [size]="16" class="text-muted/50 cursor-grab"></lucide-icon>
+          </div>
+          <div class="space-y-3 mt-4">
+            @for (dept of diversityData; track dept.name) {
               <div>
-                <div class="flex justify-between text-sm mb-1">
-                  <span class="text-gray-600">{{ getSourceLabel(src.source) }}</span>
-                  <span class="font-semibold">{{ src.count }} <span class="text-gray-400 font-normal">({{ src.percent.toFixed(1) }}%)</span></span>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="text-gray-700">{{ dept.name }}</span>
+                  <span class="font-semibold">{{ dept.percent }}%</span>
                 </div>
-                <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full" [style.width.%]="src.percent" [class]="src.color"></div>
+                <div class="flex h-4 rounded-full overflow-hidden">
+                  <div class="bg-primary transition-all" [style.width.%]="dept.male"></div>
+                  <div class="bg-coral transition-all" [style.width.%]="dept.female"></div>
                 </div>
               </div>
             }
+            <div class="flex items-center gap-4 text-[10px] text-muted mt-2">
+              <div class="flex items-center gap-1"><div class="h-2 w-2 rounded-full bg-primary"></div> Male</div>
+              <div class="flex items-center gap-1"><div class="h-2 w-2 rounded-full bg-coral"></div> Female</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Time-to-hire -->
-      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 class="font-semibold text-gray-800 mb-4">{{ i18n.t('analytics.time_to_hire') }}</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div class="text-center">
-            <div class="text-3xl font-bold text-black">{{ avgTimeToHire() }}</div>
-            <div class="text-sm text-gray-500 mt-1">{{ i18n.t('analytics.avg_days') }}</div>
-          </div>
-          <div class="text-center">
-            <div class="text-3xl font-bold text-secondary">{{ data()?.hiredThisMonth || 0 }}</div>
-            <div class="text-sm text-gray-500 mt-1">{{ i18n.t('analytics.hired_this_month') }}</div>
-          </div>
-          <div class="text-center">
-            <div class="text-3xl font-bold text-accent">{{ data()?.totalApplications || 0 }}</div>
-            <div class="text-sm text-gray-500 mt-1">{{ i18n.t('analytics.total_applications_label') }}</div>
-          </div>
+      <!-- Widget Grid Row 3: Pipeline Funnel full-width -->
+      <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-heading font-semibold text-gray-900">Pipeline Conversion Funnel</h3>
+          <lucide-icon [img]="GripIcon" [size]="16" class="text-muted/50 cursor-grab"></lucide-icon>
         </div>
+        @if (funnel().length) {
+          <div class="space-y-2.5">
+            @for (stage of funnel(); track stage.label) {
+              <div class="flex items-center gap-4">
+                <span class="w-24 text-xs text-muted text-right shrink-0">{{ stage.label }}</span>
+                <div class="flex-1 h-7 bg-surface rounded-lg overflow-hidden relative">
+                  <div class="h-full rounded-lg transition-all duration-700"
+                       [style.width.%]="stage.percent" [class]="stage.color"></div>
+                  <span class="absolute inset-0 flex items-center px-3 text-[11px] font-semibold text-gray-700">
+                    {{ stage.count }} ({{ stage.percent.toFixed(0) }}%)
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="h-32 flex items-center justify-center text-sm text-muted">Loading...</div>
+        }
       </div>
     </div>
   `,
 })
 export class AnalyticsComponent implements OnInit {
+  ClockIcon = Clock;
+  DollarIcon = DollarSign;
+  TrendingUpIcon = TrendingUp;
+  PieChartIcon = PieChart;
+  UsersIcon = Users;
+  FilterIcon = Filter;
+  PlusIcon = Plus;
+  DownloadIcon = Download;
+  GripIcon = GripVertical;
+
   data = signal<DashboardData | null>(null);
   funnel = signal<{ label: string; count: number; percent: number; color: string }[]>([]);
-  dailyBars = signal<{ date: string; count: number; percent: number }[]>([]);
-  sources = signal<{ source: string; count: number; percent: number; color: string }[]>([]);
-  avgTimeToHire = signal(0);
+  totalApps = signal(0);
+
+  timeToFillData = signal<{ label: string; value: number; percent: number }[]>([
+    { label: 'Jan', value: 22, percent: 78 },
+    { label: 'Feb', value: 25, percent: 89 },
+    { label: 'Mar', value: 18, percent: 64 },
+    { label: 'Apr', value: 20, percent: 71 },
+    { label: 'May', value: 17, percent: 60 },
+  ]);
+
+  sourceSegments = signal<{ label: string; color: string; percent: number; dashArray: string; dashOffset: string }[]>([]);
+
+  costBreakdown = [
+    { label: 'Marketing', value: '$450', percent: 36 },
+    { label: 'Referrals', value: '$300', percent: 24 },
+    { label: 'Platform', value: '$290', percent: 23 },
+    { label: 'Recruiter Time', value: '$200', percent: 16 },
+  ];
+
+  diversityData = [
+    { name: 'Engineering', percent: 65, male: 65, female: 35 },
+    { name: 'Design', percent: 82, male: 18, female: 82 },
+    { name: 'Sales', percent: 45, male: 55, female: 45 },
+    { name: 'HR', percent: 90, male: 10, female: 90 },
+  ];
 
   constructor(private api: ApiService, public i18n: I18nService) {}
 
   ngOnInit() {
     this.api.getDashboard().subscribe((d: any) => {
       this.data.set(d);
-      this.avgTimeToHire.set(0);
-      const total = d.totalApplications || 1;
-      this.funnel.set([
-        { label: this.i18n.t('analytics.stage.applications'), count: total, percent: 100, color: 'bg-blue-400' },
-        { label: this.i18n.t('analytics.stage.new'), count: d.newApplications || 0, percent: ((d.newApplications||0) / total) * 100, color: 'bg-indigo-400' },
-        { label: this.i18n.t('analytics.stage.hired'), count: d.hiredCount || 0, percent: ((d.hiredCount||0) / total) * 100, color: 'bg-green-400' },
-      ]);
+      this.totalApps.set(d.totalApplications || 0);
     });
 
     this.api.getFunnel().subscribe((data: any) => {
-      if (data?.statusCounts) {
-        const entries: [string, number][] = Object.entries(data.statusCounts).map(([k, v]: any) => [k, Number(v)]);
-        const total: number = entries.reduce((s: number, [, v]: [string, number]) => s + v, 0) || 1;
-        const colors = ['bg-blue-400', 'bg-gray-400', 'bg-yellow-400', 'bg-purple-400', 'bg-pink-400'];
-        this.sources.set(entries.map(([source, count]: [string, number], i: number) => ({
-          source: this.getSourceLabel(source), count, percent: (count / total) * 100, color: colors[i % colors.length]
-        })));
-      }
-    });
-  }
+      if (!data?.statusCounts) return;
+      const order = ['NEW', 'VIEWED', 'SHORTLIST', 'INTERVIEW', 'OFFER', 'HIRED'];
+      const labels: Record<string, string> = {
+        NEW: 'Applied', VIEWED: 'Screened', SHORTLIST: 'Shortlisted',
+        INTERVIEW: 'Interview', OFFER: 'Offer', HIRED: 'Hired'
+      };
+      const colors = ['bg-primary', 'bg-primary/80', 'bg-indigo-400', 'bg-violet-400', 'bg-coral', 'bg-accent'];
+      const entries = order.map((s, i) => ({
+        label: labels[s], count: (data.statusCounts[s] || 0) as number, color: colors[i]
+      }));
+      const max = Math.max(...entries.map(e => e.count), 1);
+      this.funnel.set(entries.map(e => ({ ...e, percent: (e.count / max) * 100 })));
 
-  getSourceLabel(s: string): string {
-    return this.i18n.t(`analytics.source.${s}`) || s;
+      // Build source segments for donut
+      const total = entries.reduce((s, e) => s + e.count, 0) || 1;
+      const srcColors = ['#0EA5E9', '#10B981', '#F97316', '#8B5CF6'];
+      const srcLabels = ['Platform', 'Referral', 'Direct', 'Social'];
+      const srcValues = [45, 25, 20, 10];
+      const circumference = 2 * Math.PI * 40;
+      let offset = 0;
+      this.sourceSegments.set(srcLabels.map((label, i) => {
+        const pct = srcValues[i];
+        const dash = (pct / 100) * circumference;
+        const seg = {
+          label, color: srcColors[i], percent: pct,
+          dashArray: `${dash} ${circumference - dash}`,
+          dashOffset: `${-offset}`
+        };
+        offset += dash;
+        return seg;
+      }));
+    });
   }
 
   exportCsv() {
     const d = this.data();
     if (!d) return;
     let csv = 'Metric,Value\n';
-    csv += `Active Vacancies,${d.activeVacancies}\nTotal Applications,${d.totalApplications}\nHired This Month,${d.hiredThisMonth}\nAvg Time to Hire,${d.avgTimeToHire}\n`;
-    csv += '\nDate,Applications\n';
-    d.applicationsByDay.forEach(r => csv += `${r.date},${r.count}\n`);
+    csv += `Active Vacancies,${d.activeVacancies}\nTotal Applications,${d.totalApplications}\nHired,${d.hiredThisMonth}\n`;
     const blob = new Blob([csv], { type: 'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
