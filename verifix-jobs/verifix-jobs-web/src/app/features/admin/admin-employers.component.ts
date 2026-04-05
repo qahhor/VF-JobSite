@@ -347,9 +347,10 @@ import { ToastService } from '../../shared/services/toast.service';
                 <select [(ngModel)]="formData.country" (ngModelChange)="onCountryChange()"
                   class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
                   <option value="">—</option>
-                  @for (c of countries(); track c.iso2) {
-                    <option [value]="c.iso2">{{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
-                  }
+                  <option value="UZ" selected>🇺🇿 {{ i18n.lang() === 'ru' ? 'Узбекистан' : "O'zbekiston" }}</option>
+                  <option value="KZ">🇰🇿 {{ i18n.lang() === 'ru' ? 'Казахстан' : "Qozog'iston" }}</option>
+                  <option value="KG">🇰🇬 {{ i18n.lang() === 'ru' ? 'Киргизия' : "Qirg'iziston" }}</option>
+                  <option value="TJ">🇹🇯 {{ i18n.lang() === 'ru' ? 'Таджикистан' : 'Tojikiston' }}</option>
                 </select>
               </div>
               <div>
@@ -460,13 +461,13 @@ import { ToastService } from '../../shared/services/toast.service';
           </div>
 
           <div class="mt-5 flex gap-3 border-t border-border pt-4">
-            <button (click)="saveForm()" [disabled]="!formData.name"
-              class="h-10 rounded-xl bg-primary px-6 text-sm font-semibold text-white transition hover:bg-primary-600 disabled:opacity-40">
-              {{ i18n.t('common.save') }}
+            <button type="button" (click)="saveForm()" [disabled]="!formData.name"
+              class="inline-flex items-center justify-center h-10 min-w-[120px] rounded-xl bg-primary px-6 text-sm font-semibold text-white transition hover:bg-primary-600 disabled:opacity-40">
+              {{ i18n.lang() === 'ru' ? 'Сохранить' : 'Saqlash' }}
             </button>
-            <button (click)="showForm.set(false)"
-              class="h-10 rounded-xl border border-border px-6 text-sm font-semibold text-gray-700 transition hover:bg-surface">
-              {{ i18n.t('common.cancel') }}
+            <button type="button" (click)="showForm.set(false)"
+              class="inline-flex items-center justify-center h-10 min-w-[100px] rounded-xl border border-border px-6 text-sm font-semibold text-gray-700 transition hover:bg-surface">
+              {{ i18n.lang() === 'ru' ? 'Отмена' : 'Bekor' }}
             </button>
           </div>
         </div>
@@ -486,11 +487,13 @@ import { ToastService } from '../../shared/services/toast.service';
               class="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"></textarea>
           </div>
           <div class="mt-4 flex gap-2">
-            <button (click)="doBlock()" class="h-8 rounded-lg bg-red-500 px-4 text-xs font-semibold text-white transition hover:bg-red-400">
-              {{ i18n.t('admin.block') }}
+            <button type="button" (click)="doBlock()"
+              class="inline-flex items-center justify-center h-10 min-w-[120px] rounded-xl bg-red-500 px-5 text-sm font-semibold text-white transition hover:bg-red-400">
+              {{ i18n.lang() === 'ru' ? 'Заблокировать' : 'Bloklash' }}
             </button>
-            <button (click)="blockTargetId.set(null)" class="h-8 rounded-lg border border-border px-4 text-xs font-semibold transition hover:bg-surface">
-              {{ i18n.t('common.cancel') }}
+            <button type="button" (click)="blockTargetId.set(null)"
+              class="inline-flex items-center justify-center h-10 min-w-[100px] rounded-xl border border-border px-5 text-sm font-semibold text-gray-700 transition hover:bg-surface">
+              {{ i18n.lang() === 'ru' ? 'Отмена' : 'Bekor' }}
             </button>
           </div>
         </div>
@@ -506,11 +509,13 @@ import { ToastService } from '../../shared/services/toast.service';
             {{ i18n.t('admin.delete_employer_confirm') }} <strong>{{ deleteTarget()?.name }}</strong>?
           </p>
           <div class="mt-4 flex gap-2">
-            <button (click)="doDelete()" class="h-8 rounded-lg bg-red-500 px-4 text-xs font-semibold text-white transition hover:bg-red-400">
-              {{ i18n.t('common.delete') }}
+            <button type="button" (click)="doDelete()"
+              class="inline-flex items-center justify-center h-10 min-w-[100px] rounded-xl bg-red-500 px-5 text-sm font-semibold text-white transition hover:bg-red-400">
+              {{ i18n.lang() === 'ru' ? 'Удалить' : "O'chirish" }}
             </button>
-            <button (click)="deleteTarget.set(null)" class="h-8 rounded-lg border border-border px-4 text-xs font-semibold transition hover:bg-surface">
-              {{ i18n.t('common.cancel') }}
+            <button type="button" (click)="deleteTarget.set(null)"
+              class="inline-flex items-center justify-center h-10 min-w-[100px] rounded-xl border border-border px-5 text-sm font-semibold text-gray-700 transition hover:bg-surface">
+              {{ i18n.lang() === 'ru' ? 'Отмена' : 'Bekor' }}
             </button>
           </div>
         </div>
