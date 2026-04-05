@@ -4,123 +4,157 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { I18nService } from '../../core/services/i18n.service';
+import { LucideAngularModule, UserPlus, Mail, Phone, MoreVertical, X } from 'lucide-angular';
 
 @Component({
   selector: 'vjw-team',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   template: `
-    <div class="space-y-6">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('team.title') }}</h1>
-        <button
-          (click)="showInvite.set(true)"
-          class="h-10 w-full rounded-lg bg-black px-4 text-sm font-medium text-white transition hover:bg-gray-800 sm:w-auto">
-          + {{ i18n.t('team.invite') }}
+    <div class="space-y-5">
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-title font-semibold text-gray-900">Team & Employees</h1>
+          <p class="mt-1 text-sm text-muted">Manage your workforce and onboarding</p>
+        </div>
+        <button (click)="showInvite.set(true)"
+          class="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-card hover:bg-primary-600 transition">
+          <lucide-icon [img]="UserPlusIcon" [size]="18"></lucide-icon>
+          Add Employee
         </button>
       </div>
 
-      <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
-        <div class="divide-y divide-gray-100 md:hidden">
-          @for (m of members(); track m.id) {
-            <div class="space-y-3 p-4">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                  <div class="break-all text-sm font-medium text-gray-800">{{ m.email }}</div>
-                  @if (m.phone) {
-                    <div class="mt-1 text-xs text-gray-400">{{ m.phone }}</div>
-                  }
-                </div>
-                <span class="shrink-0 rounded-full px-2 py-1 text-xs font-medium"
-                      [class]="m.role === 'ADMIN' ? 'bg-red-50 text-red-600' : m.role === 'RECRUITER' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'">
-                  {{ roleLabel(m.role) }}
-                </span>
-              </div>
-
-              @if (m.role !== 'ADMIN') {
-                <div class="flex flex-col gap-2 sm:flex-row">
-                  <select
-                    (change)="changeRole(m.id, $event)"
-                    [value]="m.role"
-                    class="h-10 flex-1 rounded-lg border border-gray-200 bg-white px-3 text-sm">
-                    <option value="RECRUITER">Recruiter</option>
-                    <option value="VIEWER">Viewer</option>
-                  </select>
-                  <button
-                    (click)="remove(m.id)"
-                    class="h-10 rounded-lg border border-red-200 px-4 text-sm font-medium text-red-600 hover:bg-red-50">
-                    {{ i18n.t('team.remove') }}
-                  </button>
-                </div>
-              }
-            </div>
-          } @empty {
-            <div class="px-5 py-12 text-center text-sm text-gray-400">{{ i18n.t('team.no_members') }}</div>
-          }
-        </div>
-
-        <table class="hidden w-full md:table">
-          <thead class="border-b border-gray-100 bg-gray-50">
-            <tr>
-              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('team.employee') }}</th>
-              <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('team.role') }}</th>
-              <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500">{{ i18n.t('team.action') }}</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-50">
-            @for (m of members(); track m.id) {
-              <tr>
-                <td class="px-5 py-3">
-                  <div class="text-sm font-medium text-gray-800">{{ m.email }}</div>
-                  @if (m.phone) { <div class="text-xs text-gray-400">{{ m.phone }}</div> }
-                </td>
-                <td class="px-5 py-3">
-                  <span class="rounded-full px-2 py-0.5 text-xs font-medium"
-                        [class]="m.role === 'ADMIN' ? 'bg-red-50 text-red-600' : m.role === 'RECRUITER' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600'">
-                    {{ roleLabel(m.role) }}
-                  </span>
-                </td>
-                <td class="px-5 py-3 text-right">
-                  @if (m.role !== 'ADMIN') {
-                    <select (change)="changeRole(m.id, $event)" [value]="m.role" class="mr-2 rounded border border-gray-200 px-2 py-1 text-xs">
-                      <option value="RECRUITER">Recruiter</option>
-                      <option value="VIEWER">Viewer</option>
-                    </select>
-                    <button (click)="remove(m.id)" class="text-xs text-red-500 hover:text-red-700">{{ i18n.t('team.remove') }}</button>
-                  }
-                </td>
-              </tr>
-            } @empty {
-              <tr><td colspan="3" class="px-5 py-12 text-center text-sm text-gray-400">{{ i18n.t('team.no_members') }}</td></tr>
-            }
-          </tbody>
-        </table>
+      <!-- Search + Filters -->
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="filter()"
+          placeholder="Search by name, role, or ID..."
+          class="flex-1 h-10 rounded-xl border border-border bg-white px-4 text-sm outline-none focus:border-primary">
+        <select [(ngModel)]="statusFilterVal" (ngModelChange)="filter()"
+          class="h-10 rounded-xl border border-border bg-white px-3 text-sm outline-none focus:border-primary">
+          <option value="">All Status</option>
+          <option value="ACTIVE">Active</option>
+          <option value="ON_LEAVE">On Leave</option>
+        </select>
       </div>
 
+      <!-- Table -->
+      <div class="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border text-left">
+                <th class="px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Employee</th>
+                <th class="hidden md:table-cell px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Role & Dept</th>
+                <th class="hidden lg:table-cell px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Hire Date</th>
+                <th class="px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Status</th>
+                <th class="hidden sm:table-cell px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Contact</th>
+                <th class="px-5 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of filtered(); track m.id) {
+                <tr class="border-b border-border/50 hover:bg-surface/50 transition">
+                  <td class="px-5 py-3.5">
+                    <div class="flex items-center gap-3">
+                      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                           [class]="m.role === 'ADMIN' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'">
+                        {{ (m.email || '??').substring(0,2).toUpperCase() }}
+                      </div>
+                      <div class="min-w-0">
+                        <div class="font-medium text-gray-900 truncate">{{ m.email?.split('@')[0] || m.email }}</div>
+                        <div class="text-[11px] text-muted font-mono">EMP-{{ (m.id || '').substring(0,3).toUpperCase() }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="hidden md:table-cell px-5 py-3.5">
+                    <div class="text-gray-700">{{ roleLabel(m.role) }}</div>
+                    <div class="text-[11px] text-muted">{{ m.department || 'General' }}</div>
+                  </td>
+                  <td class="hidden lg:table-cell px-5 py-3.5 text-muted">{{ m.createdAt | date:'yyyy-MM-dd' }}</td>
+                  <td class="px-5 py-3.5">
+                    <span class="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold"
+                          [class]="m.role === 'ADMIN' ? 'border border-emerald-200 bg-emerald-50 text-emerald-700' :
+                                   'border border-emerald-200 bg-emerald-50 text-emerald-700'">
+                      ACTIVE
+                    </span>
+                  </td>
+                  <td class="hidden sm:table-cell px-5 py-3.5">
+                    <div class="flex items-center gap-2">
+                      @if (m.email) {
+                        <a [href]="'mailto:' + m.email" class="rounded-md p-1 text-muted hover:text-primary hover:bg-primary/5 transition">
+                          <lucide-icon [img]="MailIcon" [size]="16"></lucide-icon>
+                        </a>
+                      }
+                      @if (m.phone) {
+                        <a [href]="'tel:' + m.phone" class="rounded-md p-1 text-muted hover:text-primary hover:bg-primary/5 transition">
+                          <lucide-icon [img]="PhoneIcon" [size]="16"></lucide-icon>
+                        </a>
+                      }
+                    </div>
+                  </td>
+                  <td class="px-5 py-3.5 text-right">
+                    @if (m.role !== 'ADMIN') {
+                      <div class="relative inline-block">
+                        <button (click)="toggleMenu(m.id)" class="rounded-md p-1.5 text-muted hover:bg-surface hover:text-gray-700 transition">
+                          <lucide-icon [img]="MoreVertIcon" [size]="16"></lucide-icon>
+                        </button>
+                        @if (openMenuId() === m.id) {
+                          <div class="absolute right-0 top-full z-10 mt-1 w-36 rounded-xl border border-border bg-white py-1 shadow-dropdown">
+                            <button (click)="changeRoleTo(m.id, 'RECRUITER')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition">Set Recruiter</button>
+                            <button (click)="changeRoleTo(m.id, 'VIEWER')" class="w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition">Set Viewer</button>
+                            <button (click)="remove(m.id)" class="w-full text-left px-3 py-1.5 text-xs text-error hover:bg-error/5 transition">Remove</button>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </td>
+                </tr>
+              } @empty {
+                <tr><td colspan="6" class="px-5 py-16 text-center text-muted">{{ i18n.t('team.no_members') }}</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Invite Modal -->
       @if (showInvite()) {
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div class="absolute inset-0 bg-black/50" (click)="showInvite.set(false)"></div>
-          <div class="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h3 class="mb-4 text-lg font-bold text-gray-900">{{ i18n.t('team.invite_member') }}</h3>
+          <div class="absolute inset-0 bg-black/40" (click)="showInvite.set(false)"></div>
+          <div class="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-modal">
+            <div class="flex items-center justify-between mb-5">
+              <h3 class="text-heading font-semibold text-gray-900">{{ i18n.t('team.invite_member') }}</h3>
+              <button (click)="showInvite.set(false)" class="rounded-lg p-1 text-muted hover:text-gray-700 transition">
+                <lucide-icon [img]="XIcon" [size]="20"></lucide-icon>
+              </button>
+            </div>
             <div class="space-y-4">
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-700">{{ i18n.t('auth.email') }}</label>
-                <input type="email" [(ngModel)]="inviteEmail" class="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm">
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('auth.email') }} *</label>
+                <input type="email" [(ngModel)]="inviteEmail"
+                  class="h-10 w-full rounded-xl border border-border px-3 text-sm outline-none focus:border-primary">
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-700">{{ i18n.t('auth.phone') }}</label>
-                <input type="tel" [(ngModel)]="invitePhone" class="h-10 w-full rounded-lg border border-gray-200 px-3 text-sm" placeholder="+998...">
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('auth.phone') }}</label>
+                <input type="tel" [(ngModel)]="invitePhone" placeholder="+998..."
+                  class="h-10 w-full rounded-xl border border-border px-3 text-sm outline-none focus:border-primary">
               </div>
               <div>
-                <label class="mb-1 block text-sm font-medium text-gray-700">{{ i18n.t('team.role') }}</label>
-                <select [(ngModel)]="inviteRole" class="h-10 w-full rounded-lg border border-gray-200 bg-white px-3 text-sm">
-                  <option value="RECRUITER">{{ i18n.t('team.role_recruiter_desc') }}</option>
-                  <option value="VIEWER">{{ i18n.t('team.role_viewer_desc') }}</option>
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('team.role') }}</label>
+                <select [(ngModel)]="inviteRole"
+                  class="h-10 w-full rounded-xl border border-border bg-white px-3 text-sm outline-none focus:border-primary">
+                  <option value="RECRUITER">Recruiter</option>
+                  <option value="VIEWER">Viewer</option>
                 </select>
               </div>
               <div class="flex justify-end gap-2 pt-2">
-                <button (click)="showInvite.set(false)" class="h-10 rounded-lg border border-gray-200 px-4 text-sm">{{ i18n.t('common.cancel') }}</button>
-                <button (click)="invite()" [disabled]="!inviteEmail" class="h-10 rounded-lg bg-black px-6 text-sm font-medium text-white disabled:opacity-50">{{ i18n.t('team.invite') }}</button>
+                <button (click)="showInvite.set(false)"
+                  class="h-10 rounded-xl border border-border px-4 text-sm font-medium hover:bg-surface transition">Cancel</button>
+                <button (click)="invite()" [disabled]="!inviteEmail"
+                  class="h-10 rounded-xl bg-primary px-6 text-sm font-semibold text-white disabled:opacity-40 hover:bg-primary-600 transition">
+                  Add Employee
+                </button>
               </div>
             </div>
           </div>
@@ -130,11 +164,21 @@ import { I18nService } from '../../core/services/i18n.service';
   `,
 })
 export class TeamComponent implements OnInit {
+  UserPlusIcon = UserPlus;
+  MailIcon = Mail;
+  PhoneIcon = Phone;
+  MoreVertIcon = MoreVertical;
+  XIcon = X;
+
   members = signal<any[]>([]);
+  filtered = signal<any[]>([]);
   showInvite = signal(false);
+  openMenuId = signal<string | null>(null);
   inviteEmail = '';
   invitePhone = '';
   inviteRole = 'RECRUITER';
+  searchQuery = '';
+  statusFilterVal = '';
 
   constructor(private http: HttpClient, public i18n: I18nService) {}
 
@@ -142,39 +186,44 @@ export class TeamComponent implements OnInit {
 
   load() {
     this.http.get<any[]>(`${environment.apiUrl}/managers`).subscribe({
-      next: (r: any) => this.members.set(r || []),
+      next: (r: any) => { this.members.set(r || []); this.filter(); },
       error: () => {}
     });
   }
+
+  filter() {
+    let list = this.members();
+    const q = this.searchQuery.trim().toLowerCase();
+    if (q) list = list.filter(m => (m.email || '').toLowerCase().includes(q) || (m.phone || '').includes(q));
+    this.filtered.set(list);
+  }
+
+  toggleMenu(id: string) { this.openMenuId.set(this.openMenuId() === id ? null : id); }
 
   invite() {
     this.http.post<any>(`${environment.apiUrl}/managers`, {
       email: this.inviteEmail, phone: this.invitePhone, role: this.inviteRole
     }).subscribe({
-      next: () => {
-        this.showInvite.set(false);
-        this.inviteEmail = '';
-        this.invitePhone = '';
-        this.load();
-      },
+      next: () => { this.showInvite.set(false); this.inviteEmail = ''; this.invitePhone = ''; this.load(); },
       error: () => {}
     });
   }
 
+  changeRoleTo(id: string, role: string) {
+    this.openMenuId.set(null);
+    this.http.patch<any>(`${environment.apiUrl}/managers/${id}/role`, { role }).subscribe({ next: () => this.load() });
+  }
+
   changeRole(id: string, event: Event) {
-    const role = (event.target as HTMLSelectElement).value;
-    this.http.patch<any>(`${environment.apiUrl}/managers/${id}/role`, { role }).subscribe({ next: () => this.load(), error: () => {} });
+    this.changeRoleTo(id, (event.target as HTMLSelectElement).value);
   }
 
   remove(id: string) {
-    this.http.delete(`${environment.apiUrl}/managers/${id}`).subscribe({ next: () => this.load(), error: () => {} });
+    this.openMenuId.set(null);
+    this.http.delete(`${environment.apiUrl}/managers/${id}`).subscribe({ next: () => this.load() });
   }
 
   roleLabel(r: string): string {
-    return ({
-      ADMIN: this.i18n.t('team.admin'),
-      RECRUITER: this.i18n.t('team.recruiter'),
-      VIEWER: this.i18n.t('team.viewer')
-    } as Record<string, string>)[r] || r;
+    return ({ ADMIN: 'HR Director', RECRUITER: 'Recruiter', VIEWER: 'Viewer' } as Record<string, string>)[r] || r;
   }
 }
