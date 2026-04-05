@@ -44,14 +44,14 @@ import { ToastService } from '../../shared/services/toast.service';
               [(ngModel)]="search"
               (keyup.enter)="load()"
               type="text"
-              class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-slate-950"
+              class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-primary"
               [placeholder]="i18n.t('admin.search_companies')" />
           </div>
           <div class="w-full lg:w-48">
             <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.moderation.status') }}</label>
             <select
               [(ngModel)]="statusFilter"
-              class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-slate-950">
+              class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none transition focus:border-primary">
               <option value="">{{ i18n.t('filter.all') }}</option>
               <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
               <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
@@ -331,7 +331,7 @@ import { ToastService } from '../../shared/services/toast.service';
             <div>
               <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.company_name') }} *</label>
               <input [(ngModel)]="formData.name" type="text"
-                class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
+                class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-primary" />
             </div>
 
             <!-- INN + Legal name -->
@@ -339,21 +339,31 @@ import { ToastService } from '../../shared/services/toast.service';
               <div>
                 <label class="mb-1 block text-xs font-medium text-muted">INN</label>
                 <input [(ngModel)]="formData.inn" type="text"
-                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
+                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-primary" />
               </div>
               <div>
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.legal_name') }}</label>
                 <input [(ngModel)]="formData.legalName" type="text"
-                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
+                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-primary" />
               </div>
             </div>
 
-            <!-- Region + City -->
-            <div class="grid grid-cols-2 gap-3">
+            <!-- Country + Region + City -->
+            <div class="grid grid-cols-3 gap-3">
+              <div>
+                <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.country') }}</label>
+                <select [(ngModel)]="formData.country" (ngModelChange)="onCountryChange()"
+                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
+                  <option value="">—</option>
+                  @for (c of countries(); track c.iso2) {
+                    <option [value]="c.iso2">{{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
+                  }
+                </select>
+              </div>
               <div>
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.region') }}</label>
                 <select [(ngModel)]="formData.region" (ngModelChange)="onRegionChange()"
-                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
+                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
                   <option value="">—</option>
                   @for (r of regions(); track r.id) {
                     <option [value]="r.fullCode">{{ i18n.lang() === 'ru' ? r.nameRu : r.nameUzLat }}</option>
@@ -363,7 +373,7 @@ import { ToastService } from '../../shared/services/toast.service';
               <div>
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.city') }}</label>
                 <select [(ngModel)]="formData.city"
-                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
+                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
                   <option value="">—</option>
                   @for (c of filteredCities(); track c.id) {
                     <option [value]="i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat">{{ i18n.lang() === 'ru' ? c.nameRu : c.nameUzLat }}</option>
@@ -376,7 +386,7 @@ import { ToastService } from '../../shared/services/toast.service';
             <div>
               <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.industry') }}</label>
               <select [(ngModel)]="formData.industry"
-                class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
+                class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
                 <option value="">—</option>
                 @for (ind of industries; track ind) {
                   <option [value]="ind">{{ i18n.t('industry.' + ind) }}</option>
@@ -388,7 +398,7 @@ import { ToastService } from '../../shared/services/toast.service';
             <div>
               <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.website') }}</label>
               <input [(ngModel)]="formData.websiteUrl" type="url"
-                class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
+                class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-primary" />
             </div>
 
             <!-- Employees + Founded -->
@@ -396,7 +406,7 @@ import { ToastService } from '../../shared/services/toast.service';
               <div>
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.employees') }}</label>
                 <select [(ngModel)]="formData.employeeCountRange"
-                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
+                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
                   <option value="">—</option>
                   <option value="1-10">1-10</option>
                   <option value="11-50">11-50</option>
@@ -409,7 +419,7 @@ import { ToastService } from '../../shared/services/toast.service';
               <div>
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.founded') }}</label>
                 <input [(ngModel)]="formData.foundedYear" type="number" min="1900" max="2026"
-                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-slate-950" />
+                  class="h-9 w-full rounded-lg border border-border px-3 text-sm outline-none focus:border-primary" />
               </div>
             </div>
 
@@ -417,7 +427,7 @@ import { ToastService } from '../../shared/services/toast.service';
             <div>
               <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.description') }}</label>
               <textarea [(ngModel)]="formData.description" rows="3"
-                class="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-slate-950"></textarea>
+                class="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"></textarea>
             </div>
 
             <!-- ── Admin-only fields ── -->
@@ -428,7 +438,7 @@ import { ToastService } from '../../shared/services/toast.service';
               <div>
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.moderation.status') }}</label>
                 <select [(ngModel)]="formData.status"
-                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-slate-950">
+                  class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
                   <option value="">— {{ i18n.t('filter.all') }}</option>
                   <option value="PENDING">{{ i18n.t('admin.pending') }}</option>
                   <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
@@ -451,7 +461,7 @@ import { ToastService } from '../../shared/services/toast.service';
                   <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.deactivation_reason') }}</label>
                   <textarea [(ngModel)]="formData.deactivationReason" rows="2"
                     [placeholder]="i18n.t('admin.block_reason_placeholder')"
-                    class="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-slate-950"></textarea>
+                    class="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"></textarea>
                 </div>
               }
             </div>
@@ -481,7 +491,7 @@ import { ToastService } from '../../shared/services/toast.service';
             <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('admin.block_reason') }}</label>
             <textarea [(ngModel)]="blockReason" rows="2"
               [placeholder]="i18n.t('admin.block_reason_placeholder')"
-              class="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-slate-950"></textarea>
+              class="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"></textarea>
           </div>
           <div class="mt-4 flex gap-2">
             <button (click)="doBlock()" class="h-8 rounded-lg bg-red-500 px-4 text-xs font-semibold text-white transition hover:bg-red-400">
@@ -526,6 +536,7 @@ export class AdminEmployersComponent implements OnInit {
   blockTargetId = signal<string | null>(null);
   currentPage = signal(0);
   totalPages = signal(0);
+  countries = signal<{ iso2: string; nameUzLat: string; nameRu: string }[]>([]);
   regions = signal<RefRegion[]>([]);
   filteredCities = signal<RefCity[]>([]);
   statusFilter = '';
@@ -550,6 +561,10 @@ export class AdminEmployersComponent implements OnInit {
 
   ngOnInit() {
     this.api.getOverview().subscribe({ next: (o) => this.overview.set(o), error: () => {} });
+    this.api.getCountries().subscribe({
+      next: (list) => this.countries.set(list),
+      error: () => {}
+    });
     this.api.getRegionsByCountry('UZ').subscribe({
       next: (list) => this.regions.set(list),
       error: () => {}
@@ -557,11 +572,26 @@ export class AdminEmployersComponent implements OnInit {
     this.load();
   }
 
+  onCountryChange() {
+    this.formData.region = '';
+    this.formData.city = '';
+    this.filteredCities.set([]);
+    const country = this.formData.country;
+    if (country) {
+      this.api.getRegionsByCountry(country).subscribe({
+        next: (list) => this.regions.set(list),
+        error: () => this.regions.set([])
+      });
+    } else {
+      this.regions.set([]);
+    }
+  }
+
   onRegionChange() {
     this.formData.city = '';
     const region = this.formData.region;
     if (region) {
-      this.api.getCitiesByCountry('UZ', region).subscribe({
+      this.api.getCitiesByCountry(this.formData.country || 'UZ', region).subscribe({
         next: (list) => this.filteredCities.set(list),
         error: () => this.filteredCities.set([])
       });
@@ -609,6 +639,7 @@ export class AdminEmployersComponent implements OnInit {
           name: emp.name || '',
           inn: emp.inn || '',
           legalName: emp.legalName || '',
+          country: 'UZ',
           city: emp.city || '',
           region: emp.region || '',
           industry: emp.industry || '',
@@ -734,7 +765,7 @@ export class AdminEmployersComponent implements OnInit {
 
   private emptyForm(): EmployerFormData {
     return {
-      name: '', inn: '', legalName: '', city: '', region: '',
+      name: '', inn: '', legalName: '', country: 'UZ', city: '', region: '',
       industry: '', websiteUrl: '', employeeCountRange: '',
       foundedYear: null, description: '',
       status: '', isVerified: false, deactivationReason: '',
@@ -746,6 +777,7 @@ interface EmployerFormData {
   name: string;
   inn: string;
   legalName: string;
+  country: string;
   city: string;
   region: string;
   industry: string;

@@ -4,6 +4,7 @@ export const WEB_EMPLOYER_TRANSLATIONS: TranslationCatalog = {
   'employer.company': { uz_lat: 'Kompaniya', ru: 'Компания' },
   'employer.company_name': { uz_lat: 'Kompaniya nomi', ru: 'Название компании' },
   'employer.legal_name': { uz_lat: 'Yuridik nomi', ru: 'Юридическое название' },
+  'employer.country': { uz_lat: 'Davlat', ru: 'Страна' },
   'employer.city': { uz_lat: 'Shahar', ru: 'Город' },
   'employer.region': { uz_lat: 'Viloyat', ru: 'Регион' },
   'employer.industry': { uz_lat: 'Soha', ru: 'Отрасль' },
