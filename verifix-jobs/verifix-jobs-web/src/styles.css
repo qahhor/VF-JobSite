@@ -19,6 +19,28 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* Employer Panel: Dark Mode global overrides */
+  .dark body, .dark {
+    background-color: #0B0F19;
+    color: #E2E8F0;
+  }
+  .dark .bg-white { background-color: #1E293B !important; }
+  .dark .bg-surface { background-color: #0B0F19 !important; }
+  .dark .border-border { border-color: #334155 !important; }
+  .dark .text-gray-900 { color: #F1F5F9 !important; }
+  .dark .text-gray-700 { color: #CBD5E1 !important; }
+  .dark .text-muted { color: #94A3B8 !important; }
+  .dark .shadow-card { box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important; }
+  .dark .shadow-dropdown { box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important; }
+  .dark .shadow-modal { box-shadow: 0 12px 40px rgba(0,0,0,0.5) !important; }
+  .dark input, .dark select, .dark textarea {
+    background-color: #0F172A;
+    border-color: #334155;
+    color: #E2E8F0;
+  }
+  .dark table thead { background-color: #0F172A; }
+  .dark tr:hover { background-color: rgba(30,41,59,0.5) !important; }
+
   /* Employer Panel: focus-visible ring */
   *:focus-visible {
     outline: 2px solid #0EA5E9;

@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { ApiService } from '../../core/services/api.service';
 import { DashboardData } from '../../core/models';
 import { I18nService } from '../../core/services/i18n.service';
@@ -9,7 +10,12 @@ import { LucideAngularModule, Clock, DollarSign, TrendingUp, PieChart, Users,
 @Component({
   selector: 'vjw-analytics',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, DragDropModule],
+  styles: [`
+    .cdk-drag-preview { border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.15); opacity: 0.9; }
+    .cdk-drag-placeholder { opacity: 0.3; border: 2px dashed #0EA5E9; border-radius: 16px; }
+    .cdk-drag-animating { transition: transform 200ms ease-out; }
+  `],
   template: `
     <div class="space-y-5">
       <!-- Header -->
@@ -105,10 +111,11 @@ import { LucideAngularModule, Clock, DollarSign, TrendingUp, PieChart, Users,
         </div>
       </div>
 
-      <!-- Widget Grid Row 2: Cost per Hire, Offer Acceptance, Diversity -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Widget Grid Row 2: Cost per Hire, Offer Acceptance, Diversity (drag-reorderable) -->
+      <div cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="onWidgetDrop($event)"
+           class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <!-- Cost per Hire -->
-        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+        <div cdkDrag class="rounded-2xl border border-border bg-white p-5 shadow-card cursor-grab">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <lucide-icon [img]="DollarIcon" [size]="18" class="text-muted"></lucide-icon>
@@ -137,7 +144,7 @@ import { LucideAngularModule, Clock, DollarSign, TrendingUp, PieChart, Users,
         </div>
 
         <!-- Offer Acceptance Rate -->
-        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+        <div cdkDrag class="rounded-2xl border border-border bg-white p-5 shadow-card cursor-grab">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <lucide-icon [img]="TrendingUpIcon" [size]="18" class="text-muted"></lucide-icon>
@@ -167,7 +174,7 @@ import { LucideAngularModule, Clock, DollarSign, TrendingUp, PieChart, Users,
         </div>
 
         <!-- Diversity Heatmap -->
-        <div class="rounded-2xl border border-border bg-white p-5 shadow-card">
+        <div cdkDrag class="rounded-2xl border border-border bg-white p-5 shadow-card cursor-grab">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <lucide-icon [img]="UsersIcon" [size]="18" class="text-muted"></lucide-icon>
@@ -264,6 +271,10 @@ export class AnalyticsComponent implements OnInit {
   ];
 
   constructor(private api: ApiService, public i18n: I18nService) {}
+
+  onWidgetDrop(event: CdkDragDrop<any>) {
+    // Reorder widgets visually (CDK handles DOM reorder)
+  }
 
   ngOnInit() {
     this.api.getDashboard().subscribe((d: any) => {

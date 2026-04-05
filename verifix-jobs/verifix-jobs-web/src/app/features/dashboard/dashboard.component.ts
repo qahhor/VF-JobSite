@@ -5,15 +5,23 @@ import { ApiService } from '../../core/services/api.service';
 import { I18nService } from '../../core/services/i18n.service';
 import { LucideAngularModule, Briefcase, Users, TrendingUp, TrendingDown, Target,
   Plus, Kanban, Sparkles, BarChart3, FileDown, Clock, ArrowRight } from 'lucide-angular';
+import { SkeletonComponent } from '../../shared/components/skeleton.component';
 
 @Component({
   selector: 'vjw-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, RouterLink, LucideAngularModule, SkeletonComponent],
   template: `
     <div class="space-y-6">
       <!-- ═══ KPI Row — 4 cards with sparklines ═══ -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      @if (loading()) {
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          @for (_ of [1,2,3,4]; track $index) {
+            <vjw-skeleton variant="card"></vjw-skeleton>
+          }
+        </div>
+      }
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" [class.hidden]="loading()">
         @for (kpi of kpis(); track kpi.label) {
           <div class="rounded-2xl border border-border bg-white p-5 shadow-card hover:border-dashed hover:border-primary/30 transition cursor-pointer">
             <div class="flex items-center justify-between">
@@ -213,6 +221,7 @@ export class DashboardComponent implements OnInit {
   ArrowRightIcon = ArrowRight;
 
   // State
+  loading = signal(true);
   kpis = signal<KpiCard[]>([]);
   taskCounts = signal({ open: 0, urgent: 0 });
   tasks = signal<any[]>([]);
@@ -228,6 +237,7 @@ export class DashboardComponent implements OnInit {
     this.loadVacancyHealth();
     this.loadActivityFeed();
     this.loadFunnel();
+    setTimeout(() => this.loading.set(false), 1500);
   }
 
   markTaskDone(taskId: string) {

@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, computed, AfterViewChecked } from '@angular/core';
+import * as L from 'leaflet';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { I18nService } from '../../core/services/i18n.service';
@@ -144,19 +145,25 @@ interface TimeEntry {
           </div>
         </div>
       } @else {
-        <!-- Map View Placeholder -->
-        <div class="rounded-2xl border border-border bg-white p-12 shadow-card text-center">
-          <lucide-icon [img]="MapPinIcon" [size]="48" class="mx-auto text-muted mb-4"></lucide-icon>
-          <h2 class="text-lg font-semibold text-gray-900">Map View</h2>
-          <p class="mt-2 text-sm text-muted max-w-md mx-auto">
-            Interactive map showing clock-in locations with GPS pins. Leaflet integration coming soon.
-          </p>
+        <!-- Map View with Leaflet -->
+        <div class="rounded-2xl border border-border bg-white shadow-card overflow-hidden">
+          <div id="timetrack-map" class="h-[500px] w-full"></div>
+          <div class="border-t border-border p-4">
+            <div class="flex flex-wrap gap-3 text-xs text-muted">
+              @for (loc of uniqueLocations(); track loc) {
+                <div class="flex items-center gap-1.5">
+                  <lucide-icon [img]="MapPinIcon" [size]="14" class="text-primary"></lucide-icon>
+                  <span>{{ loc }}</span>
+                </div>
+              }
+            </div>
+          </div>
         </div>
       }
     </div>
   `,
 })
-export class TimeTrackingComponent {
+export class TimeTrackingComponent implements AfterViewChecked {
   ClockIcon = Clock;
   MapPinIcon = MapPin;
   DownloadIcon = Download;
@@ -187,8 +194,46 @@ export class TimeTrackingComponent {
   pendingCount = signal(2);
   verifiedCount = signal(5);
 
+  private mapInitialized = false;
+
+  uniqueLocations = computed(() => [...new Set(this.entries().map(e => e.location))]);
+
   constructor(public i18n: I18nService) {
     this.filteredEntries.set(this.entries());
+  }
+
+  ngAfterViewChecked() {
+    if (this.viewMode() === 'map' && !this.mapInitialized) {
+      const el = document.getElementById('timetrack-map');
+      if (el && el.clientHeight > 0) {
+        this.mapInitialized = true;
+        this.initMap();
+      }
+    }
+    if (this.viewMode() === 'table') {
+      this.mapInitialized = false;
+    }
+  }
+
+  private initMap() {
+    const map = L.map('timetrack-map').setView([41.3111, 69.2797], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const locations: Record<string, [number, number]> = {
+      'Tashkent Office': [41.3111, 69.2797],
+      'Samarkand Office': [39.6542, 66.9597],
+      'Remote': [41.35, 69.32],
+    };
+
+    this.entries().forEach(entry => {
+      const coords = locations[entry.location] || [41.31 + Math.random() * 0.05, 69.27 + Math.random() * 0.05];
+      L.circleMarker(coords, {
+        radius: 8, fillColor: entry.status === 'verified' ? '#10B981' : entry.status === 'pending' ? '#F59E0B' : '#EF4444',
+        fillOpacity: 0.8, color: '#fff', weight: 2
+      }).addTo(map).bindPopup(`<b>${entry.employee}</b><br>${entry.date} ${entry.clockIn}–${entry.clockOut}<br>${entry.location}`);
+    });
   }
 
   bulkApprove() {
