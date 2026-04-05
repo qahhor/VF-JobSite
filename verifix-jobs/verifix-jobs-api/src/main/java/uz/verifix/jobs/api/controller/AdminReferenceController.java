@@ -87,8 +87,17 @@ public class AdminReferenceController {
     @GetMapping("/cities/by-country/{countryIso2}")
     public ResponseEntity<List<CityResponse>> citiesByCountry(
             @PathVariable String countryIso2,
-            @RequestParam(required = false) String region) {
-        return ResponseEntity.ok(referenceService.citiesByScope(countryIso2, region).stream().map(CityResponse::from).toList());
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false, defaultValue = "false") boolean activeOnly) {
+        var cities = activeOnly
+                ? referenceService.activeCitiesByScope(countryIso2, region)
+                : referenceService.citiesByScope(countryIso2, region);
+        return ResponseEntity.ok(cities.stream().map(CityResponse::from).toList());
+    }
+
+    @PatchMapping("/cities/{id}/toggle-active")
+    public ResponseEntity<CityResponse> toggleCityActive(@PathVariable UUID id) {
+        return ResponseEntity.ok(CityResponse.from(referenceService.toggleCityActive(id)));
     }
 
     @GetMapping("/regions/{id}")
@@ -114,6 +123,11 @@ public class AdminReferenceController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/regions/{id}/toggle-active")
+    public ResponseEntity<RegionResponse> toggleRegionActive(@PathVariable UUID id) {
+        return ResponseEntity.ok(RegionResponse.from(referenceService.toggleRegionActive(id)));
+    }
+
     // ── Countries ───────────────────────────────────────────
 
     @GetMapping("/countries")
@@ -135,20 +149,22 @@ public class AdminReferenceController {
     // ── DTOs ────────────────────────────────────────────────
 
     public record CityRequest(String nameUzLat, String nameRu, String nameEn, String country, String region, Integer population) {}
-    public record CityResponse(UUID id, String nameUzLat, String nameRu, String nameEn, String country, String region, String countryIso2, UUID regionId, Integer population) {
+    public record CityResponse(UUID id, String nameUzLat, String nameRu, String nameEn, String country, String region, String countryIso2, UUID regionId, Integer population, boolean isActive) {
         static CityResponse from(GeoCity c) {
             return new CityResponse(c.getId(), c.getNameUzLat(), c.getNameRu(), c.getNameEn(), c.getCountry(), c.getRegion(),
                     c.getCountryRef() != null ? c.getCountryRef().getIso2() : c.getCountry(),
                     c.getRegionRef() != null ? c.getRegionRef().getId() : null,
-                    c.getPopulation());
+                    c.getPopulation(),
+                    Boolean.TRUE.equals(c.getIsActive()));
         }
     }
 
     public record RegionRequest(String code, String fullCode, String nameUzLat, String nameRu, String nameEn, String countryIso2) {}
-    public record RegionResponse(UUID id, String code, String fullCode, String nameUzLat, String nameRu, String nameEn, String countryIso2) {
+    public record RegionResponse(UUID id, String code, String fullCode, String nameUzLat, String nameRu, String nameEn, String countryIso2, boolean isActive) {
         static RegionResponse from(GeoRegion r) {
             return new RegionResponse(r.getId(), r.getCode(), r.getFullCode(), r.getNameUzLat(), r.getNameRu(), r.getNameEn(),
-                    r.getCountry() != null ? r.getCountry().getIso2() : null);
+                    r.getCountry() != null ? r.getCountry().getIso2() : null,
+                    Boolean.TRUE.equals(r.getIsActive()));
         }
     }
 

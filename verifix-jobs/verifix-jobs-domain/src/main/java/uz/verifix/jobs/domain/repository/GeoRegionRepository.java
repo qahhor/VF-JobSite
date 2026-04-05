@@ -20,6 +20,9 @@ public interface GeoRegionRepository extends JpaRepository<GeoRegion, UUID> {
     List<GeoRegion> findByCountry_Iso2IgnoreCaseOrderByNameEnAsc(String iso2);
 
     @EntityGraph(attributePaths = "country")
+    List<GeoRegion> findByCountry_Iso2IgnoreCaseAndIsActiveTrueOrderByNameEnAsc(String iso2);
+
+    @EntityGraph(attributePaths = "country")
     Optional<GeoRegion> findByCountry_Iso2IgnoreCaseAndCodeIgnoreCase(String iso2, String code);
 
     @Query("SELECT r FROM GeoRegion r LEFT JOIN FETCH r.country WHERE " +

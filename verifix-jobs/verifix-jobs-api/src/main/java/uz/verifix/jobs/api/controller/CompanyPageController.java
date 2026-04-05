@@ -34,8 +34,12 @@ public class CompanyPageController {
 
     @GetMapping("/{slug}")
     public ResponseEntity<BrandingPageResponse> getCompanyPage(@PathVariable String slug) {
-        EmployerBranding branding = brandingService.getBrandingPage(slug);
-        return ResponseEntity.ok(toBrandingPageResponse(branding));
+        try {
+            EmployerBranding branding = brandingService.getBrandingPage(slug);
+            return ResponseEntity.ok(toBrandingPageResponse(branding));
+        } catch (uz.verifix.jobs.common.exception.ResourceNotFoundException e) {
+            return ResponseEntity.noContent().build();
+        }
     }
 
     @GetMapping("/{slug}/vacancies")

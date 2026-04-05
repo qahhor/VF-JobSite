@@ -45,6 +45,20 @@ public class AdminReferenceService {
         return cityRepository.findByGeoScope(countryIso2, region, null);
     }
 
+    @Transactional(readOnly = true)
+    public List<GeoCity> activeCitiesByScope(String countryIso2, String region) {
+        return cityRepository.findActiveByGeoScope(countryIso2, region, null);
+    }
+
+    @Transactional
+    public GeoCity toggleCityActive(UUID id) {
+        GeoCity city = getCity(id);
+        city.setIsActive(!Boolean.TRUE.equals(city.getIsActive()));
+        GeoCity saved = cityRepository.save(city);
+        log.info("City {} active status changed to: {} ({})", saved.getNameUzLat(), saved.getIsActive(), id);
+        return saved;
+    }
+
     @Transactional
     public GeoCity createCity(GeoCity city) {
         GeoCity saved = cityRepository.save(city);
@@ -90,6 +104,20 @@ public class AdminReferenceService {
     @Transactional(readOnly = true)
     public List<GeoRegion> regionsByCountry(String countryIso2) {
         return regionRepository.findByCountry_Iso2IgnoreCaseOrderByNameEnAsc(countryIso2);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GeoRegion> activeRegionsByCountry(String countryIso2) {
+        return regionRepository.findByCountry_Iso2IgnoreCaseAndIsActiveTrueOrderByNameEnAsc(countryIso2);
+    }
+
+    @Transactional
+    public GeoRegion toggleRegionActive(UUID id) {
+        GeoRegion region = getRegion(id);
+        region.setIsActive(!Boolean.TRUE.equals(region.getIsActive()));
+        GeoRegion saved = regionRepository.save(region);
+        log.info("Region {} active status changed to: {} ({})", saved.getNameUzLat(), saved.getIsActive(), id);
+        return saved;
     }
 
     @Transactional

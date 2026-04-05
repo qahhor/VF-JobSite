@@ -355,10 +355,14 @@ export class AdminApiService {
     return this.http.get<RefRegion[]>(`${this.base}/references/regions/by-country/${countryIso2}`);
   }
 
-  getCitiesByCountry(countryIso2: string, region?: string): Observable<RefCity[]> {
+  getCitiesByCountry(countryIso2: string, region?: string, activeOnly = false): Observable<RefCity[]> {
     let params = new HttpParams();
     if (region) params = params.set('region', region);
+    if (activeOnly) params = params.set('activeOnly', 'true');
     return this.http.get<RefCity[]>(`${this.base}/references/cities/by-country/${countryIso2}`, { params });
+  }
+  toggleCityActive(id: string): Observable<RefCity> {
+    return this.http.patch<RefCity>(`${this.base}/references/cities/${id}/toggle-active`, {});
   }
 
   // Regions
@@ -376,6 +380,9 @@ export class AdminApiService {
   deleteRegion(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/references/regions/${id}`);
   }
+  toggleRegionActive(id: string): Observable<RefRegion> {
+    return this.http.patch<RefRegion>(`${this.base}/references/regions/${id}/toggle-active`, {});
+  }
 
   // Countries
   getCountries(): Observable<RefCountry[]> {
@@ -389,7 +396,8 @@ export class AdminApiService {
 // Reference interfaces
 export interface RefCity {
   id: string; nameUzLat: string; nameRu: string; nameEn: string;
-  country: string; region: string; countryIso2?: string; regionId?: string; population: number | null;
+  country: string; region: string; countryIso2?: string; regionId?: string;
+  population: number | null; isActive: boolean;
 }
 export interface RefCityRequest {
   nameUzLat: string; nameRu: string; nameEn: string;
@@ -398,6 +406,7 @@ export interface RefCityRequest {
 export interface RefRegion {
   id: string; code: string; fullCode: string;
   nameUzLat: string; nameRu: string; nameEn: string; countryIso2: string;
+  isActive: boolean;
 }
 export interface RefRegionRequest {
   code: string; fullCode: string;

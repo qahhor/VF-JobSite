@@ -483,6 +483,15 @@ export class AdminEmployersComponent implements OnInit {
           foundedYear: emp.foundedYear || null,
           description: emp.description || '',
         };
+        // Load cities for the pre-selected region without clearing the city field
+        if (emp.region) {
+          this.api.getCitiesByCountry('UZ', emp.region).subscribe({
+            next: (list) => this.filteredCities.set(list),
+            error: () => this.filteredCities.set([])
+          });
+        } else {
+          this.filteredCities.set([]);
+        }
         this.showForm.set(true);
       },
       error: () => this.toast.error(this.i18n.t('admin.load_failed'))
@@ -492,15 +501,19 @@ export class AdminEmployersComponent implements OnInit {
   saveForm() {
     if (!this.formData.name) return;
     const payload = { ...this.formData };
-    const obs = this.editingId()
+    const isEdit = !!this.editingId();
+    const obs = isEdit
       ? this.api.updateEmployer(this.editingId()!, payload)
       : this.api.createEmployer(payload);
 
     obs.subscribe({
       next: () => {
+        const successKey = isEdit ? this.i18n.t('admin.company_updated') : this.i18n.t('admin.company_created');
         this.showForm.set(false);
+        this.editingId.set(null);
+        this.filteredCities.set([]);
         this.load();
-        this.toast.success(this.editingId() ? this.i18n.t('admin.company_updated') : this.i18n.t('admin.company_created'));
+        this.toast.success(successKey);
       },
       error: () => this.toast.error(this.i18n.t('admin.action_failed'))
     });

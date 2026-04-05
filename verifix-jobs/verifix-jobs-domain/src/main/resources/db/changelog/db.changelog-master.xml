@@ -30,5 +30,6 @@
     <include file="db/changelog/changelog-023-multi-country.xml"/>
     <include file="db/changelog/changelog-024-admin-invites.xml"/>
     <include file="db/changelog/changelog-025-uz-reference-data.xml"/>
+    <include file="db/changelog/changelog-026-geo-active-flag.xml"/>
 
 </databaseChangeLog>

@@ -394,4 +394,12 @@ export const WEB_ADMIN_TRANSLATIONS: TranslationCatalog = {
   'admin.ref.add_region': { uz_lat: "Viloyat qo'shish", ru: 'Добавить регион' },
   'admin.ref.edit_region': { uz_lat: 'Viloyatni tahrirlash', ru: 'Редактировать регион' },
   'admin.ref.edit_country': { uz_lat: 'Mamlakatni tahrirlash', ru: 'Редактировать страну' },
+  'admin.ref.active': { uz_lat: 'Faol', ru: 'Активный' },
+  'admin.ref.inactive': { uz_lat: 'Nofaol', ru: 'Неактивный' },
+  'admin.ref.toggle_active': { uz_lat: 'Faollikni o\'zgartirish', ru: 'Изменить статус' },
+  'admin.ref.activated': { uz_lat: 'Faollashtirildi', ru: 'Активировано' },
+  'admin.ref.deactivated': { uz_lat: 'O\'chirildi', ru: 'Деактивировано' },
+  'admin.ref.filter_all': { uz_lat: 'Hammasi', ru: 'Все' },
+  'admin.ref.filter_active': { uz_lat: 'Faollar', ru: 'Активные' },
+  'admin.ref.filter_inactive': { uz_lat: 'Nofaollar', ru: 'Неактивные' },
 };

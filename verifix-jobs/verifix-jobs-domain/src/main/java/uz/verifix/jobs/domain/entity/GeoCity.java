@@ -66,4 +66,8 @@ public class GeoCity extends BaseEntity {
 
     @Column(name = "population")
     private Integer population;
+
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 }

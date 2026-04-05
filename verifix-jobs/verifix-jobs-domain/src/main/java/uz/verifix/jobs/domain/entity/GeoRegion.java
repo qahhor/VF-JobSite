@@ -46,4 +46,8 @@ public class GeoRegion extends BaseEntity {
 
     @Column(name = "geoname_id")
     private Long geonameId;
+
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = true;
 }

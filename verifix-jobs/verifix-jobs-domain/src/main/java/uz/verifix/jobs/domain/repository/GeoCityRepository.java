@@ -56,6 +56,40 @@ public interface GeoCityRepository extends JpaRepository<GeoCity, UUID> {
                                  @Param("region") String region,
                                  @Param("district") String district);
 
+    @EntityGraph(attributePaths = {"countryRef", "regionRef", "districtRef"})
+    @Query("""
+            SELECT g FROM GeoCity g
+            LEFT JOIN g.countryRef countryRef
+            LEFT JOIN g.regionRef regionRef
+            LEFT JOIN g.districtRef districtRef
+            WHERE g.isActive = TRUE
+            AND (:country IS NULL
+                OR UPPER(g.country) = UPPER(:country)
+                OR (countryRef IS NOT NULL AND UPPER(countryRef.iso2) = UPPER(:country)))
+            AND (:region IS NULL
+                OR LOWER(COALESCE(g.region, '')) = LOWER(:region)
+                OR (regionRef IS NOT NULL AND (
+                    LOWER(regionRef.code) = LOWER(:region)
+                    OR LOWER(regionRef.fullCode) = LOWER(:region)
+                    OR LOWER(regionRef.nameUzLat) = LOWER(:region)
+                    OR LOWER(regionRef.nameRu) = LOWER(:region)
+                    OR LOWER(regionRef.nameEn) = LOWER(:region)
+                )))
+            AND (:district IS NULL
+                OR LOWER(COALESCE(g.district, '')) = LOWER(:district)
+                OR (districtRef IS NOT NULL AND (
+                    LOWER(districtRef.code) = LOWER(:district)
+                    OR LOWER(districtRef.fullCode) = LOWER(:district)
+                    OR LOWER(districtRef.nameUzLat) = LOWER(:district)
+                    OR LOWER(districtRef.nameRu) = LOWER(:district)
+                    OR LOWER(districtRef.nameEn) = LOWER(:district)
+                )))
+            ORDER BY COALESCE(g.population, 0) DESC, g.nameUzLat ASC
+            """)
+    List<GeoCity> findActiveByGeoScope(@Param("country") String country,
+                                       @Param("region") String region,
+                                       @Param("district") String district);
+
     @Query(value = "SELECT gc.* FROM geo_city gc " +
             "WHERE gc.deleted_at IS NULL " +
             "ORDER BY ST_DistanceSphere(gc.location, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)) " +
