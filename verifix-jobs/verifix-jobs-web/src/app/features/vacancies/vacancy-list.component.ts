@@ -1,120 +1,119 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Vacancy } from '../../core/models';
 import { ApiService } from '../../core/services/api.service';
 import { I18nService } from '../../core/services/i18n.service';
+import { LucideAngularModule, Plus, MoreVertical } from 'lucide-angular';
 
 @Component({
   selector: 'vjw-vacancy-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, LucideAngularModule],
   template: `
     <div class="space-y-4">
       <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <h1 class="text-2xl font-bold text-gray-800">{{ i18n.t('vacancy.list.title') }}</h1>
-        <a routerLink="/employer/vacancies/new" [attr.aria-label]="i18n.t('employer.page.new_vacancy')"
-           class="rounded-lg bg-black px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-gray-800">
-          {{ i18n.t('vacancy.list.new') }}
+        <div>
+          <h1 class="text-title font-semibold text-gray-900">Vacancies</h1>
+          <div class="mt-1 text-sm text-muted">
+            {{ countByStatus('ACTIVE') }} active, {{ countByStatus('DRAFT') }} draft, {{ countByStatus('CLOSED') + countByStatus('ARCHIVED') }} archived
+          </div>
+        </div>
+        <a routerLink="/employer/vacancies/new"
+           class="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-600 shadow-card">
+          <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+          Create New Vacancy
         </a>
       </div>
 
-      <div class="flex flex-col gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm sm:flex-row">
-        <input
-          type="text"
-          [(ngModel)]="search"
-          (ngModelChange)="onSearch()"
-          [placeholder]="i18n.t('vacancy.list.search_placeholder')"
-          class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-black/20">
-        <select
-          [(ngModel)]="statusFilter"
-          (ngModelChange)="load()"
-          class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm">
-          <option value="">{{ i18n.t('vacancy.list.all_statuses') }}</option>
-          <option value="DRAFT">{{ i18n.t('status.draft') }}</option>
-          <option value="PENDING_MODERATION">{{ i18n.t('status.pending_moderation') }}</option>
-          <option value="ACTIVE">{{ i18n.t('status.active') }}</option>
-          <option value="PAUSED">{{ i18n.t('status.paused') }}</option>
-          <option value="CLOSED">{{ i18n.t('status.closed') }}</option>
-        </select>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <input type="text" [(ngModel)]="search" (ngModelChange)="onSearch()"
+          placeholder="Search by title or ID..."
+          class="flex-1 h-10 rounded-xl border border-border bg-white px-4 text-sm outline-none transition focus:border-primary">
+        <div class="flex gap-2">
+          <select [(ngModel)]="statusFilter" (ngModelChange)="load()"
+            class="h-10 rounded-xl border border-border bg-white px-3 text-sm outline-none focus:border-primary">
+            <option value="">{{ i18n.t('vacancy.list.all_statuses') }}</option>
+            <option value="DRAFT">Draft</option>
+            <option value="PENDING_MODERATION">Under Review</option>
+            <option value="ACTIVE">Published</option>
+            <option value="PAUSED">Paused</option>
+            <option value="CLOSED">Closed</option>
+          </select>
+        </div>
       </div>
 
-      <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+      <div class="overflow-hidden rounded-2xl border border-border bg-white shadow-card">
         <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead class="border-b border-gray-100 bg-gray-50">
-              <tr>
-                <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('vacancy.list.title') }}</th>
-                <th class="hidden px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 md:table-cell">{{ i18n.t('vacancy.list.city') }}</th>
-                <th class="hidden px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 lg:table-cell">{{ i18n.t('vacancy.list.salary') }}</th>
-                <th class="px-5 py-3 text-left text-xs font-medium uppercase text-gray-500">{{ i18n.t('vacancy.list.status') }}</th>
-                <th class="hidden px-5 py-3 text-left text-xs font-medium uppercase text-gray-500 sm:table-cell">{{ i18n.t('vacancy.list.applications') }}</th>
-                <th class="px-5 py-3 text-right text-xs font-medium uppercase text-gray-500">{{ i18n.t('vacancy.list.action') }}</th>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-border text-left">
+                <th class="px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Title</th>
+                <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted md:table-cell">Department</th>
+                <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted lg:table-cell">Location</th>
+                <th class="px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted">Status</th>
+                <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted text-center sm:table-cell">Applications</th>
+                <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted text-center xl:table-cell">Views</th>
+                <th class="hidden px-5 py-3 text-caption font-medium uppercase tracking-wider text-muted lg:table-cell">Published</th>
+                <th class="px-5 py-3 text-right text-caption font-medium uppercase tracking-wider text-muted"></th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody>
               @for (v of vacancies(); track v.id) {
-                <tr class="transition-colors hover:bg-gray-50">
-                  <td class="px-5 py-3">
-                    <a [routerLink]="['/employer/vacancies', v.id]" class="text-sm font-medium text-gray-800 hover:text-black">{{ v.title }}</a>
-                    <div class="mt-0.5 text-xs text-gray-400">{{ v.category }}</div>
+                <tr class="border-b border-border/50 transition hover:bg-surface/50">
+                  <td class="px-5 py-3.5">
+                    <a [routerLink]="['/employer/vacancies', v.id]" class="font-medium text-gray-900 hover:text-primary">{{ v.title }}</a>
+                    <div class="mt-0.5 text-[11px] text-muted font-mono">{{ v.category || '—' }}</div>
                   </td>
-                  <td class="hidden px-5 py-3 text-sm text-gray-600 md:table-cell">{{ v.city }}</td>
-                  <td class="hidden px-5 py-3 text-sm text-gray-600 lg:table-cell">
-                    @if (v.salaryFrom) {
-                      {{ formatSalary(v.salaryFrom) }}
-                      @if (v.salaryTo) { - {{ formatSalary(v.salaryTo) }} }
-                      {{ v.currency }}
-                    } @else {
-                      <span class="text-gray-400">-</span>
-                    }
+                  <td class="hidden px-5 py-3.5 text-muted md:table-cell">{{ v.category || '—' }}</td>
+                  <td class="hidden px-5 py-3.5 text-muted lg:table-cell">{{ v.city || '—' }}</td>
+                  <td class="px-5 py-3.5">
+                    <span class="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold" [class]="getStatusClass(v.status)">
+                      {{ getStatusLabel(v.status) }}
+                    </span>
                   </td>
-                  <td class="px-5 py-3">
-                    <span class="rounded-full px-2 py-0.5 text-xs" [class]="getStatusClass(v.status)">{{ getStatusLabel(v.status) }}</span>
+                  <td class="hidden px-5 py-3.5 text-center sm:table-cell">
+                    <span class="font-semibold text-primary">{{ v.positionsFilled || 0 }}</span>
                   </td>
-                  <td class="hidden px-5 py-3 text-sm text-gray-600 sm:table-cell">{{ v.positionsFilled }}/{{ v.positionsCount }}</td>
-                  <td class="px-5 py-3">
-                    <div class="flex items-center justify-end gap-2 text-right">
-                      @if (v.status === 'DRAFT') {
-                        <button
-                          type="button"
-                          (click)="publish(v.id)"
-                          class="rounded border border-black px-2 py-1 text-xs font-medium text-black transition hover:bg-black hover:text-white"
-                          [title]="i18n.t('common.publish')">
-                          {{ i18n.t('common.publish') }}
-                        </button>
+                  <td class="hidden px-5 py-3.5 text-center text-muted xl:table-cell">{{ v.viewsCount || 0 }}</td>
+                  <td class="hidden px-5 py-3.5 text-muted lg:table-cell">{{ v.createdAt | date:'yyyy-MM-dd' }}</td>
+                  <td class="px-5 py-3.5 text-right">
+                    <div class="relative inline-block">
+                      <button (click)="toggleMenu(v.id)" class="rounded-md p-1.5 text-muted hover:bg-surface hover:text-gray-700 transition">
+                        <lucide-icon [img]="MoreVertIcon" [size]="16"></lucide-icon>
+                      </button>
+                      @if (openMenuId() === v.id) {
+                        <div class="absolute right-0 top-full z-10 mt-1 w-36 rounded-xl border border-border bg-white py-1 shadow-dropdown">
+                          <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="block px-3 py-1.5 text-xs hover:bg-surface transition">Edit</a>
+                          @if (v.status === 'DRAFT') {
+                            <button (click)="publish(v.id)" class="w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition">Publish</button>
+                          }
+                          @if (v.status === 'ACTIVE') {
+                            <button (click)="bump(v.id)" class="w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition">Bump</button>
+                          }
+                          <button class="w-full text-left px-3 py-1.5 text-xs hover:bg-surface transition">Duplicate</button>
+                          <button class="w-full text-left px-3 py-1.5 text-xs text-error hover:bg-error/5 transition">Archive</button>
+                        </div>
                       }
-                      @if (v.status === 'ACTIVE') {
-                        <button
-                          type="button"
-                          (click)="bump(v.id)"
-                          class="rounded border border-gray-200 px-2 py-1 text-xs transition hover:bg-gray-50"
-                          [title]="i18n.t('vacancy.list.bump')">
-                          ↑
-                        </button>
-                      }
-                      <a [routerLink]="['/employer/vacancies', v.id, 'edit']" class="text-sm text-black hover:underline">{{ i18n.t('vacancy.list.edit') }}</a>
                     </div>
                   </td>
                 </tr>
               } @empty {
-                <tr><td colspan="6" class="px-5 py-12 text-center text-gray-400">{{ i18n.t('vacancy.list.no_results') }}</td></tr>
+                <tr><td colspan="8" class="px-5 py-16 text-center text-muted">{{ i18n.t('vacancy.list.no_results') }}</td></tr>
               }
             </tbody>
           </table>
         </div>
 
         @if (totalPages() > 1) {
-          <div class="flex items-center justify-between border-t border-gray-100 px-5 py-3">
-            <span class="text-sm text-gray-500">{{ totalElements() }} {{ i18n.t('vacancy.list.total_results') }}</span>
+          <div class="flex items-center justify-between border-t border-border px-5 py-3">
+            <span class="text-xs text-muted">{{ totalElements() }} total</span>
             <div class="flex gap-1">
               @for (p of pages(); track p) {
-                <button
-                  type="button"
-                  (click)="goToPage(p)"
-                  [class]="p === currentPage() ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-                  class="h-8 w-8 rounded-lg text-sm font-medium transition">
+                <button (click)="goToPage(p)"
+                  class="h-8 w-8 rounded-lg text-xs font-medium transition"
+                  [class]="p === currentPage() ? 'bg-primary text-white' : 'bg-surface text-muted hover:bg-border'">
                   {{ p + 1 }}
                 </button>
               }
@@ -126,12 +125,16 @@ import { I18nService } from '../../core/services/i18n.service';
   `,
 })
 export class VacancyListComponent implements OnInit {
+  PlusIcon = Plus;
+  MoreVertIcon = MoreVertical;
+
   vacancies = signal<Vacancy[]>([]);
   allVacancies = signal<Vacancy[]>([]);
   currentPage = signal(0);
   totalPages = signal(0);
   totalElements = signal(0);
   pages = signal<number[]>([]);
+  openMenuId = signal<string | null>(null);
   statusFilter = '';
   search = '';
 
@@ -169,16 +172,24 @@ export class VacancyListComponent implements OnInit {
     return n.toString();
   }
 
+  toggleMenu(id: string) {
+    this.openMenuId.set(this.openMenuId() === id ? null : id);
+  }
+
+  countByStatus(status: string): number {
+    return this.allVacancies().filter(v => v.status === status).length;
+  }
+
   getStatusClass(status: string): string {
     const classes: Record<string, string> = {
-      DRAFT: 'bg-gray-100 text-gray-600',
-      ACTIVE: 'bg-green-50 text-green-600',
-      PAUSED: 'bg-yellow-50 text-yellow-600',
-      CLOSED: 'bg-red-50 text-red-600',
-      PENDING_MODERATION: 'bg-blue-50 text-blue-600',
-      ARCHIVED: 'bg-gray-50 text-gray-400',
+      DRAFT: 'border border-slate-200 bg-slate-50 text-slate-600',
+      ACTIVE: 'border border-emerald-200 bg-emerald-50 text-emerald-700',
+      PAUSED: 'border border-amber-200 bg-amber-50 text-amber-700',
+      CLOSED: 'border border-red-200 bg-red-50 text-red-600',
+      PENDING_MODERATION: 'border border-blue-200 bg-blue-50 text-blue-600',
+      ARCHIVED: 'border border-slate-200 bg-slate-50 text-slate-400',
     };
-    return classes[status] || 'bg-gray-100 text-gray-600';
+    return classes[status] || 'border border-slate-200 bg-slate-50 text-slate-600';
   }
 
   getStatusLabel(status: string): string {
