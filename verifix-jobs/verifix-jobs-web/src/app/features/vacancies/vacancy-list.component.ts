@@ -41,6 +41,14 @@ import { LucideAngularModule, Plus, MoreVertical } from 'lucide-angular';
             <option value="PAUSED">Paused</option>
             <option value="CLOSED">Closed</option>
           </select>
+          <select class="h-10 rounded-xl border border-border bg-white px-3 text-sm outline-none focus:border-primary">
+            <option value="">Department</option>
+            <option>Engineering</option>
+            <option>Design</option>
+            <option>Sales</option>
+            <option>HR</option>
+            <option>Marketing</option>
+          </select>
         </div>
       </div>
 

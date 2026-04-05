@@ -30,16 +30,23 @@ interface NavSection {
     <aside class="fixed inset-y-0 left-0 z-30 hidden lg:flex flex-col bg-sidebar text-white transition-all duration-200"
            [style.width.px]="collapsed() ? 68 : 256">
 
-      <!-- Logo -->
-      <div class="flex items-center gap-3 px-4 h-16 border-b border-white/10 shrink-0">
-        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary">
-          <span class="text-sm font-bold text-white">V</span>
+      <!-- Logo + Collapse -->
+      <div class="flex items-center justify-between px-4 h-16 border-b border-white/10 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary">
+            <lucide-icon [img]="Building2Icon" [size]="20" class="text-white"></lucide-icon>
+          </div>
+          @if (!collapsed()) {
+            <div class="min-w-0">
+              <div class="text-sm font-semibold truncate">Verifix Jobs</div>
+              <div class="text-[10px] uppercase tracking-wider text-white/50">Employer Panel</div>
+            </div>
+          }
         </div>
         @if (!collapsed()) {
-          <div class="min-w-0">
-            <div class="text-sm font-semibold truncate">Verifix Jobs</div>
-            <div class="text-[10px] uppercase tracking-wider text-white/50">Employer Panel</div>
-          </div>
+          <button (click)="collapsed.set(true)" class="rounded-md p-1 text-white/30 hover:text-white/60 transition">
+            <lucide-icon [img]="ChevronLeftIcon" [size]="18"></lucide-icon>
+          </button>
         }
       </div>
 
@@ -92,10 +99,12 @@ interface NavSection {
             </button>
           </div>
         }
-        <button (click)="collapsed.set(!collapsed())"
-                class="flex w-full items-center justify-center rounded-lg py-1.5 text-white/40 hover:bg-sidebar-hover hover:text-white/70 transition">
-          <lucide-icon [img]="collapsed() ? ChevronRightIcon : ChevronLeftIcon" [size]="16"></lucide-icon>
-        </button>
+        @if (collapsed()) {
+          <button (click)="collapsed.set(false)"
+                  class="flex w-full items-center justify-center rounded-lg py-1.5 text-white/40 hover:bg-sidebar-hover hover:text-white/70 transition">
+            <lucide-icon [img]="ChevronRightIcon" [size]="16"></lucide-icon>
+          </button>
+        }
       </div>
     </aside>
 
@@ -265,6 +274,7 @@ export class LayoutComponent {
   MoonIcon = Moon;
   SunIcon = Sun;
   SparklesIcon = Sparkles;
+  Building2Icon = Building2;
 
   // ── State ──
   collapsed = signal(false);

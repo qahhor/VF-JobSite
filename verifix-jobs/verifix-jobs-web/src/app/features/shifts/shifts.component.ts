@@ -62,10 +62,10 @@ interface Employee {
               <tr class="border-b border-border">
                 <th class="w-48 px-4 py-3 text-left text-caption font-medium uppercase tracking-wider text-muted">Employee</th>
                 @for (day of weekDays(); track day.label) {
-                  <th class="px-2 py-3 text-center text-caption font-medium uppercase tracking-wider text-muted min-w-[100px]"
+                  <th class="px-2 py-3 text-center min-w-[100px]"
                       [class.bg-sky-50]="day.isToday">
-                    <div>{{ day.label }}</div>
-                    <div class="text-[10px] font-normal">{{ day.date }}</div>
+                    <div class="text-caption font-medium uppercase tracking-wider text-muted">{{ day.label }}</div>
+                    <div class="text-lg font-semibold text-gray-900">{{ day.dateNum }}</div>
                   </th>
                 }
                 <th class="w-20 px-3 py-3 text-center text-caption font-medium uppercase tracking-wider text-muted">Hours</th>
@@ -92,7 +92,8 @@ interface Employee {
                              [class]="shift.type === 'normal' ? 'bg-accent/10 text-accent border border-accent/20' :
                                       shift.type === 'overtime' ? 'bg-warning/10 text-warning border border-warning/20' :
                                       'bg-error/10 text-error border border-error/20'">
-                          {{ shift.start }}-{{ shift.end }}
+                          {{ shift.start }} - {{ shift.end }}
+                          <div class="text-[8px] opacity-70">{{ shift.hours }}h 0m</div>
                           @if (shift.type === 'overtime') {
                             <lucide-icon [img]="AlertIcon" [size]="10" class="inline ml-0.5"></lucide-icon>
                           }
@@ -114,19 +115,24 @@ interface Employee {
         </div>
       </div>
 
+      <!-- Labor Compliance Warning -->
+      @if (hasOvertimeViolation()) {
+        <div class="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 flex items-start gap-3">
+          <lucide-icon [img]="AlertIcon" [size]="20" class="text-amber-600 shrink-0 mt-0.5"></lucide-icon>
+          <div>
+            <div class="text-sm font-semibold text-amber-900">Labor Compliance Warning</div>
+            <div class="text-xs text-amber-700 mt-0.5">Rustam I. is scheduled for 48 hours this week, exceeding the standard 40-hour limit. Consider reassigning the Friday shift.</div>
+          </div>
+        </div>
+      }
+
       <!-- Legend -->
       <div class="flex items-center gap-6 text-xs text-muted">
         <div class="flex items-center gap-1.5">
-          <div class="h-3 w-3 rounded-sm bg-accent/20 border border-accent/30"></div> Normal
+          <div class="h-3 w-3 rounded-full bg-accent"></div> Normal
         </div>
         <div class="flex items-center gap-1.5">
-          <div class="h-3 w-3 rounded-sm bg-warning/20 border border-warning/30"></div> Overtime
-        </div>
-        <div class="flex items-center gap-1.5">
-          <div class="h-3 w-3 rounded-sm bg-error/20 border border-error/30"></div> Violation
-        </div>
-        <div class="flex items-center gap-1.5">
-          <div class="h-3 w-3 rounded-sm border border-dashed border-border"></div> Empty slot
+          <div class="h-3 w-3 rounded-full bg-warning"></div> Overtime
         </div>
       </div>
     </div>
@@ -175,6 +181,8 @@ export class ShiftsComponent {
     { employeeId: '5', day: 4, start: '09:00', end: '18:00', hours: 8, type: 'normal' },
   ];
 
+  hasOvertimeViolation = computed(() => this.employees().some(e => e.totalHours > 40));
+
   constructor(public i18n: I18nService) {}
 
   weekDays = computed(() => {
@@ -188,14 +196,20 @@ export class ShiftsComponent {
       return {
         label,
         date: `${d.getDate()}.${d.getMonth() + 1}`,
+        dateNum: d.getDate(),
         isToday: d.toDateString() === today.toDateString()
       };
     });
   });
 
   weekLabel = computed(() => {
-    const days = this.weekDays();
-    return `${days[0].date} — ${days[6].date}`;
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const today = new Date();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - today.getDay() + 1 + this.weekOffset() * 7);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    return `${months[monday.getMonth()]} ${monday.getDate()} - ${months[sunday.getMonth()]} ${sunday.getDate()}, ${sunday.getFullYear()}`;
   });
 
   getShift(empId: string, dayIdx: number): ShiftBlock | undefined {
