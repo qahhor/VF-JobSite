@@ -346,11 +346,11 @@ import { ToastService } from '../../shared/services/toast.service';
                 <label class="mb-1 block text-xs font-medium text-muted">{{ i18n.t('employer.country') }}</label>
                 <select [(ngModel)]="formData.country" (ngModelChange)="onCountryChange()"
                   class="h-9 w-full rounded-lg border border-border bg-white px-3 text-sm outline-none focus:border-primary">
-                  <option value="">—</option>
-                  <option value="UZ" selected>🇺🇿 {{ i18n.lang() === 'ru' ? 'Узбекистан' : "O'zbekiston" }}</option>
-                  <option value="KZ">🇰🇿 {{ i18n.lang() === 'ru' ? 'Казахстан' : "Qozog'iston" }}</option>
-                  <option value="KG">🇰🇬 {{ i18n.lang() === 'ru' ? 'Киргизия' : "Qirg'iziston" }}</option>
-                  <option value="TJ">🇹🇯 {{ i18n.lang() === 'ru' ? 'Таджикистан' : 'Tojikiston' }}</option>
+                  <option [ngValue]="''">—</option>
+                  <option [ngValue]="'UZ'">Uzbekistan</option>
+                  <option [ngValue]="'KZ'">Kazakhstan</option>
+                  <option [ngValue]="'KG'">Kyrgyzstan</option>
+                  <option [ngValue]="'TJ'">Tajikistan</option>
                 </select>
               </div>
               <div>
